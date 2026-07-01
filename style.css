@@ -207,6 +207,7 @@ section{padding:120px 0;}
 .info-block{margin-bottom:30px;}
 .info-block .eyebrow{margin-bottom:8px;}
 .info-block div{color:var(--cream); font-size:17px;}
+.info-block div + div{margin-top:4px; font-size:14px; color:var(--muted);}
 form{display:flex; flex-direction:column; gap:18px;}
 label{font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; display:block;}
 input, textarea{
@@ -226,7 +227,28 @@ footer .foot-note{font-size:12.5px; color:var(--muted); letter-spacing:0.03em;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--bg-alt-2); border:2px solid var(--bg);}
 
-/* ---------- WHATSAPP BUTTON ---------- */
+/* ---------- CHECKLIST ---------- */
+.checklist{list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:14px 32px;}
+.checklist li{font-size:15px; color:var(--muted); display:flex; gap:10px; align-items:flex-start;}
+.checklist li::before{content:"✓"; color:var(--gold); font-weight:600;}
+@media (max-width:700px){ .checklist{grid-template-columns:1fr;} }
+
+/* ---------- PROCESS FLOW ---------- */
+.flow{border-top:1px solid var(--line);}
+.flow-step{
+  padding:20px 0; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:18px;
+}
+.flow-step .num{font-size:12px; color:var(--gold); letter-spacing:0.14em; text-transform:uppercase; width:32px; flex-shrink:0;}
+.flow-step .label{font-family:'Cormorant Garamond', serif; font-size:21px; color:var(--cream);}
+
+/* ---------- QUICKLINKS (contact enquiry routing) ---------- */
+.quicklinks{display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;}
+.quicklinks a{
+  font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted);
+  border:1px solid var(--line); padding:9px 16px; border-radius:2px; transition:all 0.25s;
+}
+.quicklinks a:hover{color:var(--gold-light); border-color:var(--gold);}
 .wa-btn{
   position:fixed; right:24px; bottom:24px; z-index:60;
   width:58px; height:58px; border-radius:50%;
