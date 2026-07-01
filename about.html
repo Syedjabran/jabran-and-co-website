@@ -11,23 +11,45 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<input type="checkbox" id="menu-toggle" class="menu-toggle">
 <header>
   <nav>
     <a href="index.html" style="display:flex;align-items:center;gap:10px;">
       <div class="logomark"><img class="nav-logo-img" src="logo-mono.png" alt="Jabran &amp; Co"><span class="name">JABRAN &amp; CO</span></div>
     </a>
-    <div class="navlinks">
-      <a href="index.html">Home</a>
-      <a href="about.html" class="active">About</a>
-      <a href="advisory.html">Advisory</a>
-      <a href="factory-performance.html">Factory Performance</a>
-      <a href="trading.html">Trading</a>
-      <a href="case-studies.html">Case Studies</a>
-      <a href="contact.html">Contact</a>
-    </div>
+    <label for="menu-toggle" class="hamburger-btn"><span class="bars"><span></span><span></span><span></span></span>Menu</label>
   </nav>
 </header>
-
+<label for="menu-toggle" class="sidebar-overlay"></label>
+<aside class="sidebar-panel">
+  <label for="menu-toggle" class="sidebar-close">&times;</label>
+  <div class="sidebar-group">
+    <div class="group-label">Company</div>
+    <a href="index.html">Home</a>
+    <a href="about.html" class="active">About</a>
+    <a href="careers.html">Careers</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="group-label">Services</div>
+    <a href="advisory.html">Advisory</a>
+    <a href="factory-performance.html">Factory Performance</a>
+    <a href="trading.html">Trading</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="group-label">Insights</div>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="insights.html">Insights</a>
+    <a href="podcast.html">Podcast</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="group-label">Contact</div>
+    <a href="contact.html">Contact Us</a>
+    <div class="sidebar-cta">
+      <a href="mailto:hello@jabranandco.com">hello@jabranandco.com</a>
+      <a href="https://wa.me/923364864345" target="_blank" rel="noopener">WhatsApp: +92 336 4864345</a>
+    </div>
+  </div>
+</aside>
 <section class="page-hero">
   <div class="wrap">
     <div class="eyebrow">About Us</div>

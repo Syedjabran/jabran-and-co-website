@@ -11,23 +11,45 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<input type="checkbox" id="menu-toggle" class="menu-toggle">
 <header>
   <nav>
     <a href="index.html" style="display:flex;align-items:center;gap:10px;">
       <div class="logomark"><img class="nav-logo-img" src="logo-mono.png" alt="Jabran &amp; Co"><span class="name">JABRAN &amp; CO</span></div>
     </a>
-    <div class="navlinks">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="advisory.html">Advisory</a>
-      <a href="factory-performance.html">Factory Performance</a>
-      <a href="trading.html">Trading</a>
-      <a href="case-studies.html">Case Studies</a>
-      <a href="contact.html" class="active">Contact</a>
-    </div>
+    <label for="menu-toggle" class="hamburger-btn"><span class="bars"><span></span><span></span><span></span></span>Menu</label>
   </nav>
 </header>
-
+<label for="menu-toggle" class="sidebar-overlay"></label>
+<aside class="sidebar-panel">
+  <label for="menu-toggle" class="sidebar-close">&times;</label>
+  <div class="sidebar-group">
+    <div class="group-label">Company</div>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="careers.html">Careers</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="group-label">Services</div>
+    <a href="advisory.html">Advisory</a>
+    <a href="factory-performance.html">Factory Performance</a>
+    <a href="trading.html">Trading</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="group-label">Insights</div>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="insights.html">Insights</a>
+    <a href="podcast.html">Podcast</a>
+  </div>
+  <div class="sidebar-group">
+    <div class="group-label">Contact</div>
+    <a href="contact.html" class="active">Contact Us</a>
+    <div class="sidebar-cta">
+      <a href="mailto:hello@jabranandco.com">hello@jabranandco.com</a>
+      <a href="https://wa.me/923364864345" target="_blank" rel="noopener">WhatsApp: +92 336 4864345</a>
+    </div>
+  </div>
+</aside>
 <section class="page-hero">
   <div class="wrap">
     <div class="eyebrow">Contact</div>
@@ -38,52 +60,47 @@
 
 <section id="contact">
   <div class="wrap">
-    <div class="contact-grid">
-      <div>
-        <div class="info-block">
-          <div class="eyebrow">General Enquiries</div>
-          <div>hello@jabranandco.com</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Executive Office</div>
-          <div>ceo@jabranandco.com</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Sourcing &amp; Trade</div>
-          <div>sourcing@jabranandco.com</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Phone / WhatsApp — Pakistan</div>
-          <div>+92 336 4864345</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Phone / WhatsApp — United Kingdom</div>
-          <div>+44 7400 760630</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Registered Office</div>
-          <div>28, Sector M8, Lake City, Lahore</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Availability</div>
-          <div>Always available via WhatsApp</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Registration &amp; Compliance</div>
-          <div>FBR Registration No. J152588</div>
-          <div>Firm Registration No. 6634 (2025–26), Registrar of Firms, Lahore</div>
-        </div>
-        <div class="info-block">
-          <div class="eyebrow">Quick Enquiries</div>
-          <div class="quicklinks">
-            <a href="mailto:ceo@jabranandco.com?subject=Business%20Enquiry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="1"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg><span>Business Enquiries</span></a>
-            <a href="mailto:sourcing@jabranandco.com?subject=Supplier%20Registration"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg><span>Supplier Registration</span></a>
-            <a href="mailto:ceo@jabranandco.com?subject=Partnership%20Opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Partnership Opportunities</span></a>
-            <a href="mailto:hello@jabranandco.com?subject=Career%20Enquiry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg><span>Career Opportunities</span></a>
-            <a href="mailto:hello@jabranandco.com?subject=Media%20Enquiry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="14" height="12" rx="1"/><path d="m16 10 6-3v10l-6-3"/></svg><span>Media Enquiries</span></a>
-          </div>
-        </div>
+    <div class="contact-cards">
+      <div class="contact-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        <div class="eyebrow">Email</div>
+        <div class="contact-line"><span>General</span>hello@jabranandco.com</div>
+        <div class="contact-line"><span>Executive</span>ceo@jabranandco.com</div>
+        <div class="contact-line"><span>Sourcing</span>sourcing@jabranandco.com</div>
       </div>
+      <div class="contact-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+        <div class="eyebrow">Phone / WhatsApp</div>
+        <div class="contact-line"><span>Pakistan</span>+92 336 4864345</div>
+        <div class="contact-line"><span>United Kingdom</span>+44 7400 760630</div>
+        <div class="contact-line" style="margin-top:8px; color:var(--gold-light);">Always available via WhatsApp</div>
+      </div>
+      <div class="contact-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M14 9h1M14 13h1M9 21v-4h6v4"/></svg>
+        <div class="eyebrow">Registered Office</div>
+        <div class="contact-line" style="margin-bottom:10px;">28, Sector M8, Lake City, Lahore</div>
+        <div class="eyebrow" style="margin-top:6px;">Compliance</div>
+        <div class="contact-line"><span>FBR</span>Reg. No. J152588</div>
+        <div class="contact-line"><span>Firm</span>No. 6634 (2025–26), Lahore</div>
+      </div>
+    </div>
+
+    <div class="quicklinks-row">
+      <div class="eyebrow" style="margin-bottom:14px;">Quick Enquiries</div>
+      <div class="quicklinks">
+        <a href="mailto:ceo@jabranandco.com?subject=Business%20Enquiry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="1"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg><span>Business Enquiries</span></a>
+        <a href="mailto:sourcing@jabranandco.com?subject=Supplier%20Registration"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg><span>Supplier Registration</span></a>
+        <a href="mailto:ceo@jabranandco.com?subject=Partnership%20Opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Partnership</span></a>
+        <a href="careers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg><span>Careers</span></a>
+        <a href="mailto:hello@jabranandco.com?subject=Media%20Enquiry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="14" height="12" rx="1"/><path d="m16 10 6-3v10l-6-3"/></svg><span>Media Enquiries</span></a>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:64px;">
+      <div class="eyebrow">Send a Message</div>
+      <h2>Tell us about your project</h2>
+    </div>
+    <div class="contact-form-wrap">
       <form action="mailto:hello@jabranandco.com" method="post" enctype="text/plain">
         <div>
           <label for="name">Name</label>
