@@ -101,7 +101,7 @@
       <h2>Tell us about your project</h2>
     </div>
     <div class="contact-form-wrap">
-      <form action="mailto:hello@jabranandco.com" method="post" enctype="text/plain">
+      <form id="contact-form">
         <div>
           <label for="name">Name</label>
           <input id="name" name="name" type="text" required>
@@ -115,10 +115,35 @@
           <textarea id="message" name="message" required></textarea>
         </div>
         <button class="btn btn-primary" type="submit" style="align-self:flex-start; margin-top:8px; border:none; cursor:pointer;">Send Message</button>
+        <p id="contact-status" style="font-size:13px; color:var(--muted); margin-top:6px;"></p>
       </form>
     </div>
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+  const cform = document.getElementById('contact-form');
+  const cstatus = document.getElementById('contact-status');
+  cform.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    cstatus.textContent = 'Sending…';
+    const { error } = await sb.from('contact_submissions').insert({
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      message: document.getElementById('message').value
+    });
+    if (error) {
+      cstatus.textContent = 'Something went wrong — please try WhatsApp or email instead.';
+      cstatus.style.color = '#c0392b';
+    } else {
+      cstatus.textContent = "Message sent. We'll get back to you soon.";
+      cstatus.style.color = 'var(--gold-light)';
+      cform.reset();
+    }
+  });
+</script>
 
 <footer>
   <div class="wrap">

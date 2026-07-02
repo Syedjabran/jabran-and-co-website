@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Jabran &amp; Co</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .admin-wrap{max-width:900px; margin:0 auto; padding:140px 32px 80px;}
+  .admin-tabs{display:flex; gap:1px; background:var(--line); border:1px solid var(--line); margin-bottom:32px;}
+  .admin-tab{flex:1; text-align:center; padding:14px; background:var(--bg-alt); cursor:pointer; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted);}
+  .admin-tab.active{background:var(--bg); color:var(--gold-light);}
+  .admin-row{border:1px solid var(--line); padding:22px 24px; margin-bottom:14px; background:var(--bg-alt);}
+  .admin-row h3{font-size:19px; color:var(--cream); margin-bottom:8px;}
+  .admin-row .meta{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;}
+  .admin-row p{font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:14px;}
+  .admin-actions{display:flex; gap:10px;}
+  .admin-btn{padding:9px 18px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; border:1px solid var(--line); cursor:pointer; background:transparent; color:var(--cream);}
+  .admin-btn.approve{border-color:var(--gold); color:var(--gold-light);}
+  .admin-btn.approve:hover{background:rgba(198,165,90,0.1);}
+  .admin-btn.reject{border-color:#c0392b; color:#e57368;}
+  .admin-btn.reject:hover{background:rgba(192,57,43,0.1);}
+  .login-box{max-width:380px; margin:160px auto; text-align:center;}
+  .login-box input{margin-bottom:14px;}
+  #logout-btn{position:fixed; top:24px; right:24px; z-index:60; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+</style>
+</head>
+<body>
+
+<div id="login-view" class="login-box">
+  <div class="logomark" style="justify-content:center; margin-bottom:30px;"><img class="nav-logo-img" src="logo-mono.png" alt="Jabran &amp; Co"></div>
+  <div class="eyebrow" style="margin-bottom:20px;">Admin Login</div>
+  <form id="login-form">
+    <input id="login-email" type="email" placeholder="Email" required>
+    <input id="login-password" type="password" placeholder="Password" required>
+    <button class="btn btn-primary" type="submit" style="width:100%; border:none; cursor:pointer;">Log In</button>
+    <p id="login-status" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="dashboard-view" class="admin-wrap" style="display:none;">
+  <div class="eyebrow">Admin Portal</div>
+  <h1 style="margin-bottom:32px;">Jabran &amp; Co Dashboard</h1>
+
+  <div class="admin-tabs">
+    <div class="admin-tab active" data-tab="pending">Pending Posts</div>
+    <div class="admin-tab" data-tab="approved">Approved Posts</div>
+    <div class="admin-tab" data-tab="contacts">Contact Submissions</div>
+  </div>
+
+  <div id="tab-pending" class="admin-panel"></div>
+  <div id="tab-approved" class="admin-panel" style="display:none;"></div>
+  <div id="tab-contacts" class="admin-panel" style="display:none;"></div>
+</div>
+
+<div id="logout-btn" style="display:none;">Log Out</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+  const loginView = document.getElementById('login-view');
+  const dashboardView = document.getElementById('dashboard-view');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+  function fmtDate(d){
+    return new Date(d).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  async function checkSession() {
+    const { data } = await sb.auth.getSession();
+    if (data.session) {
+      showDashboard();
+    } else {
+      loginView.style.display = 'block';
+      dashboardView.style.display = 'none';
+      logoutBtn.style.display = 'none';
+    }
+  }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('login-status');
+    statusEl.textContent = 'Logging in…';
+    statusEl.style.color = 'var(--muted)';
+    const { error } = await sb.auth.signInWithPassword({
+      email: document.getElementById('login-email').value,
+      password: document.getElementById('login-password').value
+    });
+    if (error) {
+      statusEl.textContent = 'Incorrect email or password.';
+      statusEl.style.color = '#e57368';
+    } else {
+      showDashboard();
+    }
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    await sb.auth.signOut();
+    checkSession();
+  });
+
+  function showDashboard(){
+    loginView.style.display = 'none';
+    dashboardView.style.display = 'block';
+    logoutBtn.style.display = 'block';
+    loadPending();
+    loadApproved();
+    loadContacts();
+  }
+
+  // Tab switching
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-panel').forEach(p => p.style.display = 'none');
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).style.display = 'block';
+    });
+  });
+
+  async function loadPending(){
+    const el = document.getElementById('tab-pending');
+    el.innerHTML = '<p style="color:var(--muted);">Loading…</p>';
+    const { data, error } = await sb.from('blog_posts').select('*').eq('status','pending').order('created_at',{ascending:false});
+    if (error) { el.innerHTML = '<p style="color:#e57368;">Error loading posts.</p>'; return; }
+    if (!data.length) { el.innerHTML = '<p style="color:var(--muted);">No pending submissions.</p>'; return; }
+    el.innerHTML = data.map(post => `
+      <div class="admin-row">
+        <div class="meta">${fmtDate(post.created_at)} · By ${escapeHtml(post.author_name)}</div>
+        <h3>${escapeHtml(post.title)}</h3>
+        <p>${escapeHtml(post.body)}</p>
+        <div class="admin-actions">
+          <button class="admin-btn approve" onclick="updateStatus('${post.id}','approved')">Approve</button>
+          <button class="admin-btn reject" onclick="updateStatus('${post.id}','rejected')">Reject</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadApproved(){
+    const el = document.getElementById('tab-approved');
+    const { data, error } = await sb.from('blog_posts').select('*').eq('status','approved').order('created_at',{ascending:false});
+    if (error) { el.innerHTML = '<p style="color:#e57368;">Error loading posts.</p>'; return; }
+    if (!data.length) { el.innerHTML = '<p style="color:var(--muted);">No approved posts yet.</p>'; return; }
+    el.innerHTML = data.map(post => `
+      <div class="admin-row">
+        <div class="meta">${fmtDate(post.created_at)} · By ${escapeHtml(post.author_name)} · Live on Insights</div>
+        <h3>${escapeHtml(post.title)}</h3>
+        <p>${escapeHtml(post.body)}</p>
+        <div class="admin-actions">
+          <button class="admin-btn reject" onclick="updateStatus('${post.id}','rejected')">Unpublish</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function updateStatus(id, status){
+    await sb.from('blog_posts').update({ status }).eq('id', id);
+    loadPending();
+    loadApproved();
+  }
+
+  async function loadContacts(){
+    const el = document.getElementById('tab-contacts');
+    el.innerHTML = '<p style="color:var(--muted);">Loading…</p>';
+    const { data, error } = await sb.from('contact_submissions').select('*').order('created_at',{ascending:false});
+    if (error) { el.innerHTML = '<p style="color:#e57368;">Error loading submissions.</p>'; return; }
+    if (!data.length) { el.innerHTML = '<p style="color:var(--muted);">No contact submissions yet.</p>'; return; }
+    el.innerHTML = data.map(c => `
+      <div class="admin-row">
+        <div class="meta">${fmtDate(c.created_at)}</div>
+        <h3>${escapeHtml(c.name)} — ${escapeHtml(c.email)}</h3>
+        <p>${escapeHtml(c.message)}</p>
+      </div>
+    `).join('');
+  }
+
+  checkSession();
+</script>
+</body>
+</html>

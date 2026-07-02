@@ -54,36 +54,101 @@
 <section class="page-hero">
   <div class="wrap">
     <div class="eyebrow">Insights</div>
-    <h1>Perspectives, not yet published</h1>
-    <p>We're building out a real library of articles on trade, sourcing, and operations — written from direct experience, not generic content.</p>
+    <h1>Perspectives from our community</h1>
+    <p>Real experiences and opinions on trade, sourcing, and business — submitted by readers, reviewed by our team, and published once approved.</p>
+  </div>
+</section>
+
+<section class="about">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Share Your Story</div>
+      <h2>Write for Insights</h2>
+    </div>
+    <div class="contact-form-wrap">
+      <form id="blog-submit-form">
+        <div>
+          <label for="author_name">Your Name</label>
+          <input id="author_name" name="author_name" type="text" required>
+        </div>
+        <div>
+          <label for="title">Title</label>
+          <input id="title" name="title" type="text" required>
+        </div>
+        <div>
+          <label for="body">Your Story / Opinion</label>
+          <textarea id="body" name="body" required style="min-height:160px;"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit" style="align-self:flex-start; margin-top:8px; border:none; cursor:pointer;">Submit for Review</button>
+        <p id="blog-submit-status" style="font-size:13px; color:var(--muted); margin-top:6px;"></p>
+      </form>
+    </div>
   </div>
 </section>
 
 <section class="teasers">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Coming Soon</div>
-      <h2>First articles in progress</h2>
+      <div class="eyebrow">Community Stories</div>
+      <h2>Published contributions</h2>
     </div>
-    <div class="teaser-grid">
-      <div class="teaser-card">
-        <div class="eyebrow">Reserved</div>
-        <h3>[Article Title]</h3>
-        <p>Send me a topic you actually want to write about — sourcing, factory operations, trade — and I'll help you draft it.</p>
-      </div>
-      <div class="teaser-card">
-        <div class="eyebrow">Reserved</div>
-        <h3>[Article Title]</h3>
-        <p>Send me a topic you actually want to write about — sourcing, factory operations, trade — and I'll help you draft it.</p>
-      </div>
-      <div class="teaser-card">
-        <div class="eyebrow">Reserved</div>
-        <h3>[Article Title]</h3>
-        <p>Send me a topic you actually want to write about — sourcing, factory operations, trade — and I'll help you draft it.</p>
-      </div>
+    <div id="blog-feed" class="teaser-grid">
+      <div class="teaser-card"><p>Loading stories…</p></div>
     </div>
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+  const form = document.getElementById('blog-submit-form');
+  const statusEl = document.getElementById('blog-submit-status');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusEl.textContent = 'Submitting…';
+    const { error } = await sb.from('blog_posts').insert({
+      author_name: document.getElementById('author_name').value,
+      title: document.getElementById('title').value,
+      body: document.getElementById('body').value
+    });
+    if (error) {
+      statusEl.textContent = 'Something went wrong. Please try again.';
+      statusEl.style.color = '#c0392b';
+    } else {
+      statusEl.textContent = "Thank you! Your story has been submitted and is pending review.";
+      statusEl.style.color = 'var(--gold-light)';
+      form.reset();
+    }
+  });
+
+  async function loadApprovedPosts() {
+    const feed = document.getElementById('blog-feed');
+    const { data, error } = await sb
+      .from('blog_posts')
+      .select('*')
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      feed.innerHTML = '<div class="teaser-card"><p>No stories published yet — be the first to share yours above.</p></div>';
+      return;
+    }
+    feed.innerHTML = data.map(post => `
+      <div class="teaser-card">
+        <div class="eyebrow">${new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}</div>
+        <h3>${escapeHtml(post.title)}</h3>
+        <p>${escapeHtml(post.body).slice(0, 180)}${post.body.length > 180 ? '…' : ''}</p>
+        <div style="margin-top:10px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;">By ${escapeHtml(post.author_name)}</div>
+      </div>
+    `).join('');
+  }
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+  loadApprovedPosts();
+</script>
 
 <footer>
   <div class="wrap">
