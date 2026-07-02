@@ -50,11 +50,32 @@
     <div class="admin-tab active" data-tab="pending">Pending Posts</div>
     <div class="admin-tab" data-tab="approved">Approved Posts</div>
     <div class="admin-tab" data-tab="contacts">Contact Submissions</div>
+    <div class="admin-tab" data-tab="topic">Featured Topic</div>
   </div>
 
   <div id="tab-pending" class="admin-panel"></div>
   <div id="tab-approved" class="admin-panel" style="display:none;"></div>
   <div id="tab-contacts" class="admin-panel" style="display:none;"></div>
+  <div id="tab-topic" class="admin-panel" style="display:none;">
+    <div class="admin-row">
+      <div class="meta">Publish a new topic</div>
+      <h3 style="margin-bottom:16px;">Set This Week's Discussion Topic</h3>
+      <form id="topic-form">
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Title</label>
+          <input id="topic-title" type="text" required style="width:100%; background:transparent; border:none; border-bottom:1px solid var(--line); color:var(--cream); padding:8px 0; font-size:15px;">
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Prompt / Question</label>
+          <textarea id="topic-prompt" required style="width:100%; min-height:90px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:10px; font-size:14px;"></textarea>
+        </div>
+        <button class="admin-btn approve" type="submit" style="cursor:pointer;">Publish as Active Topic</button>
+        <p id="topic-status" style="font-size:13px; color:var(--muted); margin-top:10px;"></p>
+      </form>
+    </div>
+    <div class="meta" style="margin-top:30px; margin-bottom:10px;">Topic History</div>
+    <div id="topic-history"></div>
+  </div>
 </div>
 
 <div id="logout-btn" style="display:none;">Log Out</div>
@@ -115,6 +136,7 @@
     loadPending();
     loadApproved();
     loadContacts();
+    loadTopicHistory();
   }
 
   // Tab switching
@@ -182,6 +204,55 @@
         <p>${escapeHtml(c.message)}</p>
       </div>
     `).join('');
+  }
+
+  document.getElementById('topic-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('topic-status');
+    statusEl.textContent = 'Publishing…';
+    await sb.from('featured_topics').update({ is_active: false }).eq('is_active', true);
+    const { error } = await sb.from('featured_topics').insert({
+      title: document.getElementById('topic-title').value,
+      prompt: document.getElementById('topic-prompt').value,
+      is_active: true
+    });
+    if (error) {
+      statusEl.textContent = 'Something went wrong.';
+      statusEl.style.color = '#e57368';
+    } else {
+      statusEl.textContent = 'Published! This is now live on the Insights page.';
+      statusEl.style.color = 'var(--gold-light)';
+      document.getElementById('topic-form').reset();
+      loadTopicHistory();
+    }
+  });
+
+  async function loadTopicHistory(){
+    const el = document.getElementById('topic-history');
+    el.innerHTML = '<p style="color:var(--muted);">Loading…</p>';
+    const { data, error } = await sb.from('featured_topics').select('*').order('created_at',{ascending:false});
+    if (error) { el.innerHTML = '<p style="color:#e57368;">Error loading topics.</p>'; return; }
+    if (!data.length) { el.innerHTML = '<p style="color:var(--muted);">No topics published yet.</p>'; return; }
+    el.innerHTML = data.map(t => `
+      <div class="admin-row">
+        <div class="meta">${fmtDate(t.created_at)} ${t.is_active ? '· <span style="color:var(--gold-light);">ACTIVE</span>' : ''}</div>
+        <h3>${escapeHtml(t.title)}</h3>
+        <p>${escapeHtml(t.prompt)}</p>
+        <div class="admin-actions">
+          ${t.is_active
+            ? `<button class="admin-btn reject" onclick="setTopicActive('${t.id}', false)">Deactivate</button>`
+            : `<button class="admin-btn approve" onclick="setTopicActive('${t.id}', true)">Set Active</button>`}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function setTopicActive(id, active){
+    if (active) {
+      await sb.from('featured_topics').update({ is_active: false }).eq('is_active', true);
+    }
+    await sb.from('featured_topics').update({ is_active: active }).eq('id', id);
+    loadTopicHistory();
   }
 
   checkSession();
