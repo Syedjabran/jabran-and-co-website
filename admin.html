@@ -51,6 +51,7 @@
     <div class="admin-tab" data-tab="approved">Approved Posts</div>
     <div class="admin-tab" data-tab="contacts">Contact Submissions</div>
     <div class="admin-tab" data-tab="topic">Featured Topic</div>
+    <div class="admin-tab" data-tab="clients">Clients</div>
   </div>
 
   <div id="tab-pending" class="admin-panel"></div>
@@ -75,6 +76,42 @@
     </div>
     <div class="meta" style="margin-top:30px; margin-bottom:10px;">Topic History</div>
     <div id="topic-history"></div>
+  </div>
+  <div id="tab-clients" class="admin-panel" style="display:none;">
+    <div class="admin-row">
+      <div class="meta">Add a client</div>
+      <h3 style="margin-bottom:16px;">New Client</h3>
+      <form id="client-form">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+          <div>
+            <label style="display:block; font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Client Name</label>
+            <input id="client-name" type="text" required style="width:100%; background:transparent; border:none; border-bottom:1px solid var(--line); color:var(--cream); padding:8px 0;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Industry</label>
+            <input id="client-industry" type="text" style="width:100%; background:transparent; border:none; border-bottom:1px solid var(--line); color:var(--cream); padding:8px 0;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Status</label>
+            <select id="client-status" style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:8px;">
+              <option value="active">Active</option>
+              <option value="on_hold">On Hold</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Start Date</label>
+            <input id="client-start" type="date" style="width:100%; background:transparent; border:none; border-bottom:1px solid var(--line); color:var(--cream); padding:8px 0;">
+          </div>
+        </div>
+        <label style="display:block; font-size:12px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Notes</label>
+        <textarea id="client-notes" style="width:100%; min-height:60px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:10px; margin-bottom:14px;"></textarea>
+        <button class="admin-btn approve" type="submit" style="cursor:pointer;">Add Client</button>
+        <p id="client-status-msg" style="font-size:13px; color:var(--muted); margin-top:10px;"></p>
+      </form>
+    </div>
+    <div class="meta" style="margin-top:30px; margin-bottom:10px;">All Clients</div>
+    <div id="clients-list"></div>
   </div>
 </div>
 
@@ -137,6 +174,7 @@
     loadApproved();
     loadContacts();
     loadTopicHistory();
+    loadClients();
   }
 
   // Tab switching
@@ -256,6 +294,195 @@
   }
 
   checkSession();
+
+  // ================= CLIENTS MODULE =================
+  const STATUS_LABELS = {not_started:'Not Started', in_progress:'In Progress', under_review:'Under Review', completed:'Completed', delayed:'Delayed', blocked:'Blocked'};
+
+  document.getElementById('client-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('client-status-msg');
+    msg.textContent = 'Adding…';
+    const { error } = await sb.from('clients').insert({
+      name: document.getElementById('client-name').value,
+      industry: document.getElementById('client-industry').value,
+      status: document.getElementById('client-status').value,
+      start_date: document.getElementById('client-start').value || null,
+      notes: document.getElementById('client-notes').value
+    });
+    if (error) { msg.textContent = 'Error: ' + error.message; msg.style.color = '#e57368'; }
+    else {
+      msg.textContent = 'Client added.'; msg.style.color = 'var(--gold-light)';
+      document.getElementById('client-form').reset();
+      loadClients();
+    }
+  });
+
+  async function loadClients(){
+    const el = document.getElementById('clients-list');
+    el.innerHTML = '<p style="color:var(--muted);">Loading…</p>';
+    const { data: clients, error } = await sb.from('clients').select('*').order('created_at', {ascending:false});
+    if (error) { el.innerHTML = '<p style="color:#e57368;">Error: '+error.message+'</p>'; return; }
+    if (!clients.length) { el.innerHTML = '<p style="color:var(--muted);">No clients yet.</p>'; return; }
+
+    el.innerHTML = '';
+    for (const c of clients) {
+      const card = document.createElement('div');
+      card.className = 'admin-row';
+      card.innerHTML = `
+        <div class="meta">${escapeHtml(c.industry||'')} · ${c.status.replace('_',' ').toUpperCase()} ${c.start_date ? '· Since '+c.start_date : ''}</div>
+        <h3>${escapeHtml(c.name)}</h3>
+        <p>${escapeHtml(c.notes||'')}</p>
+        <details style="margin-top:14px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">KPIs</summary>
+          <div id="kpi-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addKpi(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+            <input required placeholder="Metric (e.g. OEE)" id="kpi-metric-${c.id}" style="flex:1; min-width:120px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input required placeholder="Value" id="kpi-value-${c.id}" style="width:90px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input placeholder="Unit" id="kpi-unit-${c.id}" style="width:70px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input type="date" id="kpi-date-${c.id}" style="background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Add</button>
+          </form>
+        </details>
+        <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Action Items</summary>
+          <div id="action-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addAction(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+            <input required placeholder="Task title" id="action-title-${c.id}" style="flex:1; min-width:140px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <select id="action-status-${c.id}" style="background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:6px;">
+              <option value="not_started">Not Started</option>
+              <option value="in_progress">In Progress</option>
+              <option value="under_review">Under Review</option>
+              <option value="completed">Completed</option>
+              <option value="delayed">Delayed</option>
+              <option value="blocked">Blocked</option>
+            </select>
+            <select id="action-priority-${c.id}" style="background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:6px;">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+            <input type="date" id="action-due-${c.id}" style="background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input placeholder="Assigned to" id="action-assigned-${c.id}" style="width:120px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Add</button>
+          </form>
+        </details>
+        <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Documents</summary>
+          <div id="doc-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addDocument(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+            <input required placeholder="Title" id="doc-title-${c.id}" style="flex:1; min-width:120px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input required placeholder="Link (Google Drive, etc.)" id="doc-url-${c.id}" style="flex:2; min-width:160px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input placeholder="Category" id="doc-category-${c.id}" style="width:110px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Add</button>
+          </form>
+        </details>
+        <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Client Login</summary>
+          <div id="login-status-${c.id}" style="margin:10px 0; font-size:13px; color:var(--muted);">Checking…</div>
+          <form onsubmit="return linkLogin(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input placeholder="Paste Supabase Auth User UID" id="login-uid-${c.id}" style="flex:1; min-width:200px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Link Login</button>
+          </form>
+        </details>
+      `;
+      el.appendChild(card);
+      loadKpis(c.id);
+      loadActions(c.id);
+      loadDocuments(c.id);
+      loadLoginStatus(c.id);
+    }
+  }
+
+  async function loadKpis(clientId){
+    const { data } = await sb.from('client_kpis').select('*').eq('client_id', clientId).order('recorded_at', {ascending:false});
+    const el = document.getElementById('kpi-list-'+clientId);
+    if (!el) return;
+    el.innerHTML = (data && data.length) ? data.map(k => `
+      <div style="font-size:13px; color:var(--cream); padding:4px 0; border-bottom:1px solid var(--line);">
+        <strong>${escapeHtml(k.metric_name)}</strong>: ${escapeHtml(k.value)} ${escapeHtml(k.unit||'')} <span style="color:var(--muted);">— ${k.recorded_at}</span>
+      </div>`).join('') : '<p style="color:var(--muted); font-size:13px;">No KPIs recorded yet.</p>';
+  }
+
+  async function addKpi(e, clientId){
+    e.preventDefault();
+    await sb.from('client_kpis').insert({
+      client_id: clientId,
+      metric_name: document.getElementById('kpi-metric-'+clientId).value,
+      value: document.getElementById('kpi-value-'+clientId).value,
+      unit: document.getElementById('kpi-unit-'+clientId).value,
+      recorded_at: document.getElementById('kpi-date-'+clientId).value || new Date().toISOString().slice(0,10)
+    });
+    loadKpis(clientId);
+    e.target.reset();
+    return false;
+  }
+
+  async function loadActions(clientId){
+    const { data } = await sb.from('client_actions').select('*').eq('client_id', clientId).order('created_at', {ascending:false});
+    const el = document.getElementById('action-list-'+clientId);
+    if (!el) return;
+    el.innerHTML = (data && data.length) ? data.map(a => `
+      <div style="font-size:13px; color:var(--cream); padding:6px 0; border-bottom:1px solid var(--line);">
+        <strong>${escapeHtml(a.title)}</strong> — <span style="color:var(--gold-light);">${STATUS_LABELS[a.status]}</span>
+        <span style="color:var(--muted);">· ${a.priority} priority ${a.due_date ? '· due '+a.due_date : ''} ${a.assigned_to ? '· '+escapeHtml(a.assigned_to) : ''}</span>
+      </div>`).join('') : '<p style="color:var(--muted); font-size:13px;">No action items yet.</p>';
+  }
+
+  async function addAction(e, clientId){
+    e.preventDefault();
+    await sb.from('client_actions').insert({
+      client_id: clientId,
+      title: document.getElementById('action-title-'+clientId).value,
+      status: document.getElementById('action-status-'+clientId).value,
+      priority: document.getElementById('action-priority-'+clientId).value,
+      due_date: document.getElementById('action-due-'+clientId).value || null,
+      assigned_to: document.getElementById('action-assigned-'+clientId).value
+    });
+    loadActions(clientId);
+    e.target.reset();
+    return false;
+  }
+
+  async function loadDocuments(clientId){
+    const { data } = await sb.from('client_documents').select('*').eq('client_id', clientId).order('created_at', {ascending:false});
+    const el = document.getElementById('doc-list-'+clientId);
+    if (!el) return;
+    el.innerHTML = (data && data.length) ? data.map(d => `
+      <div style="font-size:13px; padding:4px 0; border-bottom:1px solid var(--line);">
+        <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener" style="color:var(--gold-light);">${escapeHtml(d.title)}</a>
+        <span style="color:var(--muted);"> ${d.category ? '· '+escapeHtml(d.category) : ''}</span>
+      </div>`).join('') : '<p style="color:var(--muted); font-size:13px;">No documents linked yet.</p>';
+  }
+
+  async function addDocument(e, clientId){
+    e.preventDefault();
+    await sb.from('client_documents').insert({
+      client_id: clientId,
+      title: document.getElementById('doc-title-'+clientId).value,
+      url: document.getElementById('doc-url-'+clientId).value,
+      category: document.getElementById('doc-category-'+clientId).value
+    });
+    loadDocuments(clientId);
+    e.target.reset();
+    return false;
+  }
+
+  async function loadLoginStatus(clientId){
+    const { data } = await sb.from('profiles').select('*').eq('client_id', clientId).eq('role','client');
+    const el = document.getElementById('login-status-'+clientId);
+    if (!el) return;
+    el.textContent = (data && data.length) ? `Linked to login: ${data[0].email || data[0].id}` : 'No login linked yet.';
+  }
+
+  async function linkLogin(e, clientId){
+    e.preventDefault();
+    const uid = document.getElementById('login-uid-'+clientId).value.trim();
+    if (!uid) return false;
+    const { error } = await sb.from('profiles').upsert({ id: uid, role: 'client', client_id: clientId });
+    const statusEl = document.getElementById('login-status-'+clientId);
+    statusEl.textContent = error ? ('Error: '+error.message) : 'Login linked successfully.';
+    return false;
+  }
 </script>
 </body>
 </html>
