@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Portal — Jabran &amp; Co</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .portal-wrap{max-width:900px; margin:0 auto; padding:140px 32px 80px;}
+  .login-box{max-width:380px; margin:160px auto; text-align:center;}
+  .login-box input{margin-bottom:14px;}
+  #logout-btn{position:fixed; top:24px; right:24px; z-index:60; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  .kpi-card, .action-card, .doc-card{border:1px solid var(--line); background:var(--bg-alt); padding:18px 22px; margin-bottom:10px;}
+  .kpi-card .metric{font-family:'Playfair Display',serif; font-size:22px; color:var(--gold-light);}
+  .action-card .status-badge{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 10px; border:1px solid var(--gold); color:var(--gold-light); border-radius:2px; display:inline-block; margin-top:6px;}
+  .doc-card a{color:var(--gold-light);}
+</style>
+</head>
+<body>
+
+<div id="login-view" class="login-box">
+  <div class="logomark" style="justify-content:center; margin-bottom:30px;"><img class="nav-logo-img" src="logo-mono.png" alt="Jabran &amp; Co"></div>
+  <div class="eyebrow" style="margin-bottom:20px;">Client Portal</div>
+  <form id="login-form">
+    <input id="login-email" type="email" placeholder="Email" required>
+    <input id="login-password" type="password" placeholder="Password" required>
+    <button class="btn btn-primary" type="submit" style="width:100%; border:none; cursor:pointer;">Log In</button>
+    <p id="login-status" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+  <p style="margin-top:24px; font-size:13px; color:var(--muted);">Not a client yet? <a href="contact.html" style="color:var(--gold-light);">Contact us</a> to get started.</p>
+</div>
+
+<div id="dashboard-view" class="portal-wrap" style="display:none;">
+  <div class="eyebrow">Client Portal</div>
+  <h1 id="client-name-display" style="margin-bottom:6px;">Loading…</h1>
+  <p id="client-meta-display" style="color:var(--muted); margin-bottom:40px;"></p>
+
+  <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Key Performance Indicators</div>
+    <h2>Your Metrics</h2>
+  </div>
+  <div id="kpi-container" style="margin-bottom:50px;"></div>
+
+  <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Action Plan</div>
+    <h2>Tasks &amp; Progress</h2>
+  </div>
+  <div id="action-container" style="margin-bottom:50px;"></div>
+
+  <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Document Center</div>
+    <h2>Reports &amp; Files</h2>
+  </div>
+  <div id="doc-container" style="margin-bottom:50px;"></div>
+
+  <p style="color:var(--muted); font-size:13px;">Questions about your project? <a href="mailto:ceo@jabranandco.com" style="color:var(--gold-light);">Contact your consultant</a> or reach us on <a href="https://wa.me/923364864345" target="_blank" rel="noopener" style="color:var(--gold-light);">WhatsApp</a>.</p>
+</div>
+
+<div id="logout-btn" style="display:none;">Log Out</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+  const loginView = document.getElementById('login-view');
+  const dashboardView = document.getElementById('dashboard-view');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+  const STATUS_LABELS = {not_started:'Not Started', in_progress:'In Progress', under_review:'Under Review', completed:'Completed', delayed:'Delayed', blocked:'Blocked'};
+
+  async function checkSession() {
+    const { data } = await sb.auth.getSession();
+    if (data.session) {
+      showDashboard();
+    } else {
+      loginView.style.display = 'block';
+      dashboardView.style.display = 'none';
+      logoutBtn.style.display = 'none';
+    }
+  }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('login-status');
+    statusEl.textContent = 'Logging in…';
+    statusEl.style.color = 'var(--muted)';
+    const { error } = await sb.auth.signInWithPassword({
+      email: document.getElementById('login-email').value,
+      password: document.getElementById('login-password').value
+    });
+    if (error) {
+      statusEl.textContent = 'Incorrect email or password.';
+      statusEl.style.color = '#e57368';
+    } else {
+      showDashboard();
+    }
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    await sb.auth.signOut();
+    checkSession();
+  });
+
+  async function showDashboard(){
+    loginView.style.display = 'none';
+    dashboardView.style.display = 'block';
+    logoutBtn.style.display = 'block';
+
+    const { data: clients, error } = await sb.from('clients').select('*').limit(1);
+    if (error || !clients || !clients.length) {
+      document.getElementById('client-name-display').textContent = 'No project linked to this login yet';
+      document.getElementById('client-meta-display').textContent = 'Please contact Jabran & Co to complete your portal setup.';
+      return;
+    }
+    const client = clients[0];
+    document.getElementById('client-name-display').textContent = client.name;
+    document.getElementById('client-meta-display').textContent =
+      `${client.industry || ''} · ${client.status.replace('_',' ').toUpperCase()}${client.start_date ? ' · Since ' + client.start_date : ''}`;
+
+    loadKpis(client.id);
+    loadActions(client.id);
+    loadDocuments(client.id);
+  }
+
+  async function loadKpis(clientId){
+    const el = document.getElementById('kpi-container');
+    const { data } = await sb.from('client_kpis').select('*').eq('client_id', clientId).order('recorded_at', {ascending:false});
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);">No KPIs recorded yet.</p>'; return; }
+    el.innerHTML = data.map(k => `
+      <div class="kpi-card">
+        <div class="metric">${escapeHtml(k.value)} ${escapeHtml(k.unit||'')}</div>
+        <div style="color:var(--cream); margin-top:4px;">${escapeHtml(k.metric_name)}</div>
+        <div style="color:var(--muted); font-size:12px; margin-top:4px;">Recorded ${k.recorded_at}</div>
+      </div>
+    `).join('');
+  }
+
+  async function loadActions(clientId){
+    const el = document.getElementById('action-container');
+    const { data } = await sb.from('client_actions').select('*').eq('client_id', clientId).order('created_at', {ascending:false});
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);">No action items yet.</p>'; return; }
+    el.innerHTML = data.map(a => `
+      <div class="action-card">
+        <div style="color:var(--cream); font-family:'Playfair Display',serif; font-size:18px;">${escapeHtml(a.title)}</div>
+        ${a.description ? '<div style="color:var(--muted); font-size:14px; margin-top:6px;">'+escapeHtml(a.description)+'</div>' : ''}
+        <div class="status-badge">${STATUS_LABELS[a.status]}</div>
+        <div style="color:var(--muted); font-size:12px; margin-top:8px;">
+          ${a.priority.toUpperCase()} priority ${a.due_date ? '· Due ' + a.due_date : ''} ${a.assigned_to ? '· ' + escapeHtml(a.assigned_to) : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadDocuments(clientId){
+    const el = document.getElementById('doc-container');
+    const { data } = await sb.from('client_documents').select('*').eq('client_id', clientId).order('created_at', {ascending:false});
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);">No documents shared yet.</p>'; return; }
+    el.innerHTML = data.map(d => `
+      <div class="doc-card">
+        <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">${escapeHtml(d.title)}</a>
+        ${d.category ? '<span style="color:var(--muted); font-size:12px;"> · '+escapeHtml(d.category)+'</span>' : ''}
+      </div>
+    `).join('');
+  }
+
+  checkSession();
+</script>
+</body>
+</html>
