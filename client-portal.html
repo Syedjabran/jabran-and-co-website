@@ -40,6 +40,12 @@
   <p id="client-meta-display" style="color:var(--muted); margin-bottom:40px;"></p>
 
   <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Case Study Review</div>
+    <h2>Public Story Approval</h2>
+  </div>
+  <div id="case-container" style="margin-bottom:50px;"></div>
+
+  <div class="section-head" style="margin-bottom:20px;">
     <div class="eyebrow">Factory Audit</div>
     <h2>Findings &amp; Observations</h2>
   </div>
@@ -143,6 +149,7 @@
     document.getElementById('client-meta-display').textContent =
       `${client.industry || ''} · ${client.status.replace('_',' ').toUpperCase()}${client.start_date ? ' · Since ' + client.start_date : ''}`;
 
+    loadCaseStudies(client.id);
     loadFindings(client.id);
     loadKpis(client.id);
     loadActions(client.id);
@@ -153,6 +160,33 @@
 
   const SEVERITY_COLOR = {low:'var(--muted)', medium:'var(--gold-light)', high:'#e08a4a', critical:'#e57368'};
   const CATEGORY_LABELS = {observation:'Observation', bottleneck:'Bottleneck', quality:'Quality Issue', wastage:'Wastage', downtime:'Downtime', safety:'Safety', production_data:'Production Data', machine_data:'Machine Data', workforce:'Workforce', recommendation:'Recommendation'};
+
+  const CASE_STATUS_LABELS = {draft:'In preparation', pending_approval:'Awaiting your approval', published:'Published on our website', rejected:'On hold'};
+
+  async function loadCaseStudies(clientId){
+    const el = document.getElementById('case-container');
+    const { data } = await sb.from('case_studies').select('*, case_study_approvals(*)').eq('client_id', clientId).order('created_at', {ascending:false});
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);">No case study drafted yet.</p>'; return; }
+    el.innerHTML = data.map(cs => {
+      const approval = cs.case_study_approvals;
+      const clientApproved = approval && approval.client_approved;
+      const canApprove = cs.status === 'pending_approval' && !clientApproved;
+      return `
+        <div class="action-card">
+          <div style="color:var(--cream); font-family:'Playfair Display',serif; font-size:19px;">${escapeHtml(cs.title)}</div>
+          <div style="color:var(--gold-light); font-size:13px; margin-top:6px;">${CASE_STATUS_LABELS[cs.status]}${clientApproved ? ' · Approved by you ✓' : ''}</div>
+          ${cs.problem ? '<div style="margin-top:12px;"><strong style="color:var(--cream);">Problem:</strong> <span style="color:var(--muted);">'+escapeHtml(cs.problem)+'</span></div>' : ''}
+          ${cs.solution ? '<div style="margin-top:8px;"><strong style="color:var(--cream);">Solution:</strong> <span style="color:var(--muted);">'+escapeHtml(cs.solution)+'</span></div>' : ''}
+          ${cs.results ? '<div style="margin-top:8px;"><strong style="color:var(--cream);">Results:</strong> <span style="color:var(--muted);">'+escapeHtml(cs.results)+'</span></div>' : ''}
+          ${canApprove ? `<button class="btn btn-primary" style="margin-top:14px; border:none; cursor:pointer;" onclick="approveCaseStudy('${cs.id}','${clientId}')">Approve for Publication</button>` : ''}
+        </div>`;
+    }).join('');
+  }
+
+  async function approveCaseStudy(caseId, clientId){
+    await sb.from('case_study_approvals').upsert({ case_study_id: caseId, client_approved: true, approved_at: new Date().toISOString() });
+    loadCaseStudies(clientId);
+  }
 
   async function loadFindings(clientId){
     const el = document.getElementById('audit-container');

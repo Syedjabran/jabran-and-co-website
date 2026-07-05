@@ -84,28 +84,41 @@
 <section class="teasers">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Coming Soon</div>
+      <div class="eyebrow">Published</div>
       <h2>More case studies</h2>
     </div>
-    <div class="teaser-grid">
-      <div class="teaser-card">
-        <div class="eyebrow">Reserved</div>
-        <h3>[Case Study Title]</h3>
-        <p>Send me the details — industry, problem, approach, and outcome — and I'll build this out properly.</p>
-      </div>
-      <div class="teaser-card">
-        <div class="eyebrow">Reserved</div>
-        <h3>[Case Study Title]</h3>
-        <p>Send me the details — industry, problem, approach, and outcome — and I'll build this out properly.</p>
-      </div>
-      <div class="teaser-card">
-        <div class="eyebrow">Reserved</div>
-        <h3>[Case Study Title]</h3>
-        <p>Send me the details — industry, problem, approach, and outcome — and I'll build this out properly.</p>
-      </div>
+    <div id="case-studies-feed" class="teaser-grid">
+      <div class="teaser-card"><p>Loading…</p></div>
     </div>
   </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+  async function loadPublishedCaseStudies(){
+    const el = document.getElementById('case-studies-feed');
+    const { data, error } = await sb.from('case_studies').select('*').eq('status', 'published').order('created_at', {ascending:false});
+    if (error || !data || !data.length) {
+      el.innerHTML = '<div class="teaser-card"><div class="eyebrow">Reserved</div><h3>More stories coming soon</h3><p>Have a project you\'d like featured here? Get in touch once it wraps up.</p></div>';
+      return;
+    }
+    el.innerHTML = data.map(cs => `
+      <div class="teaser-card">
+        <div class="eyebrow">${escapeHtml(cs.industry || 'Case Study')}</div>
+        <h3>${escapeHtml(cs.title)}</h3>
+        <p><strong>Client:</strong> ${escapeHtml(cs.client_display_name)}</p>
+        ${cs.results ? '<p>'+escapeHtml(cs.results).slice(0,180)+(cs.results.length>180?'…':'')+'</p>' : ''}
+      </div>
+    `).join('');
+  }
+  loadPublishedCaseStudies();
+</script>
 
 <section class="manifest">
   <div class="wrap">

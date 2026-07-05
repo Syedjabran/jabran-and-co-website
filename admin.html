@@ -539,6 +539,24 @@
           </form>
         </details>
         <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Case Study</summary>
+          <div id="case-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addCaseStudy(event,'${c.id}')" style="margin-top:14px; border:1px solid var(--line); padding:14px;">
+            <input required placeholder="Public display name (e.g. real name, or 'Confidential Manufacturing Client')" id="case-displayname-${c.id}" value="${escapeHtml(c.name)}" style="width:100%; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+            <div style="display:flex; gap:8px; margin-bottom:8px;">
+              <input placeholder="Industry" id="case-industry-${c.id}" value="${escapeHtml(c.industry||'')}" style="flex:1; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+            </div>
+            <input required placeholder="Case study title" id="case-title-${c.id}" style="width:100%; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+            <textarea placeholder="Problem" id="case-problem-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Diagnosis" id="case-diagnosis-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Solution" id="case-solution-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Implementation" id="case-implementation-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Results" id="case-results-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Lessons" id="case-lessons-${c.id}" style="width:100%; min-height:50px; margin-bottom:10px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Save as Draft</button>
+          </form>
+        </details>
+        <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
           <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Client Login</summary>
           <div id="login-status-${c.id}" style="margin:10px 0; font-size:13px; color:var(--muted);">Checking…</div>
           <form onsubmit="return linkLogin(event,'${c.id}','${escapeHtml(c.name)}')" style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -549,6 +567,7 @@
         </details>
       `;
       el.appendChild(card);
+      loadCaseStudies(c.id);
       loadFindings(c.id);
       loadKpis(c.id);
       loadActions(c.id);
@@ -664,6 +683,62 @@
     loadMeetings(clientId);
     e.target.reset();
     return false;
+  }
+
+  const CASE_STATUS_LABELS = {draft:'Draft', pending_approval:'Awaiting Client Approval', published:'Published', rejected:'Rejected'};
+
+  async function loadCaseStudies(clientId){
+    const { data } = await sb.from('case_studies').select('*, case_study_approvals(*)').eq('client_id', clientId).order('created_at', {ascending:false});
+    const el = document.getElementById('case-list-'+clientId);
+    if (!el) return;
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted); font-size:13px;">No case study drafted yet.</p>'; return; }
+    el.innerHTML = data.map(cs => {
+      const approval = cs.case_study_approvals;
+      const clientApproved = approval && approval.client_approved;
+      let actions = '';
+      if (cs.status === 'draft') {
+        actions = `<button class="admin-btn approve" onclick="setCaseStatus('${cs.id}','pending_approval','${clientId}')">Send for Client Approval</button>`;
+      } else if (cs.status === 'pending_approval') {
+        actions = clientApproved
+          ? `<button class="admin-btn approve" onclick="setCaseStatus('${cs.id}','published','${clientId}')">Publish Now</button> <button class="admin-btn reject" onclick="setCaseStatus('${cs.id}','draft','${clientId}')">Back to Draft</button>`
+          : `<span style="color:var(--muted); font-size:12px;">Waiting on client approval…</span> <button class="admin-btn reject" onclick="setCaseStatus('${cs.id}','draft','${clientId}')">Back to Draft</button>`;
+      } else if (cs.status === 'published') {
+        actions = `<button class="admin-btn reject" onclick="setCaseStatus('${cs.id}','draft','${clientId}')">Unpublish</button>`;
+      } else {
+        actions = `<button class="admin-btn approve" onclick="setCaseStatus('${cs.id}','draft','${clientId}')">Restore to Draft</button>`;
+      }
+      return `
+        <div style="font-size:13px; color:var(--cream); padding:10px 0; border-bottom:1px solid var(--line);">
+          <strong>${escapeHtml(cs.title)}</strong><br>
+          <span style="color:var(--gold-light);">${CASE_STATUS_LABELS[cs.status]}</span>
+          ${clientApproved ? ' · <span style="color:#7fbf7f;">Client Approved ✓</span>' : ''}
+          <div style="margin-top:8px;">${actions}</div>
+        </div>`;
+    }).join('');
+  }
+
+  async function addCaseStudy(e, clientId){
+    e.preventDefault();
+    const { error } = await sb.from('case_studies').insert({
+      client_id: clientId,
+      client_display_name: document.getElementById('case-displayname-'+clientId).value,
+      industry: document.getElementById('case-industry-'+clientId).value,
+      title: document.getElementById('case-title-'+clientId).value,
+      problem: document.getElementById('case-problem-'+clientId).value,
+      diagnosis: document.getElementById('case-diagnosis-'+clientId).value,
+      solution: document.getElementById('case-solution-'+clientId).value,
+      implementation: document.getElementById('case-implementation-'+clientId).value,
+      results: document.getElementById('case-results-'+clientId).value,
+      lessons: document.getElementById('case-lessons-'+clientId).value,
+      status: 'draft'
+    });
+    if (!error) { loadCaseStudies(clientId); e.target.reset(); }
+    return false;
+  }
+
+  async function setCaseStatus(caseId, status, clientId){
+    await sb.from('case_studies').update({ status }).eq('id', caseId);
+    loadCaseStudies(clientId);
   }
 
   async function loadReports(clientId){
