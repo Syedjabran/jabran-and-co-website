@@ -58,6 +58,7 @@
     <div class="admin-tab" data-tab="contacts">Contact Submissions</div>
     <div class="admin-tab" data-tab="topic">Featured Topic</div>
     <div class="admin-tab" data-tab="clients">Clients</div>
+    <div class="admin-tab" data-tab="training">Training Academy</div>
   </div>
   <div id="tab-overview" class="admin-panel"></div>
 
@@ -119,6 +120,32 @@
     </div>
     <div class="meta" style="margin-top:30px; margin-bottom:10px;">All Clients</div>
     <div id="clients-list"></div>
+  </div>
+  <div id="tab-training" class="admin-panel" style="display:none;">
+    <div class="admin-row">
+      <div class="meta">Create a training module</div>
+      <h3 style="margin-bottom:16px;">New Module</h3>
+      <form id="module-form">
+        <input required placeholder="Title (e.g. Lean Manufacturing Fundamentals)" id="module-title" style="width:100%; margin-bottom:10px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+        <textarea placeholder="Description" id="module-description" style="width:100%; min-height:50px; margin-bottom:10px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+        <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+          <input placeholder="Category (e.g. Leadership)" id="module-category" style="flex:1; min-width:140px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+          <select id="module-type" style="background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:8px;">
+            <option value="video">Video</option>
+            <option value="pdf">PDF</option>
+            <option value="text">Written Lesson</option>
+            <option value="mixed" selected>Mixed</option>
+          </select>
+          <input type="number" placeholder="Pass %" id="module-passing" value="70" style="width:80px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+        </div>
+        <input placeholder="Content link (video/PDF URL)" id="module-url" style="width:100%; margin-bottom:10px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+        <textarea placeholder="Written lesson text (optional)" id="module-text" style="width:100%; min-height:70px; margin-bottom:10px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+        <button class="admin-btn approve" type="submit" style="cursor:pointer;">Create Module</button>
+        <p id="module-status-msg" style="font-size:13px; color:var(--muted); margin-top:10px;"></p>
+      </form>
+    </div>
+    <div class="meta" style="margin-top:30px; margin-bottom:10px;">All Modules</div>
+    <div id="modules-list"></div>
   </div>
 </div>
 
@@ -183,6 +210,7 @@
     loadTopicHistory();
     loadClients();
     loadOverview();
+    loadModules();
   }
 
   // Tab switching
@@ -393,6 +421,125 @@
 
   checkSession();
 
+  // ================= TRAINING ACADEMY MODULE =================
+  let ALL_MODULES = [];
+
+  document.getElementById('module-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('module-status-msg');
+    msg.textContent = 'Creating…';
+    const { error } = await sb.from('training_modules').insert({
+      title: document.getElementById('module-title').value,
+      description: document.getElementById('module-description').value,
+      category: document.getElementById('module-category').value,
+      content_type: document.getElementById('module-type').value,
+      passing_score: parseInt(document.getElementById('module-passing').value) || 70,
+      content_url: document.getElementById('module-url').value,
+      content_text: document.getElementById('module-text').value
+    });
+    if (error) { msg.textContent = 'Error: '+error.message; msg.style.color = '#e57368'; }
+    else {
+      msg.textContent = 'Module created.'; msg.style.color = 'var(--gold-light)';
+      document.getElementById('module-form').reset();
+      loadModules();
+    }
+  });
+
+  async function loadModules(){
+    const { data, error } = await sb.from('training_modules').select('*').order('created_at', {ascending:false});
+    ALL_MODULES = data || [];
+
+    document.querySelectorAll('[id^="assign-module-"]').forEach(sel => {
+      sel.innerHTML = ALL_MODULES.map(m => `<option value="${m.id}">${escapeHtml(m.title)}</option>`).join('') || '<option value="">No modules yet</option>';
+    });
+
+    const el = document.getElementById('modules-list');
+    if (!el) return;
+    if (error) { el.innerHTML = '<p style="color:#e57368;">Error: '+error.message+'</p>'; return; }
+    if (!ALL_MODULES.length) { el.innerHTML = '<p style="color:var(--muted);">No modules created yet.</p>'; return; }
+
+    el.innerHTML = ALL_MODULES.map(m => `
+      <div class="admin-row">
+        <div class="meta">${escapeHtml(m.category||'')} · ${m.content_type.toUpperCase()} · Pass mark ${m.passing_score}%</div>
+        <h3>${escapeHtml(m.title)}</h3>
+        <p>${escapeHtml(m.description||'')}</p>
+        <details style="margin-top:14px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Quiz Questions</summary>
+          <div id="quiz-list-${m.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addQuestion(event,'${m.id}')" style="margin-top:14px; border:1px solid var(--line); padding:14px;">
+            <input required placeholder="Question" id="q-text-${m.id}" style="width:100%; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+            <input required placeholder="Option A" id="q-a-${m.id}" style="width:100%; margin-bottom:6px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px; font-size:13px;">
+            <input required placeholder="Option B" id="q-b-${m.id}" style="width:100%; margin-bottom:6px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px; font-size:13px;">
+            <input required placeholder="Option C" id="q-c-${m.id}" style="width:100%; margin-bottom:6px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px; font-size:13px;">
+            <input required placeholder="Option D" id="q-d-${m.id}" style="width:100%; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px; font-size:13px;">
+            <select id="q-correct-${m.id}" style="margin-bottom:10px; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:6px;">
+              <option value="a">Correct: A</option>
+              <option value="b">Correct: B</option>
+              <option value="c">Correct: C</option>
+              <option value="d">Correct: D</option>
+            </select>
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Add Question</button>
+          </form>
+        </details>
+      </div>
+    `).join('');
+
+    ALL_MODULES.forEach(m => loadQuestions(m.id));
+  }
+
+  async function loadQuestions(moduleId){
+    const { data } = await sb.from('training_quiz_questions').select('*').eq('module_id', moduleId).order('order_index');
+    const el = document.getElementById('quiz-list-'+moduleId);
+    if (!el) return;
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted); font-size:13px;">No questions yet.</p>'; return; }
+    el.innerHTML = data.map((q,i) => `
+      <div style="font-size:13px; color:var(--cream); padding:6px 0; border-bottom:1px solid var(--line);">
+        ${i+1}. ${escapeHtml(q.question_text)} <span style="color:var(--gold-light);">(Correct: ${q.correct_option.toUpperCase()})</span>
+      </div>
+    `).join('');
+  }
+
+  async function addQuestion(e, moduleId){
+    e.preventDefault();
+    await sb.from('training_quiz_questions').insert({
+      module_id: moduleId,
+      question_text: document.getElementById('q-text-'+moduleId).value,
+      option_a: document.getElementById('q-a-'+moduleId).value,
+      option_b: document.getElementById('q-b-'+moduleId).value,
+      option_c: document.getElementById('q-c-'+moduleId).value,
+      option_d: document.getElementById('q-d-'+moduleId).value,
+      correct_option: document.getElementById('q-correct-'+moduleId).value
+    });
+    loadQuestions(moduleId);
+    e.target.reset();
+    return false;
+  }
+
+  async function loadAssignments(clientId){
+    const sel = document.getElementById('assign-module-'+clientId);
+    if (sel && ALL_MODULES.length) {
+      sel.innerHTML = ALL_MODULES.map(m => `<option value="${m.id}">${escapeHtml(m.title)}</option>`).join('');
+    }
+    const { data } = await sb.from('training_assignments').select('*, training_modules(title)').eq('client_id', clientId);
+    const el = document.getElementById('assign-list-'+clientId);
+    if (!el) return;
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted); font-size:13px;">No training assigned yet.</p>'; return; }
+    el.innerHTML = data.map(a => `
+      <div style="font-size:13px; color:var(--cream); padding:6px 0; border-bottom:1px solid var(--line);">
+        ${escapeHtml(a.training_modules.title)} — <span style="color:${a.completed ? 'var(--gold-light)' : 'var(--muted)'};">${a.completed ? 'Completed' : 'In Progress'}</span>
+      </div>
+    `).join('');
+  }
+
+  async function assignModule(e, clientId){
+    e.preventDefault();
+    const moduleId = document.getElementById('assign-module-'+clientId).value;
+    if (!moduleId) return false;
+    const { error } = await sb.from('training_assignments').insert({ client_id: clientId, module_id: moduleId });
+    if (!error) loadAssignments(clientId);
+    return false;
+  }
+
   // ================= CLIENTS MODULE =================
   const STATUS_LABELS = {not_started:'Not Started', in_progress:'In Progress', under_review:'Under Review', completed:'Completed', delayed:'Delayed', blocked:'Blocked'};
 
@@ -557,6 +704,16 @@
           </form>
         </details>
         <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Training Assignments</summary>
+          <div id="assign-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return assignModule(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+            <select id="assign-module-${c.id}" style="flex:1; min-width:180px; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:6px;">
+              <option value="">Loading modules…</option>
+            </select>
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Assign</button>
+          </form>
+        </details>
+        <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
           <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Client Login</summary>
           <div id="login-status-${c.id}" style="margin:10px 0; font-size:13px; color:var(--muted);">Checking…</div>
           <form onsubmit="return linkLogin(event,'${c.id}','${escapeHtml(c.name)}')" style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -568,6 +725,7 @@
       `;
       el.appendChild(card);
       loadCaseStudies(c.id);
+      loadAssignments(c.id);
       loadFindings(c.id);
       loadKpis(c.id);
       loadActions(c.id);

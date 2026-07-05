@@ -40,6 +40,12 @@
   <p id="client-meta-display" style="color:var(--muted); margin-bottom:40px;"></p>
 
   <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Training Academy</div>
+    <h2>Your Assigned Courses</h2>
+  </div>
+  <div id="training-container" style="margin-bottom:50px;"></div>
+
+  <div class="section-head" style="margin-bottom:20px;">
     <div class="eyebrow">Case Study Review</div>
     <h2>Public Story Approval</h2>
   </div>
@@ -149,6 +155,7 @@
     document.getElementById('client-meta-display').textContent =
       `${client.industry || ''} · ${client.status.replace('_',' ').toUpperCase()}${client.start_date ? ' · Since ' + client.start_date : ''}`;
 
+    loadTraining(client.id);
     loadCaseStudies(client.id);
     loadFindings(client.id);
     loadKpis(client.id);
@@ -162,6 +169,128 @@
   const CATEGORY_LABELS = {observation:'Observation', bottleneck:'Bottleneck', quality:'Quality Issue', wastage:'Wastage', downtime:'Downtime', safety:'Safety', production_data:'Production Data', machine_data:'Machine Data', workforce:'Workforce', recommendation:'Recommendation'};
 
   const CASE_STATUS_LABELS = {draft:'In preparation', pending_approval:'Awaiting your approval', published:'Published on our website', rejected:'On hold'};
+
+  const CONTENT_TYPE_LABELS = {video:'Video Lesson', pdf:'PDF Lesson', text:'Written Lesson', mixed:'Lesson'};
+
+  async function loadTraining(clientId){
+    const el = document.getElementById('training-container');
+    const { data: assignments } = await sb.from('training_assignments').select('*, training_modules(*)').eq('client_id', clientId);
+    if (!assignments || !assignments.length) { el.innerHTML = '<p style="color:var(--muted);">No training modules assigned yet.</p>'; return; }
+
+    el.innerHTML = assignments.map(a => `<div id="module-card-${a.module_id}"></div>`).join('');
+
+    for (const a of assignments) {
+      await renderModuleCard(clientId, a);
+    }
+  }
+
+  async function renderModuleCard(clientId, assignment){
+    const m = assignment.training_modules;
+    const card = document.getElementById('module-card-'+m.id);
+    if (!card) return;
+
+    const { data: questions } = await sb.from('training_quiz_questions').select('*').eq('module_id', m.id).order('order_index');
+    const { data: attempts } = await sb.from('training_quiz_attempts').select('*').eq('client_id', clientId).eq('module_id', m.id).order('attempted_at', {ascending:false});
+    const { data: certs } = await sb.from('training_certificates').select('*').eq('client_id', clientId).eq('module_id', m.id);
+
+    const hasQuiz = questions && questions.length > 0;
+    const bestAttempt = attempts && attempts.length ? attempts.find(x => x.passed) || attempts[0] : null;
+    const passed = bestAttempt && bestAttempt.passed;
+    const cert = certs && certs.length ? certs[0] : null;
+
+    let contentHtml = '';
+    if (m.content_url) contentHtml += `<div style="margin-top:10px;"><a href="${escapeHtml(m.content_url)}" target="_blank" rel="noopener" style="color:var(--gold-light);">Open ${CONTENT_TYPE_LABELS[m.content_type]} →</a></div>`;
+    if (m.content_text) contentHtml += `<div style="margin-top:10px; color:var(--muted); font-size:14px; white-space:pre-wrap;">${escapeHtml(m.content_text)}</div>`;
+
+    let statusHtml = '';
+    if (assignment.completed) {
+      statusHtml = `<span style="color:var(--gold-light);">✓ Completed</span>`;
+    } else {
+      statusHtml = `<span style="color:var(--muted);">In Progress</span>`;
+    }
+
+    let actionHtml = '';
+    if (hasQuiz) {
+      if (passed) {
+        actionHtml = `<div style="margin-top:12px; color:var(--gold-light);">Quiz passed — Score ${bestAttempt.score}%</div>`;
+        if (cert) actionHtml += `<a class="btn btn-ghost" style="margin-top:8px; display:inline-block;" href="certificate-view.html?code=${cert.certificate_code}" target="_blank">View Certificate</a>`;
+      } else {
+        actionHtml = `<button class="btn btn-primary" style="margin-top:12px; border:none; cursor:pointer;" onclick="startQuiz('${clientId}','${m.id}',${m.passing_score})">Take Quiz</button>`;
+      }
+    } else if (!assignment.completed) {
+      actionHtml = `<button class="btn btn-primary" style="margin-top:12px; border:none; cursor:pointer;" onclick="markComplete('${clientId}','${m.id}')">Mark as Complete</button>`;
+    }
+
+    card.innerHTML = `
+      <div class="action-card">
+        <div style="color:var(--gold-light); font-size:12px; text-transform:uppercase; letter-spacing:0.06em;">${escapeHtml(m.category||'')}</div>
+        <div style="color:var(--cream); font-family:'Playfair Display',serif; font-size:19px; margin-top:4px;">${escapeHtml(m.title)}</div>
+        <div style="color:var(--muted); font-size:14px; margin-top:6px;">${escapeHtml(m.description||'')}</div>
+        ${contentHtml}
+        <div style="margin-top:10px; font-size:13px;">${statusHtml}</div>
+        ${actionHtml}
+        <div id="quiz-area-${m.id}" style="margin-top:14px;"></div>
+      </div>
+    `;
+  }
+
+  async function startQuiz(clientId, moduleId, passingScore){
+    const { data: questions } = await sb.from('training_quiz_questions').select('*').eq('module_id', moduleId).order('order_index');
+    const area = document.getElementById('quiz-area-'+moduleId);
+    if (!questions || !questions.length) { area.innerHTML = '<p style="color:var(--muted);">No quiz questions found.</p>'; return; }
+
+    area.innerHTML = `
+      <div style="border-top:1px solid var(--line); padding-top:14px;">
+        ${questions.map((q, i) => `
+          <div style="margin-bottom:16px;">
+            <div style="color:var(--cream); font-size:14px; margin-bottom:8px;">${i+1}. ${escapeHtml(q.question_text)}</div>
+            ${['a','b','c','d'].map(opt => `
+              <label style="display:block; font-size:13px; color:var(--muted); margin-bottom:4px; cursor:pointer;">
+                <input type="radio" name="q-${q.id}" value="${opt}"> ${escapeHtml(q['option_'+opt])}
+              </label>
+            `).join('')}
+          </div>
+        `).join('')}
+        <button class="btn btn-primary" style="border:none; cursor:pointer;" onclick='submitQuiz("${clientId}","${moduleId}",${passingScore})'>Submit Quiz</button>
+        <p id="quiz-result-${moduleId}" style="margin-top:10px; font-size:14px;"></p>
+      </div>
+    `;
+    area.dataset.questionIds = questions.map(q => q.id + ':' + q.correct_option).join(',');
+  }
+
+  async function submitQuiz(clientId, moduleId, passingScore){
+    const area = document.getElementById('quiz-area-'+moduleId);
+    const answerKey = area.dataset.questionIds.split(',').map(pair => {
+      const [id, correct] = pair.split(':');
+      return { id, correct };
+    });
+    let correctCount = 0;
+    answerKey.forEach(({id, correct}) => {
+      const selected = document.querySelector(`input[name="q-${id}"]:checked`);
+      if (selected && selected.value === correct) correctCount++;
+    });
+    const total = answerKey.length;
+    const score = Math.round((correctCount / total) * 100);
+    const passed = score >= passingScore;
+
+    await sb.from('training_quiz_attempts').insert({ client_id: clientId, module_id: moduleId, score, total_questions: total, passed });
+
+    const resultEl = document.getElementById('quiz-result-'+moduleId);
+    if (passed) {
+      const code = 'JC-' + clientId.slice(0,6).toUpperCase() + '-' + moduleId.slice(0,6).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+      await sb.from('training_certificates').insert({ client_id: clientId, module_id: moduleId, certificate_code: code });
+      await sb.from('training_assignments').update({ completed: true, completed_at: new Date().toISOString() }).eq('client_id', clientId).eq('module_id', moduleId);
+      resultEl.innerHTML = `<span style="color:var(--gold-light);">Passed with ${score}%! Reloading your certificate…</span>`;
+    } else {
+      resultEl.innerHTML = `<span style="color:#e57368;">Score: ${score}% — needs ${passingScore}% to pass. Try again anytime.</span>`;
+    }
+    setTimeout(() => loadTraining(clientId), 1500);
+  }
+
+  async function markComplete(clientId, moduleId){
+    await sb.from('training_assignments').update({ completed: true, completed_at: new Date().toISOString() }).eq('client_id', clientId).eq('module_id', moduleId);
+    loadTraining(clientId);
+  }
 
   async function loadCaseStudies(clientId){
     const el = document.getElementById('case-container');
