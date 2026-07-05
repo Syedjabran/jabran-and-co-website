@@ -42,6 +42,12 @@
     .recipient{color:#8a6b1e;}
     .presented, .for-text, .logo-sub, .signature-row, .cert-code{color:#555;}
   }
+  .sig-img{height:50px; display:block; margin:0 auto;}
+
+  @media print{
+    .sig-light{display:none !important;}
+    .sig-dark{display:block !important;}
+  }
 </style>
 </head>
 <body>
@@ -50,8 +56,7 @@
 
 <div class="cert">
   <div class="cert-inner-border">
-    <div class="logo">J&amp;Co</div>
-    <div class="logo-sub">JABRAN &amp; CO</div>
+    <img src="logo-full.png" alt="Jabran &amp; Co" style="height:70px; margin-bottom:30px;">
 
     <div class="eyebrow">Certificate of Completion</div>
     <div class="cert-title">Training Academy</div>
@@ -64,8 +69,10 @@
 
     <div class="signature-row">
       <div class="signature-block">
-        <div class="signature-name">Syed Jabran Ali Kamran</div>
-        Founder &amp; Chief Executive Officer
+        <img src="signature-light.png" class="sig-img sig-light" alt="Signature">
+        <img src="signature-dark.png" class="sig-img sig-dark" alt="Signature" style="display:none;">
+        <div class="signature-name" style="border-bottom:1px solid var(--line); padding-bottom:6px; margin-top:8px;">Syed Jabran Ali Kamran</div>
+        Chief Executive Officer
       </div>
       <div class="signature-block">
         <div class="signature-name" id="issue-date">—</div>
