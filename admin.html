@@ -301,6 +301,41 @@
     loadTopicHistory();
   }
 
+  const SEVERITY_COLOR = {low:'var(--muted)', medium:'var(--gold-light)', high:'#e08a4a', critical:'#e57368'};
+  const CATEGORY_LABELS = {observation:'Observation', bottleneck:'Bottleneck', quality:'Quality Issue', wastage:'Wastage', downtime:'Downtime', safety:'Safety', production_data:'Production Data', machine_data:'Machine Data', workforce:'Workforce', recommendation:'Recommendation'};
+
+  async function loadFindings(clientId){
+    const { data } = await sb.from('audit_findings').select('*').eq('client_id', clientId).order('recorded_at', {ascending:false});
+    const el = document.getElementById('audit-list-'+clientId);
+    if (!el) return;
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted); font-size:13px;">No audit findings recorded yet.</p>'; return; }
+    el.innerHTML = data.map(f => `
+      <div style="font-size:13px; color:var(--cream); padding:8px 0; border-bottom:1px solid var(--line);">
+        <span style="color:${SEVERITY_COLOR[f.severity]}; text-transform:uppercase; font-size:11px; letter-spacing:0.06em;">${f.severity}</span>
+        &nbsp;·&nbsp; <span style="color:var(--gold-light);">${CATEGORY_LABELS[f.category]}</span>
+        &nbsp;·&nbsp; ${f.recorded_at}<br>
+        <strong>${escapeHtml(f.title)}</strong>
+        ${f.description ? '<br><span style="color:var(--muted);">'+escapeHtml(f.description)+'</span>' : ''}
+        ${f.media_url ? '<br><a href="'+escapeHtml(f.media_url)+'" target="_blank" rel="noopener" style="color:var(--gold-light);">View Photo/Video</a>' : ''}
+      </div>
+    `).join('');
+  }
+
+  async function addFinding(e, clientId){
+    e.preventDefault();
+    const { error } = await sb.from('audit_findings').insert({
+      client_id: clientId,
+      category: document.getElementById('finding-category-'+clientId).value,
+      severity: document.getElementById('finding-severity-'+clientId).value,
+      recorded_at: document.getElementById('finding-date-'+clientId).value || new Date().toISOString().slice(0,10),
+      title: document.getElementById('finding-title-'+clientId).value,
+      description: document.getElementById('finding-desc-'+clientId).value,
+      media_url: document.getElementById('finding-media-'+clientId).value
+    });
+    if (!error) { loadFindings(clientId); e.target.reset(); }
+    return false;
+  }
+
   async function loadOverview(){
     const el = document.getElementById('tab-overview');
     el.innerHTML = '<p style="color:var(--muted);">Loading…</p>';
@@ -396,6 +431,37 @@
         <h3>${escapeHtml(c.name)}</h3>
         <p>${escapeHtml(c.notes||'')}</p>
         <details style="margin-top:14px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Factory Audit Findings</summary>
+          <div id="audit-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addFinding(event,'${c.id}')" style="margin-top:14px; border:1px solid var(--line); padding:14px;">
+            <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+              <select id="finding-category-${c.id}" style="background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:6px;">
+                <option value="observation">Observation</option>
+                <option value="bottleneck">Bottleneck</option>
+                <option value="quality">Quality Issue</option>
+                <option value="wastage">Wastage</option>
+                <option value="downtime">Downtime</option>
+                <option value="safety">Safety</option>
+                <option value="production_data">Production Data</option>
+                <option value="machine_data">Machine Data</option>
+                <option value="workforce">Workforce</option>
+                <option value="recommendation">Recommendation</option>
+              </select>
+              <select id="finding-severity-${c.id}" style="background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:6px;">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+              <input type="date" id="finding-date-${c.id}" style="background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            </div>
+            <input required placeholder="Title (e.g. Line 2 packaging bottleneck)" id="finding-title-${c.id}" style="width:100%; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+            <textarea placeholder="Description / findings" id="finding-desc-${c.id}" style="width:100%; min-height:60px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <input placeholder="Photo/video link (Google Drive, Photos, etc.)" id="finding-media-${c.id}" style="width:100%; margin-bottom:10px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px;">
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Add Finding</button>
+          </form>
+        </details>
+        <details style="margin-top:14px; border-top:1px solid var(--line); padding-top:10px;">
           <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">KPIs</summary>
           <div id="kpi-list-${c.id}" style="margin-top:10px;"></div>
           <form onsubmit="return addKpi(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
@@ -483,6 +549,7 @@
         </details>
       `;
       el.appendChild(card);
+      loadFindings(c.id);
       loadKpis(c.id);
       loadActions(c.id);
       loadDocuments(c.id);

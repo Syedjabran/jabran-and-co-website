@@ -40,6 +40,12 @@
   <p id="client-meta-display" style="color:var(--muted); margin-bottom:40px;"></p>
 
   <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Factory Audit</div>
+    <h2>Findings &amp; Observations</h2>
+  </div>
+  <div id="audit-container" style="margin-bottom:50px;"></div>
+
+  <div class="section-head" style="margin-bottom:20px;">
     <div class="eyebrow">Key Performance Indicators</div>
     <h2>Your Metrics</h2>
   </div>
@@ -137,11 +143,31 @@
     document.getElementById('client-meta-display').textContent =
       `${client.industry || ''} · ${client.status.replace('_',' ').toUpperCase()}${client.start_date ? ' · Since ' + client.start_date : ''}`;
 
+    loadFindings(client.id);
     loadKpis(client.id);
     loadActions(client.id);
     loadMeetings(client.id);
     loadReports(client.id);
     loadDocuments(client.id);
+  }
+
+  const SEVERITY_COLOR = {low:'var(--muted)', medium:'var(--gold-light)', high:'#e08a4a', critical:'#e57368'};
+  const CATEGORY_LABELS = {observation:'Observation', bottleneck:'Bottleneck', quality:'Quality Issue', wastage:'Wastage', downtime:'Downtime', safety:'Safety', production_data:'Production Data', machine_data:'Machine Data', workforce:'Workforce', recommendation:'Recommendation'};
+
+  async function loadFindings(clientId){
+    const el = document.getElementById('audit-container');
+    const { data } = await sb.from('audit_findings').select('*').eq('client_id', clientId).order('recorded_at', {ascending:false});
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);">No findings shared yet.</p>'; return; }
+    el.innerHTML = data.map(f => `
+      <div class="action-card">
+        <span style="color:${SEVERITY_COLOR[f.severity]}; text-transform:uppercase; font-size:11px; letter-spacing:0.06em;">${f.severity}</span>
+        &nbsp;·&nbsp; <span style="color:var(--gold-light); font-size:12px;">${CATEGORY_LABELS[f.category]}</span>
+        &nbsp;·&nbsp; <span style="color:var(--muted); font-size:12px;">${f.recorded_at}</span>
+        <div style="color:var(--cream); font-family:'Playfair Display',serif; font-size:17px; margin-top:6px;">${escapeHtml(f.title)}</div>
+        ${f.description ? '<div style="color:var(--muted); font-size:14px; margin-top:6px;">'+escapeHtml(f.description)+'</div>' : ''}
+        ${f.media_url ? '<div style="margin-top:6px;"><a href="'+escapeHtml(f.media_url)+'" target="_blank" rel="noopener" style="color:var(--gold-light);">View Photo/Video →</a></div>' : ''}
+      </div>
+    `).join('');
   }
 
   async function loadKpis(clientId){
