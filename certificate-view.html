@@ -43,10 +43,13 @@
     .presented, .for-text, .logo-sub, .signature-row, .cert-code{color:#555;}
   }
   .sig-img{height:50px; display:block; margin:0 auto;}
+  .estamp-img{width:130px; margin:30px auto 0; display:block; opacity:0.92;}
 
   @media print{
     .sig-light{display:none !important;}
     .sig-dark{display:block !important;}
+    .estamp-light{display:none !important;}
+    .estamp-dark{display:block !important;}
   }
 </style>
 </head>
@@ -81,6 +84,9 @@
     </div>
 
     <div class="cert-code" id="cert-code">Certificate ID: —</div>
+
+    <img src="estamp-gold.png" class="estamp-img estamp-light" alt="Official Seal">
+    <img src="estamp-print.png" class="estamp-img estamp-dark" alt="Official Seal" style="display:none;">
   </div>
 </div>
 
