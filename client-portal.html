@@ -52,6 +52,12 @@
   <div id="action-container" style="margin-bottom:50px;"></div>
 
   <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Meetings</div>
+    <h2>Upcoming &amp; Past</h2>
+  </div>
+  <div id="meeting-container" style="margin-bottom:50px;"></div>
+
+  <div class="section-head" style="margin-bottom:20px;">
     <div class="eyebrow">Document Center</div>
     <h2>Reports &amp; Files</h2>
   </div>
@@ -127,6 +133,7 @@
 
     loadKpis(client.id);
     loadActions(client.id);
+    loadMeetings(client.id);
     loadDocuments(client.id);
   }
 
@@ -157,6 +164,24 @@
         </div>
       </div>
     `).join('');
+  }
+
+  async function loadMeetings(clientId){
+    const el = document.getElementById('meeting-container');
+    const { data } = await sb.from('client_meetings').select('*').eq('client_id', clientId).order('meeting_datetime', {ascending:true});
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);">No meetings scheduled yet.</p>'; return; }
+    const now = new Date();
+    el.innerHTML = data.map(m => {
+      const dt = new Date(m.meeting_datetime);
+      const isPast = dt < now;
+      return `
+      <div class="action-card" ${isPast ? 'style="opacity:0.55;"' : ''}>
+        <div style="color:var(--cream); font-family:'Playfair Display',serif; font-size:18px;">${escapeHtml(m.title)} ${isPast ? '<span style="color:var(--muted); font-size:13px;">(past)</span>' : ''}</div>
+        <div style="color:var(--gold-light); font-size:14px; margin-top:6px;">${dt.toLocaleString('en-GB', {dateStyle:'medium', timeStyle:'short'})}</div>
+        ${m.meeting_link ? '<div style="margin-top:6px;"><a href="'+escapeHtml(m.meeting_link)+'" target="_blank" rel="noopener" style="color:var(--gold-light);">Join Meeting →</a></div>' : ''}
+        ${m.notes ? '<div style="color:var(--muted); font-size:13px; margin-top:6px;">'+escapeHtml(m.notes)+'</div>' : ''}
+      </div>`;
+    }).join('');
   }
 
   async function loadDocuments(clientId){

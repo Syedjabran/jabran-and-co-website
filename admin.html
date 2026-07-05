@@ -377,6 +377,17 @@
           </form>
         </details>
         <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Meetings</summary>
+          <div id="meeting-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addMeeting(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+            <input required placeholder="Title (e.g. Monthly Review)" id="meeting-title-${c.id}" style="flex:1; min-width:140px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input required type="datetime-local" id="meeting-datetime-${c.id}" style="background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input placeholder="Zoom/Meet link" id="meeting-link-${c.id}" style="flex:1; min-width:140px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input placeholder="Notes" id="meeting-notes-${c.id}" style="flex:1; min-width:120px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Add</button>
+          </form>
+        </details>
+        <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
           <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Client Login</summary>
           <div id="login-status-${c.id}" style="margin:10px 0; font-size:13px; color:var(--muted);">Checking…</div>
           <form onsubmit="return linkLogin(event,'${c.id}','${escapeHtml(c.name)}')" style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -390,6 +401,7 @@
       loadKpis(c.id);
       loadActions(c.id);
       loadDocuments(c.id);
+      loadMeetings(c.id);
       loadLoginStatus(c.id, c.name);
     }
   }
@@ -464,6 +476,39 @@
       category: document.getElementById('doc-category-'+clientId).value
     });
     loadDocuments(clientId);
+    e.target.reset();
+    return false;
+  }
+
+  async function loadMeetings(clientId){
+    const { data } = await sb.from('client_meetings').select('*').eq('client_id', clientId).order('meeting_datetime', {ascending:true});
+    const el = document.getElementById('meeting-list-'+clientId);
+    if (!el) return;
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted); font-size:13px;">No meetings scheduled yet.</p>'; return; }
+    const now = new Date();
+    el.innerHTML = data.map(m => {
+      const dt = new Date(m.meeting_datetime);
+      const isPast = dt < now;
+      return `
+      <div style="font-size:13px; color:var(--cream); padding:6px 0; border-bottom:1px solid var(--line); ${isPast ? 'opacity:0.5;' : ''}">
+        <strong>${escapeHtml(m.title)}</strong> ${isPast ? '<span style="color:var(--muted);">(past)</span>' : ''}<br>
+        <span style="color:var(--muted);">${dt.toLocaleString('en-GB', {dateStyle:'medium', timeStyle:'short'})}</span>
+        ${m.meeting_link ? ' · <a href="'+escapeHtml(m.meeting_link)+'" target="_blank" rel="noopener" style="color:var(--gold-light);">Join Link</a>' : ''}
+        ${m.notes ? '<br><span style="color:var(--muted);">'+escapeHtml(m.notes)+'</span>' : ''}
+      </div>`;
+    }).join('');
+  }
+
+  async function addMeeting(e, clientId){
+    e.preventDefault();
+    await sb.from('client_meetings').insert({
+      client_id: clientId,
+      title: document.getElementById('meeting-title-'+clientId).value,
+      meeting_datetime: document.getElementById('meeting-datetime-'+clientId).value,
+      meeting_link: document.getElementById('meeting-link-'+clientId).value,
+      notes: document.getElementById('meeting-notes-'+clientId).value
+    });
+    loadMeetings(clientId);
     e.target.reset();
     return false;
   }
