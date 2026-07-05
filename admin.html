@@ -388,6 +388,28 @@
           </form>
         </details>
         <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
+          <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Progress Reports</summary>
+          <div id="report-list-${c.id}" style="margin-top:10px;"></div>
+          <form onsubmit="return addReport(event,'${c.id}')" style="margin-top:14px; border:1px solid var(--line); padding:14px;">
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
+              <select id="report-type-${c.id}" style="background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:6px;">
+                <option value="weekly">Weekly</option>
+                <option value="monthly" selected>Monthly</option>
+                <option value="project_end">Project-End</option>
+              </select>
+              <input type="date" id="report-date-${c.id}" style="background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            </div>
+            <textarea placeholder="Baseline summary" id="report-baseline-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Current performance" id="report-current-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Improvements achieved" id="report-improvements-${c.id}" style="width:100%; min-height:50px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Financial savings" id="report-savings-${c.id}" style="width:100%; min-height:40px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Risks" id="report-risks-${c.id}" style="width:100%; min-height:40px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Next steps" id="report-next-${c.id}" style="width:100%; min-height:40px; margin-bottom:8px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <textarea placeholder="Consultant recommendations" id="report-recommendations-${c.id}" style="width:100%; min-height:40px; margin-bottom:10px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:8px; font-size:13px;"></textarea>
+            <button class="admin-btn approve" type="submit" style="cursor:pointer;">Generate Report</button>
+          </form>
+        </details>
+        <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
           <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Client Login</summary>
           <div id="login-status-${c.id}" style="margin:10px 0; font-size:13px; color:var(--muted);">Checking…</div>
           <form onsubmit="return linkLogin(event,'${c.id}','${escapeHtml(c.name)}')" style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -402,6 +424,7 @@
       loadActions(c.id);
       loadDocuments(c.id);
       loadMeetings(c.id);
+      loadReports(c.id);
       loadLoginStatus(c.id, c.name);
     }
   }
@@ -510,6 +533,37 @@
     });
     loadMeetings(clientId);
     e.target.reset();
+    return false;
+  }
+
+  async function loadReports(clientId){
+    const { data } = await sb.from('client_reports').select('*').eq('client_id', clientId).order('report_date', {ascending:false});
+    const el = document.getElementById('report-list-'+clientId);
+    if (!el) return;
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted); font-size:13px;">No reports generated yet.</p>'; return; }
+    el.innerHTML = data.map(r => `
+      <div style="font-size:13px; padding:6px 0; border-bottom:1px solid var(--line);">
+        ${r.report_type.replace('_',' ').toUpperCase()} · ${r.report_date}
+        &nbsp;·&nbsp; <a href="report-view.html?id=${r.id}" target="_blank" style="color:var(--gold-light);">View / Print</a>
+      </div>
+    `).join('');
+  }
+
+  async function addReport(e, clientId){
+    e.preventDefault();
+    const { error } = await sb.from('client_reports').insert({
+      client_id: clientId,
+      report_type: document.getElementById('report-type-'+clientId).value,
+      report_date: document.getElementById('report-date-'+clientId).value || new Date().toISOString().slice(0,10),
+      baseline_summary: document.getElementById('report-baseline-'+clientId).value,
+      current_performance: document.getElementById('report-current-'+clientId).value,
+      improvements_achieved: document.getElementById('report-improvements-'+clientId).value,
+      financial_savings: document.getElementById('report-savings-'+clientId).value,
+      risks: document.getElementById('report-risks-'+clientId).value,
+      next_steps: document.getElementById('report-next-'+clientId).value,
+      recommendations: document.getElementById('report-recommendations-'+clientId).value
+    });
+    if (!error) { loadReports(clientId); e.target.reset(); }
     return false;
   }
 

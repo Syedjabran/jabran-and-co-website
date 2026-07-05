@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress Report — Jabran & Co</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14; --gold:#C6A55A; --gold-light:#E4C98A; --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.25);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Inter',sans-serif; background:var(--bg); color:var(--cream); line-height:1.6;}
+  .wrap{max-width:800px; margin:0 auto; padding:60px 32px 100px;}
+  h1,h2{font-family:'Playfair Display',serif; font-weight:600;}
+  .header{display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid var(--gold); padding-bottom:24px; margin-bottom:32px;}
+  .logo{font-family:'Playfair Display',serif; font-size:28px; color:var(--gold-light);}
+  .logo .sub{font-family:'Inter',sans-serif; font-size:11px; letter-spacing:0.2em; color:var(--cream); display:block; margin-top:2px;}
+  .meta-block{text-align:right; font-size:13px; color:var(--muted);}
+  .report-title{font-size:34px; margin-bottom:8px;}
+  .report-sub{color:var(--gold); font-size:13px; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:40px;}
+  .section{margin-bottom:32px;}
+  .section .label{font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;}
+  .section .content{font-size:15px; color:var(--cream); white-space:pre-wrap;}
+  .print-btn{
+    position:fixed; top:24px; right:24px; background:var(--gold); color:#0a0a0b; border:none;
+    padding:12px 22px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; border-radius:2px;
+  }
+  .footer-note{margin-top:60px; padding-top:20px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); text-align:center;}
+
+  @media print{
+    body{background:#fff; color:#111;}
+    .wrap{padding:0;}
+    .print-btn{display:none;}
+    .header{border-bottom-color:#C6A55A;}
+    .logo{color:#8a6b1e;}
+    .logo .sub{color:#111;}
+    .meta-block{color:#555;}
+    .report-title{color:#111;}
+    .section .content{color:#222;}
+    .footer-note{color:#777;}
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="wrap">
+  <div class="header">
+    <div class="logo">J&amp;Co<span class="sub">JABRAN &amp; CO</span></div>
+    <div class="meta-block" id="meta-block">Loading…</div>
+  </div>
+
+  <div id="report-body">
+    <p style="color:var(--muted);">Loading report…</p>
+  </div>
+
+  <div class="footer-note">
+    Jabran &amp; Co · 28, Sector M8, Lake City, Lahore · www.jabranandco.com<br>
+    This report is confidential and prepared exclusively for the named client.
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+  const TYPE_LABELS = {weekly:'Weekly Progress Report', monthly:'Monthly Progress Report', project_end:'Project-End Report'};
+
+  async function loadReport(){
+    const params = new URLSearchParams(window.location.search);
+    const reportId = params.get('id');
+    const body = document.getElementById('report-body');
+    const meta = document.getElementById('meta-block');
+
+    const { data: session } = await sb.auth.getSession();
+    if (!session.session) {
+      body.innerHTML = '<p style="color:#e57368;">Please log in to view this report.</p>';
+      meta.textContent = '';
+      return;
+    }
+    if (!reportId) {
+      body.innerHTML = '<p style="color:#e57368;">No report specified.</p>';
+      return;
+    }
+
+    const { data: report, error } = await sb.from('client_reports').select('*, clients(name)').eq('id', reportId).single();
+    if (error || !report) {
+      body.innerHTML = '<p style="color:#e57368;">Report not found, or you do not have access to it.</p>';
+      meta.textContent = '';
+      return;
+    }
+
+    meta.innerHTML = `${escapeHtml(report.clients.name)}<br>${report.report_date}`;
+
+    body.innerHTML = `
+      <div class="report-title">${TYPE_LABELS[report.report_type]}</div>
+      <div class="report-sub">Prepared for ${escapeHtml(report.clients.name)} · ${report.report_date}</div>
+
+      ${section('Baseline', report.baseline_summary)}
+      ${section('Current Performance', report.current_performance)}
+      ${section('Improvements Achieved', report.improvements_achieved)}
+      ${section('Financial Savings', report.financial_savings)}
+      ${section('Risks', report.risks)}
+      ${section('Next Steps', report.next_steps)}
+      ${section('Consultant Recommendations', report.recommendations)}
+    `;
+  }
+
+  function section(label, content){
+    if (!content) return '';
+    return `<div class="section"><div class="label">${label}</div><div class="content">${escapeHtml(content)}</div></div>`;
+  }
+
+  loadReport();
+</script>
+</body>
+</html>

@@ -58,6 +58,12 @@
   <div id="meeting-container" style="margin-bottom:50px;"></div>
 
   <div class="section-head" style="margin-bottom:20px;">
+    <div class="eyebrow">Progress Reports</div>
+    <h2>Reports Prepared For You</h2>
+  </div>
+  <div id="report-container" style="margin-bottom:50px;"></div>
+
+  <div class="section-head" style="margin-bottom:20px;">
     <div class="eyebrow">Document Center</div>
     <h2>Reports &amp; Files</h2>
   </div>
@@ -134,6 +140,7 @@
     loadKpis(client.id);
     loadActions(client.id);
     loadMeetings(client.id);
+    loadReports(client.id);
     loadDocuments(client.id);
   }
 
@@ -182,6 +189,18 @@
         ${m.notes ? '<div style="color:var(--muted); font-size:13px; margin-top:6px;">'+escapeHtml(m.notes)+'</div>' : ''}
       </div>`;
     }).join('');
+  }
+
+  async function loadReports(clientId){
+    const el = document.getElementById('report-container');
+    const { data } = await sb.from('client_reports').select('*').eq('client_id', clientId).order('report_date', {ascending:false});
+    if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);">No reports prepared yet.</p>'; return; }
+    const TYPE_LABELS = {weekly:'Weekly Report', monthly:'Monthly Report', project_end:'Project-End Report'};
+    el.innerHTML = data.map(r => `
+      <div class="doc-card">
+        <a href="report-view.html?id=${r.id}" target="_blank">${TYPE_LABELS[r.report_type]} — ${r.report_date}</a>
+      </div>
+    `).join('');
   }
 
   async function loadDocuments(clientId){
