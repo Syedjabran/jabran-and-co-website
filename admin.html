@@ -379,8 +379,9 @@
         <details style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px;">
           <summary style="cursor:pointer; color:var(--gold-light); font-size:13px; text-transform:uppercase; letter-spacing:0.06em;">Client Login</summary>
           <div id="login-status-${c.id}" style="margin:10px 0; font-size:13px; color:var(--muted);">Checking…</div>
-          <form onsubmit="return linkLogin(event,'${c.id}')" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <form onsubmit="return linkLogin(event,'${c.id}','${escapeHtml(c.name)}')" style="display:flex; gap:8px; flex-wrap:wrap;">
             <input placeholder="Paste Supabase Auth User UID" id="login-uid-${c.id}" style="flex:1; min-width:200px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
+            <input placeholder="Client email" id="login-email-${c.id}" type="email" style="flex:1; min-width:180px; background:transparent; border:1px solid var(--line); color:var(--cream); padding:6px 8px;">
             <button class="admin-btn approve" type="submit" style="cursor:pointer;">Link Login</button>
           </form>
         </details>
@@ -389,7 +390,7 @@
       loadKpis(c.id);
       loadActions(c.id);
       loadDocuments(c.id);
-      loadLoginStatus(c.id);
+      loadLoginStatus(c.id, c.name);
     }
   }
 
@@ -467,20 +468,29 @@
     return false;
   }
 
-  async function loadLoginStatus(clientId){
+  async function loadLoginStatus(clientId, clientName){
     const { data } = await sb.from('profiles').select('*').eq('client_id', clientId).eq('role','client');
     const el = document.getElementById('login-status-'+clientId);
     if (!el) return;
-    el.textContent = (data && data.length) ? `Linked to login: ${data[0].email || data[0].id}` : 'No login linked yet.';
+    if (data && data.length && data[0].email) {
+      const email = data[0].email;
+      const subject = encodeURIComponent(`Update on your Jabran & Co project — ${clientName}`);
+      const body = encodeURIComponent(`Hello,\n\nThere's a new update on your project dashboard. Please log in to review it:\n\nhttps://www.jabranandco.com/client-portal.html\n\nBest,\nJabran & Co`);
+      el.innerHTML = `Linked to login: ${escapeHtml(email)} &nbsp; <a href="mailto:${email}?subject=${subject}&body=${body}" style="color:var(--gold-light); text-decoration:underline;">Notify Client</a>`;
+    } else {
+      el.textContent = 'No login linked yet.';
+    }
   }
 
-  async function linkLogin(e, clientId){
+  async function linkLogin(e, clientId, clientName){
     e.preventDefault();
     const uid = document.getElementById('login-uid-'+clientId).value.trim();
+    const email = document.getElementById('login-email-'+clientId).value.trim();
     if (!uid) return false;
-    const { error } = await sb.from('profiles').upsert({ id: uid, role: 'client', client_id: clientId });
+    const { error } = await sb.from('profiles').upsert({ id: uid, role: 'client', client_id: clientId, email: email || null });
     const statusEl = document.getElementById('login-status-'+clientId);
-    statusEl.textContent = error ? ('Error: '+error.message) : 'Login linked successfully.';
+    if (error) { statusEl.textContent = 'Error: '+error.message; }
+    else { loadLoginStatus(clientId, clientName); }
     return false;
   }
 </script>
