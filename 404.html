@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Not Found — Jabran &amp; Co</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .nf-wrap{
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px;
+  }
+  .nf-blueprint{ width:280px; height:280px; margin-bottom:36px; opacity:0.9; }
+  .nf-blueprint path{
+    fill:none; stroke:#C6A55A; stroke-width:1.4;
+    stroke-dasharray:900; stroke-dashoffset:900;
+    animation: nfDraw 2.4s ease forwards;
+  }
+  @keyframes nfDraw{ to{ stroke-dashoffset:0; } }
+  .nf-code{ font-family:'Playfair Display',serif; font-size:15vw; line-height:1; color:var(--gold-light); opacity:0.15; position:absolute; z-index:0; user-select:none; }
+  .nf-title{ font-family:'Playfair Display',serif; font-size:32px; color:var(--cream); margin-bottom:12px; position:relative; z-index:1; }
+  .nf-sub{ color:var(--muted); font-size:15px; max-width:420px; margin-bottom:32px; position:relative; z-index:1; }
+  @media (prefers-reduced-motion: reduce){
+    .nf-blueprint path{ animation:none; stroke-dashoffset:0; }
+  }
+</style>
+</head>
+<body style="background:var(--bg);">
+
+<div class="nf-wrap">
+  <div class="nf-code">404</div>
+  <svg class="nf-blueprint" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 180 L20 60 L70 20 L180 20 L180 140 L130 180 Z"/>
+    <path d="M20 60 L130 60 L180 20"/>
+    <path d="M130 60 L130 180"/>
+    <path d="M45 100 L95 100 M45 130 L95 130 M45 160 L85 160"/>
+    <circle cx="150" cy="90" r="14"/>
+  </svg>
+  <div class="nf-title">This page doesn't exist</div>
+  <p class="nf-sub">The page you're looking for may have moved, or the link might be outdated. Let's get you back on track.</p>
+  <a class="btn btn-primary" href="index.html" style="border:none;">Return Home</a>
+</div>
+
+</body>
+</html>

@@ -433,3 +433,42 @@ body{animation:pageFadeIn 0.6s ease both;}
   transition:all 0.25s ease;
 }
 .social-links a:hover{color:var(--gold-light); border-color:var(--gold); transform:translateY(-2px);}
+
+/* ---------- PREMIUM PAGE LOADER ---------- */
+#jc-loader{
+  position:fixed; inset:0; z-index:9999; background:#0B0F14;
+  display:flex; align-items:center; justify-content:center;
+  animation: jcLoaderFade 0.35s ease 1.15s forwards;
+}
+#jc-loader img{ height:56px; opacity:0; animation: jcLoaderLogo 0.9s ease 0.1s forwards; }
+#jc-loader .jc-sweep{
+  position:absolute; top:0; bottom:0; width:120px; left:-140px;
+  background:linear-gradient(100deg, transparent, rgba(198,165,90,0.35), transparent);
+  animation: jcSweep 1.1s ease 0.15s forwards;
+}
+@keyframes jcLoaderLogo{ to{opacity:1;} }
+@keyframes jcSweep{ to{ left:110%; } }
+@keyframes jcLoaderFade{ to{opacity:0; visibility:hidden; pointer-events:none;} }
+
+@media (prefers-reduced-motion: reduce){
+  #jc-loader{ display:none; }
+}
+
+/* ---------- CUSTOM CURSOR (desktop, fine pointer only) ---------- */
+.jc-custom-cursor, .jc-custom-cursor a, .jc-custom-cursor button{ cursor:none; }
+.jc-cursor-ring{
+  position:fixed; top:0; left:0; width:32px; height:32px; margin:-16px 0 0 -16px;
+  border:1.5px solid var(--gold); border-radius:50%; pointer-events:none; z-index:9998;
+  transition:width 0.25s ease, height 0.25s ease, margin 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  mix-blend-mode:difference;
+}
+.jc-cursor-ring.jc-cursor-active{
+  width:52px; height:52px; margin:-26px 0 0 -26px; background:rgba(198,165,90,0.12);
+}
+.jc-cursor-dot{
+  position:fixed; top:0; left:0; width:6px; height:6px; margin:-3px 0 0 -3px;
+  background:#F5F3EF; border-radius:50%; pointer-events:none; z-index:9998;
+}
+@media (hover:none), (pointer:coarse){
+  .jc-cursor-ring, .jc-cursor-dot{ display:none; }
+}
