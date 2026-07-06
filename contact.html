@@ -193,6 +193,22 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
 <script>
   const cform = document.getElementById('contact-form');
   const cstatus = document.getElementById('contact-status');
+
+  const REF_LABELS = {
+    'advisory': 'Strategic Advisory',
+    'factory-audit': 'Production Plant Audit & Performance',
+    'construction': 'Architecture, Interiors & Construction',
+    'training': 'Corporate Training Consultation',
+    'training-workshop': 'Executive Workshop Request',
+    'customs': 'Custom Clearance Consultancy',
+    'customs-import-export': 'Import & Export Consultation'
+  };
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref && REF_LABELS[ref]) {
+    document.getElementById('message').value = `Enquiry regarding: ${REF_LABELS[ref]}\n\n`;
+  }
+
   cform.addEventListener('submit', async (e) => {
     e.preventDefault();
     cstatus.textContent = 'Sending…';
