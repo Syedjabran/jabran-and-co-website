@@ -1,0 +1,156 @@
+<!--
+=====================================================================
+THE JABRAN METHOD™ — INTERACTIVE HOVER STORY-REVEAL UPGRADE
+=====================================================================
+INSTALL (2 steps):
+
+STEP 1 — advisory.html
+Replace the entire existing <section class="teasers"> block
+(the one containing "The JABRAN Method™" with <details> cards,
+including the second .teaser-grid row and the "Ready?" card)
+with the SECTION HTML below.
+
+STEP 2 — style.css
+Append the CSS block at the bottom of this file to the END of
+style.css (after the sidebar/light-section rules, so cascade
+priority is preserved).
+
+No JS changes. No new assets. Works with existing animations.js.
+Reduced-motion users are covered by the site's existing global
+prefers-reduced-motion kill switch.
+=====================================================================
+-->
+
+
+<!-- ============ SECTION HTML — paste into advisory.html ============ -->
+
+<section class="teasers jm-section" id="method">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Our Methodology</div>
+      <h2>The JABRAN Method&trade;</h2>
+      <p class="jm-lede">Every engagement we take on runs through the same discipline: five stages, in sequence, each one earning the next. It begins on the floor of the business — not in a template — and it doesn't end at the recommendation. It ends when the client's own team can sustain the result without us.</p>
+      <p class="jm-lede jm-lede-sub">Hover a stage to read how it works in practice.</p>
+    </div>
+
+    <div class="jm-track" aria-hidden="true"></div>
+
+    <div class="jm-grid">
+
+      <article class="jm-card" tabindex="0">
+        <div class="jm-num">01</div>
+        <h3>Discover</h3>
+        <p class="jm-thesis">Understand the business — its people, operations, and objectives.</p>
+        <p class="jm-more">We start by listening: walking the operation as it actually runs today, not as it's described on paper. Site visits, working sessions with the people who do the work, and a clear picture of what the owners are trying to achieve.</p>
+      </article>
+
+      <article class="jm-card" tabindex="0">
+        <div class="jm-num">02</div>
+        <h3>Diagnose</h3>
+        <p class="jm-thesis">Identify the real constraint — not just the visible symptom.</p>
+        <p class="jm-more">We trace issues back to their source — a planning gap, a supplier relationship, a process bottleneck — so the plan we design fixes the right thing, not the loudest one.</p>
+      </article>
+
+      <article class="jm-card" tabindex="0">
+        <div class="jm-num">03</div>
+        <h3>Design</h3>
+        <p class="jm-thesis">Build a practical, commercially grounded plan.</p>
+        <p class="jm-more">Every recommendation is shaped around what's achievable for the client's scale, budget, and timeline — never a generic template. We sequence the changes that create the most value first.</p>
+      </article>
+
+      <article class="jm-card" tabindex="0">
+        <div class="jm-num">04</div>
+        <h3>Deliver</h3>
+        <p class="jm-thesis">Execute with discipline and measurable outcomes.</p>
+        <p class="jm-more">We stay involved through implementation, not just the recommendation stage — tracking progress against agreed milestones and adjusting as real-world conditions change. The deliverable is the result, not the slide deck.</p>
+      </article>
+
+      <article class="jm-card" tabindex="0">
+        <div class="jm-num">05</div>
+        <h3>Develop</h3>
+        <p class="jm-thesis">Build capability that outlasts the engagement.</p>
+        <p class="jm-more">The goal is never dependency on us. We leave the client's team with the tools, processes, and confidence to sustain the improvement long after we step back.</p>
+      </article>
+
+    </div>
+
+    <div class="jm-cta">
+      <div>
+        <div class="eyebrow">Ready?</div>
+        <h3>Start with a Conversation</h3>
+        <p>Tell us about your business and we'll recommend where to begin.</p>
+      </div>
+      <a class="btn btn-primary" href="contact.html?ref=advisory">Book a Consultation</a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============ CSS — append to the END of style.css ============ -->
+<style>
+/* ---------- THE JABRAN METHOD™ — INTERACTIVE STAGE CARDS ---------- */
+.jm-section .section-head{max-width:720px;}
+.jm-lede{margin-top:20px; color:var(--muted); font-size:16px; line-height:1.75;}
+.jm-lede-sub{margin-top:10px; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold);}
+
+.jm-grid{
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:1px;
+  background:var(--line); border:1px solid var(--line);
+}
+.jm-card{
+  position:relative; background:var(--bg); padding:38px 26px 30px;
+  cursor:pointer; overflow:hidden; outline:none;
+  transition:background 0.35s ease;
+}
+.jm-card::before{ /* gold sweep along the top edge — the sequence line */
+  content:""; position:absolute; top:0; left:0; height:2px; width:100%;
+  background:linear-gradient(90deg, var(--gold-deep), var(--gold-light));
+  transform:scaleX(0); transform-origin:left;
+  transition:transform 0.5s ease;
+}
+.jm-card:hover, .jm-card:focus-visible, .jm-card:focus-within{background:var(--bg-alt-2);}
+.jm-card:hover::before, .jm-card:focus-visible::before{transform:scaleX(1);}
+
+.jm-num{
+  font-family:'Playfair Display', serif; font-size:15px; color:var(--gold);
+  letter-spacing:0.2em; margin-bottom:16px;
+  transition:color 0.3s ease;
+}
+.jm-card:hover .jm-num, .jm-card:focus-visible .jm-num{color:var(--gold-light);}
+.jm-card h3{font-size:23px; color:var(--cream); margin-bottom:10px;}
+.jm-thesis{font-size:13.5px; color:var(--muted); line-height:1.6;}
+
+.jm-more{
+  font-size:13px; line-height:1.65; color:rgba(245,243,239,0.86);
+  max-height:0; opacity:0; overflow:hidden;
+  margin-top:0; padding-top:0; border-top:1px solid transparent;
+  transition:max-height 0.5s ease, opacity 0.4s ease 0.05s,
+             margin-top 0.5s ease, padding-top 0.5s ease, border-color 0.4s ease;
+}
+.jm-card:hover .jm-more,
+.jm-card:focus-visible .jm-more,
+.jm-card:focus-within .jm-more{
+  max-height:220px; opacity:1;
+  margin-top:14px; padding-top:14px; border-top-color:var(--line);
+}
+.jm-card:focus-visible{box-shadow:inset 0 0 0 1px var(--gold);}
+
+.jm-cta{
+  margin-top:1px; border:1px solid var(--line); background:var(--bg);
+  padding:36px 34px; display:flex; align-items:center; justify-content:space-between;
+  gap:28px; flex-wrap:wrap;
+}
+.jm-cta h3{font-size:24px; color:var(--cream); margin:10px 0 8px;}
+.jm-cta p{font-size:14px; color:var(--muted);}
+
+@media (max-width:1080px){
+  .jm-grid{grid-template-columns:repeat(3, 1fr);}
+}
+@media (max-width:760px){
+  .jm-grid{grid-template-columns:1fr;}
+  /* touch devices: reveal all narratives — hover doesn't exist */
+  .jm-more{max-height:none; opacity:1; margin-top:14px; padding-top:14px; border-top-color:var(--line);}
+  .jm-card{cursor:default;}
+}
+</style>
