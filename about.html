@@ -65,6 +65,44 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+/* ===== About hero scene (LED-wall mission as live text) ===== */
+.hero-scene{background:var(--ink, #0b0f14); line-height:0;}
+.hero-scene-frame{position:relative; width:100%;}
+.hero-scene-img{display:block; width:100%; height:auto;}
+/* Positions are % of the 1376x768 frame, so overlays track the image at any width */
+.led-mission{
+  position:absolute; left:46.6%; top:12%; width:27.5%;
+  line-height:1.18; text-align:left;
+}
+.led-headline{
+  margin:0; font-family:'Inter',sans-serif; font-weight:600;
+  font-size:2.35vw; letter-spacing:0.015em; text-transform:uppercase;
+  color:#ffffff; text-shadow:0 2px 14px rgba(6,20,45,0.55);
+}
+.led-gold{color:#e8c15a; display:block;}
+.led-subline{
+  margin:0.9vw 0 0; font-family:'Inter',sans-serif; font-weight:500;
+  font-size:0.95vw; letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(255,255,255,0.92); text-shadow:0 1px 8px rgba(6,20,45,0.5);
+}
+.led-logo{
+  position:absolute; left:47.2%; top:36.5%; width:12.5%; height:auto;
+  filter:drop-shadow(0 2px 10px rgba(6,20,45,0.45));
+}
+/* Caption fallback: on small screens the wall text is too small to read, so the
+   same mission text renders as a legible block beneath the scene */
+.led-mission-caption{display:none;}
+@media (max-width:720px){
+  .led-mission, .led-logo{display:none;}
+  .led-mission-caption{
+    display:block; padding:26px 22px 30px; line-height:1.35;
+    background:linear-gradient(180deg, #10233f, #0b0f14); text-align:center;
+  }
+  .led-mission-caption .led-headline{font-size:19px;}
+  .led-mission-caption .led-subline{font-size:11px; margin-top:10px;}
+}
+</style>
 </head>
 <body>
 <div id="jc-loader"><div class="jc-sweep"></div><img src="logo-full.png" alt="Jabran &amp; Co"></div>
@@ -111,11 +149,30 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
     </div>
   </div>
 </aside>
-<section class="page-hero" style="background-image:linear-gradient(180deg, rgba(11,15,20,0.87), rgba(11,15,20,0.95)), url('https://images.pexels.com/photos/7534216/pexels-photo-7534216.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600'); background-size:cover; background-position:center;">
+<section class="page-hero" style="background-image:linear-gradient(180deg, rgba(11,15,20,0.92), rgba(11,15,20,0.97)), url('about-hero-scene.jpg'); background-size:cover; background-position:center top;">
   <div class="wrap">
     <div class="eyebrow">About Us</div>
     <h1>Our Story</h1>
     <p>Trading and advising informally since 2014, formally registered as a partnership firm in Lahore in 2026.</p>
+  </div>
+</section>
+
+<!-- Hero scene: full visual ecosystem with the mission statement rendered as live text over the LED wall -->
+<section class="hero-scene" aria-label="Jabran &amp; Co mission">
+  <div class="hero-scene-frame">
+    <picture>
+      <source srcset="about-hero-scene.webp" type="image/webp">
+      <img class="hero-scene-img" src="about-hero-scene.jpg" alt="Concept visual: four professionals collaborating around an interactive brand table in a glass-walled London office at dusk, with the Jabran &amp; Co mission displayed on a large LED wall" width="1376" height="768" loading="eager">
+    </picture>
+    <div class="led-mission">
+      <p class="led-headline"><span class="led-gold">Unleashing Human Potential</span> Through Creative Vision &amp; Brand Excellence</p>
+      <p class="led-subline">Our People. Our Ethos. Our Global Impact.</p>
+    </div>
+    <img class="led-logo" src="logo-full.png" alt="Jabran &amp; Co">
+  </div>
+  <div class="led-mission-caption">
+    <p class="led-headline"><span class="led-gold">Unleashing Human Potential</span> Through Creative Vision &amp; Brand Excellence</p>
+    <p class="led-subline">Our People. Our Ethos. Our Global Impact.</p>
   </div>
 </section>
 
