@@ -1,0 +1,151 @@
+<!--
+=====================================================================
+GLOBAL TRADE & SOURCING — SNIPPET PACK
+Target: global-trade-sourcing.html (trading.html is a redirect stub)
+Preview note: this file is NOT a full page. The script is null-guarded
+so standalone preview will no longer throw addEventListener errors.
+=====================================================================
+-->
+
+
+<!-- ====== 1 · THE 8-STEP SOURCING WORKFLOW (editorial narrative) ====== -->
+<!-- Insert as a .manifest section; reuses existing .manifest-row pattern -->
+
+<section class="manifest">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">The Sourcing Workflow</div>
+      <h2>From requirement to fulfilment — eight controlled stages</h2>
+      <p style="margin-top:18px; color:var(--muted); font-size:15.5px; line-height:1.75; max-width:720px;">Sourcing fails at handoffs — an unwritten specification, an unvetted supplier, an inspection that happens after the goods ship. Our process closes each gap in sequence. Nothing moves to the next stage until the previous one is documented and agreed in writing.</p>
+    </div>
+    <div class="manifest-list">
+      <div class="manifest-row"><div class="code">01</div><h3>Requirement Definition</h3><div class="route">Written specification, quantities, quality criteria, and commercial terms agreed with the client before any supplier is approached.</div></div>
+      <div class="manifest-row"><div class="code">02</div><h3>Market &amp; Supplier Discovery</h3><div class="route">Candidate suppliers identified across our sourcing markets against the written specification — not from a generic directory.</div></div>
+      <div class="manifest-row"><div class="code">03</div><h3>Supplier Screening &amp; Qualification</h3><div class="route">Capability, capacity, compliance, and track record verified before a supplier is shortlisted.</div></div>
+      <div class="manifest-row"><div class="code">04</div><h3>Sampling &amp; Specification Lock</h3><div class="route">Samples evaluated against the agreed criteria; the approved sample becomes the contractual quality reference.</div></div>
+      <div class="manifest-row"><div class="code">05</div><h3>Commercial Negotiation</h3><div class="route">Pricing, payment terms, lead times, and liability negotiated and documented on the client's behalf.</div></div>
+      <div class="manifest-row"><div class="code">06</div><h3>Order &amp; Production Monitoring</h3><div class="route">Purchase order placed; production progress tracked against milestones, with issues raised while they can still be fixed.</div></div>
+      <div class="manifest-row"><div class="code">07</div><h3>Inspection &amp; Quality Verification</h3><div class="route">Goods inspected against the locked specification and approved sample before dispatch — not after arrival.</div></div>
+      <div class="manifest-row"><div class="code">08</div><h3>Logistics, Clearance &amp; Fulfilment</h3><div class="route">Freight coordination, customs documentation, and delivery managed through to receipt — one accountable point of contact throughout.</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ====== 2 · SINGLE TRADING CATEGORY CARD (repeating component) ====== -->
+<!-- Uses existing .story-card system in style.css — zero new CSS needed.
+     Duplicate once per category inside <div class="services-grid">.
+     Swap the tag, h3, story-text, and background image per category.
+     Image: use a root-level file (e.g. trade-raw-materials.jpg) or a
+     licensed CDN URL — the repo has NO /assets/ directory. -->
+
+<div class="service-card story-card" tabindex="0">
+  <div class="story-img" style="background-image:url('IMAGE-URL-HERE');"></div>
+  <div class="story-overlay">
+    <div class="tag">Trading Division · 01</div>
+    <h3>Industrial Raw Materials &amp; Chemicals</h3>
+    <p class="story-text">Sourcing and supply of industrial inputs against written specification — screened suppliers, agreed inspection criteria, coordinated logistics.</p>
+  </div>
+</div>
+
+
+<!-- ====== 3 · SUPABASE INTEGRATION (guarded, drop-in) ====== -->
+<!-- Requires the page's existing includes (add if absent, before </body>):
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+
+RUN THIS SQL FIRST in Supabase (SQL editor) — these tables don't exist yet:
+
+  create table if not exists product_lines (
+    id uuid primary key default gen_random_uuid(),
+    division_code text not null,          -- '01'..'07'
+    title text not null,
+    summary text,
+    image_url text,
+    sort_order int default 0,
+    is_active boolean default true,
+    created_at timestamptz default now()
+  );
+  alter table product_lines enable row level security;
+  create policy "public read active lines" on product_lines
+    for select using (is_active = true);
+  create policy "admin manages lines" on product_lines
+    for all using (is_admin()) with check (is_admin());
+
+  create table if not exists trade_inquiries (
+    id uuid primary key default gen_random_uuid(),
+    name text not null,
+    email text not null,
+    company text,
+    division_code text,
+    message text not null,
+    created_at timestamptz default now()
+  );
+  alter table trade_inquiries enable row level security;
+  create policy "anyone can submit inquiry" on trade_inquiries
+    for insert with check (true);
+  create policy "admin reads inquiries" on trade_inquiries
+    for select using (is_admin());
+
+(Reuses the existing security-definer is_admin() — do not replace it;
+it's what fixed the RLS recursion bug.)
+-->
+
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+  // Guards: exit quietly if this snippet is previewed standalone
+  if (typeof sb === 'undefined') return;
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+
+  // A) Render active trading divisions from product_lines
+  const grid = document.getElementById('trade-lines-grid');
+  if (grid) {
+    const { data, error } = await sb.from('product_lines')
+      .select('division_code,title,summary,image_url')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (!error && data && data.length) {
+      grid.innerHTML = data.map(l => `
+        <div class="service-card story-card" tabindex="0">
+          <div class="story-img" style="background-image:url('${escapeHtml(l.image_url)}');"></div>
+          <div class="story-overlay">
+            <div class="tag">Trading Division · ${escapeHtml(l.division_code)}</div>
+            <h3>${escapeHtml(l.title)}</h3>
+            <p class="story-text">${escapeHtml(l.summary)}</p>
+          </div>
+        </div>`).join('');
+    }
+    // On error/empty: leave the static hard-coded cards in place as fallback
+  }
+
+  // B) Trade inquiry submission (insert-only; admin reads via portal)
+  const form = document.getElementById('trade-inquiry-form');
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const status = document.getElementById('trade-inquiry-status');
+      const payload = {
+        name:          form.querySelector('[name=name]')?.value?.trim(),
+        email:         form.querySelector('[name=email]')?.value?.trim(),
+        company:       form.querySelector('[name=company]')?.value?.trim() || null,
+        division_code: form.querySelector('[name=division]')?.value || null,
+        message:       form.querySelector('[name=message]')?.value?.trim()
+      };
+      if (!payload.name || !payload.email || !payload.message) {
+        if (status) status.textContent = 'Please complete name, email, and message.';
+        return;
+      }
+      const { error } = await sb.from('trade_inquiries').insert(payload);
+      if (status) status.textContent = error
+        ? 'Something went wrong — please email us directly at hello@jabranandco.com.'
+        : 'Received. We\u2019ll come back to you shortly.';
+      if (!error) form.reset();
+    });
+  }
+});
+</script>
