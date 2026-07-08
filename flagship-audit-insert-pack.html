@@ -1,0 +1,293 @@
+<!-- ================================================================
+     FLAGSHIP INSERT PACK — production-plant-audit-performance.html
+     ================================================================
+     PLACEMENT: paste Blocks A–D in order, directly AFTER the
+     "Areas we assess" manifest section and BEFORE the
+     "Deliverables" checklist section on the live page.
+
+     Block 0 (local styles) goes in the page <head>, after the
+     style.css <link>. Everything else inherits existing tokens.
+
+     Integrity notes:
+     · The worked diagnostic in Block B is explicitly framed as an
+       illustrative scenario ("Consider a plant…"). No client is
+       named or implied. No outcomes are claimed.
+     · The JABRAN Method™ maps 1:1 to the audit scope and
+       deliverables already published on this page. ™ asserts an
+       unregistered common-law mark — do not use ® unless/until
+       registered with IPO-Pakistan.
+================================================================ -->
+
+
+<!-- ============ BLOCK 0 — local styles (page <head>) ============ -->
+<style>
+  /* Audit data tables — Inter, hairline grid, gold column accents */
+  .audit-table-wrap{overflow-x:auto; border:1px solid var(--line);}
+  .audit-table{
+    width:100%; border-collapse:collapse; min-width:760px;
+    font-family:'Inter', sans-serif; font-size:14px;
+  }
+  .audit-table th{
+    text-align:left; padding:16px 20px; background:var(--bg-alt-2);
+    color:var(--gold); font-size:11px; letter-spacing:0.18em;
+    text-transform:uppercase; font-weight:500; border-bottom:1px solid var(--line);
+  }
+  .audit-table td{
+    padding:18px 20px; border-bottom:1px solid var(--line);
+    color:var(--muted); vertical-align:top; line-height:1.6;
+  }
+  .audit-table tr:last-child td{border-bottom:none;}
+  .audit-table td:first-child{
+    color:var(--gold-light); font-weight:500; white-space:nowrap;
+  }
+  .audit-table td strong{color:var(--cream); font-weight:500;}
+  .audit-table tbody tr{transition:background 0.25s ease;}
+  .audit-table tbody tr:hover{background:rgba(198,165,90,0.05);}
+
+  /* Method phase cards — five across, collapsing responsively */
+  .method-5-grid{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line);
+  }
+  .method-5-grid .method-card{background:var(--bg); padding:30px 24px;}
+  .method-5-grid .method-card:hover{background:var(--bg-alt-2);}
+  .method-phase-num{
+    font-size:11px; letter-spacing:0.2em; color:var(--gold);
+    text-transform:uppercase; margin-bottom:12px;
+  }
+  .method-5-grid h3{
+    font-family:'Playfair Display',serif; font-size:22px;
+    color:var(--cream); margin-bottom:10px;
+  }
+  .method-5-grid .method-lede{font-size:13.5px; color:var(--muted); line-height:1.6;}
+  @media (max-width:1080px){ .method-5-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .method-5-grid{grid-template-columns:1fr;} }
+
+  /* Diagnostic walkthrough steps */
+  .diag-steps{border-top:1px solid rgba(16,20,24,0.12); max-width:820px;}
+  .diag-step{
+    display:grid; grid-template-columns:64px 1fr; gap:26px;
+    padding:26px 0; border-bottom:1px solid rgba(16,20,24,0.12);
+  }
+  .diag-step .q{
+    font-family:'Playfair Display',serif; font-size:26px;
+    color:var(--gold-deep); line-height:1;
+  }
+  .diag-step h4{color:var(--text-dark); font-size:16.5px; font-weight:600; margin-bottom:8px;}
+  .diag-step p{color:var(--text-secondary); font-size:15px; line-height:1.7; margin:0;}
+  @media (max-width:560px){ .diag-step{grid-template-columns:1fr; gap:8px;} }
+</style>
+
+
+<!-- ============ BLOCK A — The JABRAN Method™ ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Our Operating Framework</div>
+      <h2>The JABRAN Method™</h2>
+      <p style="color:var(--muted); margin-top:16px; font-size:16px;">Five phases, each with a defined question, a defined evidence base, and a defined output. Nothing moves to the next phase on opinion alone.</p>
+    </div>
+    <div class="method-5-grid">
+      <details class="method-card">
+        <summary>
+          <div class="method-phase-num">Phase 01</div>
+          <h3>Discover</h3>
+          <p class="method-lede">Establish what the plant believes about itself.</p>
+        </summary>
+        <div class="method-more">Management interviews, production records review, and a first structured walk of the floor. The output is a documented gap list: every point where the plant's records and the plant's reality disagree.</div>
+      </details>
+      <details class="method-card">
+        <summary>
+          <div class="method-phase-num">Phase 02</div>
+          <h3>Diagnose</h3>
+          <p class="method-lede">Measure the losses and rank them by impact.</p>
+        </summary>
+        <div class="method-more">Time studies, downtime logging, line-balance analysis, and material-flow tracing across all six assessment areas. The output is a quantified capacity-loss ledger, ranked by hours and cost — not by anecdote.</div>
+      </details>
+      <details class="method-card">
+        <summary>
+          <div class="method-phase-num">Phase 03</div>
+          <h3>Design</h3>
+          <p class="method-lede">Build the intervention around the largest verified loss.</p>
+        </summary>
+        <div class="method-more">Corrective actions are specified with owners, sequence, and expected effect — prioritised so the first move lands on the biggest constraint. The output is the 90-day action plan and management presentation.</div>
+      </details>
+      <details class="method-card">
+        <summary>
+          <div class="method-phase-num">Phase 04</div>
+          <h3>Deliver</h3>
+          <p class="method-lede">Support execution on the floor, not from a slide.</p>
+        </summary>
+        <div class="method-more">For clients who retain us through implementation: on-site support of the action plan, removal of blockers, and verification that each fix produces its expected effect before the next begins.</div>
+      </details>
+      <details class="method-card">
+        <summary>
+          <div class="method-phase-num">Phase 05</div>
+          <h3>Develop</h3>
+          <p class="method-lede">Leave behind capability, not dependence.</p>
+        </summary>
+        <div class="method-more">A KPI framework, an operational dashboard, and training for supervisors so the measurement discipline survives our departure. The audit ends; the visibility does not.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ BLOCK B — Anatomy of a Diagnosis (ivory editorial) ============ -->
+<section class="section-light">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Anatomy of a Diagnosis</div>
+      <h2>How a 20% drop gets found</h2>
+      <p style="margin-top:16px; font-size:16px;">An illustrative walkthrough of the diagnostic logic. Consider a plant whose packing department output has fallen roughly 20% over a quarter — a pattern we see in many facilities. Management's first explanation is almost always labour. The method's job is to replace that assumption with evidence.</p>
+    </div>
+    <div class="diag-steps">
+      <div class="diag-step">
+        <div class="q">Q1</div>
+        <div>
+          <h4>Is the drop real, and where exactly does it sit?</h4>
+          <p>Reconcile dispatch records against packing-line counts, shift by shift and SKU by SKU. A "20% department drop" is often three different problems wearing one number — one line, one shift, or one product family may account for most of it. The diagnosis narrows before it explains.</p>
+        </div>
+      </div>
+      <div class="diag-step">
+        <div class="q">Q2</div>
+        <div>
+          <h4>Is packing the constraint, or the victim of one?</h4>
+          <p>A packing line can only pack what reaches it. Trace upstream: is the line starved by filling, by material availability, by changeover scheduling? If operators are standing idle waiting for product, the loss lives upstream and every hour spent "fixing packing" is wasted.</p>
+        </div>
+      </div>
+      <div class="diag-step">
+        <div class="q">Q3</div>
+        <div>
+          <h4>If it is packing — is the loss availability, rate, or quality?</h4>
+          <p>Time-stamped observation over full shifts separates the three: machine stoppages and changeovers (availability), running below rated speed and micro-stops (performance), and rejects or rework consuming finished output (quality). Each has a different owner and a different fix; conflating them guarantees the wrong intervention.</p>
+        </div>
+      </div>
+      <div class="diag-step">
+        <div class="q">Q4</div>
+        <div>
+          <h4>What changed when the drop began?</h4>
+          <p>A step-change has a cause with a date: a new SKU with a slower pack format, a maintenance event, a staffing rotation, a material or supplier switch. Correlating the timeline of the drop against the plant's change log usually shortens the search dramatically.</p>
+        </div>
+      </div>
+      <div class="diag-step">
+        <div class="q">Q5</div>
+        <div>
+          <h4>What is the ranked recovery sequence?</h4>
+          <p>Only now is a recommendation legitimate. The verified losses are ranked by recoverable hours, each with an owner, an action, and an expected effect — the raw material of the 90-day plan. The discipline is refusing to prescribe in week one what can only be known by week three.</p>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:28px; font-size:13px; color:var(--text-secondary); max-width:820px;"><em>This walkthrough is illustrative of our diagnostic method. Findings from client engagements are published only after completion and with written client approval.</em></p>
+  </div>
+</section>
+
+
+<!-- ============ BLOCK C — Audit workflow table ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">On the Ground</div>
+      <h2>The audit workflow</h2>
+    </div>
+    <div class="audit-table-wrap">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>On-Site Activity</th>
+            <th>Evidence Collected</th>
+            <th>Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Discover</td>
+            <td>Management interviews · records review · structured floor walk</td>
+            <td>Production reports vs. observed reality; stated vs. actual process</td>
+            <td><strong>Gap list</strong> — where records and reality disagree</td>
+          </tr>
+          <tr>
+            <td>Diagnose</td>
+            <td>Time studies · downtime logging · line-balance &amp; flow tracing</td>
+            <td>Shift-level utilisation data; stoppage causes ranked by hours; material travel paths</td>
+            <td><strong>Capacity-loss ledger</strong> — quantified, ranked</td>
+          </tr>
+          <tr>
+            <td>Design</td>
+            <td>Constraint analysis · corrective-action specification with plant leadership</td>
+            <td>Verified constraint; expected effect per action; ownership map</td>
+            <td><strong>90-day action plan</strong> + management presentation</td>
+          </tr>
+          <tr>
+            <td>Deliver</td>
+            <td>Implementation support · blocker removal · fix-by-fix verification</td>
+            <td>Before/after measurement per corrective action</td>
+            <td><strong>Verified improvements</strong>, sequenced</td>
+          </tr>
+          <tr>
+            <td>Develop</td>
+            <td>KPI framework install · supervisor training · handover</td>
+            <td>Dashboard baseline; trained measurement owners</td>
+            <td><strong>Standing visibility</strong> that outlasts the engagement</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ BLOCK D — Capacity-loss ledger table ============ -->
+<section class="manifest">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">What We Measure</div>
+      <h2>The capacity-loss ledger</h2>
+      <p style="color:var(--muted); margin-top:16px; font-size:16px; max-width:640px;">Every audit produces this ledger — the plant's losses, named, measured, and ranked. It is the difference between knowing the plant is underperforming and knowing why.</p>
+    </div>
+    <div class="audit-table-wrap">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th>Loss Category</th>
+            <th>How It Is Measured</th>
+            <th>Evidence Artifact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Availability loss</td>
+            <td>Time-stamped stoppage log across full shifts — breakdowns, changeovers, waiting, starvation</td>
+            <td>Downtime Pareto, ranked by hours per cause</td>
+          </tr>
+          <tr>
+            <td>Performance loss</td>
+            <td>Observed cycle rate vs. rated capacity per machine and station; micro-stop frequency counts</td>
+            <td>Rate-gap table per line, with pacing station identified</td>
+          </tr>
+          <tr>
+            <td>Quality loss</td>
+            <td>Reject, rework, and scrap tracking at point of occurrence — not point of discovery</td>
+            <td>Defect-origin map with cost-of-poor-quality estimate</td>
+          </tr>
+          <tr>
+            <td>Flow loss</td>
+            <td>Material travel distance and handling counts from raw store to dispatch; search-time sampling</td>
+            <td>Spaghetti diagram + handling ledger</td>
+          </tr>
+          <tr>
+            <td>Maintenance loss</td>
+            <td>Planned vs. forced maintenance ratio; repeat-failure analysis by asset</td>
+            <td>Asset criticality register with failure history</td>
+          </tr>
+          <tr>
+            <td>Planning loss</td>
+            <td>Schedule adherence tracking; changeover sequence analysis; handoff audit between planning and floor</td>
+            <td>Adherence report with root-cause tags per deviation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
