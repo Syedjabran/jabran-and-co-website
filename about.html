@@ -63,44 +63,45 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jabranandco.com/"}, {"@type": "ListItem", "position": 2, "name": "About", "item": "https://www.jabranandco.com/about.html"}]}</script>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&amp;family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-/* ===== About hero scene (LED-wall mission as live text) ===== */
-.hero-scene{background:var(--ink, #0b0f14); line-height:0;}
-.hero-scene-frame{position:relative; width:100%;}
-.hero-scene-img{display:block; width:100%; height:auto;}
-/* Positions are % of the 1376x768 frame, so overlays track the image at any width */
-.led-mission{
-  position:absolute; left:46.6%; top:12%; width:27.5%;
-  line-height:1.18; text-align:left;
+/* ===== About hero: full scene as background, LED mission as live text ===== */
+.page-hero.hero-scene{padding:0;}
+/* Frame keeps the image's exact 1376:768 aspect, so the full scene always shows
+   edge-to-edge with zero cropping, and % overlay positions never drift */
+.hero-scene-frame{
+  position:relative; width:100%; aspect-ratio:1376/768;
+  background-image:url('about-hero-scene.jpg');
+  background-image:image-set(url('about-hero-scene.webp') type('image/webp'), url('about-hero-scene.jpg') type('image/jpeg'));
+  background-size:cover; background-position:center;
 }
-.led-headline{
-  margin:0; font-family:'Inter',sans-serif; font-weight:600;
-  font-size:2.35vw; letter-spacing:0.015em; text-transform:uppercase;
-  color:#ffffff; text-shadow:0 2px 14px rgba(6,20,45,0.55);
+/* Existing page title, overlaid on a soft bottom scrim for legibility */
+.hero-copy{
+  position:absolute; left:0; right:0; bottom:0; padding:90px 0 44px;
+  background:linear-gradient(180deg, rgba(11,15,20,0) 0%, rgba(11,15,20,0.82) 85%);
 }
-.led-gold{color:#e8c15a; display:block;}
-.led-subline{
-  margin:0.9vw 0 0; font-family:'Inter',sans-serif; font-weight:500;
-  font-size:0.95vw; letter-spacing:0.14em; text-transform:uppercase;
-  color:rgba(255,255,255,0.92); text-shadow:0 1px 8px rgba(6,20,45,0.5);
-}
-.led-logo{
-  position:absolute; left:47.2%; top:36.5%; width:12.5%; height:auto;
-  filter:drop-shadow(0 2px 10px rgba(6,20,45,0.45));
-}
-/* Caption fallback: on small screens the wall text is too small to read, so the
-   same mission text renders as a legible block beneath the scene */
+/* Mission text, positioned line-by-line over the LED wall (percentages of frame) */
+.led-mission p{margin:0; position:absolute; left:46.7%; font-family:'Inter',sans-serif; text-transform:uppercase; white-space:nowrap;}
+.led-h{font-weight:800; font-size:2.5vw; letter-spacing:0.005em; color:#fff;
+  text-shadow:0 0 3px rgba(16,35,63,0.95), 0 0 8px rgba(16,35,63,0.85), 0 2px 12px rgba(6,20,45,0.6);}
+.led-h.gold{color:#e8c15a;}
+.led-l1{top:13.1%;} .led-l2{top:18.5%;} .led-l3{top:23.9%;}
+.led-sub{top:29.9%; font-weight:700; font-size:1.02vw; letter-spacing:0.1em; color:rgba(255,255,255,0.95);
+  text-shadow:0 0 3px rgba(16,35,63,0.95), 0 0 6px rgba(16,35,63,0.85);}
+/* Mobile: mission text too small on the wall, so it renders as a block below the scene */
 .led-mission-caption{display:none;}
 @media (max-width:720px){
-  .led-mission, .led-logo{display:none;}
+  .led-mission{display:none;}
+  .hero-copy{position:static; background:var(--bg-alt, #10151c); padding:34px 0 30px;}
   .led-mission-caption{
-    display:block; padding:26px 22px 30px; line-height:1.35;
-    background:linear-gradient(180deg, #10233f, #0b0f14); text-align:center;
+    display:block; padding:24px 22px 28px; text-align:center; line-height:1.35;
+    background:linear-gradient(180deg, #10233f, #0b0f14);
+    font-family:'Inter',sans-serif; text-transform:uppercase;
   }
-  .led-mission-caption .led-headline{font-size:19px;}
-  .led-mission-caption .led-subline{font-size:11px; margin-top:10px;}
+  .led-mission-caption .cap-h{margin:0; font-weight:800; font-size:19px; color:#fff;}
+  .led-mission-caption .cap-h .gold{color:#e8c15a;}
+  .led-mission-caption .cap-sub{margin:10px 0 0; font-weight:600; font-size:11px; letter-spacing:0.14em; color:rgba(255,255,255,0.9);}
 }
 </style>
 </head>
@@ -149,30 +150,25 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
     </div>
   </div>
 </aside>
-<section class="page-hero" style="background-image:linear-gradient(180deg, rgba(11,15,20,0.92), rgba(11,15,20,0.97)), url('about-hero-scene.jpg'); background-size:cover; background-position:center top;">
-  <div class="wrap">
-    <div class="eyebrow">About Us</div>
-    <h1>Our Story</h1>
-    <p>Trading and advising informally since 2014, formally registered as a partnership firm in Lahore in 2026.</p>
-  </div>
-</section>
-
-<!-- Hero scene: full visual ecosystem with the mission statement rendered as live text over the LED wall -->
-<section class="hero-scene" aria-label="Jabran &amp; Co mission">
-  <div class="hero-scene-frame">
-    <picture>
-      <source srcset="about-hero-scene.webp" type="image/webp">
-      <img class="hero-scene-img" src="about-hero-scene.jpg" alt="Concept visual: four professionals collaborating around an interactive brand table in a glass-walled London office at dusk, with the Jabran &amp; Co mission displayed on a large LED wall" width="1376" height="768" loading="eager">
-    </picture>
-    <div class="led-mission">
-      <p class="led-headline"><span class="led-gold">Unleashing Human Potential</span> Through Creative Vision &amp; Brand Excellence</p>
-      <p class="led-subline">Our People. Our Ethos. Our Global Impact.</p>
+<section class="page-hero hero-scene" aria-label="About Jabran &amp; Co">
+  <div class="hero-scene-frame" role="img" aria-label="Concept visual: four professionals collaborating around an interactive brand table in a glass-walled London office at dusk, with the Jabran &amp; Co mission displayed on a large LED wall">
+    <div class="led-mission" aria-hidden="false">
+      <p class="led-h gold led-l1">Unleashing Human Potential</p>
+      <p class="led-h led-l2">Through Creative Vision &amp;</p>
+      <p class="led-h led-l3">Brand Excellence</p>
+      <p class="led-sub">Our People. Our Ethos. Our Global Impact.</p>
     </div>
-    <img class="led-logo" src="logo-full.png" alt="Jabran &amp; Co">
+    <div class="hero-copy">
+      <div class="wrap">
+        <div class="eyebrow">About Us</div>
+        <h1>Our Story</h1>
+        <p>Trading and advising informally since 2014, formally registered as a partnership firm in Lahore in 2026.</p>
+      </div>
+    </div>
   </div>
   <div class="led-mission-caption">
-    <p class="led-headline"><span class="led-gold">Unleashing Human Potential</span> Through Creative Vision &amp; Brand Excellence</p>
-    <p class="led-subline">Our People. Our Ethos. Our Global Impact.</p>
+    <p class="cap-h"><span class="gold">Unleashing Human Potential</span> Through Creative Vision &amp; Brand Excellence</p>
+    <p class="cap-sub">Our People. Our Ethos. Our Global Impact.</p>
   </div>
 </section>
 
