@@ -1,0 +1,78 @@
+<!-- ================================================================
+     INTEGRATION SNIPPET — "The Hidden Factory" firm insight
+     ================================================================
+
+     BLOCK 1 — Firm Insights section for insights.html
+     Paste this section directly AFTER the page-hero (and before the
+     Topic of the Discussion section). It creates a firm-authored
+     editorial tier above the community-submitted posts, using the
+     existing teaser-grid vocabulary. No CSS changes required.
+================================================================ -->
+
+<section class="teasers">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">From the Firm</div>
+      <h2>Firm insights</h2>
+    </div>
+    <div class="teaser-grid">
+      <div class="teaser-card reveal">
+        <div class="eyebrow">Production &amp; Operations · July 2026</div>
+        <h3>The Hidden Factory</h3>
+        <p>Every plant runs a second, invisible factory that consumes the capacity the first was supposed to deliver. Where it hides, why standard reporting never sees it, and the diagnostic discipline that recovers it.</p>
+        <a class="link" href="insight-hidden-factory.html">Read the Insight →</a>
+      </div>
+      <div class="teaser-card reveal">
+        <div class="eyebrow">Reserved</div>
+        <h3>Next insight in preparation</h3>
+        <p>Firm insights are published as they are written — one strong piece at a time, never filler.</p>
+      </div>
+      <div class="teaser-card reveal">
+        <div class="eyebrow">Contribute</div>
+        <h3>Have a perspective?</h3>
+        <p>Community submissions are reviewed by our team and published below once approved.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================
+     BLOCK 2 — sitemap.xml entry
+     Add inside <urlset>, alongside the insights.html entry.
+================================================================ -->
+<!--
+  <url>
+    <loc>https://www.jabranandco.com/insight-hidden-factory.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+-->
+
+
+<!-- ================================================================
+     DEPLOYMENT NOTES
+     ================================================================
+     1. insight-hidden-factory.html has two clearly marked placeholder
+        comments — HEADER/SIDEBAR and FOOTER. Copy those shared blocks
+        verbatim from insights.html so navigation, reg-number trust
+        markers (Firm Reg. 6634 / FBR J152588), and social links stay
+        byte-identical across the site. Set the sidebar active link to
+        insights.html.
+     2. Analytics (GA4 G-7S5MKLLT8B, Meta Pixel 949153958179548,
+        LinkedIn 10515737) are already included in the article head —
+        do not duplicate them when pasting the header.
+     3. The CTA uses the established ref-parameter pattern:
+        contact.html?ref=insight-hidden-factory — this will attribute
+        audit inquiries to this article in GA4.
+     4. Content integrity: the piece contains no client names, no
+        fabricated metrics, and no invented outcomes. The only figure
+        cited (world-class OEE ≈ 85%) is a standard published industry
+        benchmark, framed as such. The six loss areas map one-to-one
+        to the real audit scope on
+        production-plant-audit-performance.html.
+     5. Social derivative: the pull-quote "The cheapest capacity any
+        plant will ever buy is the capacity it already owns" is
+        deliberately written to stand alone as a LinkedIn/X post
+        linking back to the article.
+================================================================ -->
