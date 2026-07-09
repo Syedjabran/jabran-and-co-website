@@ -64,8 +64,70 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "serviceType": "Factory Performance Audit", "provider": {"@type": "Organization", "name": "Jabran & Co", "url": "https://www.jabranandco.com/"}, "areaServed": "PK", "description": "Production Plant Audit &amp; Performance by Jabran &amp; Co — factory performance audits and production improvement consulting, identifying operational bottlenecks, production losses, and efficiency gaps for manufacturing businesses."}</script>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&amp;family=Inter:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+/* ===== PA Diagnostic Dashboard (scoped) ===== */
+.pa-diagnostic{background:var(--bg-alt); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:100px 0;}
+.pa-head{max-width:640px; margin-bottom:56px;}
+.pa-head h2{font-size:clamp(28px,3.6vw,42px); color:var(--cream); margin-top:14px;}
+.pa-lead{margin-top:18px; color:var(--muted); font-size:16px;}
+.pa-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+.pa-cell{
+  position:relative; background:var(--bg); padding:30px 26px 26px; overflow:hidden;
+  opacity:0; transform:translateY(18px);
+  transition:opacity .6s ease, transform .6s ease, background .35s ease;
+}
+.pa-cell.pa-in{opacity:1; transform:none;}
+.pa-cell::before{
+  content:""; position:absolute; top:0; left:0; height:2px; width:100%;
+  background:linear-gradient(90deg, var(--gold), var(--gold-light));
+  transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.4,0,.2,1);
+}
+.pa-cell:hover{background:var(--bg-alt-2);}
+.pa-cell:hover::before{transform:scaleX(1);}
+.pa-idx{
+  font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.22em;
+  color:var(--gold); display:block; margin-bottom:14px;
+}
+.pa-cell h3{font-family:'Inter',sans-serif; font-weight:500; font-size:16.5px; color:var(--cream); line-height:1.4;}
+.pa-scan{
+  position:absolute; left:26px; right:26px; bottom:18px; height:1px;
+  background:rgba(198,165,90,0.18);
+}
+.pa-scan::after{
+  content:""; position:absolute; inset:0; background:var(--gold-light);
+  transform:scaleX(0); transform-origin:left; transition:transform .7s ease .1s;
+}
+.pa-cell:hover .pa-scan::after{transform:scaleX(1);}
+.pa-closing{margin-top:40px; max-width:640px; color:var(--muted); font-size:16px;}
+.pa-roadmap{margin-top:64px; position:relative; padding-top:36px;}
+.pa-roadline{position:absolute; top:0; left:0; height:1px; width:100%; background:rgba(198,165,90,0.18); overflow:hidden;}
+.pa-roadline::after{
+  content:""; position:absolute; inset:0; background:linear-gradient(90deg, var(--gold), var(--gold-light));
+  transform:scaleX(0); transform-origin:left; transition:transform 1.4s cubic-bezier(.4,0,.2,1);
+}
+.pa-roadmap.pa-in .pa-roadline::after{transform:scaleX(1);}
+.pa-result{font-family:'Playfair Display',serif; font-size:clamp(20px,2.6vw,29px); line-height:1.55; color:var(--cream); max-width:940px;}
+.pa-result strong{color:var(--gold-light); font-weight:600;}
+.pa-outcome{
+  color:var(--muted); background-image:linear-gradient(var(--gold-light), var(--gold-light));
+  background-repeat:no-repeat; background-size:0% 1px; background-position:0 100%;
+  transition:color .6s ease, background-size .6s ease; padding-bottom:2px;
+}
+.pa-roadmap.pa-in .pa-outcome{color:var(--gold-light); background-size:100% 1px;}
+.pa-roadmap.pa-in .pa-outcome:nth-of-type(1){transition-delay:.25s;}
+.pa-roadmap.pa-in .pa-outcome:nth-of-type(2){transition-delay:.5s;}
+.pa-roadmap.pa-in .pa-outcome:nth-of-type(3){transition-delay:.75s;}
+.pa-roadmap.pa-in .pa-outcome:nth-of-type(4){transition-delay:1s;}
+.pa-roadmap.pa-in .pa-outcome:nth-of-type(5){transition-delay:1.25s;}
+@media (max-width:900px){ .pa-grid{grid-template-columns:repeat(2,1fr);} .pa-diagnostic{padding:72px 0;} }
+@media (max-width:560px){ .pa-grid{grid-template-columns:1fr;} .pa-cell{padding:24px 22px 22px;} }
+@media (prefers-reduced-motion:reduce){
+  .pa-cell,.pa-outcome,.pa-roadline::after,.pa-cell::before,.pa-scan::after{transition:none !important;}
+  .pa-cell{opacity:1; transform:none;}
+}
+</style>
 </head>
 <body>
 <div id="jc-loader"><div class="jc-sweep"></div><img src="logo-full.png" alt="Jabran &amp; Co"></div>
@@ -125,8 +187,8 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
     <div class="about-grid">
       <div>
         <h3 style="font-size:22px; color:var(--gold-light); margin-bottom:12px;">What a Factory Performance Audit Covers</h3>
-        <p>A structured, on-the-ground review of how a facility actually operates — looking beyond the headline output numbers to find where time, capacity, and margin are being lost.</p>
-        <p>We work with manufacturing businesses to examine production planning and flow, machine utilisation, downtime patterns, material movement, inventory control, quality control processes, maintenance practices, and factory layout — building a clear picture of where the constraints actually sit.</p>
+        <p>A Factory Performance Audit provides a structured, on-site assessment of your manufacturing operation, uncovering inefficiencies that impact productivity, capacity, profitability, and growth.</p>
+        <p>Going beyond headline production figures, we identify where time, resources, and margin are being lost across the factory floor.</p>
       </div>
       <div>
         <h3 style="font-size:22px; color:var(--gold-light); margin-bottom:12px;">Why Production Plants Underperform</h3>
@@ -136,6 +198,57 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
     </div>
   </div>
 </section>
+
+<!-- ===== PA Diagnostic Dashboard ===== -->
+<section class="pa-diagnostic" id="diagnostic-coverage">
+  <div class="wrap">
+    <div class="pa-head">
+      <div class="eyebrow">Diagnostic Coverage</div>
+      <h2>Key Operational Areas</h2>
+      <p class="pa-lead">Our manufacturing consultants analyse key operational areas, including:</p>
+    </div>
+    <div class="pa-grid">
+      <article class="pa-cell"><span class="pa-idx">AREA 01</span><h3>Production Planning &amp; Scheduling</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 02</span><h3>Workflow Efficiency</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 03</span><h3>Machine Utilisation</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 04</span><h3>Downtime Causes</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 05</span><h3>Material Handling</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 06</span><h3>Inventory Management</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 07</span><h3>Quality Control Systems</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 08</span><h3>Maintenance Performance</h3><span class="pa-scan" aria-hidden="true"></span></article>
+      <article class="pa-cell"><span class="pa-idx">AREA 09</span><h3>Factory Layout Optimisation</h3><span class="pa-scan" aria-hidden="true"></span></article>
+    </div>
+    <p class="pa-closing">By examining how your facility operates in practice, we build a clear picture of bottlenecks, constraints, and improvement opportunities.</p>
+    <div class="pa-roadmap">
+      <div class="pa-roadline" aria-hidden="true"></div>
+      <p class="pa-result">The result is a <strong>data-driven roadmap</strong> that helps manufacturers <span class="pa-outcome">increase output</span>, <span class="pa-outcome">reduce waste</span>, <span class="pa-outcome">improve operational efficiency</span>, <span class="pa-outcome">lower costs</span>, and <span class="pa-outcome">maximise factory performance</span>.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var items = document.querySelectorAll('.pa-cell, .pa-roadmap');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(function (el) { el.classList.add('pa-in'); });
+    return;
+  }
+  var cells = document.querySelectorAll('.pa-cell');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      if (el.classList.contains('pa-cell')) {
+        var i = Array.prototype.indexOf.call(cells, el);
+        el.style.transitionDelay = (i % 3) * 0.08 + 's';
+      }
+      el.classList.add('pa-in');
+      io.unobserve(el);
+    });
+  }, { threshold: 0.25 });
+  items.forEach(function (el) { io.observe(el); });
+})();
+</script>
 
 <section class="manifest">
   <div class="wrap">
