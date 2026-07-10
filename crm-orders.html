@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders &amp; Projects | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; transition:color .2s, border-color .2s; text-decoration:none;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:500; padding:10px 12px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .crm-table td{padding:12px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-row-link{cursor:pointer;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--line); color:var(--gold-light); border-radius:2px; white-space:nowrap;}
+  .crm-badge.warn{border-color:#e08a4a; color:#e08a4a;}
+  .crm-badge.bad{border-color:#e57368; color:#e57368;}
+  .crm-badge.ok{border-color:var(--emerald); color:#5cc9b4;}
+  .crm-toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center;}
+  .crm-toolbar input, .crm-toolbar select, .crm-form input, .crm-form select, .crm-form textarea{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:10px 12px; font-family:'Inter',sans-serif; font-size:13px; border-radius:2px; width:100%;
+  }
+  .crm-toolbar input, .crm-toolbar select{width:auto; min-width:180px;}
+  .crm-form textarea{min-height:70px; resize:vertical;}
+  .crm-form label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 5px;}
+  .crm-grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px 16px; margin-bottom:14px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .crm-btn.danger{background:transparent; border:1px solid #e57368; color:#e57368;}
+  .crm-btn.sm{padding:6px 12px; font-size:10px;}
+  .crm-modal-bg{position:fixed; inset:0; background:rgba(8,17,28,0.86); z-index:80; display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:60px 16px;}
+  .crm-modal{background:var(--bg-alt); border:1px solid var(--line); max-width:920px; width:100%; padding:34px 36px 40px;}
+  .crm-modal h2{margin-bottom:22px;}
+  .crm-fieldset-label{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:22px 0 12px; border-bottom:1px solid var(--line); padding-bottom:6px;}
+  .crm-empty{color:var(--muted); font-size:13px; padding:30px 0;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:8px;}
+  .crm-timeline{border-left:1px solid var(--line); margin:14px 0 0 6px; padding-left:20px;}
+  .crm-tl-item{margin-bottom:16px; position:relative;}
+  .crm-tl-item::before{content:''; position:absolute; left:-24px; top:6px; width:7px; height:7px; background:var(--gold); border-radius:50%;}
+  .crm-fin{border:1px solid var(--line); background:var(--bg-deep); padding:14px 18px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:12px;}
+  .crm-fin div{display:flex; justify-content:space-between; padding:3px 0;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  .crm-bar{height:6px; background:var(--bg-deep); border:1px solid var(--line); border-radius:2px; overflow:hidden; min-width:90px;}
+  .crm-bar span{display:block; height:100%; background:var(--gold);}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Client Relationship Management Portal</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" name="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <div class="crm-nav-label">Fulfilment</div>
+    <span class="crm-nav-item active" data-view="orders">Orders</span>
+    <span class="crm-nav-item" data-view="projects">Service Projects</span>
+    <span class="crm-nav-item" data-view="shipments">Shipments &amp; Customs</span>
+  </aside>
+
+  <main class="crm-main">
+
+    <!-- ORDERS -->
+    <section id="view-orders">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Fulfilment</div><h1>Orders</h1></div>
+      </div>
+      <div id="convertible-block" style="display:none; border:1px solid var(--line); background:var(--bg-alt); padding:16px 20px; margin-bottom:24px;">
+        <div class="eyebrow" style="margin-bottom:10px;">Accepted Quotations — Ready to Convert</div>
+        <div id="convertible-list"></div>
+      </div>
+      <div class="crm-toolbar">
+        <select id="ord-status-filter">
+          <option value="">All statuses</option>
+          <option value="draft">Draft</option><option value="confirmed">Confirmed</option>
+          <option value="awaiting_advance">Awaiting Advance</option><option value="advance_received">Advance Received</option>
+          <option value="supplier_confirmation">Supplier Confirmation</option><option value="in_production">In Production</option>
+          <option value="inspection">Inspection</option><option value="ready_for_dispatch">Ready for Dispatch</option>
+          <option value="shipment_booked">Shipment Booked</option><option value="dispatched">Dispatched</option>
+          <option value="in_transit">In Transit</option><option value="customs_clearance">Customs Clearance</option>
+          <option value="cleared">Cleared</option><option value="local_delivery">Local Delivery</option>
+          <option value="delivered">Delivered</option><option value="completed">Completed</option>
+          <option value="on_hold">On Hold</option><option value="cancelled">Cancelled</option>
+          <option value="disputed">Disputed</option><option value="refunded">Refunded</option>
+        </select>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Title</th><th>Organization</th><th>Value</th><th>Status</th><th>Client Sees</th><th></th></tr></thead>
+        <tbody id="ord-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="ord-empty" style="display:none;">No orders yet. Convert an accepted quotation to begin.</p>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="view-projects" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Consultancy &amp; Delivery</div><h1>Service Projects</h1></div>
+        <button class="crm-btn" id="btn-new-project">+ New Project</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Title</th><th>Organization</th><th>Due</th><th>Progress</th><th>Status</th><th></th></tr></thead>
+        <tbody id="prj-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="prj-empty" style="display:none;">No projects yet.</p>
+    </section>
+
+    <!-- SHIPMENTS -->
+    <section id="view-shipments" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Logistics — Internal Detail</div><h1>Shipments &amp; Customs</h1></div>
+        <button class="crm-btn" id="btn-new-shipment">+ New Shipment</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Order</th><th>Mode</th><th>Route</th><th>ETA</th><th>Status</th><th>Customs</th><th></th></tr></thead>
+        <tbody id="shp-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="shp-empty" style="display:none;">No shipments yet.</p>
+    </section>
+
+  </main>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="crm-modal-bg" id="modal-order">
+  <div class="crm-modal">
+    <h2 id="order-modal-title">Order</h2>
+    <form id="order-form" class="crm-form">
+      <input type="hidden" id="or-id">
+      <div class="crm-grid2">
+        <div><label>Title</label><input id="or-title"></div>
+        <div><label>Status</label>
+          <select id="or-status">
+            <option value="draft">Draft</option><option value="confirmed">Confirmed</option>
+            <option value="awaiting_advance">Awaiting Advance</option><option value="advance_received">Advance Received</option>
+            <option value="supplier_confirmation">Supplier Confirmation</option><option value="in_production">In Production</option>
+            <option value="inspection">Inspection</option><option value="ready_for_dispatch">Ready for Dispatch</option>
+            <option value="shipment_booked">Shipment Booked</option><option value="dispatched">Dispatched</option>
+            <option value="in_transit">In Transit</option><option value="customs_clearance">Customs Clearance</option>
+            <option value="cleared">Cleared</option><option value="local_delivery">Local Delivery</option>
+            <option value="delivered">Delivered</option><option value="completed">Completed</option>
+            <option value="on_hold">On Hold</option><option value="cancelled">Cancelled</option>
+            <option value="disputed">Disputed</option><option value="refunded">Refunded</option>
+          </select></div>
+        <div><label>Payment Status</label>
+          <select id="or-payment_status">
+            <option value="unpaid">Unpaid</option><option value="advance_received">Advance Received</option>
+            <option value="partially_paid">Partially Paid</option><option value="paid">Paid</option>
+            <option value="refunded">Refunded</option>
+          </select></div>
+        <div><label>Vendor (internal)</label><select id="or-vendor_id"><option value="">—</option></select></div>
+        <div><label>Purchase Cost (internal)</label><input id="or-purchase_cost" type="number" step="0.01" min="0"></div>
+        <div><label>Landed Cost (internal)</label><input id="or-landed_cost" type="number" step="0.01" min="0"></div>
+        <div><label>Promised Date</label><input id="or-promised_date" type="date"></div>
+        <div><label>Expected Completion</label><input id="or-expected_completion" type="date"></div>
+      </div>
+      <div><label>Internal Notes (never client-visible)</label><textarea id="or-internal_notes"></textarea></div>
+      <div class="crm-fieldset-label">Line Items</div>
+      <div id="or-items"></div>
+      <div class="crm-fin" id="or-fin"></div>
+      <div class="crm-fieldset-label">Order Timeline</div>
+      <div class="crm-timeline" id="or-timeline"></div>
+      <div style="margin-top:12px;"><label>Add Update</label><textarea id="or-new-event" style="min-height:52px;"></textarea></div>
+      <div style="display:flex; gap:10px; margin-top:8px; align-items:center; flex-wrap:wrap;">
+        <select id="or-event-visibility" style="width:auto;">
+          <option value="internal_only">Internal Only</option>
+          <option value="client_visible">Client Visible</option>
+          <option value="client_action_required">Client Action Required</option>
+        </select>
+        <button class="crm-btn ghost" type="button" id="btn-post-order-event">Post Update</button>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:22px;">
+        <button class="crm-btn" type="submit">Save Order</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-order">Close</button>
+        <span class="crm-status-msg" id="order-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="crm-modal-bg" id="modal-project">
+  <div class="crm-modal">
+    <h2 id="project-modal-title">New Project</h2>
+    <form id="project-form" class="crm-form">
+      <input type="hidden" id="pj-id">
+      <div class="crm-grid2">
+        <div><label>Title *</label><input id="pj-title" required></div>
+        <div><label>Organization *</label><select id="pj-organization_id" required><option value="">—</option></select></div>
+        <div><label>Service</label><select id="pj-service_id"><option value="">—</option></select></div>
+        <div><label>Related Order</label><select id="pj-order_id"><option value="">—</option></select></div>
+        <div><label>Start Date</label><input id="pj-start_date" type="date"></div>
+        <div><label>Due Date</label><input id="pj-due_date" type="date"></div>
+        <div><label>Completion %</label><input id="pj-completion_pct" type="number" min="0" max="100"></div>
+        <div><label>Status</label>
+          <select id="pj-status">
+            <option value="planned">Planned</option><option value="active">Active</option>
+            <option value="on_hold">On Hold</option><option value="delayed">Delayed</option>
+            <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+          </select></div>
+      </div>
+      <div><label>Scope</label><textarea id="pj-scope"></textarea></div>
+      <div style="margin-top:12px;"><label>Internal Notes (never client-visible)</label><textarea id="pj-internal_notes"></textarea></div>
+      <div id="pj-milestones-block" style="display:none;">
+        <div class="crm-fieldset-label">Milestones</div>
+        <div id="pj-milestones-list"></div>
+        <div class="crm-grid2" style="margin-top:10px;">
+          <div><label>Milestone Title</label><input id="pm-title"></div>
+          <div><label>Due Date</label><input id="pm-due_date" type="date"></div>
+          <div><label>Visibility</label>
+            <select id="pm-visibility">
+              <option value="internal_only">Internal Only</option>
+              <option value="client_visible">Client Visible</option>
+              <option value="client_action_required">Client Action Required</option>
+            </select></div>
+        </div>
+        <button class="crm-btn ghost" type="button" id="btn-add-milestone">Add Milestone</button>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:22px;">
+        <button class="crm-btn" type="submit">Save Project</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-project">Close</button>
+        <span class="crm-status-msg" id="project-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SHIPMENT MODAL -->
+<div class="crm-modal-bg" id="modal-shipment">
+  <div class="crm-modal">
+    <h2 id="shipment-modal-title">New Shipment</h2>
+    <form id="shipment-form" class="crm-form">
+      <input type="hidden" id="sh-id">
+      <div class="crm-grid2">
+        <div><label>Order *</label><select id="sh-order_id" required><option value="">—</option></select></div>
+        <div><label>Vendor (internal)</label><select id="sh-vendor_id"><option value="">—</option></select></div>
+        <div><label>Mode</label><select id="sh-mode"><option value="sea">Sea</option><option value="air">Air</option><option value="road">Road</option><option value="rail">Rail</option><option value="courier">Courier</option></select></div>
+        <div><label>Carrier</label><input id="sh-carrier"></div>
+        <div><label>Freight Forwarder</label><input id="sh-freight_forwarder"></div>
+        <div><label>Incoterm</label><input id="sh-incoterm"></div>
+        <div><label>Country of Origin</label><input id="sh-country_of_origin"></div>
+        <div><label>Port of Loading</label><input id="sh-port_of_loading"></div>
+        <div><label>Destination Port</label><input id="sh-destination_port"></div>
+        <div><label>Container No.</label><input id="sh-container_number"></div>
+        <div><label>B/L No.</label><input id="sh-bl_number"></div>
+        <div><label>AWB No.</label><input id="sh-awb_number"></div>
+        <div><label>ETD</label><input id="sh-etd" type="date"></div>
+        <div><label>ETA</label><input id="sh-eta" type="date"></div>
+        <div><label>Actual Departure</label><input id="sh-actual_departure" type="date"></div>
+        <div><label>Actual Arrival</label><input id="sh-actual_arrival" type="date"></div>
+        <div><label>Freight Cost (internal)</label><input id="sh-freight_cost" type="number" step="0.01" min="0"></div>
+        <div><label>Insurance (internal)</label><input id="sh-insurance_cost" type="number" step="0.01" min="0"></div>
+        <div><label>Status</label>
+          <select id="sh-status">
+            <option value="planned">Planned</option><option value="booked">Booked</option>
+            <option value="at_origin_port">At Origin Port</option><option value="departed">Departed</option>
+            <option value="in_transit">In Transit</option><option value="arrived">Arrived</option>
+            <option value="customs">Customs</option><option value="cleared">Cleared</option>
+            <option value="delivered">Delivered</option><option value="delayed">Delayed</option>
+            <option value="cancelled">Cancelled</option>
+          </select></div>
+      </div>
+      <div><label>Notes (internal)</label><textarea id="sh-notes"></textarea></div>
+      <div id="sh-customs-block" style="display:none;">
+        <div class="crm-fieldset-label">Customs Record</div>
+        <input type="hidden" id="cu-id">
+        <div class="crm-grid2">
+          <div><label>Customs Agent</label><input id="cu-customs_agent"></div>
+          <div><label>GD Number</label><input id="cu-gd_number"></div>
+          <div><label>HS Code</label><input id="cu-hs_code"></div>
+          <div><label>Customs Value</label><input id="cu-customs_value" type="number" step="0.01" min="0"></div>
+          <div><label>Duty</label><input id="cu-duty_amount" type="number" step="0.01" min="0"></div>
+          <div><label>Tax</label><input id="cu-tax_amount" type="number" step="0.01" min="0"></div>
+          <div><label>Clearing Charges</label><input id="cu-clearing_charges" type="number" step="0.01" min="0"></div>
+          <div><label>Demurrage</label><input id="cu-demurrage" type="number" step="0.01" min="0"></div>
+          <div><label>Detention</label><input id="cu-detention" type="number" step="0.01" min="0"></div>
+          <div><label>Customs Status</label>
+            <select id="cu-status">
+              <option value="pending">Pending</option><option value="gd_filed">GD Filed</option>
+              <option value="assessment">Assessment</option><option value="examination">Examination</option>
+              <option value="duty_paid">Duty Paid</option><option value="cleared">Cleared</option>
+              <option value="held">Held</option><option value="disputed">Disputed</option>
+            </select></div>
+          <div><label>Clearance Date</label><input id="cu-clearance_date" type="date"></div>
+        </div>
+        <div><label>Customs Notes</label><textarea id="cu-notes" style="min-height:52px;"></textarea></div>
+        <button class="crm-btn ghost" type="button" id="btn-save-customs">Save Customs Record</button>
+        <span class="crm-status-msg" id="customs-status"></span>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:22px;">
+        <button class="crm-btn" type="submit">Save Shipment</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-shipment">Close</button>
+        <span class="crm-status-msg" id="shipment-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function badgeClass(s){
+    if(['completed','delivered','cleared','paid','active'].includes(s)) return 'crm-badge ok';
+    if(['cancelled','disputed','refunded','held','delayed'].includes(s)) return 'crm-badge bad';
+    if(['on_hold','awaiting_advance','customs_clearance','customs','pending'].includes(s)) return 'crm-badge warn';
+    return 'crm-badge';
+  }
+  function val(id){ const el=document.getElementById(id); return el?(el.type==='checkbox'?el.checked:(el.value.trim()||null)):null; }
+  function numval(id){ const v=val(id); return v===null||v===false?null:Number(v); }
+  function setval(id,v){ const el=document.getElementById(id); if(!el)return; if(el.type==='checkbox'){el.checked=!!v;}else{el.value=v==null?'':v;} }
+  function openModal(id){ document.getElementById(id).style.display='flex'; }
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+  function fillSelect(id,rows,labelKey){
+    const sel=document.getElementById(id); if(!sel)return;
+    const first=sel.querySelector('option'); sel.innerHTML=''; sel.appendChild(first);
+    rows.forEach(r=>{ const o=document.createElement('option'); o.value=r.id; o.textContent=r[labelKey]; sel.appendChild(o); });
+  }
+
+  let orgsCache=[], servicesCache=[], vendorsCache=[], ordersCache=[], projectsCache=[], shipmentsCache=[], customsCache=[];
+  function orgName(id){ const o=orgsCache.find(x=>x.id===id); return o?o.legal_name:'—'; }
+  function orderLabel(id){ const o=ordersCache.find(x=>x.id===id); return o?(o.order_number+' '+o.title):'—'; }
+
+  /* ---------- auth ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:probe,error}=await sb.from('crm_settings').select('key').limit(1);
+    if(error||!probe){
+      document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    const [orgs,svcs,vnds]=await Promise.all([
+      sb.from('crm_organizations').select('id,legal_name').is('deleted_at',null).order('legal_name'),
+      sb.from('crm_services').select('id,name').eq('is_active',true).order('sort_order'),
+      sb.from('crm_vendors').select('id,legal_name').is('deleted_at',null).order('legal_name')
+    ]);
+    orgsCache=orgs.data||[]; servicesCache=svcs.data||[]; vendorsCache=vnds.data||[];
+    fillSelect('pj-organization_id',orgsCache,'legal_name');
+    fillSelect('pj-service_id',servicesCache,'name');
+    fillSelect('or-vendor_id',vendorsCache,'legal_name');
+    fillSelect('sh-vendor_id',vendorsCache,'legal_name');
+    showView('orders');
+  }
+
+  const loaders={orders:loadOrders, projects:loadProjects, shipments:loadShipments};
+  function showView(v){
+    document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.classList.toggle('active',n.dataset.view===v));
+    ['orders','projects','shipments'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'':'none');
+    loaders[v]&&loaders[v]();
+  }
+  document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
+
+  /* ---------- ORDERS ---------- */
+  async function loadOrders(){
+    const stF=document.getElementById('ord-status-filter').value;
+    let q=sb.from('crm_orders').select('*').is('deleted_at',null).order('created_at',{ascending:false});
+    if(stF)q=q.eq('status',stF);
+    const [{data:orders},{data:accepted}]=await Promise.all([
+      q, sb.from('crm_quotations').select('id,quotation_number,version,title,total,currency,organization_id').eq('status','accepted').is('deleted_at',null)
+    ]);
+    ordersCache=orders||[];
+    fillSelect('pj-order_id',ordersCache.map(o=>({id:o.id,name:o.order_number+' '+o.title})),'name');
+    fillSelect('sh-order_id',ordersCache.map(o=>({id:o.id,name:o.order_number+' '+o.title})),'name');
+    // convertible strip
+    const conv=accepted||[];
+    document.getElementById('convertible-block').style.display=conv.length?'block':'none';
+    document.getElementById('convertible-list').innerHTML=conv.map(x=>`
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid rgba(198,165,90,0.1); flex-wrap:wrap;">
+        <span style="font-size:13px;">${esc(x.quotation_number)} v${x.version} — ${esc(x.title)} · ${esc(orgName(x.organization_id))} · <span class="crm-mono">${money(x.total,x.currency)}</span></span>
+        <button class="crm-btn sm" data-convert="${x.id}">Convert to Order</button>
+      </div>`).join('');
+    document.querySelectorAll('[data-convert]').forEach(b=>b.addEventListener('click',async()=>{
+      if(!confirm('Convert this accepted quotation into a confirmed order?'))return;
+      const {error}=await sb.rpc('crm_convert_quotation_to_order',{p_quotation_id:b.dataset.convert});
+      if(error){ alert('Error: '+error.message); return; }
+      loadOrders();
+    }));
+    document.getElementById('ord-empty').style.display=ordersCache.length?'none':'block';
+    document.getElementById('ord-rows').innerHTML=ordersCache.map(o=>`
+      <tr class="crm-row-link" data-orid="${o.id}">
+        <td class="crm-mono">${esc(o.order_number||'—')}</td>
+        <td>${esc(o.title)}</td>
+        <td>${esc(orgName(o.organization_id))}</td>
+        <td class="crm-mono">${money(o.order_value,o.currency)}</td>
+        <td><span class="${badgeClass(o.status)}">${esc(label(o.status))}</span></td>
+        <td class="crm-mono"></td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    // client-facing status labels via SQL function values (mirror mapping client view uses)
+    document.querySelectorAll('[data-orid]').forEach((r,i)=>{
+      r.addEventListener('click',()=>openOrder(r.dataset.orid));
+    });
+  }
+  document.getElementById('ord-status-filter').addEventListener('change',loadOrders);
+
+  const OR_FIELDS=['title','status','payment_status','vendor_id','promised_date','expected_completion','internal_notes'];
+  async function openOrder(id){
+    const o=ordersCache.find(x=>x.id===id); if(!o)return;
+    document.getElementById('order-form').reset(); setval('or-id',o.id);
+    OR_FIELDS.forEach(f=>setval('or-'+f,o[f]));
+    setval('or-purchase_cost',o.purchase_cost); setval('or-landed_cost',o.landed_cost);
+    document.getElementById('order-modal-title').textContent=(o.order_number||'Order')+' — '+o.title;
+    const {data:items}=await sb.from('crm_order_items').select('*').eq('order_id',id).order('sort_order');
+    document.getElementById('or-items').innerHTML=(items&&items.length)
+      ? items.map(i=>`<div style="display:grid; grid-template-columns:3fr 1fr 1fr 1fr; gap:8px; font-size:12px; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.1);">
+          <span>${esc(i.description)}</span><span class="crm-mono">${i.quantity} ${esc(i.unit||'')}</span>
+          <span class="crm-mono">@ ${money(i.unit_price)}</span><span class="crm-mono">${money(i.line_total,o.currency)}</span>
+        </div>`).join('')
+      : '<p class="crm-empty" style="padding:6px 0;">No items.</p>';
+    // internal financial summary (from profitability view; RLS applies)
+    const {data:fin}=await sb.from('crm_order_profitability').select('*').eq('order_id',id).maybeSingle();
+    document.getElementById('or-fin').innerHTML=fin
+      ? `<div><span>Order Value</span><span>${money(fin.order_value,o.currency)}</span></div>
+         <div><span>Cost Basis (landed / est.)</span><span>${money(fin.cost_basis,o.currency)}</span></div>
+         <div><span>Gross Profit — INTERNAL</span><span>${money(fin.gross_profit,o.currency)}</span></div>
+         <div><span>Gross Margin — INTERNAL</span><span>${fin.gross_margin_pct==null?'—':fin.gross_margin_pct+'%'}</span></div>`
+      : '<div><span>Financial summary unavailable for your role</span><span></span></div>';
+    await renderOrderTimeline(id);
+    openModal('modal-order');
+  }
+  async function renderOrderTimeline(orderId){
+    const {data}=await sb.from('crm_order_events').select('*').eq('order_id',orderId).order('created_at',{ascending:false}).limit(50);
+    document.getElementById('or-timeline').innerHTML=(data&&data.length)
+      ? data.map(a=>{
+          const body=a.kind==='status_change'
+            ? `Status: <strong>${esc(label(a.old_value))}</strong> → <strong>${esc(label(a.new_value))}</strong>`
+            : (a.kind==='milestone'
+               ? esc(a.body||'')+` <span class="crm-mono">(${esc(label(a.old_value))} → ${esc(label(a.new_value))})</span>`
+               : esc(a.body||''));
+          return `<div class="crm-tl-item"><div style="font-size:13px;">${body}</div>
+            <div class="crm-mono" style="margin-top:3px;">${esc(new Date(a.created_at).toISOString().replace('T',' ').slice(0,16))} · <span class="crm-badge">${esc(label(a.visibility))}</span></div></div>`;
+        }).join('')
+      : '<p class="crm-empty" style="padding:0;">No events yet.</p>';
+  }
+  document.getElementById('btn-post-order-event').addEventListener('click', async ()=>{
+    const id=val('or-id'); const body=val('or-new-event'); if(!id||!body)return;
+    const {error}=await sb.from('crm_order_events').insert({order_id:id, kind:'comment', body, visibility:val('or-event-visibility')||'internal_only'});
+    if(error){document.getElementById('order-form-status').textContent='Error: '+error.message; return;}
+    setval('or-new-event',''); renderOrderTimeline(id);
+  });
+  document.getElementById('order-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('order-form-status'); st.textContent='Saving…';
+    const id=val('or-id'); if(!id)return;
+    const payload={}; OR_FIELDS.forEach(f=>payload[f]=val('or-'+f));
+    payload.purchase_cost=numval('or-purchase_cost'); payload.landed_cost=numval('or-landed_cost');
+    const {error}=await sb.from('crm_orders').update(payload).eq('id',id);
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; loadOrders(); renderOrderTimeline(id);
+  });
+
+  /* ---------- PROJECTS ---------- */
+  const PJ_FIELDS=['title','organization_id','service_id','order_id','start_date','due_date','status','scope','internal_notes'];
+  async function loadProjects(){
+    const {data}=await sb.from('crm_projects').select('*').is('deleted_at',null).order('created_at',{ascending:false});
+    projectsCache=data||[];
+    document.getElementById('prj-empty').style.display=projectsCache.length?'none':'block';
+    document.getElementById('prj-rows').innerHTML=projectsCache.map(p=>`
+      <tr class="crm-row-link" data-pjid="${p.id}">
+        <td class="crm-mono">${esc(p.project_number||'—')}</td>
+        <td>${esc(p.title)}</td>
+        <td>${esc(orgName(p.organization_id))}</td>
+        <td class="crm-mono">${esc(p.due_date||'—')}</td>
+        <td><div class="crm-bar"><span style="width:${p.completion_pct||0}%;"></span></div><span class="crm-mono">${p.completion_pct||0}%</span></td>
+        <td><span class="${badgeClass(p.status)}">${esc(label(p.status))}</span></td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-pjid]').forEach(r=>r.addEventListener('click',()=>openProject(r.dataset.pjid)));
+  }
+  document.getElementById('btn-new-project').addEventListener('click',()=>{
+    document.getElementById('project-form').reset(); setval('pj-id','');
+    document.getElementById('project-modal-title').textContent='New Project';
+    document.getElementById('pj-milestones-block').style.display='none';
+    openModal('modal-project');
+  });
+  async function openProject(id){
+    const p=projectsCache.find(x=>x.id===id); if(!p)return;
+    document.getElementById('project-form').reset(); setval('pj-id',p.id);
+    PJ_FIELDS.forEach(f=>setval('pj-'+f,p[f])); setval('pj-completion_pct',p.completion_pct);
+    document.getElementById('project-modal-title').textContent=(p.project_number||'Project')+' — '+p.title;
+    document.getElementById('pj-milestones-block').style.display='block';
+    await renderMilestones(id);
+    openModal('modal-project');
+  }
+  async function renderMilestones(projectId){
+    const {data}=await sb.from('crm_project_milestones').select('*').eq('project_id',projectId).order('sort_order').order('due_date');
+    document.getElementById('pj-milestones-list').innerHTML=(data&&data.length)
+      ? data.map(m=>`<div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:8px; align-items:center; font-size:12px; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.1);">
+          <span>${esc(m.title)}</span>
+          <span class="crm-mono">${esc(m.due_date||'—')}</span>
+          <select data-msstatus="${m.id}" style="padding:5px 8px; font-size:11px;">
+            ${['pending','in_progress','completed','delayed','cancelled'].map(s=>`<option value="${s}" ${m.status===s?'selected':''}>${label(s)}</option>`).join('')}
+          </select>
+          <span class="crm-badge">${esc(label(m.visibility))}</span>
+          <button class="crm-btn danger sm" type="button" data-delms="${m.id}">✕</button>
+        </div>`).join('')
+      : '<p class="crm-empty" style="padding:6px 0;">No milestones yet.</p>';
+    document.querySelectorAll('[data-msstatus]').forEach(sel=>sel.addEventListener('change',async()=>{
+      await sb.from('crm_project_milestones').update({status:sel.value, completed_at: sel.value==='completed'?new Date().toISOString().slice(0,10):null}).eq('id',sel.dataset.msstatus);
+    }));
+    document.querySelectorAll('[data-delms]').forEach(b=>b.addEventListener('click',async()=>{
+      await sb.from('crm_project_milestones').delete().eq('id',b.dataset.delms);
+      renderMilestones(projectId);
+    }));
+  }
+  document.getElementById('btn-add-milestone').addEventListener('click', async ()=>{
+    const pid=val('pj-id'); const title=val('pm-title');
+    if(!pid||!title){document.getElementById('project-form-status').textContent='Save the project first / enter a title.'; return;}
+    const {error}=await sb.from('crm_project_milestones').insert({project_id:pid, title, due_date:val('pm-due_date'), visibility:val('pm-visibility')||'internal_only'});
+    if(error){document.getElementById('project-form-status').textContent='Error: '+error.message; return;}
+    ['pm-title','pm-due_date'].forEach(f=>setval(f,''));
+    renderMilestones(pid);
+  });
+  document.getElementById('project-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('project-form-status'); st.textContent='Saving…';
+    const payload={}; PJ_FIELDS.forEach(f=>payload[f]=val('pj-'+f));
+    payload.completion_pct=numval('pj-completion_pct')||0;
+    if(!payload.organization_id){ st.textContent='Organization required.'; return; }
+    const id=val('pj-id'); let error;
+    if(id){ ({error}=await sb.from('crm_projects').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'prj'});
+      payload.project_number=num;
+      ({error}=await sb.from('crm_projects').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; closeModal('modal-project'); loadProjects();
+  });
+
+  /* ---------- SHIPMENTS + CUSTOMS ---------- */
+  const SH_FIELDS=['order_id','vendor_id','mode','carrier','freight_forwarder','incoterm','country_of_origin','port_of_loading','destination_port','container_number','bl_number','awb_number','etd','eta','actual_departure','actual_arrival','status','notes'];
+  const CU_FIELDS=['customs_agent','gd_number','hs_code','status','clearance_date','notes'];
+  const CU_NUMS=['customs_value','duty_amount','tax_amount','clearing_charges','demurrage','detention'];
+  async function loadShipments(){
+    const [{data:shp},{data:cus}]=await Promise.all([
+      sb.from('crm_shipments').select('*').is('deleted_at',null).order('created_at',{ascending:false}),
+      sb.from('crm_customs_records').select('*')
+    ]);
+    shipmentsCache=shp||[]; customsCache=cus||[];
+    document.getElementById('shp-empty').style.display=shipmentsCache.length?'none':'block';
+    document.getElementById('shp-rows').innerHTML=shipmentsCache.map(s=>{
+      const cu=customsCache.find(c=>c.shipment_id===s.id);
+      return `<tr class="crm-row-link" data-shid="${s.id}">
+        <td class="crm-mono">${esc(s.shipment_number||'—')}</td>
+        <td>${esc(orderLabel(s.order_id))}</td>
+        <td>${esc(label(s.mode))}</td>
+        <td class="crm-mono">${esc(s.port_of_loading||'?')} → ${esc(s.destination_port||'?')}</td>
+        <td class="crm-mono">${esc(s.eta||'—')}</td>
+        <td><span class="${badgeClass(s.status)}">${esc(label(s.status))}</span></td>
+        <td>${cu?`<span class="${badgeClass(cu.status)}">${esc(label(cu.status))}</span>`:'<span class="crm-mono">—</span>'}</td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`;
+    }).join('');
+    document.querySelectorAll('[data-shid]').forEach(r=>r.addEventListener('click',()=>openShipment(r.dataset.shid)));
+  }
+  document.getElementById('btn-new-shipment').addEventListener('click', async ()=>{
+    if(!ordersCache.length) await loadOrders();
+    document.getElementById('shipment-form').reset(); setval('sh-id',''); setval('cu-id','');
+    document.getElementById('shipment-modal-title').textContent='New Shipment';
+    document.getElementById('sh-customs-block').style.display='none';
+    openModal('modal-shipment');
+  });
+  function openShipment(id){
+    const s=shipmentsCache.find(x=>x.id===id); if(!s)return;
+    document.getElementById('shipment-form').reset(); setval('sh-id',s.id);
+    SH_FIELDS.forEach(f=>setval('sh-'+f,s[f]));
+    setval('sh-freight_cost',s.freight_cost); setval('sh-insurance_cost',s.insurance_cost);
+    document.getElementById('shipment-modal-title').textContent=(s.shipment_number||'Shipment');
+    document.getElementById('sh-customs-block').style.display='block';
+    const cu=customsCache.find(c=>c.shipment_id===s.id);
+    setval('cu-id',cu?cu.id:'');
+    CU_FIELDS.forEach(f=>setval('cu-'+f,cu?cu[f]:null));
+    CU_NUMS.forEach(f=>setval('cu-'+f,cu?cu[f]:null));
+    openModal('modal-shipment');
+  }
+  document.getElementById('shipment-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('shipment-form-status'); st.textContent='Saving…';
+    const payload={}; SH_FIELDS.forEach(f=>payload[f]=val('sh-'+f));
+    payload.freight_cost=numval('sh-freight_cost'); payload.insurance_cost=numval('sh-insurance_cost');
+    if(!payload.order_id){ st.textContent='Order is required.'; return; }
+    const id=val('sh-id'); let error;
+    if(id){ ({error}=await sb.from('crm_shipments').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'shp'});
+      payload.shipment_number=num;
+      ({error}=await sb.from('crm_shipments').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; closeModal('modal-shipment'); loadShipments();
+  });
+  document.getElementById('btn-save-customs').addEventListener('click', async ()=>{
+    const shId=val('sh-id');
+    const st=document.getElementById('customs-status');
+    if(!shId){ st.textContent='Save the shipment first.'; return; }
+    const payload={shipment_id:shId};
+    CU_FIELDS.forEach(f=>payload[f]=val('cu-'+f));
+    CU_NUMS.forEach(f=>payload[f]=numval('cu-'+f));
+    const cuId=val('cu-id'); let error, data;
+    if(cuId){ ({error}=await sb.from('crm_customs_records').update(payload).eq('id',cuId)); }
+    else{ ({data,error}=await sb.from('crm_customs_records').insert(payload).select().single()); if(data)setval('cu-id',data.id); }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Customs record saved.'; loadShipments();
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
