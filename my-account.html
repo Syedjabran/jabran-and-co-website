@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- ma- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .ma-wrap{max-width:1040px; margin:0 auto; padding:100px 20px 90px;}
+  .ma-head{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:34px;}
+  .ma-head img{width:120px; height:auto;}
+  .ma-tabs{display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:30px; overflow-x:auto;}
+  .ma-tab{padding:12px 18px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap;}
+  .ma-tab:hover{color:var(--cream);}
+  .ma-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .ma-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .ma-card{border:1px solid var(--line); background:var(--bg-alt); padding:20px 24px; margin-bottom:14px;}
+  .ma-card h3{font-size:17px; margin-bottom:4px;}
+  .ma-row{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;}
+  .ma-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--line); color:var(--gold-light); border-radius:2px; white-space:nowrap;}
+  .ma-badge.ok{border-color:var(--emerald); color:#5cc9b4;}
+  .ma-badge.warn{border-color:#e08a4a; color:#e08a4a;}
+  .ma-badge.bad{border-color:#e57368; color:#e57368;}
+  .ma-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px; text-decoration:none;}
+  .ma-btn:hover{background:var(--gold-light);}
+  .ma-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .ma-btn.sm{padding:6px 14px; font-size:10px;}
+  .ma-form input, .ma-form select, .ma-form textarea{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:11px 13px; font-family:'Inter',sans-serif; font-size:13px; border-radius:2px; width:100%;
+  }
+  .ma-form label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 5px;}
+  .ma-form textarea{min-height:100px; resize:vertical;}
+  .ma-grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px 16px; margin-bottom:14px;}
+  .ma-empty{color:var(--muted); font-size:13px; padding:26px 0;}
+  .ma-fin{font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:10px;}
+  .ma-fin div{display:flex; justify-content:space-between; padding:2px 0;}
+  .ma-bar{height:6px; background:var(--bg-deep); border:1px solid var(--line); border-radius:2px; overflow:hidden; min-width:120px;}
+  .ma-bar span{display:block; height:100%; background:var(--gold);}
+  .ma-tl{border-left:1px solid var(--line); margin:14px 0 0 6px; padding-left:18px;}
+  .ma-tl-item{margin-bottom:14px; position:relative; font-size:13px;}
+  .ma-tl-item::before{content:''; position:absolute; left:-22px; top:6px; width:7px; height:7px; background:var(--gold); border-radius:50%;}
+  #ma-login{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #ma-login input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #ma-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  .ma-status{font-size:12px; color:var(--gold-light); margin-top:10px;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="ma-login">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Client Account</p>
+  <form id="ma-login-form">
+    <label for="ma-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="ma-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="ma-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="ma-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="ma-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="ma-btn" id="ma-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="ma-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="ma-logout" style="display:none;">Log Out</div>
+
+<div class="ma-wrap" id="ma-app" style="display:none;">
+  <div class="ma-head">
+    <img src="logo-full.png" alt="JABRAN &amp; CO.">
+    <div style="text-align:right;">
+      <div class="eyebrow">Client Account</div>
+      <h1 id="ma-org-name" style="font-size:24px;"></h1>
+    </div>
+  </div>
+
+  <div class="ma-tabs">
+    <span class="ma-tab active" data-view="quotes">Quotations</span>
+    <span class="ma-tab" data-view="orders">Orders</span>
+    <span class="ma-tab" data-view="projects">Projects</span>
+    <span class="ma-tab" data-view="invoices">Invoices &amp; Payments</span>
+    <span class="ma-tab" data-view="enquiry">Submit an Enquiry</span>
+  </div>
+
+  <!-- QUOTATIONS -->
+  <section id="mav-quotes">
+    <div id="ma-quotes-list"></div>
+    <p class="ma-empty" id="ma-quotes-empty" style="display:none;">No quotations have been issued to your organization yet.</p>
+  </section>
+
+  <!-- ORDERS -->
+  <section id="mav-orders" style="display:none;">
+    <div id="ma-orders-list"></div>
+    <p class="ma-empty" id="ma-orders-empty" style="display:none;">No orders yet.</p>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="mav-projects" style="display:none;">
+    <div id="ma-projects-list"></div>
+    <p class="ma-empty" id="ma-projects-empty" style="display:none;">No active projects.</p>
+  </section>
+
+  <!-- INVOICES -->
+  <section id="mav-invoices" style="display:none;">
+    <div id="ma-invoices-list"></div>
+    <p class="ma-empty" id="ma-invoices-empty" style="display:none;">No invoices yet.</p>
+    <div class="ma-card" id="ma-proof-card" style="display:none;">
+      <h3>Upload Payment Proof</h3>
+      <p class="ma-mono" style="margin-bottom:12px;">Bank transfer slips, cheque images, or remittance advice (PDF/JPG/PNG). Uploads are private to your organization and our finance team.</p>
+      <input type="file" id="ma-proof-file" accept=".pdf,.jpg,.jpeg,.png" style="margin-bottom:12px; color:var(--muted); font-size:13px;">
+      <button class="ma-btn ghost" id="ma-proof-btn" type="button">Upload Proof</button>
+      <p class="ma-status" id="ma-proof-status"></p>
+    </div>
+  </section>
+
+  <!-- SUBMIT ENQUIRY -->
+  <section id="mav-enquiry" style="display:none;">
+    <div class="ma-card">
+      <h3 style="margin-bottom:16px;">Submit a New Enquiry</h3>
+      <form id="ma-enq-form" class="ma-form">
+        <div class="ma-grid2">
+          <div><label>Title *</label><input id="me-title" required></div>
+          <div><label>Service</label><select id="me-service"><option value="">—</option></select></div>
+          <div><label>Type</label>
+            <select id="me-type">
+              <option value="general">General</option><option value="service">Service</option>
+              <option value="sourcing">Global Sourcing</option><option value="customs">Customs Clearance</option>
+              <option value="audit">Plant Audit</option><option value="training">Training</option>
+              <option value="advisory">Advisory</option><option value="architecture">Architecture / Construction</option>
+              <option value="ai_consultancy">AI Consultancy</option>
+            </select></div>
+          <div><label>Required By</label><input id="me-required_by" type="date"></div>
+        </div>
+        <label>Your Requirement *</label>
+        <textarea id="me-detail" required></textarea>
+        <button class="ma-btn" type="submit" style="margin-top:16px;">Submit Enquiry</button>
+        <p class="ma-status" id="ma-enq-status"></p>
+      </form>
+    </div>
+    <div class="eyebrow" style="margin:26px 0 12px;">Your Enquiries</div>
+    <div id="ma-enq-list"></div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function badge(s){
+    const t=String(s||'').toLowerCase();
+    if(['paid','accepted','delivered','completed','verified'].some(x=>t.includes(x))) return 'ma-badge ok';
+    if(['overdue','rejected','cancelled','declined'].some(x=>t.includes(x))) return 'ma-badge bad';
+    if(['awaiting','hold','revision','partially'].some(x=>t.includes(x))) return 'ma-badge warn';
+    return 'ma-badge';
+  }
+
+  let orgId=null;
+
+  /* ---- auth ---- */
+  const loginBox=document.getElementById('ma-login'), app=document.getElementById('ma-app'), logoutBtn=document.getElementById('ma-logout');
+  const passToggle=document.getElementById('ma-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('ma-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; app.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('ma-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('ma-login-status'), btn=document.getElementById('ma-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('ma-email').value, password:document.getElementById('ma-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:org}=await sb.from('crm_my_organization').select('*').limit(1).maybeSingle();
+    if(!org){
+      document.getElementById('ma-login-status').textContent='Your account is not yet linked to a client organization. Please contact us on WhatsApp +92 336 4864345.';
+      await sb.auth.signOut(); return;
+    }
+    orgId=org.id;
+    document.getElementById('ma-org-name').textContent=org.trading_name||org.legal_name;
+    loginBox.style.display='none'; app.style.display='block'; logoutBtn.style.display='block';
+    const {data:svcs}=await sb.from('crm_services').select('id,name').eq('is_active',true).order('sort_order');
+    const sel=document.getElementById('me-service');
+    (svcs||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sel.appendChild(o); });
+    showView('quotes');
+  }
+
+  const loaders={quotes:loadQuotes, orders:loadOrders, projects:loadProjects, invoices:loadInvoices, enquiry:loadEnquiries};
+  function showView(v){
+    document.querySelectorAll('.ma-tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+    ['quotes','orders','projects','invoices','enquiry'].forEach(x=>document.getElementById('mav-'+x).style.display=x===v?'':'none');
+    loaders[v]&&loaders[v]();
+  }
+  document.querySelectorAll('.ma-tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
+
+  /* ---- QUOTATIONS ---- */
+  async function loadQuotes(){
+    const {data}=await sb.from('crm_client_quotations').select('*').order('issue_date',{ascending:false});
+    const rows=data||[];
+    document.getElementById('ma-quotes-empty').style.display=rows.length?'none':'block';
+    document.getElementById('ma-quotes-list').innerHTML=rows.map(q=>`
+      <div class="ma-card">
+        <div class="ma-row">
+          <div>
+            <h3>${esc(q.title)}</h3>
+            <span class="ma-mono">${esc(q.quotation_number)} v${q.version} · Issued ${esc(q.issue_date||'—')} · Valid until ${esc(q.expiry_date||'—')}</span>
+            <div class="ma-fin"><div><span>Total</span><span>${money(q.total,q.currency)}</span></div></div>
+          </div>
+          <div style="text-align:right;">
+            <span class="${badge(q.status)}">${esc(label(q.status))}</span><br>
+            <a class="ma-btn sm" style="margin-top:12px;" href="quotation-view.html?id=${q.id}">View &amp; Respond</a>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ---- ORDERS ---- */
+  async function loadOrders(){
+    const [{data:orders},{data:ships}]=await Promise.all([
+      sb.from('crm_client_orders').select('*').order('order_date',{ascending:false}),
+      sb.from('crm_client_shipments').select('*')
+    ]);
+    const rows=orders||[]; const shipRows=ships||[];
+    document.getElementById('ma-orders-empty').style.display=rows.length?'none':'block';
+    const container=document.getElementById('ma-orders-list');
+    container.innerHTML=rows.map(o=>{
+      const sh=shipRows.filter(s=>s.order_id===o.id);
+      return `<div class="ma-card">
+        <div class="ma-row">
+          <div>
+            <h3>${esc(o.title)}</h3>
+            <span class="ma-mono">${esc(o.order_number)} · Ordered ${esc(o.order_date)} ${o.promised_date?'· Promised '+esc(o.promised_date):''}</span>
+            <div class="ma-fin">
+              <div><span>Order Value</span><span>${money(o.order_value,o.currency)}</span></div>
+              <div><span>Payment</span><span>${esc(label(o.payment_status))}</span></div>
+            </div>
+            ${sh.length?'<div class="ma-mono" style="margin-top:10px;">Shipments:</div>'+sh.map(s=>
+              `<div class="ma-mono" style="color:var(--cream);">${esc(s.shipment_number||'')} · ${esc(label(s.mode))} → ${esc(s.destination_port||'')} · ETA ${esc(s.eta||'—')} · <span class="${badge(s.status)}">${esc(s.status)}</span></div>`).join(''):''}
+          </div>
+          <div style="text-align:right;">
+            <span class="${badge(o.status)}">${esc(o.status)}</span>
+          </div>
+        </div>
+        <div class="ma-tl" id="ma-ord-tl-${o.id}"></div>
+      </div>`;
+    }).join('');
+    // client-visible timelines
+    for(const o of rows){
+      const {data:ev}=await sb.from('crm_order_events').select('*').eq('order_id',o.id).order('created_at',{ascending:false}).limit(10);
+      const el=document.getElementById('ma-ord-tl-'+o.id); if(!el)continue;
+      el.innerHTML=(ev&&ev.length)?ev.map(a=>{
+        const body=a.kind==='status_change'
+          ? 'Status updated to <strong>'+esc(label(a.new_value))+'</strong>'
+          : esc(a.body||'');
+        return `<div class="ma-tl-item">${body}<div class="ma-mono">${esc(new Date(a.created_at).toISOString().slice(0,10))}</div></div>`;
+      }).join(''):'';
+    }
+  }
+
+  /* ---- PROJECTS ---- */
+  async function loadProjects(){
+    const {data}=await sb.from('crm_client_projects').select('*').order('due_date');
+    const rows=data||[];
+    document.getElementById('ma-projects-empty').style.display=rows.length?'none':'block';
+    const container=document.getElementById('ma-projects-list');
+    container.innerHTML=rows.map(p=>`
+      <div class="ma-card">
+        <div class="ma-row">
+          <div style="flex:1; min-width:220px;">
+            <h3>${esc(p.title)}</h3>
+            <span class="ma-mono">${esc(p.project_number)} ${p.due_date?'· Due '+esc(p.due_date):''}</span>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+              <div class="ma-bar" style="flex:1;"><span style="width:${p.completion_pct||0}%;"></span></div>
+              <span class="ma-mono" style="color:var(--gold-light);">${p.completion_pct||0}%</span>
+            </div>
+          </div>
+          <span class="${badge(p.status)}">${esc(label(p.status))}</span>
+        </div>
+        <div class="ma-tl" id="ma-prj-ms-${p.id}"></div>
+      </div>`).join('');
+    for(const p of rows){
+      const {data:ms}=await sb.from('crm_project_milestones').select('*').eq('project_id',p.id).order('sort_order').order('due_date');
+      const el=document.getElementById('ma-prj-ms-'+p.id); if(!el)continue;
+      el.innerHTML=(ms&&ms.length)?ms.map(m=>
+        `<div class="ma-tl-item">${esc(m.title)} · <span class="${badge(m.status)}">${esc(label(m.status))}</span>
+         <div class="ma-mono">${m.due_date?'Due '+esc(m.due_date):''}${m.completed_at?' · Completed '+esc(m.completed_at):''}</div></div>`).join(''):'';
+    }
+  }
+
+  /* ---- INVOICES & PAYMENTS ---- */
+  async function loadInvoices(){
+    const [{data:invs},{data:receipts}]=await Promise.all([
+      sb.from('crm_client_invoices').select('*').order('issue_date',{ascending:false}),
+      sb.from('crm_receipts').select('*').order('issued_at',{ascending:false})
+    ]);
+    const rows=invs||[];
+    document.getElementById('ma-invoices-empty').style.display=rows.length?'none':'block';
+    document.getElementById('ma-proof-card').style.display=rows.length?'block':'none';
+    document.getElementById('ma-invoices-list').innerHTML=rows.map(i=>`
+      <div class="ma-card">
+        <div class="ma-row">
+          <div>
+            <h3>${esc(i.title)}</h3>
+            <span class="ma-mono">${esc(i.invoice_number)} · ${esc(label(i.invoice_type))} · Issued ${esc(i.issue_date||'—')} · Due ${esc(i.due_date||'—')}</span>
+            <div class="ma-fin">
+              <div><span>Total</span><span>${money(i.total,i.currency)}</span></div>
+              <div><span>Paid</span><span>${money(i.paid_amount,i.currency)}</span></div>
+              <div style="color:var(--gold-light);"><span>Outstanding</span><span>${money(i.outstanding,i.currency)}</span></div>
+            </div>
+            ${i.payment_instructions?'<div class="ma-mono" style="margin-top:10px; white-space:pre-line; color:var(--cream);">'+esc(i.payment_instructions)+'</div>':''}
+          </div>
+          <span class="${badge(i.status)}">${esc(label(i.status))}</span>
+        </div>
+      </div>`).join('') +
+      ((receipts&&receipts.length)?'<div class="eyebrow" style="margin:22px 0 12px;">Payment Receipts</div>'+receipts.map(r=>
+        `<div class="ma-card"><div class="ma-row">
+          <span class="ma-mono" style="color:var(--cream);">${esc(r.receipt_number)} · ${esc(new Date(r.issued_at).toISOString().slice(0,10))}</span>
+          <span class="ma-mono" style="color:var(--gold-light);">${money(r.amount,r.currency)}</span>
+        </div></div>`).join(''):'');
+  }
+  document.getElementById('ma-proof-btn').addEventListener('click', async ()=>{
+    const st=document.getElementById('ma-proof-status');
+    const f=document.getElementById('ma-proof-file').files[0];
+    if(!f){ st.textContent='Choose a file first.'; return; }
+    if(f.size>10*1024*1024){ st.textContent='File must be under 10 MB.'; return; }
+    st.textContent='Uploading…';
+    const path='payment-proofs/'+orgId+'/'+Date.now()+'-'+f.name.replace(/[^a-zA-Z0-9.\-_]/g,'_');
+    const {error}=await sb.storage.from('crm-private').upload(path,f);
+    if(error){ st.textContent='Upload failed: '+error.message; return; }
+    st.textContent='Thank you — your payment proof has been received. Our finance team will verify it and issue a receipt.';
+    document.getElementById('ma-proof-file').value='';
+  });
+
+  /* ---- ENQUIRIES ---- */
+  async function loadEnquiries(){
+    const {data}=await sb.from('crm_enquiries').select('id,enquiry_number,title,status,created_at').order('created_at',{ascending:false});
+    document.getElementById('ma-enq-list').innerHTML=(data&&data.length)?data.map(e=>`
+      <div class="ma-card"><div class="ma-row">
+        <div><h3 style="font-size:15px;">${esc(e.title)}</h3>
+        <span class="ma-mono">${esc(e.enquiry_number||'')} · ${esc(new Date(e.created_at).toISOString().slice(0,10))}</span></div>
+        <span class="${badge(e.status)}">${esc(label(e.status))}</span>
+      </div></div>`).join(''):'<p class="ma-empty">No enquiries submitted yet.</p>';
+  }
+  document.getElementById('ma-enq-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('ma-enq-status'); st.textContent='Submitting…';
+    const title=document.getElementById('me-title').value.trim();
+    const detail=document.getElementById('me-detail').value.trim();
+    if(!title||!detail){ st.textContent='Title and requirement are required.'; return; }
+    const {error}=await sb.from('crm_enquiries').insert({
+      organization_id: orgId, title, requirement_detail: detail,
+      service_id: document.getElementById('me-service').value||null,
+      enquiry_type: document.getElementById('me-type').value,
+      required_by_date: document.getElementById('me-required_by').value||null,
+      source:'portal', status:'new'
+    });
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Thank you — your enquiry has been received. Our team will respond shortly.';
+    document.getElementById('ma-enq-form').reset();
+    loadEnquiries();
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>

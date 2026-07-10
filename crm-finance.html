@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; transition:color .2s, border-color .2s; text-decoration:none;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:32px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:24px; color:var(--gold-light);}
+  .crm-kpi .l{font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-top:4px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:500; padding:10px 12px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .crm-table td{padding:12px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-row-link{cursor:pointer;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--line); color:var(--gold-light); border-radius:2px; white-space:nowrap;}
+  .crm-badge.warn{border-color:#e08a4a; color:#e08a4a;}
+  .crm-badge.bad{border-color:#e57368; color:#e57368;}
+  .crm-badge.ok{border-color:var(--emerald); color:#5cc9b4;}
+  .crm-toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center;}
+  .crm-toolbar input, .crm-toolbar select, .crm-form input, .crm-form select, .crm-form textarea{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:10px 12px; font-family:'Inter',sans-serif; font-size:13px; border-radius:2px; width:100%;
+  }
+  .crm-toolbar input, .crm-toolbar select{width:auto; min-width:180px;}
+  .crm-form textarea{min-height:70px; resize:vertical;}
+  .crm-form label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 5px;}
+  .crm-grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px 16px; margin-bottom:14px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .crm-btn.danger{background:transparent; border:1px solid #e57368; color:#e57368;}
+  .crm-btn.sm{padding:6px 12px; font-size:10px;}
+  .crm-modal-bg{position:fixed; inset:0; background:rgba(8,17,28,0.86); z-index:80; display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:60px 16px;}
+  .crm-modal{background:var(--bg-alt); border:1px solid var(--line); max-width:920px; width:100%; padding:34px 36px 40px;}
+  .crm-modal h2{margin-bottom:22px;}
+  .crm-fieldset-label{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:22px 0 12px; border-bottom:1px solid var(--line); padding-bottom:6px;}
+  .crm-empty{color:var(--muted); font-size:13px; padding:30px 0;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:8px;}
+  .crm-totals{border:1px solid var(--line); background:var(--bg-deep); padding:16px 20px; margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12px;}
+  .crm-totals div{display:flex; justify-content:space-between; padding:3px 0;}
+  .crm-totals .grand{border-top:1px solid var(--line); margin-top:6px; padding-top:8px; color:var(--gold-light); font-size:14px;}
+  .crm-item-row{display:grid; grid-template-columns:3fr 1fr 1fr 1fr auto; gap:8px; margin-bottom:8px; align-items:center;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+    .crm-item-row{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Client Relationship Management Portal</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" name="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <div class="crm-nav-label">Finance</div>
+    <span class="crm-nav-item active" data-view="invoices">Invoices</span>
+    <span class="crm-nav-item" data-view="payments">Payments &amp; Receipts</span>
+    <span class="crm-nav-item" data-view="receivables">Receivables</span>
+    <span class="crm-nav-item" data-view="expenses">Expenses</span>
+    <span class="crm-nav-item" data-view="profit" data-mgmt>Profitability &amp; EBITDA</span>
+  </aside>
+
+  <main class="crm-main">
+
+    <!-- INVOICES -->
+    <section id="view-invoices">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Finance</div><h1>Invoices</h1></div>
+        <button class="crm-btn" id="btn-new-inv">+ New Invoice</button>
+      </div>
+      <div class="crm-toolbar">
+        <select id="inv-status-filter">
+          <option value="">All statuses</option>
+          <option value="draft">Draft</option><option value="issued">Issued</option>
+          <option value="partially_paid">Partially Paid</option><option value="paid">Paid</option>
+          <option value="overdue">Overdue</option><option value="disputed">Disputed</option>
+          <option value="cancelled">Cancelled</option><option value="written_off">Written Off</option>
+          <option value="refunded">Refunded</option>
+        </select>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Type</th><th>Organization</th><th>Total</th><th>Paid</th><th>Outstanding</th><th>Due</th><th>Status</th><th></th></tr></thead>
+        <tbody id="inv-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="inv-empty" style="display:none;">No invoices yet, or your role does not include finance access.</p>
+    </section>
+
+    <!-- PAYMENTS -->
+    <section id="view-payments" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Finance</div><h1>Payments &amp; Receipts</h1></div>
+        <button class="crm-btn" id="btn-new-pay">+ Record Payment</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Organization</th><th>Date</th><th>Amount</th><th>Net Received</th><th>Allocated</th><th>Verified</th><th></th></tr></thead>
+        <tbody id="pay-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="pay-empty" style="display:none;">No payments recorded yet.</p>
+    </section>
+
+    <!-- RECEIVABLES -->
+    <section id="view-receivables" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Finance</div><h1>Receivables Ageing</h1></div>
+      </div>
+      <div class="crm-kpis" id="ar-kpis"></div>
+      <table class="crm-table">
+        <thead><tr><th>Invoice</th><th>Organization</th><th>Due Date</th><th>Days Overdue</th><th>Outstanding</th><th>Bucket</th></tr></thead>
+        <tbody id="ar-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="ar-empty" style="display:none;">No outstanding receivables. Excellent.</p>
+    </section>
+
+    <!-- EXPENSES -->
+    <section id="view-expenses" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Finance</div><h1>Expenses</h1></div>
+        <button class="crm-btn" id="btn-new-exp">+ New Expense</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Category</th><th>Linked To</th><th>Date</th><th>Amount</th><th>Direct</th><th></th></tr></thead>
+        <tbody id="exp-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="exp-empty" style="display:none;">No expenses recorded yet.</p>
+    </section>
+
+    <!-- PROFITABILITY -->
+    <section id="view-profit" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Management Only — Never Client-Visible</div><h1>Profitability &amp; EBITDA</h1></div>
+      </div>
+      <div class="crm-kpis" id="pr-kpis"></div>
+      <div class="eyebrow" style="margin-bottom:12px;">Order EBITDA Contribution</div>
+      <table class="crm-table">
+        <thead><tr><th>Order</th><th>Revenue</th><th>COGS</th><th>Direct Exp.</th><th>Overhead Alloc.</th><th>EBITDA</th><th>Margin</th><th>% of Annual</th></tr></thead>
+        <tbody id="pr-rows"></tbody>
+      </table>
+      <div class="eyebrow" style="margin:32px 0 12px;">Monthly Rollup (last 12 months)</div>
+      <table class="crm-table">
+        <thead><tr><th>Period</th><th>Invoiced</th><th>Collected</th><th>Gross Profit</th><th>EBITDA</th></tr></thead>
+        <tbody id="pr-monthly"></tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<!-- INVOICE MODAL -->
+<div class="crm-modal-bg" id="modal-inv">
+  <div class="crm-modal">
+    <h2 id="inv-modal-title">New Invoice</h2>
+    <form id="inv-form" class="crm-form">
+      <input type="hidden" id="in-id">
+      <div class="crm-grid2">
+        <div><label>Title *</label><input id="in-title" required></div>
+        <div><label>Organization *</label><select id="in-organization_id" required><option value="">—</option></select></div>
+        <div><label>Type</label>
+          <select id="in-invoice_type">
+            <option value="proforma">Pro Forma</option><option value="advance">Advance</option>
+            <option value="commercial" selected>Commercial</option><option value="tax">Tax Invoice</option>
+            <option value="milestone">Milestone</option><option value="final">Final</option>
+            <option value="debit_note">Debit Note</option><option value="credit_note">Credit Note</option>
+          </select></div>
+        <div><label>Related Order</label><select id="in-order_id"><option value="">—</option></select></div>
+        <div><label>Currency</label><select id="in-currency"><option>PKR</option><option>USD</option><option>EUR</option><option>GBP</option><option>CNY</option><option>AED</option><option>SAR</option></select></div>
+        <div><label>Exchange Rate → PKR</label><input id="in-exchange_rate" type="number" step="0.000001" min="0"></div>
+        <div><label>Discount %</label><input id="in-discount_pct" type="number" step="0.01" min="0" max="100"></div>
+        <div><label>Tax %</label><input id="in-tax_pct" type="number" step="0.01" min="0" max="100"></div>
+        <div><label>Freight</label><input id="in-freight_amount" type="number" step="0.01" min="0"></div>
+        <div><label>Other Charges</label><input id="in-other_charges" type="number" step="0.01" min="0"></div>
+        <div><label>Due Date</label><input id="in-due_date" type="date"></div>
+        <div><label>Payment Terms</label><input id="in-payment_terms"></div>
+      </div>
+      <div><label>Payment Instructions / Bank Details (client-visible)</label><textarea id="in-payment_instructions"></textarea></div>
+      <div style="margin-top:12px;"><label>Notes (client-visible)</label><textarea id="in-notes"></textarea></div>
+      <div style="margin-top:12px;"><label>Internal Notes (never client-visible)</label><textarea id="in-internal_notes"></textarea></div>
+      <div id="inv-items-block" style="display:none;">
+        <div class="crm-fieldset-label">Line Items</div>
+        <div id="inv-items-list"></div>
+        <div class="crm-item-row" style="margin-top:10px;">
+          <input id="ini-description" placeholder="Description">
+          <input id="ini-quantity" type="number" step="0.001" min="0" placeholder="Qty">
+          <input id="ini-unit" placeholder="Unit">
+          <input id="ini-unit_price" type="number" step="0.0001" placeholder="Unit Price">
+          <button class="crm-btn ghost sm" type="button" id="btn-add-inv-item">Add</button>
+        </div>
+        <div class="crm-totals" id="inv-totals"></div>
+        <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+          <button class="crm-btn ghost" type="button" id="btn-issue-inv">Issue Invoice</button>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:22px;">
+        <button class="crm-btn" type="submit">Save Invoice</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-inv">Close</button>
+        <span class="crm-status-msg" id="inv-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="crm-modal-bg" id="modal-pay">
+  <div class="crm-modal">
+    <h2 id="pay-modal-title">Record Payment</h2>
+    <form id="pay-form" class="crm-form">
+      <input type="hidden" id="pa-id">
+      <div class="crm-grid2">
+        <div><label>Organization *</label><select id="pa-organization_id" required><option value="">—</option></select></div>
+        <div><label>Payment Date</label><input id="pa-payment_date" type="date"></div>
+        <div><label>Amount *</label><input id="pa-amount" type="number" step="0.01" min="0" required></div>
+        <div><label>Currency</label><select id="pa-currency"><option>PKR</option><option>USD</option><option>EUR</option><option>GBP</option><option>CNY</option><option>AED</option><option>SAR</option></select></div>
+        <div><label>Exchange Rate → PKR</label><input id="pa-exchange_rate" type="number" step="0.000001" min="0"></div>
+        <div><label>Method</label>
+          <select id="pa-payment_method">
+            <option value="bank_transfer">Bank Transfer</option><option value="cash">Cash</option>
+            <option value="cheque">Cheque</option><option value="card">Card</option>
+            <option value="online">Online</option><option value="other">Other</option>
+          </select></div>
+        <div><label>Bank</label><input id="pa-bank_name"></div>
+        <div><label>Transaction Ref.</label><input id="pa-transaction_ref"></div>
+        <div><label>Withholding Tax</label><input id="pa-withholding_tax" type="number" step="0.01" min="0"></div>
+        <div><label>Bank Charges</label><input id="pa-bank_charges" type="number" step="0.01" min="0"></div>
+        <div><label>Other Deductions</label><input id="pa-deductions" type="number" step="0.01" min="0"></div>
+      </div>
+      <div><label>Internal Notes</label><textarea id="pa-internal_notes"></textarea></div>
+      <div id="pay-alloc-block" style="display:none;">
+        <div class="crm-fieldset-label">Allocations — apply this payment to invoices</div>
+        <div id="pay-alloc-list"></div>
+        <div class="crm-grid2" style="margin-top:10px;">
+          <div><label>Invoice</label><select id="al-invoice_id"><option value="">—</option></select></div>
+          <div><label>Amount</label><input id="al-amount" type="number" step="0.01" min="0"></div>
+        </div>
+        <button class="crm-btn ghost" type="button" id="btn-add-alloc">Allocate</button>
+        <div class="crm-totals" id="pay-totals"></div>
+        <div style="display:flex; gap:10px; margin-top:14px;">
+          <button class="crm-btn ghost" type="button" id="btn-verify-pay">Verify Payment &amp; Generate Receipt</button>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:22px;">
+        <button class="crm-btn" type="submit">Save Payment</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-pay">Close</button>
+        <span class="crm-status-msg" id="pay-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EXPENSE MODAL -->
+<div class="crm-modal-bg" id="modal-exp">
+  <div class="crm-modal">
+    <h2>New Expense</h2>
+    <form id="exp-form" class="crm-form">
+      <input type="hidden" id="ex-id">
+      <div class="crm-grid2">
+        <div><label>Category *</label>
+          <select id="ex-category" required>
+            <option value="travel">Travel</option><option value="inspection">Inspection</option>
+            <option value="commission">Commission</option><option value="marketing">Marketing / Lead Cost</option>
+            <option value="professional_fees">Professional Fees</option><option value="logistics">Logistics</option>
+            <option value="office">Office / Admin</option><option value="other">Other</option>
+          </select></div>
+        <div><label>Related Order</label><select id="ex-order_id"><option value="">—</option></select></div>
+        <div><label>Related Project</label><select id="ex-project_id"><option value="">—</option></select></div>
+        <div><label>Date</label><input id="ex-expense_date" type="date"></div>
+        <div><label>Amount *</label><input id="ex-amount" type="number" step="0.01" min="0" required></div>
+        <div><label>Currency</label><select id="ex-currency"><option>PKR</option><option>USD</option><option>EUR</option><option>GBP</option><option>CNY</option><option>AED</option><option>SAR</option></select></div>
+      </div>
+      <div><label>Description</label><textarea id="ex-description"></textarea></div>
+      <div style="margin:12px 0;">
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0; font-size:13px; color:var(--cream);">
+          <input type="checkbox" id="ex-is_direct" checked style="width:auto;"> Direct expense (counts against the linked order's EBITDA)
+        </label>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:16px;">
+        <button class="crm-btn" type="submit">Save Expense</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-exp">Cancel</button>
+        <span class="crm-status-msg" id="exp-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function badgeClass(s){
+    if(['paid','cleared','verified','current'].includes(s)) return 'crm-badge ok';
+    if(['overdue','disputed','written_off','over_120','91_120'].includes(s)) return 'crm-badge bad';
+    if(['partially_paid','pending_approval','61_90','31_60'].includes(s)) return 'crm-badge warn';
+    return 'crm-badge';
+  }
+  function val(id){ const el=document.getElementById(id); return el?(el.type==='checkbox'?el.checked:(el.value.trim()||null)):null; }
+  function numval(id){ const v=val(id); return v===null||v===false?null:Number(v); }
+  function setval(id,v){ const el=document.getElementById(id); if(!el)return; if(el.type==='checkbox'){el.checked=!!v;}else{el.value=v==null?'':v;} }
+  function openModal(id){ document.getElementById(id).style.display='flex'; }
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+  function fillSelect(id,rows,labelKey){
+    const sel=document.getElementById(id); if(!sel)return;
+    const first=sel.querySelector('option'); sel.innerHTML=''; sel.appendChild(first);
+    rows.forEach(r=>{ const o=document.createElement('option'); o.value=r.id; o.textContent=r[labelKey]; sel.appendChild(o); });
+  }
+
+  let orgsCache=[], ordersCache=[], projectsCache=[], invCache=[], payCache=[], allocCache=[];
+  function orgName(id){ const o=orgsCache.find(x=>x.id===id); return o?o.legal_name:'—'; }
+
+  /* ---------- auth ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:probe,error}=await sb.from('crm_settings').select('key').limit(1);
+    if(error||!probe){
+      document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    const [orgs,ords,prjs]=await Promise.all([
+      sb.from('crm_organizations').select('id,legal_name').is('deleted_at',null).order('legal_name'),
+      sb.from('crm_orders').select('id,order_number,title').is('deleted_at',null).order('created_at',{ascending:false}),
+      sb.from('crm_projects').select('id,project_number,title').is('deleted_at',null).order('created_at',{ascending:false})
+    ]);
+    orgsCache=orgs.data||[]; ordersCache=(ords.data||[]).map(o=>({id:o.id,name:(o.order_number||'')+' '+o.title}));
+    projectsCache=(prjs.data||[]).map(p=>({id:p.id,name:(p.project_number||'')+' '+p.title}));
+    fillSelect('in-organization_id',orgsCache,'legal_name');
+    fillSelect('pa-organization_id',orgsCache,'legal_name');
+    fillSelect('in-order_id',ordersCache,'name');
+    fillSelect('ex-order_id',ordersCache,'name');
+    fillSelect('ex-project_id',projectsCache,'name');
+    // Management tab visibility probe
+    const {error:mgmtErr}=await sb.from('crm_order_ebitda').select('order_id').limit(1);
+    document.querySelectorAll('[data-mgmt]').forEach(el=>el.style.display=mgmtErr?'none':'');
+    showView('invoices');
+  }
+
+  const loaders={invoices:loadInvoices, payments:loadPayments, receivables:loadReceivables, expenses:loadExpenses, profit:loadProfit};
+  function showView(v){
+    document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.classList.toggle('active',n.dataset.view===v));
+    ['invoices','payments','receivables','expenses','profit'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'':'none');
+    loaders[v]&&loaders[v]();
+  }
+  document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
+
+  /* ---------- INVOICES ---------- */
+  const IN_FIELDS=['title','organization_id','invoice_type','order_id','currency','due_date','payment_terms','payment_instructions','notes','internal_notes'];
+  const IN_NUMS=['exchange_rate','discount_pct','tax_pct','freight_amount','other_charges'];
+  async function loadInvoices(){
+    const stF=document.getElementById('inv-status-filter').value;
+    let q=sb.from('crm_invoices').select('*').is('deleted_at',null).order('created_at',{ascending:false});
+    if(stF)q=q.eq('status',stF);
+    const {data,error}=await q; invCache=data||[];
+    document.getElementById('inv-empty').style.display=(error||!invCache.length)?'block':'none';
+    document.getElementById('inv-rows').innerHTML=invCache.map(i=>`
+      <tr class="crm-row-link" data-inid="${i.id}">
+        <td class="crm-mono">${esc(i.invoice_number||'—')}</td>
+        <td>${esc(label(i.invoice_type))}</td>
+        <td>${esc(orgName(i.organization_id))}</td>
+        <td class="crm-mono">${money(i.total,i.currency)}</td>
+        <td class="crm-mono">${money(i.paid_amount,i.currency)}</td>
+        <td class="crm-mono">${money(i.outstanding,i.currency)}</td>
+        <td class="crm-mono">${esc(i.due_date||'—')}</td>
+        <td><span class="${badgeClass(i.status)}">${esc(label(i.status))}</span></td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-inid]').forEach(r=>r.addEventListener('click',()=>openInv(r.dataset.inid)));
+  }
+  document.getElementById('inv-status-filter').addEventListener('change',loadInvoices);
+  document.getElementById('btn-new-inv').addEventListener('click',()=>{
+    document.getElementById('inv-form').reset(); setval('in-id','');
+    document.getElementById('inv-modal-title').textContent='New Invoice';
+    document.getElementById('inv-items-block').style.display='none';
+    openModal('modal-inv');
+  });
+  async function openInv(id){
+    const i=invCache.find(x=>x.id===id); if(!i)return;
+    document.getElementById('inv-form').reset(); setval('in-id',i.id);
+    IN_FIELDS.forEach(f=>setval('in-'+f,i[f])); IN_NUMS.forEach(f=>setval('in-'+f,i[f]));
+    document.getElementById('inv-modal-title').textContent=(i.invoice_number||'Invoice')+' — '+i.title;
+    document.getElementById('inv-items-block').style.display='block';
+    await renderInvItems(i);
+    openModal('modal-inv');
+  }
+  async function renderInvItems(i){
+    const locked=!['draft','pending_approval'].includes(i.status);
+    const {data:items}=await sb.from('crm_invoice_items').select('*').eq('invoice_id',i.id).order('sort_order');
+    document.getElementById('inv-items-list').innerHTML=(items&&items.length)
+      ? items.map(x=>`<div class="crm-item-row" style="font-size:12px;">
+          <span>${esc(x.description)}</span>
+          <span class="crm-mono">${x.quantity} ${esc(x.unit||'')}</span>
+          <span class="crm-mono">@ ${money(x.unit_price)}</span>
+          <span class="crm-mono">${money(x.line_total,i.currency)}</span>
+          ${locked?'<span class="crm-mono">locked</span>':`<button class="crm-btn danger sm" type="button" data-delini="${x.id}">✕</button>`}
+        </div>`).join('')
+      : '<p class="crm-empty" style="padding:6px 0;">No line items yet.</p>';
+    if(!locked)document.querySelectorAll('[data-delini]').forEach(b=>b.addEventListener('click',async()=>{
+      const {error}=await sb.from('crm_invoice_items').delete().eq('id',b.dataset.delini);
+      if(error){document.getElementById('inv-form-status').textContent=error.message; return;}
+      await refreshInv(i.id);
+    }));
+    document.getElementById('inv-totals').innerHTML=`
+      <div><span>Subtotal</span><span>${money(i.subtotal,i.currency)}</span></div>
+      <div><span>Discount (${i.discount_pct||0}%)</span><span>− ${money(i.discount_amount,i.currency)}</span></div>
+      <div><span>Tax (${i.tax_pct||0}%)</span><span>${money(i.tax_amount,i.currency)}</span></div>
+      <div><span>Freight + Other</span><span>${money((Number(i.freight_amount)||0)+(Number(i.other_charges)||0),i.currency)}</span></div>
+      <div class="grand"><span>Total</span><span>${money(i.total,i.currency)}</span></div>
+      <div><span>Paid</span><span>${money(i.paid_amount,i.currency)}</span></div>
+      <div><span>Outstanding</span><span>${money(i.outstanding,i.currency)}</span></div>`;
+  }
+  async function refreshInv(id){
+    const {data}=await sb.from('crm_invoices').select('*').eq('id',id).single();
+    if(!data)return;
+    const idx=invCache.findIndex(q=>q.id===id); if(idx>-1)invCache[idx]=data;
+    await renderInvItems(data);
+  }
+  document.getElementById('btn-add-inv-item').addEventListener('click', async ()=>{
+    const id=val('in-id'); if(!id){document.getElementById('inv-form-status').textContent='Save the invoice first.'; return;}
+    const desc=val('ini-description'), qty=numval('ini-quantity'), price=numval('ini-unit_price');
+    if(!desc||!qty||price==null){document.getElementById('inv-form-status').textContent='Description, quantity and unit price required.'; return;}
+    const {error}=await sb.from('crm_invoice_items').insert({invoice_id:id, description:desc, quantity:qty, unit:val('ini-unit'), unit_price:price});
+    if(error){document.getElementById('inv-form-status').textContent='Error: '+error.message; return;}
+    ['ini-description','ini-quantity','ini-unit','ini-unit_price'].forEach(f=>setval(f,''));
+    await refreshInv(id);
+  });
+  document.getElementById('btn-issue-inv').addEventListener('click', async ()=>{
+    const id=val('in-id'); if(!id)return;
+    if(!confirm('Issue this invoice to the client? Financials will be locked.'))return;
+    const {error}=await sb.rpc('crm_issue_invoice',{p_invoice_id:id});
+    const st=document.getElementById('inv-form-status');
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Invoice issued.'; await refreshInv(id); loadInvoices();
+  });
+  document.getElementById('inv-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('inv-form-status'); st.textContent='Saving…';
+    const payload={}; IN_FIELDS.forEach(f=>payload[f]=val('in-'+f)); IN_NUMS.forEach(f=>payload[f]=numval('in-'+f)||0);
+    payload.exchange_rate=numval('in-exchange_rate');
+    if(!payload.organization_id){ st.textContent='Organization is required.'; return; }
+    const id=val('in-id'); let error;
+    if(id){ ({error}=await sb.from('crm_invoices').update(payload).eq('id',id)); if(!error)await refreshInv(id); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'inv'});
+      payload.invoice_number=num;
+      ({error}=await sb.from('crm_invoices').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; if(!id)closeModal('modal-inv'); loadInvoices();
+  });
+
+  /* ---------- PAYMENTS ---------- */
+  const PA_FIELDS=['organization_id','payment_date','currency','payment_method','bank_name','transaction_ref','internal_notes'];
+  const PA_NUMS=['amount','exchange_rate','withholding_tax','bank_charges','deductions'];
+  async function loadPayments(){
+    const [{data:pays},{data:allocs}]=await Promise.all([
+      sb.from('crm_payments').select('*').is('deleted_at',null).order('created_at',{ascending:false}),
+      sb.from('crm_payment_allocations').select('*')
+    ]);
+    payCache=pays||[]; allocCache=allocs||[];
+    document.getElementById('pay-empty').style.display=payCache.length?'none':'block';
+    document.getElementById('pay-rows').innerHTML=payCache.map(p=>{
+      const alloc=allocCache.filter(a=>a.payment_id===p.id).reduce((s,a)=>s+Number(a.amount),0);
+      return `<tr class="crm-row-link" data-paid="${p.id}">
+        <td class="crm-mono">${esc(p.payment_number||'—')}</td>
+        <td>${esc(orgName(p.organization_id))}</td>
+        <td class="crm-mono">${esc(p.payment_date)}</td>
+        <td class="crm-mono">${money(p.amount,p.currency)}</td>
+        <td class="crm-mono">${money(p.net_received,p.currency)}</td>
+        <td class="crm-mono">${money(alloc,p.currency)}</td>
+        <td>${p.is_verified?'<span class="crm-badge ok">Verified</span>':'<span class="crm-badge warn">Pending</span>'}</td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`;
+    }).join('');
+    document.querySelectorAll('[data-paid]').forEach(r=>r.addEventListener('click',()=>openPay(r.dataset.paid)));
+  }
+  document.getElementById('btn-new-pay').addEventListener('click',()=>{
+    document.getElementById('pay-form').reset(); setval('pa-id','');
+    document.getElementById('pay-modal-title').textContent='Record Payment';
+    document.getElementById('pay-alloc-block').style.display='none';
+    openModal('modal-pay');
+  });
+  async function openPay(id){
+    const p=payCache.find(x=>x.id===id); if(!p)return;
+    document.getElementById('pay-form').reset(); setval('pa-id',p.id);
+    PA_FIELDS.forEach(f=>setval('pa-'+f,p[f])); PA_NUMS.forEach(f=>setval('pa-'+f,p[f]));
+    document.getElementById('pay-modal-title').textContent=(p.payment_number||'Payment')+' — '+orgName(p.organization_id);
+    document.getElementById('pay-alloc-block').style.display='block';
+    document.getElementById('btn-verify-pay').style.display=p.is_verified?'none':'inline-block';
+    // Open invoices of this org for allocation
+    const {data:openInv}=await sb.from('crm_invoices').select('id,invoice_number,total,outstanding,currency')
+      .eq('organization_id',p.organization_id).in('status',['issued','partially_paid','overdue']).is('deleted_at',null);
+    fillSelect('al-invoice_id',(openInv||[]).map(i=>({id:i.id,name:i.invoice_number+' · outstanding '+money(i.outstanding,i.currency)})),'name');
+    await renderAllocs(p);
+    openModal('modal-pay');
+  }
+  async function renderAllocs(p){
+    const {data:allocs}=await sb.from('crm_payment_allocations').select('*').eq('payment_id',p.id);
+    const list=allocs||[];
+    const allocated=list.reduce((s,a)=>s+Number(a.amount),0);
+    document.getElementById('pay-alloc-list').innerHTML=list.length
+      ? list.map(a=>{
+          const inv=invCache.find(i=>i.id===a.invoice_id);
+          return `<div style="display:flex; justify-content:space-between; gap:10px; font-size:12px; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.1);">
+            <span>${esc(inv?inv.invoice_number:a.invoice_id.slice(0,8))}</span>
+            <span class="crm-mono">${money(a.amount,p.currency)}</span>
+            <button class="crm-btn danger sm" type="button" data-delal="${a.id}">✕</button>
+          </div>`;
+        }).join('')
+      : '<p class="crm-empty" style="padding:6px 0;">Not yet allocated. Unallocated amounts remain as client credit.</p>';
+    document.querySelectorAll('[data-delal]').forEach(b=>b.addEventListener('click',async()=>{
+      await sb.from('crm_payment_allocations').delete().eq('id',b.dataset.delal);
+      renderAllocs(p); loadInvoices();
+    }));
+    document.getElementById('pay-totals').innerHTML=`
+      <div><span>Payment Amount</span><span>${money(p.amount,p.currency)}</span></div>
+      <div><span>Net Received (after WHT / charges)</span><span>${money(p.net_received,p.currency)}</span></div>
+      <div><span>Allocated</span><span>${money(allocated,p.currency)}</span></div>
+      <div class="grand"><span>Unallocated (client credit)</span><span>${money(p.amount-allocated,p.currency)}</span></div>`;
+  }
+  document.getElementById('btn-add-alloc').addEventListener('click', async ()=>{
+    const pid=val('pa-id'); const inv=val('al-invoice_id'); const amt=numval('al-amount');
+    const st=document.getElementById('pay-form-status');
+    if(!pid||!inv||!amt){ st.textContent='Choose an invoice and amount.'; return; }
+    const {error}=await sb.from('crm_payment_allocations').insert({payment_id:pid, invoice_id:inv, amount:amt});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    setval('al-amount','');
+    const p=payCache.find(x=>x.id===pid);
+    await loadInvoices(); await renderAllocs(p);
+  });
+  document.getElementById('btn-verify-pay').addEventListener('click', async ()=>{
+    const id=val('pa-id'); if(!id)return;
+    if(!confirm('Verify this payment and generate an official receipt?'))return;
+    const {error}=await sb.rpc('crm_verify_payment',{p_payment_id:id});
+    const st=document.getElementById('pay-form-status');
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Payment verified — receipt generated.'; closeModal('modal-pay'); loadPayments();
+  });
+  document.getElementById('pay-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('pay-form-status'); st.textContent='Saving…';
+    const payload={}; PA_FIELDS.forEach(f=>payload[f]=val('pa-'+f)); PA_NUMS.forEach(f=>payload[f]=numval('pa-'+f));
+    ['withholding_tax','bank_charges','deductions'].forEach(f=>payload[f]=payload[f]||0);
+    if(!payload.organization_id||!payload.amount){ st.textContent='Organization and amount are required.'; return; }
+    payload.payment_date=payload.payment_date||new Date().toISOString().slice(0,10);
+    const id=val('pa-id'); let error;
+    if(id){ ({error}=await sb.from('crm_payments').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'pay'});
+      payload.payment_number=num;
+      ({error}=await sb.from('crm_payments').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; if(!id)closeModal('modal-pay'); loadPayments();
+  });
+
+  /* ---------- RECEIVABLES ---------- */
+  async function loadReceivables(){
+    const {data,error}=await sb.from('crm_receivables_ageing').select('*').order('days_overdue',{ascending:false});
+    const rows=data||[];
+    document.getElementById('ar-empty').style.display=(error||!rows.length)?'block':'none';
+    const buckets={current:0,'1_30':0,'31_60':0,'61_90':0,'91_120':0,over_120:0};
+    rows.forEach(r=>{ buckets[r.ageing_bucket]=(buckets[r.ageing_bucket]||0)+Number(r.outstanding); });
+    const names={current:'Current','1_30':'1–30 Days','31_60':'31–60 Days','61_90':'61–90 Days','91_120':'91–120 Days',over_120:'120+ Days'};
+    document.getElementById('ar-kpis').innerHTML=Object.keys(names).map(k=>
+      `<div class="crm-kpi"><div class="n">${Number(buckets[k]).toLocaleString('en-US',{maximumFractionDigits:0})}</div><div class="l">${names[k]}</div></div>`).join('');
+    document.getElementById('ar-rows').innerHTML=rows.map(r=>`
+      <tr>
+        <td class="crm-mono">${esc(r.invoice_number)}</td>
+        <td>${esc(orgName(r.organization_id))}</td>
+        <td class="crm-mono">${esc(r.due_date||'—')}</td>
+        <td class="crm-mono">${r.days_overdue}</td>
+        <td class="crm-mono">${money(r.outstanding,r.currency)}</td>
+        <td><span class="${badgeClass(r.ageing_bucket)}">${names[r.ageing_bucket]||label(r.ageing_bucket)}</span></td>
+      </tr>`).join('');
+  }
+
+  /* ---------- EXPENSES ---------- */
+  const EX_FIELDS=['category','order_id','project_id','expense_date','currency','description'];
+  let expCache=[];
+  async function loadExpenses(){
+    const {data,error}=await sb.from('crm_expenses').select('*').is('deleted_at',null).order('expense_date',{ascending:false});
+    expCache=data||[];
+    document.getElementById('exp-empty').style.display=(error||!expCache.length)?'block':'none';
+    document.getElementById('exp-rows').innerHTML=expCache.map(x=>{
+      const ord=ordersCache.find(o=>o.id===x.order_id); const prj=projectsCache.find(p=>p.id===x.project_id);
+      return `<tr class="crm-row-link" data-exid="${x.id}">
+        <td class="crm-mono">${esc(x.expense_number||'—')}</td>
+        <td>${esc(label(x.category))}</td>
+        <td class="crm-mono">${esc(ord?ord.name:(prj?prj.name:'General'))}</td>
+        <td class="crm-mono">${esc(x.expense_date)}</td>
+        <td class="crm-mono">${money(x.amount,x.currency)}</td>
+        <td>${x.is_direct?'<span class="crm-badge ok">Direct</span>':'<span class="crm-badge">Overhead</span>'}</td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`;
+    }).join('');
+    document.querySelectorAll('[data-exid]').forEach(r=>r.addEventListener('click',()=>openExp(r.dataset.exid)));
+  }
+  document.getElementById('btn-new-exp').addEventListener('click',()=>{
+    document.getElementById('exp-form').reset(); setval('ex-id',''); setval('ex-is_direct',true);
+    openModal('modal-exp');
+  });
+  function openExp(id){
+    const x=expCache.find(y=>y.id===id); if(!x)return;
+    document.getElementById('exp-form').reset(); setval('ex-id',x.id);
+    EX_FIELDS.forEach(f=>setval('ex-'+f,x[f])); setval('ex-amount',x.amount); setval('ex-is_direct',x.is_direct);
+    openModal('modal-exp');
+  }
+  document.getElementById('exp-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('exp-form-status'); st.textContent='Saving…';
+    const payload={}; EX_FIELDS.forEach(f=>payload[f]=val('ex-'+f));
+    payload.amount=numval('ex-amount'); payload.is_direct=val('ex-is_direct')||false;
+    payload.expense_date=payload.expense_date||new Date().toISOString().slice(0,10);
+    if(!payload.amount){ st.textContent='Amount required.'; return; }
+    const id=val('ex-id'); let error;
+    if(id){ ({error}=await sb.from('crm_expenses').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'exp'});
+      payload.expense_number=num;
+      ({error}=await sb.from('crm_expenses').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; closeModal('modal-exp'); loadExpenses();
+  });
+
+  /* ---------- PROFITABILITY & EBITDA ---------- */
+  async function loadProfit(){
+    const [{data:orders},{data:monthly}]=await Promise.all([
+      sb.from('crm_order_ebitda').select('*').order('order_date',{ascending:false}),
+      sb.from('crm_monthly_finance').select('*')
+    ]);
+    const rows=orders||[];
+    const annualEbitda=rows.reduce((s,r)=>s+Number(r.ebitda_contribution||0),0);
+    const revenue=rows.reduce((s,r)=>s+Number(r.revenue||0),0);
+    const gp=rows.reduce((s,r)=>s+(Number(r.revenue||0)-Number(r.cogs||0)),0);
+    document.getElementById('pr-kpis').innerHTML=[
+      {n:revenue.toLocaleString('en-US',{maximumFractionDigits:0}),l:'Order Revenue'},
+      {n:gp.toLocaleString('en-US',{maximumFractionDigits:0}),l:'Gross Profit'},
+      {n:annualEbitda.toLocaleString('en-US',{maximumFractionDigits:0}),l:'EBITDA Contribution'},
+      {n:revenue?((annualEbitda/revenue)*100).toFixed(1)+'%':'—',l:'EBITDA Margin'}
+    ].map(k=>`<div class="crm-kpi"><div class="n">${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+    document.getElementById('pr-rows').innerHTML=rows.map(r=>`
+      <tr>
+        <td class="crm-mono">${esc(r.order_number)}</td>
+        <td class="crm-mono">${money(r.revenue,r.currency)}</td>
+        <td class="crm-mono">${money(r.cogs,r.currency)}</td>
+        <td class="crm-mono">${money(r.direct_expenses,r.currency)}</td>
+        <td class="crm-mono">${money(r.allocated_overhead,r.currency)}</td>
+        <td class="crm-mono">${money(r.ebitda_contribution,r.currency)}</td>
+        <td class="crm-mono">${r.ebitda_margin_pct==null?'—':r.ebitda_margin_pct+'%'}</td>
+        <td class="crm-mono">${annualEbitda?((Number(r.ebitda_contribution)/annualEbitda)*100).toFixed(1)+'%':'—'}</td>
+      </tr>`).join('')||'<tr><td class="crm-empty">No qualifying orders yet.</td></tr>';
+    document.getElementById('pr-monthly').innerHTML=(monthly||[]).map(m=>`
+      <tr>
+        <td class="crm-mono">${esc(m.period)}</td>
+        <td class="crm-mono">${money(m.invoiced)}</td>
+        <td class="crm-mono">${money(m.collected)}</td>
+        <td class="crm-mono">${money(m.gross_profit)}</td>
+        <td class="crm-mono">${money(m.ebitda)}</td>
+      </tr>`).join('');
+  }
+
+  checkSession();
+});
+</script>
+</body>
+</html>
