@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quotations &amp; Costing | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- CRM scoped styles (crm-) — never touches shared style.css ----
+     Brand-token fallbacks (exact values from style.css :root) so this page
+     can never render as an unstyled white screen if style.css fails. */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; transition:color .2s, border-color .2s; text-decoration:none;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:500; padding:10px 12px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .crm-table td{padding:12px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-row-link{cursor:pointer;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--line); color:var(--gold-light); border-radius:2px; white-space:nowrap;}
+  .crm-badge.warn{border-color:#e08a4a; color:#e08a4a;}
+  .crm-badge.bad{border-color:#e57368; color:#e57368;}
+  .crm-badge.ok{border-color:var(--emerald); color:#5cc9b4;}
+  .crm-toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center;}
+  .crm-toolbar input, .crm-toolbar select, .crm-form input, .crm-form select, .crm-form textarea{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:10px 12px; font-family:'Inter',sans-serif; font-size:13px; border-radius:2px; width:100%;
+  }
+  .crm-toolbar input, .crm-toolbar select{width:auto; min-width:180px;}
+  .crm-form textarea{min-height:70px; resize:vertical;}
+  .crm-form label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 5px;}
+  .crm-grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px 16px; margin-bottom:14px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .crm-btn.danger{background:transparent; border:1px solid #e57368; color:#e57368;}
+  .crm-btn.sm{padding:6px 12px; font-size:10px;}
+  .crm-modal-bg{position:fixed; inset:0; background:rgba(8,17,28,0.86); z-index:80; display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:60px 16px;}
+  .crm-modal{background:var(--bg-alt); border:1px solid var(--line); max-width:920px; width:100%; padding:34px 36px 40px;}
+  .crm-modal h2{margin-bottom:22px;}
+  .crm-fieldset-label{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:22px 0 12px; border-bottom:1px solid var(--line); padding-bottom:6px;}
+  .crm-empty{color:var(--muted); font-size:13px; padding:30px 0;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:8px;}
+  .crm-totals{border:1px solid var(--line); background:var(--bg-deep); padding:16px 20px; margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12px;}
+  .crm-totals div{display:flex; justify-content:space-between; padding:3px 0;}
+  .crm-totals .grand{border-top:1px solid var(--line); margin-top:6px; padding-top:8px; color:var(--gold-light); font-size:14px;}
+  .crm-item-row{display:grid; grid-template-columns:3fr 1fr 1fr 1fr auto; gap:8px; margin-bottom:8px; align-items:center;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+    .crm-item-row{grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity (same as crm.html) -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Client Relationship Management Portal</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" name="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Pipeline</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <div class="crm-nav-label">Commercial</div>
+    <span class="crm-nav-item active" data-view="quotations">Quotations</span>
+    <span class="crm-nav-item" data-view="costsheets" data-fin>Cost Sheets</span>
+    <span class="crm-nav-item" data-view="offers">Supplier Offers</span>
+    <span class="crm-nav-item" data-view="vendors">Vendors</span>
+  </aside>
+
+  <main class="crm-main">
+
+    <!-- QUOTATIONS -->
+    <section id="view-quotations">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Commercial</div><h1>Quotations</h1></div>
+        <button class="crm-btn" id="btn-new-qtn">+ New Quotation</button>
+      </div>
+      <div class="crm-toolbar">
+        <select id="qtn-status-filter">
+          <option value="">All statuses</option>
+          <option value="draft">Draft</option><option value="costing_review">Costing Review</option>
+          <option value="pending_approval">Pending Approval</option><option value="approved">Approved</option>
+          <option value="issued">Issued</option><option value="viewed">Viewed</option>
+          <option value="revision_requested">Revision Requested</option><option value="revised">Revised</option>
+          <option value="accepted">Accepted</option><option value="rejected">Rejected</option>
+          <option value="expired">Expired</option><option value="withdrawn">Withdrawn</option>
+          <option value="converted_to_order">Converted to Order</option>
+        </select>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No. / Ver</th><th>Title</th><th>Organization</th><th>Total</th><th>Status</th><th>Approval</th><th></th></tr></thead>
+        <tbody id="qtn-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="qtn-empty" style="display:none;">No quotations yet.</p>
+    </section>
+
+    <!-- COST SHEETS -->
+    <section id="view-costsheets" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Finance &amp; Management Only</div><h1>Cost Sheets</h1></div>
+        <button class="crm-btn" id="btn-new-cs">+ New Cost Sheet</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Title</th><th>Est. Total</th><th>Actual</th><th>Variance</th><th>Status</th><th></th></tr></thead>
+        <tbody id="cs-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="cs-empty" style="display:none;">No cost sheets yet, or your role does not include costing access.</p>
+    </section>
+
+    <!-- SUPPLIER OFFERS -->
+    <section id="view-offers" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Sourcing — Internal Only</div><h1>Supplier Offers</h1></div>
+        <button class="crm-btn" id="btn-new-offer">+ New Offer</button>
+      </div>
+      <div class="crm-toolbar">
+        <select id="offer-enq-filter"><option value="">All enquiries</option></select>
+        <span class="crm-mono">Ranked by landed offer total when an enquiry is selected</span>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Vendor</th><th>Product</th><th>Unit Cost</th><th>Offer Total</th><th>Lead Time</th><th>Selected</th><th></th></tr></thead>
+        <tbody id="offer-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="offer-empty" style="display:none;">No supplier offers yet.</p>
+    </section>
+
+    <!-- VENDORS -->
+    <section id="view-vendors" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Supplier Database — Internal Only</div><h1>Vendors</h1></div>
+        <button class="crm-btn" id="btn-new-vendor">+ New Vendor</button>
+      </div>
+      <div class="crm-toolbar"><input id="vendor-search" placeholder="Search vendor / country / product…"></div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Vendor</th><th>Country</th><th>Type</th><th>Approval</th><th>Score</th><th></th></tr></thead>
+        <tbody id="vendor-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="vendor-empty" style="display:none;">No vendors yet.</p>
+    </section>
+
+  </main>
+</div>
+
+<!-- VENDOR MODAL -->
+<div class="crm-modal-bg" id="modal-vendor">
+  <div class="crm-modal">
+    <h2 id="vendor-modal-title">New Vendor</h2>
+    <form id="vendor-form" class="crm-form">
+      <input type="hidden" id="v-id">
+      <div class="crm-fieldset-label">Identity</div>
+      <div class="crm-grid2">
+        <div><label>Legal Name *</label><input id="v-legal_name" required></div>
+        <div><label>Trading Name</label><input id="v-trading_name"></div>
+        <div><label>Type</label><select id="v-supplier_type"><option value="manufacturer">Manufacturer</option><option value="trader">Trader</option><option value="agent">Agent</option><option value="service_provider">Service Provider</option></select></div>
+        <div><label>Country</label><input id="v-country"></div>
+        <div><label>City</label><input id="v-city"></div>
+        <div><label>Website</label><input id="v-website"></div>
+        <div><label>Primary Contact</label><input id="v-primary_contact"></div>
+        <div><label>Email</label><input id="v-email" type="email"></div>
+        <div><label>Phone</label><input id="v-phone"></div>
+        <div><label>WhatsApp</label><input id="v-whatsapp"></div>
+        <div><label>WeChat</label><input id="v-wechat"></div>
+        <div><label>Product Categories</label><input id="v-product_categories"></div>
+      </div>
+      <div class="crm-fieldset-label">Commercial</div>
+      <div class="crm-grid2">
+        <div><label>MOQ</label><input id="v-moq"></div>
+        <div><label>Capacity</label><input id="v-capacity"></div>
+        <div><label>Lead Time</label><input id="v-lead_time"></div>
+        <div><label>Payment Terms</label><input id="v-payment_terms"></div>
+        <div><label>Certifications</label><input id="v-certifications"></div>
+        <div><label>Factory Audit</label><select id="v-factory_audit_status"><option value="not_audited">Not Audited</option><option value="scheduled">Scheduled</option><option value="passed">Passed</option><option value="failed">Failed</option><option value="expired">Expired</option></select></div>
+        <div><label>Approval Status</label><select id="v-approval_status"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="suspended">Suspended</option></select></div>
+      </div>
+      <div class="crm-fieldset-label">Scoring (1–5)</div>
+      <div class="crm-grid2">
+        <div><label>Price</label><input id="v-score_price" type="number" min="1" max="5"></div>
+        <div><label>Quality</label><input id="v-score_quality" type="number" min="1" max="5"></div>
+        <div><label>Communication</label><input id="v-score_communication" type="number" min="1" max="5"></div>
+        <div><label>Delivery</label><input id="v-score_delivery" type="number" min="1" max="5"></div>
+        <div><label>Documentation</label><input id="v-score_documentation" type="number" min="1" max="5"></div>
+        <div><label>Compliance</label><input id="v-score_compliance" type="number" min="1" max="5"></div>
+        <div><label>Reliability</label><input id="v-score_reliability" type="number" min="1" max="5"></div>
+      </div>
+      <div><label>Internal Notes (never client-visible)</label><textarea id="v-internal_notes"></textarea></div>
+      <div style="margin:14px 0;">
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0; font-size:13px; color:var(--cream);">
+          <input type="checkbox" id="v-is_blacklisted" style="width:auto;"> Blacklisted
+        </label>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="crm-btn" type="submit">Save Vendor</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-vendor">Cancel</button>
+        <span class="crm-status-msg" id="vendor-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SUPPLIER OFFER MODAL -->
+<div class="crm-modal-bg" id="modal-offer">
+  <div class="crm-modal">
+    <h2 id="offer-modal-title">New Supplier Offer</h2>
+    <form id="offer-form" class="crm-form">
+      <input type="hidden" id="of-id">
+      <div class="crm-grid2">
+        <div><label>Enquiry *</label><select id="of-enquiry_id" required><option value="">—</option></select></div>
+        <div><label>Vendor *</label><select id="of-vendor_id" required><option value="">—</option></select></div>
+        <div><label>Product</label><input id="of-product"></div>
+        <div><label>Quantity</label><input id="of-quantity" type="number" step="0.001" min="0"></div>
+        <div><label>Unit</label><input id="of-unit"></div>
+        <div><label>Unit Cost</label><input id="of-unit_cost" type="number" step="0.0001" min="0"></div>
+        <div><label>Currency</label><select id="of-currency"><option>USD</option><option>CNY</option><option>PKR</option><option>EUR</option><option>GBP</option><option>AED</option><option>SAR</option></select></div>
+        <div><label>Exchange Rate → PKR</label><input id="of-exchange_rate" type="number" step="0.000001" min="0"></div>
+        <div><label>Sample Cost</label><input id="of-sample_cost" type="number" step="0.01" min="0"></div>
+        <div><label>Tooling Cost</label><input id="of-tooling_cost" type="number" step="0.01" min="0"></div>
+        <div><label>Packaging Cost</label><input id="of-packaging_cost" type="number" step="0.01" min="0"></div>
+        <div><label>Freight Estimate</label><input id="of-freight_estimate" type="number" step="0.01" min="0"></div>
+        <div><label>MOQ</label><input id="of-moq"></div>
+        <div><label>Lead Time</label><input id="of-lead_time"></div>
+        <div><label>Incoterm</label><input id="of-incoterm" placeholder="e.g. FOB Shanghai"></div>
+        <div><label>Payment Terms</label><input id="of-payment_terms"></div>
+        <div><label>Validity</label><input id="of-validity_date" type="date"></div>
+        <div><label>Quality Score (1–5)</label><input id="of-quality_score" type="number" min="1" max="5"></div>
+        <div><label>Risk Score (1–5)</label><input id="of-risk_score" type="number" min="1" max="5"></div>
+      </div>
+      <div><label>Specification</label><textarea id="of-specification"></textarea></div>
+      <div style="margin-top:12px;"><label>Notes (internal)</label><textarea id="of-notes"></textarea></div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="crm-btn" type="submit">Save Offer</button>
+        <button class="crm-btn ghost" type="button" id="btn-select-offer" style="display:none;">Select This Supplier</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-offer">Cancel</button>
+        <span class="crm-status-msg" id="offer-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- COST SHEET MODAL -->
+<div class="crm-modal-bg" id="modal-cs">
+  <div class="crm-modal">
+    <h2 id="cs-modal-title">New Cost Sheet</h2>
+    <form id="cs-form" class="crm-form">
+      <input type="hidden" id="cs-id">
+      <div class="crm-grid2">
+        <div><label>Title *</label><input id="cs-title" required></div>
+        <div><label>Enquiry</label><select id="cs-enquiry_id"><option value="">—</option></select></div>
+        <div><label>Currency</label><select id="cs-currency"><option>PKR</option><option>USD</option><option>EUR</option><option>GBP</option><option>CNY</option><option>AED</option><option>SAR</option></select></div>
+        <div><label>Quantity</label><input id="cs-quantity" type="number" step="0.001" min="0"></div>
+        <div><label>Unit</label><input id="cs-unit"></div>
+        <div><label>Contingency %</label><input id="cs-contingency_pct" type="number" step="0.01" min="0" max="100"></div>
+        <div><label>Status</label><select id="cs-status"><option value="draft">Draft</option><option value="under_review">Under Review</option><option value="approved">Approved</option><option value="locked">Locked</option><option value="archived">Archived</option></select></div>
+      </div>
+      <div><label>Notes (internal)</label><textarea id="cs-notes"></textarea></div>
+      <div id="cs-items-block" style="display:none;">
+        <div class="crm-fieldset-label">Cost Lines — Estimated / Revised / Actual</div>
+        <div id="cs-items-list"></div>
+        <div class="crm-grid2" style="margin-top:10px;">
+          <div><label>Category</label>
+            <select id="csi-category">
+              <option value="supplier_cost">Supplier Cost</option><option value="samples">Samples</option>
+              <option value="tooling">Tooling / Moulds</option><option value="packaging">Packaging / Labels</option>
+              <option value="certification">Certification / Testing</option><option value="inspection">Inspection</option>
+              <option value="export_docs">Export Documents</option><option value="origin_transport">Origin Transport</option>
+              <option value="freight">Freight</option><option value="insurance">Insurance</option>
+              <option value="bank_charges">Bank / FX Charges</option><option value="customs_duty">Customs Duty</option>
+              <option value="sales_tax">Sales Tax</option><option value="withholding_tax">Withholding / Income Tax</option>
+              <option value="clearing">Customs Agent / Port / THC</option><option value="demurrage">Demurrage / Detention</option>
+              <option value="local_transport">Local Transport / Warehousing</option>
+              <option value="damage_allowance">Damage / Shortage Allowance</option>
+              <option value="commission">Sales Commission</option><option value="marketing">Marketing / Lead Cost</option>
+              <option value="project_mgmt">Project Management</option><option value="finance_cost">Finance Cost</option>
+              <option value="admin_allocation">Admin Allocation</option><option value="other">Other</option>
+            </select></div>
+          <div><label>Description</label><input id="csi-description"></div>
+          <div><label>Estimated</label><input id="csi-estimated_amount" type="number" step="0.01"></div>
+          <div><label>Borne By</label><select id="csi-borne_by"><option value="company">Company</option><option value="client">Client</option><option value="pass_through">Pass-Through</option></select></div>
+        </div>
+        <button class="crm-btn ghost" type="button" id="btn-add-cs-item">Add Cost Line</button>
+        <div class="crm-totals" id="cs-totals"></div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="crm-btn" type="submit">Save Cost Sheet</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-cs">Cancel</button>
+        <span class="crm-status-msg" id="cs-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- QUOTATION MODAL -->
+<div class="crm-modal-bg" id="modal-qtn">
+  <div class="crm-modal">
+    <h2 id="qtn-modal-title">New Quotation</h2>
+    <form id="qtn-form" class="crm-form">
+      <input type="hidden" id="q-id">
+      <div class="crm-grid2">
+        <div><label>Title *</label><input id="q-title" required></div>
+        <div><label>Organization *</label><select id="q-organization_id" required><option value="">—</option></select></div>
+        <div><label>Service</label><select id="q-service_id"><option value="">—</option></select></div>
+        <div><label>Enquiry</label><select id="q-enquiry_id"><option value="">—</option></select></div>
+        <div><label>Cost Sheet (margin check)</label><select id="q-cost_sheet_id"><option value="">—</option></select></div>
+        <div><label>Currency</label><select id="q-currency"><option>PKR</option><option>USD</option><option>EUR</option><option>GBP</option><option>CNY</option><option>AED</option><option>SAR</option></select></div>
+        <div><label>Discount %</label><input id="q-discount_pct" type="number" step="0.01" min="0" max="100"></div>
+        <div><label>Tax %</label><input id="q-tax_pct" type="number" step="0.01" min="0" max="100"></div>
+        <div><label>Freight</label><input id="q-freight_amount" type="number" step="0.01" min="0"></div>
+        <div><label>Other Charges</label><input id="q-other_charges" type="number" step="0.01" min="0"></div>
+        <div><label>Expiry Date</label><input id="q-expiry_date" type="date"></div>
+        <div><label>Incoterm</label><input id="q-incoterm"></div>
+      </div>
+      <div class="crm-grid2">
+        <div><label>Payment Terms</label><input id="q-payment_terms"></div>
+        <div><label>Delivery Terms</label><input id="q-delivery_terms"></div>
+        <div><label>Delivery Timeline</label><input id="q-delivery_timeline"></div>
+        <div><label>Warranty</label><input id="q-warranty"></div>
+      </div>
+      <div><label>Assumptions</label><textarea id="q-assumptions"></textarea></div>
+      <div style="margin-top:12px;"><label>Exclusions</label><textarea id="q-exclusions"></textarea></div>
+      <div style="margin-top:12px;"><label>Terms &amp; Conditions</label><textarea id="q-terms_conditions"></textarea></div>
+      <div style="margin-top:12px;"><label>Client-Visible Notes</label><textarea id="q-client_notes"></textarea></div>
+      <div style="margin-top:12px;"><label>Internal Notes (never client-visible)</label><textarea id="q-internal_notes"></textarea></div>
+
+      <div id="qtn-items-block" style="display:none;">
+        <div class="crm-fieldset-label">Line Items</div>
+        <div id="qtn-items-list"></div>
+        <div class="crm-item-row" style="margin-top:10px;">
+          <input id="qi-description" placeholder="Description">
+          <input id="qi-quantity" type="number" step="0.001" min="0" placeholder="Qty">
+          <input id="qi-unit" placeholder="Unit">
+          <input id="qi-unit_price" type="number" step="0.0001" min="0" placeholder="Unit Price">
+          <button class="crm-btn ghost sm" type="button" id="btn-add-qtn-item">Add</button>
+        </div>
+        <div class="crm-totals" id="qtn-totals"></div>
+        <div class="crm-fieldset-label">Workflow</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="crm-btn ghost" type="button" id="btn-qtn-submit">Submit for Issue</button>
+          <button class="crm-btn ghost" type="button" id="btn-qtn-approve" style="display:none;">Approve</button>
+          <button class="crm-btn danger" type="button" id="btn-qtn-reject" style="display:none;">Reject</button>
+          <button class="crm-btn ghost" type="button" id="btn-qtn-issue">Issue to Client</button>
+          <button class="crm-btn ghost" type="button" id="btn-qtn-revise">Create Revision</button>
+          <a class="crm-btn ghost" id="btn-qtn-view" target="_blank" style="text-decoration:none;">View Document</a>
+        </div>
+        <p class="crm-mono" id="qtn-workflow-status" style="margin-top:10px;"></p>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:22px;">
+        <button class="crm-btn" type="submit">Save Quotation</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-qtn">Cancel</button>
+        <span class="crm-status-msg" id="qtn-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s ? s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : '—'; }
+  function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function badgeClass(s){
+    if(['accepted','approved','issued','passed','ok','converted_to_order'].includes(s)) return 'crm-badge ok';
+    if(['rejected','expired','withdrawn','failed','suspended','blacklisted'].includes(s)) return 'crm-badge bad';
+    if(['pending_approval','revision_requested','under_review','pending'].includes(s)) return 'crm-badge warn';
+    return 'crm-badge';
+  }
+  function val(id){ const el=document.getElementById(id); return el?(el.type==='checkbox'?el.checked:(el.value.trim()||null)):null; }
+  function numval(id){ const v=val(id); return v===null||v===false?null:Number(v); }
+  function setval(id,v){ const el=document.getElementById(id); if(!el)return; if(el.type==='checkbox'){el.checked=!!v;}else{el.value=v==null?'':v;} }
+  function openModal(id){ document.getElementById(id).style.display='flex'; }
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+
+  let servicesCache=[], orgsCache=[], enqCache=[], vendorsCache=[], csCache=[], csTotalsCache=[], offersCache=[], qtnCache=[], isCEO=false;
+
+  /* ---------- auth (identical pattern to crm.html) ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:probe, error}=await sb.from('crm_settings').select('key').limit(1);
+    if(error||!probe){
+      document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    // CEO probe: only super_admin/ceo can read decided approvals workflow buttons
+    const {error:ceoErr}=await sb.from('crm_audit_logs').select('id').limit(1);
+    isCEO=!ceoErr;
+    await Promise.all([loadRefServices(), loadRefOrgs(), loadRefEnquiries(), loadRefVendors(), loadRefCostSheets()]);
+    showView('quotations');
+  }
+
+  const loaders={quotations:loadQuotations, costsheets:loadCostSheets, offers:loadOffers, vendors:loadVendors};
+  function showView(v){
+    document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.classList.toggle('active', n.dataset.view===v));
+    ['quotations','costsheets','offers','vendors'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'':'none');
+    loaders[v]&&loaders[v]();
+  }
+  document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
+
+  /* ---------- reference loaders ---------- */
+  async function loadRefServices(){
+    const {data}=await sb.from('crm_services').select('id,name').eq('is_active',true).order('sort_order');
+    servicesCache=data||[]; fillSelect('q-service_id',servicesCache,'name');
+  }
+  async function loadRefOrgs(){
+    const {data}=await sb.from('crm_organizations').select('id,legal_name').is('deleted_at',null).order('legal_name');
+    orgsCache=data||[]; fillSelect('q-organization_id',orgsCache,'legal_name');
+  }
+  async function loadRefEnquiries(){
+    const {data}=await sb.from('crm_enquiries').select('id,enquiry_number,title').is('deleted_at',null).order('created_at',{ascending:false}).limit(200);
+    enqCache=(data||[]).map(e=>({id:e.id,name:(e.enquiry_number||'')+' '+e.title}));
+    ['of-enquiry_id','cs-enquiry_id','q-enquiry_id','offer-enq-filter'].forEach(id=>fillSelect(id,enqCache,'name'));
+  }
+  async function loadRefVendors(){
+    const {data}=await sb.from('crm_vendors').select('id,legal_name,country,is_blacklisted').is('deleted_at',null).order('legal_name');
+    vendorsCache=data||[];
+    fillSelect('of-vendor_id',vendorsCache.filter(v=>!v.is_blacklisted).map(v=>({id:v.id,name:v.legal_name+(v.country?' ('+v.country+')':'')})),'name');
+  }
+  async function loadRefCostSheets(){
+    const {data}=await sb.from('crm_cost_sheets').select('id,sheet_number,title').is('deleted_at',null).order('created_at',{ascending:false});
+    csCache=data||[];
+    fillSelect('q-cost_sheet_id',csCache.map(c=>({id:c.id,name:(c.sheet_number||'')+' '+c.title})),'name');
+    // Hide cost sheet tab if role has no access (RLS returns empty AND error null means allowed but empty — probe error instead)
+    const {error}=await sb.from('crm_cost_sheets').select('id',{head:true,count:'exact'});
+    document.querySelectorAll('[data-fin]').forEach(el=>el.style.display=error?'none':'');
+  }
+  function fillSelect(id,rows,labelKey){
+    const sel=document.getElementById(id); if(!sel)return;
+    const first=sel.querySelector('option'); sel.innerHTML=''; sel.appendChild(first);
+    rows.forEach(r=>{ const o=document.createElement('option'); o.value=r.id; o.textContent=r[labelKey]; sel.appendChild(o); });
+  }
+  function orgName(id){ const o=orgsCache.find(x=>x.id===id); return o?o.legal_name:'—'; }
+  function vendorName(id){ const v=vendorsCache.find(x=>x.id===id); return v?v.legal_name:'—'; }
+
+  /* ---------- VENDORS ---------- */
+  const V_FIELDS=['legal_name','trading_name','supplier_type','country','city','website','primary_contact','email','phone','whatsapp','wechat','product_categories','moq','capacity','lead_time','payment_terms','certifications','factory_audit_status','approval_status','internal_notes'];
+  const V_SCORES=['score_price','score_quality','score_communication','score_delivery','score_documentation','score_compliance','score_reliability'];
+  let vendorsData=[];
+  async function loadVendors(){
+    const {data}=await sb.from('crm_vendors').select('*').is('deleted_at',null).order('created_at',{ascending:false});
+    vendorsData=data||[]; renderVendors();
+  }
+  function avgScore(v){ const s=V_SCORES.map(k=>v[k]).filter(x=>x); return s.length?(s.reduce((a,b)=>a+b,0)/s.length).toFixed(1):'—'; }
+  function renderVendors(){
+    const q=(document.getElementById('vendor-search').value||'').toLowerCase();
+    const rows=vendorsData.filter(v=>!q||((v.legal_name||'')+' '+(v.country||'')+' '+(v.product_categories||'')).toLowerCase().includes(q));
+    document.getElementById('vendor-empty').style.display=rows.length?'none':'block';
+    document.getElementById('vendor-rows').innerHTML=rows.map(v=>`
+      <tr class="crm-row-link" data-vid="${v.id}">
+        <td class="crm-mono">${esc(v.vendor_number||'—')}</td>
+        <td>${esc(v.legal_name)}${v.is_blacklisted?' <span class="crm-badge bad">Blacklisted</span>':''}</td>
+        <td>${esc(v.country||'—')}</td>
+        <td>${esc(label(v.supplier_type))}</td>
+        <td><span class="${badgeClass(v.approval_status)}">${esc(label(v.approval_status))}</span></td>
+        <td class="crm-mono">${avgScore(v)}</td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-vid]').forEach(r=>r.addEventListener('click',()=>openVendor(r.dataset.vid)));
+  }
+  document.getElementById('vendor-search').addEventListener('input',renderVendors);
+  document.getElementById('btn-new-vendor').addEventListener('click',()=>{
+    document.getElementById('vendor-form').reset(); setval('v-id','');
+    document.getElementById('vendor-modal-title').textContent='New Vendor';
+    openModal('modal-vendor');
+  });
+  function openVendor(id){
+    const v=vendorsData.find(x=>x.id===id); if(!v)return;
+    document.getElementById('vendor-form').reset(); setval('v-id',v.id);
+    V_FIELDS.concat(V_SCORES).forEach(f=>setval('v-'+f,v[f]));
+    setval('v-is_blacklisted',v.is_blacklisted);
+    document.getElementById('vendor-modal-title').textContent=(v.vendor_number||'Vendor')+' — '+v.legal_name;
+    openModal('modal-vendor');
+  }
+  document.getElementById('vendor-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('vendor-form-status'); st.textContent='Saving…';
+    const payload={}; V_FIELDS.forEach(f=>payload[f]=val('v-'+f));
+    V_SCORES.forEach(f=>payload[f]=numval('v-'+f));
+    payload.is_blacklisted=val('v-is_blacklisted')||false;
+    const id=val('v-id'); let error;
+    if(id){ ({error}=await sb.from('crm_vendors').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'vnd'});
+      payload.vendor_number=num;
+      ({error}=await sb.from('crm_vendors').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; closeModal('modal-vendor'); await loadRefVendors(); loadVendors();
+  });
+
+  /* ---------- SUPPLIER OFFERS ---------- */
+  const OF_FIELDS=['enquiry_id','vendor_id','product','unit','currency','moq','lead_time','incoterm','payment_terms','validity_date','specification','notes'];
+  const OF_NUMS=['quantity','unit_cost','exchange_rate','sample_cost','tooling_cost','packaging_cost','freight_estimate','quality_score','risk_score'];
+  async function loadOffers(){
+    const enq=document.getElementById('offer-enq-filter').value;
+    let q=sb.from('crm_supplier_offers').select('*').is('deleted_at',null);
+    q=enq?q.eq('enquiry_id',enq).order('total_cost',{ascending:true}):q.order('created_at',{ascending:false});
+    const {data,error}=await q;
+    offersCache=data||[];
+    document.getElementById('offer-empty').style.display=(error||!offersCache.length)?'block':'none';
+    document.getElementById('offer-rows').innerHTML=offersCache.map(o=>`
+      <tr class="crm-row-link" data-ofid="${o.id}">
+        <td class="crm-mono">${esc(o.offer_number||'—')}</td>
+        <td>${esc(vendorName(o.vendor_id))}</td>
+        <td>${esc(o.product||'—')}</td>
+        <td class="crm-mono">${money(o.unit_cost,o.currency)}</td>
+        <td class="crm-mono">${money(o.total_cost,o.currency)}</td>
+        <td>${esc(o.lead_time||'—')}</td>
+        <td>${o.is_selected?'<span class="crm-badge ok">Selected</span>':''}</td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-ofid]').forEach(r=>r.addEventListener('click',()=>openOffer(r.dataset.ofid)));
+  }
+  document.getElementById('offer-enq-filter').addEventListener('change',loadOffers);
+  document.getElementById('btn-new-offer').addEventListener('click',()=>{
+    document.getElementById('offer-form').reset(); setval('of-id','');
+    document.getElementById('offer-modal-title').textContent='New Supplier Offer';
+    document.getElementById('btn-select-offer').style.display='none';
+    openModal('modal-offer');
+  });
+  function openOffer(id){
+    const o=offersCache.find(x=>x.id===id); if(!o)return;
+    document.getElementById('offer-form').reset(); setval('of-id',o.id);
+    OF_FIELDS.forEach(f=>setval('of-'+f,o[f])); OF_NUMS.forEach(f=>setval('of-'+f,o[f]));
+    document.getElementById('offer-modal-title').textContent=(o.offer_number||'Offer')+' — '+vendorName(o.vendor_id);
+    document.getElementById('btn-select-offer').style.display=o.is_selected?'none':'inline-block';
+    openModal('modal-offer');
+  }
+  document.getElementById('offer-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('offer-form-status'); st.textContent='Saving…';
+    const payload={}; OF_FIELDS.forEach(f=>payload[f]=val('of-'+f)); OF_NUMS.forEach(f=>payload[f]=numval('of-'+f));
+    if(!payload.enquiry_id||!payload.vendor_id){ st.textContent='Enquiry and vendor are required.'; return; }
+    const id=val('of-id'); let error;
+    if(id){ ({error}=await sb.from('crm_supplier_offers').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'spo'});
+      payload.offer_number=num;
+      ({error}=await sb.from('crm_supplier_offers').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; closeModal('modal-offer'); loadOffers();
+  });
+  document.getElementById('btn-select-offer').addEventListener('click', async ()=>{
+    const id=val('of-id'); if(!id)return;
+    if(!confirm('Select this supplier for the enquiry? This records an approval and deselects other offers.'))return;
+    const {error}=await sb.rpc('crm_select_supplier_offer',{p_offer_id:id});
+    const st=document.getElementById('offer-form-status');
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Supplier selected.'; closeModal('modal-offer'); loadOffers();
+  });
+
+  /* ---------- COST SHEETS ---------- */
+  const CS_FIELDS=['title','enquiry_id','currency','unit','status','notes'];
+  let csData=[];
+  async function loadCostSheets(){
+    const [{data:sheets,error},{data:totals}]=await Promise.all([
+      sb.from('crm_cost_sheets').select('*').is('deleted_at',null).order('created_at',{ascending:false}),
+      sb.from('crm_cost_sheet_totals').select('*')
+    ]);
+    csData=sheets||[]; csTotalsCache=totals||[];
+    document.getElementById('cs-empty').style.display=(error||!csData.length)?'block':'none';
+    document.getElementById('cs-rows').innerHTML=csData.map(c=>{
+      const t=csTotalsCache.find(x=>x.cost_sheet_id===c.id)||{};
+      return `<tr class="crm-row-link" data-csid="${c.id}">
+        <td class="crm-mono">${esc(c.sheet_number||'—')}</td>
+        <td>${esc(c.title)}</td>
+        <td class="crm-mono">${money(t.est_total_with_contingency,c.currency)}</td>
+        <td class="crm-mono">${money(t.actual_subtotal,c.currency)}</td>
+        <td class="crm-mono">${t.variance_pct==null?'—':t.variance_pct+'%'}</td>
+        <td><span class="${badgeClass(c.status)}">${esc(label(c.status))}</span></td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`;
+    }).join('');
+    document.querySelectorAll('[data-csid]').forEach(r=>r.addEventListener('click',()=>openCS(r.dataset.csid)));
+  }
+  document.getElementById('btn-new-cs').addEventListener('click',()=>{
+    document.getElementById('cs-form').reset(); setval('cs-id','');
+    document.getElementById('cs-modal-title').textContent='New Cost Sheet';
+    document.getElementById('cs-items-block').style.display='none';
+    openModal('modal-cs');
+  });
+  async function openCS(id){
+    const c=csData.find(x=>x.id===id); if(!c)return;
+    document.getElementById('cs-form').reset(); setval('cs-id',c.id);
+    CS_FIELDS.forEach(f=>setval('cs-'+f,c[f]));
+    setval('cs-quantity',c.quantity); setval('cs-contingency_pct',c.contingency_pct);
+    document.getElementById('cs-modal-title').textContent=(c.sheet_number||'Cost Sheet')+' — '+c.title;
+    document.getElementById('cs-items-block').style.display='block';
+    await renderCSItems(id,c.currency);
+    openModal('modal-cs');
+  }
+  async function renderCSItems(sheetId,currency){
+    const {data:items}=await sb.from('crm_cost_sheet_items').select('*').eq('cost_sheet_id',sheetId).order('sort_order');
+    document.getElementById('cs-items-list').innerHTML=(items&&items.length)
+      ? items.map(i=>`<div style="display:grid; grid-template-columns:2fr 2fr 1fr 1fr 1fr auto; gap:8px; align-items:center; border-bottom:1px solid rgba(198,165,90,0.1); padding:6px 0; font-size:12px;">
+          <span>${esc(label(i.category))}</span><span class="crm-mono">${esc(i.description||'')}</span>
+          <span class="crm-mono">E ${money(i.estimated_amount)}</span>
+          <input type="number" step="0.01" value="${i.actual_amount==null?'':i.actual_amount}" data-actual="${i.id}" placeholder="Actual" style="padding:5px 8px; font-size:12px;">
+          <span class="crm-badge">${esc(label(i.borne_by))}</span>
+          <button class="crm-btn danger sm" type="button" data-delcsi="${i.id}">✕</button>
+        </div>`).join('')
+      : '<p class="crm-empty" style="padding:6px 0;">No cost lines yet.</p>';
+    document.querySelectorAll('[data-delcsi]').forEach(b=>b.addEventListener('click',async()=>{
+      await sb.from('crm_cost_sheet_items').delete().eq('id',b.dataset.delcsi);
+      renderCSItems(sheetId,currency); refreshCSTotals(sheetId,currency);
+    }));
+    document.querySelectorAll('[data-actual]').forEach(inp=>inp.addEventListener('change',async()=>{
+      await sb.from('crm_cost_sheet_items').update({actual_amount:inp.value===''?null:Number(inp.value)}).eq('id',inp.dataset.actual);
+      refreshCSTotals(sheetId,currency);
+    }));
+    refreshCSTotals(sheetId,currency);
+  }
+  async function refreshCSTotals(sheetId,currency){
+    const {data}=await sb.from('crm_cost_sheet_totals').select('*').eq('cost_sheet_id',sheetId).single();
+    if(!data)return;
+    document.getElementById('cs-totals').innerHTML=`
+      <div><span>Estimated Subtotal</span><span>${money(data.est_subtotal,currency)}</span></div>
+      <div><span>Est. Total incl. Contingency</span><span>${money(data.est_total_with_contingency,currency)}</span></div>
+      <div><span>Actual Subtotal</span><span>${money(data.actual_subtotal,currency)}</span></div>
+      <div><span>Variance</span><span>${money(data.variance,currency)} (${data.variance_pct==null?'—':data.variance_pct+'%'})</span></div>
+      <div class="grand"><span>Est. Landed Cost / Unit</span><span>${data.est_landed_cost_per_unit==null?'—':money(data.est_landed_cost_per_unit,currency)}</span></div>`;
+  }
+  document.getElementById('btn-add-cs-item').addEventListener('click', async ()=>{
+    const sheetId=val('cs-id'); if(!sheetId){ document.getElementById('cs-form-status').textContent='Save the cost sheet first.'; return; }
+    const est=numval('csi-estimated_amount');
+    if(est==null){ document.getElementById('cs-form-status').textContent='Estimated amount required.'; return; }
+    const {error}=await sb.from('crm_cost_sheet_items').insert({
+      cost_sheet_id:sheetId, category:val('csi-category'), description:val('csi-description'),
+      estimated_amount:est, borne_by:val('csi-borne_by')||'company'
+    });
+    if(error){ document.getElementById('cs-form-status').textContent='Error: '+error.message; return; }
+    ['csi-description','csi-estimated_amount'].forEach(f=>setval(f,''));
+    renderCSItems(sheetId,val('cs-currency'));
+  });
+  document.getElementById('cs-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('cs-form-status'); st.textContent='Saving…';
+    const payload={}; CS_FIELDS.forEach(f=>payload[f]=val('cs-'+f));
+    payload.quantity=numval('cs-quantity'); payload.contingency_pct=numval('cs-contingency_pct')||0;
+    const id=val('cs-id'); let error;
+    if(id){ ({error}=await sb.from('crm_cost_sheets').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'cst'});
+      payload.sheet_number=num;
+      ({error}=await sb.from('crm_cost_sheets').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; closeModal('modal-cs'); await loadRefCostSheets(); loadCostSheets();
+  });
+
+  /* ---------- QUOTATIONS ---------- */
+  const Q_FIELDS=['title','organization_id','service_id','enquiry_id','cost_sheet_id','currency','expiry_date','incoterm','payment_terms','delivery_terms','delivery_timeline','warranty','assumptions','exclusions','terms_conditions','client_notes','internal_notes'];
+  const Q_NUMS=['discount_pct','tax_pct','freight_amount','other_charges'];
+  async function loadQuotations(){
+    const stF=document.getElementById('qtn-status-filter').value;
+    let q=sb.from('crm_quotations').select('*').is('deleted_at',null).order('created_at',{ascending:false});
+    if(stF)q=q.eq('status',stF);
+    const {data}=await q; qtnCache=data||[];
+    document.getElementById('qtn-empty').style.display=qtnCache.length?'none':'block';
+    document.getElementById('qtn-rows').innerHTML=qtnCache.map(x=>`
+      <tr class="crm-row-link" data-qid="${x.id}">
+        <td class="crm-mono">${esc(x.quotation_number)} v${x.version}</td>
+        <td>${esc(x.title)}</td>
+        <td>${esc(orgName(x.organization_id))}</td>
+        <td class="crm-mono">${money(x.total,x.currency)}</td>
+        <td><span class="${badgeClass(x.status)}">${esc(label(x.status))}</span></td>
+        <td><span class="${badgeClass(x.approval_status)}">${esc(label(x.approval_status))}</span></td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-qid]').forEach(r=>r.addEventListener('click',()=>openQtn(r.dataset.qid)));
+  }
+  document.getElementById('qtn-status-filter').addEventListener('change',loadQuotations);
+  document.getElementById('btn-new-qtn').addEventListener('click',()=>{
+    document.getElementById('qtn-form').reset(); setval('q-id','');
+    document.getElementById('qtn-modal-title').textContent='New Quotation';
+    document.getElementById('qtn-items-block').style.display='none';
+    openModal('modal-qtn');
+  });
+  async function openQtn(id){
+    const x=qtnCache.find(y=>y.id===id); if(!x)return;
+    document.getElementById('qtn-form').reset(); setval('q-id',x.id);
+    Q_FIELDS.forEach(f=>setval('q-'+f,x[f])); Q_NUMS.forEach(f=>setval('q-'+f,x[f]));
+    document.getElementById('qtn-modal-title').textContent=x.quotation_number+' v'+x.version+' — '+x.title;
+    document.getElementById('qtn-items-block').style.display='block';
+    document.getElementById('btn-qtn-view').href='quotation-view.html?id='+x.id;
+    document.getElementById('btn-qtn-approve').style.display=(isCEO&&x.status==='pending_approval')?'inline-block':'none';
+    document.getElementById('btn-qtn-reject').style.display=(isCEO&&x.status==='pending_approval')?'inline-block':'none';
+    document.getElementById('qtn-workflow-status').textContent='Status: '+label(x.status)+' · Approval: '+label(x.approval_status);
+    await renderQtnItems(x);
+    openModal('modal-qtn');
+  }
+  async function renderQtnItems(x){
+    const locked=!['draft','costing_review','revised'].includes(x.status);
+    const {data:items}=await sb.from('crm_quotation_items').select('*').eq('quotation_id',x.id).order('sort_order');
+    document.getElementById('qtn-items-list').innerHTML=(items&&items.length)
+      ? items.map(i=>`<div class="crm-item-row" style="font-size:12px;">
+          <span>${esc(i.description)}</span>
+          <span class="crm-mono">${i.quantity} ${esc(i.unit||'')}</span>
+          <span class="crm-mono">@ ${money(i.unit_price)}</span>
+          <span class="crm-mono">${money(i.line_total,x.currency)}</span>
+          ${locked?'<span class="crm-mono">locked</span>':`<button class="crm-btn danger sm" type="button" data-delqi="${i.id}">✕</button>`}
+        </div>`).join('')
+      : '<p class="crm-empty" style="padding:6px 0;">No line items yet.</p>';
+    if(!locked) document.querySelectorAll('[data-delqi]').forEach(b=>b.addEventListener('click',async()=>{
+      const {error}=await sb.from('crm_quotation_items').delete().eq('id',b.dataset.delqi);
+      if(error){document.getElementById('qtn-form-status').textContent=error.message; return;}
+      await refreshQtn(x.id);
+    }));
+    document.getElementById('qtn-totals').innerHTML=`
+      <div><span>Subtotal</span><span>${money(x.subtotal,x.currency)}</span></div>
+      <div><span>Discount (${x.discount_pct||0}%)</span><span>− ${money(x.discount_amount,x.currency)}</span></div>
+      <div><span>Tax (${x.tax_pct||0}%)</span><span>${money(x.tax_amount,x.currency)}</span></div>
+      <div><span>Freight + Other</span><span>${money((Number(x.freight_amount)||0)+(Number(x.other_charges)||0),x.currency)}</span></div>
+      <div class="grand"><span>Total</span><span>${money(x.total,x.currency)}</span></div>
+      <div style="margin-top:6px;"><span>Totals are computed in the database (server-side)</span><span></span></div>`;
+  }
+  async function refreshQtn(id){
+    const {data}=await sb.from('crm_quotations').select('*').eq('id',id).single();
+    if(!data)return;
+    const idx=qtnCache.findIndex(q=>q.id===id); if(idx>-1)qtnCache[idx]=data;
+    await renderQtnItems(data);
+    document.getElementById('qtn-workflow-status').textContent='Status: '+label(data.status)+' · Approval: '+label(data.approval_status);
+  }
+  document.getElementById('btn-add-qtn-item').addEventListener('click', async ()=>{
+    const id=val('q-id'); if(!id){document.getElementById('qtn-form-status').textContent='Save the quotation first.'; return;}
+    const desc=val('qi-description'), qty=numval('qi-quantity'), price=numval('qi-unit_price');
+    if(!desc||!qty||price==null){document.getElementById('qtn-form-status').textContent='Description, quantity and unit price required.'; return;}
+    const {error}=await sb.from('crm_quotation_items').insert({quotation_id:id, description:desc, quantity:qty, unit:val('qi-unit'), unit_price:price});
+    if(error){document.getElementById('qtn-form-status').textContent='Error: '+error.message; return;}
+    ['qi-description','qi-quantity','qi-unit','qi-unit_price'].forEach(f=>setval(f,''));
+    await refreshQtn(id);
+  });
+  document.getElementById('qtn-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('qtn-form-status'); st.textContent='Saving…';
+    const payload={}; Q_FIELDS.forEach(f=>payload[f]=val('q-'+f)); Q_NUMS.forEach(f=>payload[f]=numval('q-'+f)||0);
+    if(!payload.organization_id){ st.textContent='Organization is required.'; return; }
+    const id=val('q-id'); let error;
+    if(id){ ({error}=await sb.from('crm_quotations').update(payload).eq('id',id)); if(!error)await refreshQtn(id); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'qtn'});
+      payload.quotation_number=num;
+      ({error}=await sb.from('crm_quotations').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; if(!id){ closeModal('modal-qtn'); } loadQuotations();
+  });
+  async function wf(rpc,args,confirmMsg){
+    const id=val('q-id'); if(!id)return;
+    if(confirmMsg&&!confirm(confirmMsg))return;
+    const st=document.getElementById('qtn-form-status'); st.textContent='Working…';
+    const {data,error}=await sb.rpc(rpc,Object.assign({},args,{p_quotation_id:id}));
+    if(error){ st.textContent='Error: '+error.message; return null; }
+    st.textContent='Done.'; await refreshQtn(id); loadQuotations(); return data;
+  }
+  document.getElementById('btn-qtn-submit').addEventListener('click',()=>wf('crm_submit_quotation',{},null));
+  document.getElementById('btn-qtn-approve').addEventListener('click',()=>wf('crm_decide_quotation',{p_decision:'approved',p_comments:null},'Approve this quotation?'));
+  document.getElementById('btn-qtn-reject').addEventListener('click',()=>wf('crm_decide_quotation',{p_decision:'rejected',p_comments:null},'Reject this quotation back to draft?'));
+  document.getElementById('btn-qtn-issue').addEventListener('click',()=>wf('crm_issue_quotation',{},'Issue this quotation to the client? The version will be locked.'));
+  document.getElementById('btn-qtn-revise').addEventListener('click', async ()=>{
+    const newId=await wf('crm_revise_quotation',{},'Create a new editable revision of this quotation?');
+    if(newId){ closeModal('modal-qtn'); await loadQuotations(); openQtn(newId); }
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
