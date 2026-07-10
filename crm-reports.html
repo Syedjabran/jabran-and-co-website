@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:32px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:24px; color:var(--gold-light);}
+  .crm-kpi .l{font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-top:4px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px; margin-bottom:34px;}
+  .crm-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:500; padding:10px 12px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .crm-table td{padding:11px 12px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream);}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .crm-btn.sm{padding:6px 12px; font-size:10px;}
+  .crm-section-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:10px; flex-wrap:wrap;}
+  .crm-empty{color:var(--muted); font-size:13px; padding:24px 0;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  /* Executive report document */
+  .rep-doc{background:var(--bg-alt); border:1px solid var(--line); padding:52px 54px; max-width:900px;}
+  .rep-head{display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--line); padding-bottom:24px; margin-bottom:28px; gap:20px; flex-wrap:wrap;}
+  .rep-head img{width:120px; height:auto;}
+  .rep-title{font-family:'Playfair Display',serif; font-size:28px;}
+  .rep-trust{border-top:1px solid var(--line); margin-top:36px; padding-top:14px; display:flex; gap:22px; flex-wrap:wrap;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+    .rep-doc{padding:28px 20px;}
+  }
+  @media print{
+    body{background:#fff; color:#111;}
+    .crm-side, #crm-logout, .crm-topline button, .no-print{display:none !important;}
+    .crm-main{padding:0;}
+    .rep-doc{border:none; background:#fff; max-width:none; padding:10px 0;}
+    .rep-doc *{color:#111 !important;}
+    .rep-doc .eyebrow, .rep-doc th{color:#8a6d2f !important;}
+    .crm-kpi{border-color:#ddd !important; background:#fff !important;}
+    .crm-table th,.crm-table td{border-color:#ddd !important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Client Relationship Management Portal</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <div class="crm-nav-label">Intelligence</div>
+    <span class="crm-nav-item active" data-view="sales">Sales Reports</span>
+    <span class="crm-nav-item" data-view="perf" data-mgmt>Profitability Reports</span>
+    <span class="crm-nav-item" data-view="exec" data-mgmt>Executive Report</span>
+  </aside>
+
+  <main class="crm-main">
+
+    <!-- SALES REPORTS (all staff) -->
+    <section id="view-sales">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Intelligence</div><h1>Sales Reports</h1></div>
+        <span class="crm-mono" id="sales-date"></span>
+      </div>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Prospect Pipeline</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-pipeline" data-name="prospect-pipeline">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-pipeline">
+        <thead><tr><th>Stage</th><th>Prospects</th><th>Expected Budget</th><th>Weighted</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Lead Sources</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-sources" data-name="lead-sources">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-sources">
+        <thead><tr><th>Source</th><th>Prospects</th><th>Won</th><th>Lost</th><th>Win Rate</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Quotation Win / Loss</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-qstats" data-name="quotation-stats">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-qstats">
+        <thead><tr><th>Status</th><th>Quotations</th><th>Value</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Unrealised Pipeline (Weighted)</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-unreal" data-name="unrealised-pipeline">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-unreal">
+        <thead><tr><th>Quotation</th><th>Title</th><th>Status</th><th>Total</th><th>Prob.</th><th>Weighted</th><th>Expiry</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Enquiries by Service</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-enq" data-name="enquiries-by-service">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-enq">
+        <thead><tr><th>Service</th><th>Status</th><th>Source</th><th>Enquiries</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- PROFITABILITY REPORTS (management only) -->
+    <section id="view-perf" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Management Only — Never Client-Visible</div><h1>Profitability Reports</h1></div>
+      </div>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Service Performance</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-svc" data-name="service-performance">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-svc">
+        <thead><tr><th>Service</th><th>Orders</th><th>Revenue</th><th>Gross Profit</th><th>EBITDA</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Client Lifetime Value &amp; Profitability</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-clients" data-name="client-value">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-clients">
+        <thead><tr><th>Client</th><th>Enquiries</th><th>Quotes</th><th>Orders</th><th>Revenue</th><th>Gross Profit</th><th>EBITDA</th><th>Outstanding</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="crm-section-head">
+        <div class="eyebrow">Country Distribution</div>
+        <button class="crm-btn ghost sm" data-csv="tbl-country" data-name="country-distribution">Export CSV</button>
+      </div>
+      <table class="crm-table" id="tbl-country">
+        <thead><tr><th>Country</th><th>Orders</th><th>Revenue</th><th>Gross Profit</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- EXECUTIVE REPORT (management only, printable) -->
+    <section id="view-exec" style="display:none;">
+      <div class="crm-topline">
+        <div><div class="eyebrow">Management Only</div><h1>Executive Report</h1></div>
+        <button class="crm-btn ghost" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+      <article class="rep-doc">
+        <header class="rep-head">
+          <img src="logo-full.png" alt="JABRAN &amp; CO.">
+          <div style="text-align:right;">
+            <div class="eyebrow">Executive Management Report</div>
+            <div class="rep-title">JABRAN &amp; CO.</div>
+            <div class="crm-mono" id="rep-date"></div>
+          </div>
+        </header>
+        <div class="eyebrow" style="margin-bottom:14px;">Key Performance Indicators</div>
+        <div class="crm-kpis" id="rep-kpis"></div>
+        <div class="eyebrow" style="margin-bottom:12px;">Monthly Financial Rollup</div>
+        <table class="crm-table" id="rep-monthly">
+          <thead><tr><th>Period</th><th>Invoiced</th><th>Collected</th><th>Gross Profit</th><th>EBITDA</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="eyebrow" style="margin-bottom:12px;">Receivables Exposure</div>
+        <div class="crm-kpis" id="rep-ar"></div>
+        <div class="eyebrow" style="margin-bottom:12px;">Top Clients by Revenue</div>
+        <table class="crm-table" id="rep-topclients">
+          <thead><tr><th>Client</th><th>Orders</th><th>Revenue</th><th>EBITDA</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <footer class="rep-trust">
+          <span class="crm-mono">FBR REG. NO. J152588</span>
+          <span class="crm-mono">FIRM REG. NO. 6634</span>
+          <span class="crm-mono">CONFIDENTIAL — MANAGEMENT USE ONLY</span>
+          <span class="crm-mono">JABRANANDCO.COM</span>
+        </footer>
+      </article>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n){ return n==null?'—':Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function num(n){ return n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
+
+  /* ---- CSV export: exports the rendered table exactly as shown ---- */
+  function tableToCSV(tableId){
+    const rows=[...document.getElementById(tableId).querySelectorAll('tr')];
+    return rows.map(r=>[...r.querySelectorAll('th,td')]
+      .map(c=>'"'+c.textContent.trim().replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  }
+  document.querySelectorAll('[data-csv]').forEach(b=>b.addEventListener('click',()=>{
+    const csv=tableToCSV(b.dataset.csv);
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='jabranandco-'+b.dataset.name+'-'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+  }));
+
+  /* ---- auth (same pattern as other CRM modules) ---- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:probe,error}=await sb.from('crm_settings').select('key').limit(1);
+    if(error||!probe){
+      document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    const {error:mgmtErr}=await sb.from('crm_order_ebitda').select('order_id').limit(1);
+    document.querySelectorAll('[data-mgmt]').forEach(el=>el.style.display=mgmtErr?'none':'');
+    showView('sales');
+  }
+
+  const loaders={sales:loadSales, perf:loadPerf, exec:loadExec};
+  function showView(v){
+    document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.classList.toggle('active',n.dataset.view===v));
+    ['sales','perf','exec'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'':'none');
+    loaders[v]&&loaders[v]();
+  }
+  document.querySelectorAll('.crm-nav-item[data-view]').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
+
+  /* ---- SALES REPORTS ---- */
+  const STAGE_ORDER=['new','contacted','qualified','needs_assessment','quotation_required','quotation_sent','negotiation','won','lost','dormant','disqualified'];
+  async function loadSales(){
+    document.getElementById('sales-date').textContent='Generated '+new Date().toISOString().slice(0,10);
+    const [pl,src,qs,un,enq]=await Promise.all([
+      sb.from('crm_report_pipeline').select('*'),
+      sb.from('crm_report_lead_sources').select('*').order('prospects',{ascending:false}),
+      sb.from('crm_report_quotation_stats').select('*'),
+      sb.from('crm_report_unrealised').select('*').order('weighted_value',{ascending:false}),
+      sb.from('crm_report_enquiries').select('*').order('enquiries',{ascending:false})
+    ]);
+    const plRows=(pl.data||[]).sort((a,b)=>STAGE_ORDER.indexOf(a.stage)-STAGE_ORDER.indexOf(b.stage));
+    document.querySelector('#tbl-pipeline tbody').innerHTML=plRows.map(r=>
+      `<tr><td>${esc(label(r.stage))}</td><td class="crm-mono">${num(r.prospects)}</td><td class="crm-mono">${money(r.expected_budget)}</td><td class="crm-mono">${money(r.weighted_budget)}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="4">No pipeline data.</td></tr>';
+    document.querySelector('#tbl-sources tbody').innerHTML=(src.data||[]).map(r=>
+      `<tr><td>${esc(label(r.lead_source))}</td><td class="crm-mono">${num(r.prospects)}</td><td class="crm-mono">${num(r.won)}</td><td class="crm-mono">${num(r.lost)}</td><td class="crm-mono">${r.win_rate_pct==null?'—':r.win_rate_pct+'%'}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="5">No data.</td></tr>';
+    const qRows=qs.data||[];
+    const won=qRows.filter(r=>['accepted','converted_to_order'].includes(r.status)).reduce((s,r)=>s+Number(r.quotations),0);
+    const lost=qRows.filter(r=>['rejected','expired','withdrawn'].includes(r.status)).reduce((s,r)=>s+Number(r.quotations),0);
+    document.querySelector('#tbl-qstats tbody').innerHTML=qRows.map(r=>
+      `<tr><td>${esc(label(r.status))}</td><td class="crm-mono">${num(r.quotations)}</td><td class="crm-mono">${money(r.total_value)}</td></tr>`).join('')
+      +(won+lost>0?`<tr><td style="color:var(--gold-light);">Win Rate (decided)</td><td class="crm-mono" colspan="2" style="color:var(--gold-light);">${((won/(won+lost))*100).toFixed(1)}%</td></tr>`:'')
+      ||'<tr><td class="crm-empty" colspan="3">No quotations yet.</td></tr>';
+    document.querySelector('#tbl-unreal tbody').innerHTML=(un.data||[]).map(r=>
+      `<tr><td class="crm-mono">${esc(r.quotation_number)} v${r.version}</td><td>${esc(r.title)}</td><td>${esc(label(r.status))}</td><td class="crm-mono">${money(r.total)}</td><td class="crm-mono">${r.probability_pct}%</td><td class="crm-mono">${money(r.weighted_value)}</td><td class="crm-mono">${esc(r.expiry_date||'—')}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="7">No open quotations.</td></tr>';
+    document.querySelector('#tbl-enq tbody').innerHTML=(enq.data||[]).map(r=>
+      `<tr><td>${esc(r.service_name||'Unassigned')}</td><td>${esc(label(r.status))}</td><td>${esc(label(r.source))}</td><td class="crm-mono">${num(r.enquiries)}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="4">No enquiries yet.</td></tr>';
+  }
+
+  /* ---- PROFITABILITY REPORTS ---- */
+  async function loadPerf(){
+    const [svc,cli,cty]=await Promise.all([
+      sb.from('crm_report_service_perf').select('*').order('revenue',{ascending:false}),
+      sb.from('crm_report_client_value').select('*').order('revenue',{ascending:false}),
+      sb.from('crm_report_country').select('*').order('revenue',{ascending:false})
+    ]);
+    document.querySelector('#tbl-svc tbody').innerHTML=(svc.data||[]).filter(r=>r.orders>0||r.revenue>0).map(r=>
+      `<tr><td>${esc(r.service_name)}</td><td class="crm-mono">${num(r.orders)}</td><td class="crm-mono">${money(r.revenue)}</td><td class="crm-mono">${money(r.gross_profit)}</td><td class="crm-mono">${money(r.ebitda)}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="5">No order data yet.</td></tr>';
+    document.querySelector('#tbl-clients tbody').innerHTML=(cli.data||[]).map(r=>
+      `<tr><td>${esc(r.legal_name)}</td><td class="crm-mono">${num(r.enquiries)}</td><td class="crm-mono">${num(r.quotations)}</td><td class="crm-mono">${num(r.orders)}</td><td class="crm-mono">${money(r.revenue)}</td><td class="crm-mono">${money(r.gross_profit)}</td><td class="crm-mono">${money(r.ebitda)}</td><td class="crm-mono">${money(r.outstanding)}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="8">No client data yet.</td></tr>';
+    document.querySelector('#tbl-country tbody').innerHTML=(cty.data||[]).map(r=>
+      `<tr><td>${esc(r.country)}</td><td class="crm-mono">${num(r.orders)}</td><td class="crm-mono">${money(r.revenue)}</td><td class="crm-mono">${money(r.gross_profit)}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="4">No data yet.</td></tr>';
+  }
+
+  /* ---- EXECUTIVE REPORT ---- */
+  async function loadExec(){
+    document.getElementById('rep-date').textContent='Generated '+new Date().toISOString().slice(0,10)+' · Confidential';
+    const [pl,un,eb,mon,ar,cli]=await Promise.all([
+      sb.from('crm_report_pipeline').select('*'),
+      sb.from('crm_report_unrealised').select('weighted_value,total'),
+      sb.from('crm_order_ebitda').select('revenue,cogs,ebitda_contribution'),
+      sb.from('crm_monthly_finance').select('*'),
+      sb.from('crm_receivables_ageing').select('outstanding,ageing_bucket'),
+      sb.from('crm_report_client_value').select('*').order('revenue',{ascending:false}).limit(5)
+    ]);
+    const prospects=(pl.data||[]).reduce((s,r)=>s+Number(r.prospects),0);
+    const weighted=(un.data||[]).reduce((s,r)=>s+Number(r.weighted_value),0);
+    const revenue=(eb.data||[]).reduce((s,r)=>s+Number(r.revenue||0),0);
+    const gp=(eb.data||[]).reduce((s,r)=>s+(Number(r.revenue||0)-Number(r.cogs||0)),0);
+    const ebitda=(eb.data||[]).reduce((s,r)=>s+Number(r.ebitda_contribution||0),0);
+    const outstanding=(ar.data||[]).reduce((s,r)=>s+Number(r.outstanding),0);
+    const overdue=(ar.data||[]).filter(r=>r.ageing_bucket!=='current').reduce((s,r)=>s+Number(r.outstanding),0);
+    document.getElementById('rep-kpis').innerHTML=[
+      {n:num(prospects),l:'Active Prospects'},
+      {n:num(weighted),l:'Weighted Pipeline'},
+      {n:num(revenue),l:'Order Revenue'},
+      {n:num(gp),l:'Gross Profit'},
+      {n:num(ebitda),l:'EBITDA Contribution'},
+      {n:revenue?((ebitda/revenue)*100).toFixed(1)+'%':'—',l:'EBITDA Margin'}
+    ].map(k=>`<div class="crm-kpi"><div class="n">${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+    document.querySelector('#rep-monthly tbody').innerHTML=(mon.data||[]).map(m=>
+      `<tr><td class="crm-mono">${esc(m.period)}</td><td class="crm-mono">${money(m.invoiced)}</td><td class="crm-mono">${money(m.collected)}</td><td class="crm-mono">${money(m.gross_profit)}</td><td class="crm-mono">${money(m.ebitda)}</td></tr>`).join('');
+    document.getElementById('rep-ar').innerHTML=[
+      {n:num(outstanding),l:'Total Outstanding'},
+      {n:num(overdue),l:'Overdue'},
+      {n:num(outstanding-overdue),l:'Current'}
+    ].map(k=>`<div class="crm-kpi"><div class="n">${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+    document.querySelector('#rep-topclients tbody').innerHTML=(cli.data||[]).map(r=>
+      `<tr><td>${esc(r.legal_name)}</td><td class="crm-mono">${num(r.orders)}</td><td class="crm-mono">${money(r.revenue)}</td><td class="crm-mono">${money(r.ebitda)}</td></tr>`).join('')
+      ||'<tr><td class="crm-empty" colspan="4">No client data yet.</td></tr>';
+  }
+
+  checkSession();
+});
+</script>
+</body>
+</html>
