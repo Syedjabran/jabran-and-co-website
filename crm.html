@@ -27,7 +27,7 @@
   .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
   .crm-side .crm-brand{padding:0 22px 26px;}
   .crm-side .crm-brand img{height:34px;}
-  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; transition:color .2s, border-color .2s;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; transition:color .2s, border-color .2s; text-decoration:none;}
   .crm-nav-item:hover{color:var(--cream);}
   .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
   .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
@@ -111,6 +111,11 @@
 <div class="crm-shell" id="crm-shell" style="display:none;">
   <aside class="crm-side">
     <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
     <div class="crm-nav-label">Pipeline</div>
     <span class="crm-nav-item active" data-view="dashboard">CRM Dashboard</span>
     <span class="crm-nav-item" data-view="prospects">Prospects</span>
