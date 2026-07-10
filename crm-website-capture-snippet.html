@@ -1,0 +1,95 @@
+<!-- ============================================================================
+  JABRAN & CO. CRM · WEBSITE ENQUIRY CAPTURE (Phase 3)
+  Drop-in for contact.html (or any service page).
+  Requires: migration 001 applied, and the page's existing includes:
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+  RLS: anonymous insert-only into crm_enquiries (same pattern as trade_inquiries).
+  Anonymous visitors can never read, list, or modify enquiries.
+============================================================================ -->
+
+<!-- A) FORM MARKUP — place inside the page's existing contact section.
+     Styling inherits the site's shared input/button styles; the scoped
+     block below only adds layout. -->
+<style>
+  /* crm-cap: scoped, page-level — does not touch style.css */
+  .crm-cap-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
+  .crm-cap-grid input, .crm-cap-grid select, #crm-cap-message{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:12px 14px; font-family:'Inter',sans-serif; font-size:14px; border-radius:2px; width:100%;
+  }
+  #crm-cap-message{min-height:110px; resize:vertical; margin-bottom:14px;}
+  @media (max-width:640px){ .crm-cap-grid{grid-template-columns:1fr;} }
+</style>
+
+<form id="crm-capture-form">
+  <div class="crm-cap-grid">
+    <input name="name" placeholder="Full Name *" required>
+    <input name="email" type="email" placeholder="Email *" required>
+    <input name="phone" placeholder="Phone / WhatsApp">
+    <input name="company" placeholder="Company">
+    <select name="service" id="crm-cap-service">
+      <option value="">Service of interest…</option>
+    </select>
+    <input name="country" placeholder="Country">
+  </div>
+  <textarea id="crm-cap-message" name="message" placeholder="Tell us about your requirement *" required></textarea>
+  <button class="btn btn-primary" type="submit" style="border:none; cursor:pointer;">Submit Enquiry</button>
+  <p id="crm-cap-status" style="font-size:13px; color:var(--gold-light); margin-top:12px;"></p>
+</form>
+
+<!-- B) SCRIPT — guarded drop-in, place before </body> after supabase-client.js -->
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+  if (typeof sb === 'undefined') return;
+  const form = document.getElementById('crm-capture-form');
+  if (!form) return;
+
+  // Populate active services (public read policy on crm_services)
+  const svcSel = document.getElementById('crm-cap-service');
+  if (svcSel) {
+    const { data } = await sb.from('crm_services')
+      .select('id,name').eq('is_active', true).order('sort_order');
+    (data || []).forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.id; o.textContent = s.name;
+      svcSel.appendChild(o);
+    });
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const status = document.getElementById('crm-cap-status');
+    const g = n => form.querySelector('[name=' + n + ']')?.value?.trim() || null;
+    const payload = {
+      source: 'website',
+      status: 'new',
+      enquiry_type: 'general',
+      title: 'Website enquiry — ' + (g('company') || g('name')),
+      submitter_name: g('name'),
+      submitter_email: g('email'),
+      submitter_phone: g('phone'),
+      submitter_company: g('company'),
+      service_id: g('service') || null,
+      country: g('country'),
+      requirement_detail: g('message')
+    };
+    if (!payload.submitter_name || !payload.submitter_email || !payload.requirement_detail) {
+      status.textContent = 'Please complete name, email, and your requirement.';
+      status.style.color = '#e57368';
+      return;
+    }
+    status.textContent = 'Submitting…'; status.style.color = 'var(--muted)';
+    const { error } = await sb.from('crm_enquiries').insert(payload);
+    if (error) {
+      status.textContent = 'Something went wrong. Please email us directly or reach us on WhatsApp.';
+      status.style.color = '#e57368';
+      console.error(error);
+      return;
+    }
+    form.reset();
+    status.textContent = 'Thank you — your enquiry has been received. Our team will respond shortly.';
+    status.style.color = 'var(--gold-light)';
+  });
+});
+</script>
