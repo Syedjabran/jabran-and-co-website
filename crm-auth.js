@@ -204,8 +204,15 @@ document.addEventListener('DOMContentLoaded', function () {
         catch (e) { roleScopes[scope] = false; }
       }
       cfg.forEach(function (f) {
+        if (f.is_custom) return;             // custom fields render via crm-forms.js
         var el = document.getElementById(f.field_id);
         if (!el) return;
+        if (f.is_active === false) { (el.closest('div')||el).style.display='none'; el.required=false; return; }
+        if (f.label) {                        // Owner-renamed built-in label
+          var wrapEl = el.closest('div') || el;
+          var lbEl = wrapEl.querySelector('label');
+          if (lbEl) lbEl.textContent = f.label;
+        }
         var wrap = el.closest('div') || el;
         var allowed = roleScopes[f.visibility_scope] !== false;
         if (!f.visible || !allowed) { wrap.style.display = 'none'; el.required = false; return; }

@@ -251,7 +251,8 @@
           <button class="crm-btn ghost" type="button" id="btn-issue-inv">Issue Invoice</button>
         </div>
       </div>
-      <div style="display:flex; gap:10px; margin-top:22px;">
+            <div class="jco-custom" data-module="invoices" data-idfield="in-id"></div>
+<div style="display:flex; gap:10px; margin-top:22px;">
         <button class="crm-btn" type="submit">Save Invoice</button>
         <button class="crm-btn ghost" type="button" data-close="modal-inv">Close</button>
         <span class="crm-status-msg" id="inv-form-status"></span>
@@ -346,6 +347,7 @@
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
+<script src="crm-forms.js"></script>
 <script src="crm-links.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {

@@ -194,7 +194,8 @@
         <div style="margin-top:12px;"><label>Add Note</label><textarea id="op-new-note" style="min-height:52px;"></textarea></div>
         <button class="crm-btn ghost sm" type="button" id="btn-post-opp-note" style="margin-top:8px;">Post Note</button>
       </div>
-      <div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
+            <div class="jco-custom" data-module="opportunities" data-idfield="op-id"></div>
+<div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
         <button class="crm-btn" type="submit">Save Opportunity</button>
         <button class="crm-btn ghost" type="button" id="btn-opp-to-qtn" style="display:none;">Create Quotation</button>
         <button class="crm-btn ghost" type="button" data-close="modal-opp">Close</button>
@@ -208,6 +209,7 @@
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
+<script src="crm-forms.js"></script>
 <script src="crm-links.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {

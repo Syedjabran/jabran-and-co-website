@@ -228,7 +228,8 @@
         </select>
         <button class="crm-btn ghost" type="button" id="btn-post-order-event">Post Update</button>
       </div>
-      <div style="display:flex; gap:10px; margin-top:22px;">
+            <div class="jco-custom" data-module="orders" data-idfield="or-id"></div>
+<div style="display:flex; gap:10px; margin-top:22px;">
         <button class="crm-btn" type="submit">Save Order</button>
         <button class="crm-btn ghost" type="button" data-close="modal-order">Close</button>
         <span class="crm-status-msg" id="order-form-status"></span>
@@ -359,6 +360,7 @@
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
+<script src="crm-forms.js"></script>
 <script src="crm-links.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {

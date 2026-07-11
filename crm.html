@@ -125,6 +125,7 @@
     <div class="crm-nav-label" data-mgmt>Administration</div>
     <a class="crm-nav-item" href="crm-command-center.html" data-owner style="display:none;">Command Center</a>
     <a class="crm-nav-item" href="crm-business-rules.html" data-owner style="display:none;">Business Rules</a>
+    <a class="crm-nav-item" href="crm-form-builder.html" data-owner style="display:none;">Form Builder</a>
     <a class="crm-nav-item" href="crm-employees.html" data-mgmt>Employees</a>
     <span class="crm-nav-item" data-view="services" data-mgmt>Services</span>
     <span class="crm-nav-item" data-view="audit" data-mgmt>Audit Logs</span>
@@ -303,7 +304,8 @@
           <input type="checkbox" id="p-communication_consent" style="width:auto;"> Communication consent recorded
         </label>
       </div>
-      <div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
+            <div class="jco-custom" data-module="prospects" data-idfield="p-id"></div>
+<div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
         <button class="crm-btn" type="submit">Save Prospect</button>
         <button class="crm-btn ghost" type="button" id="btn-convert-prospect" style="display:none;">Convert to Client</button>
         <button class="crm-btn ghost" type="button" data-close="modal-prospect">Cancel</button>
@@ -366,7 +368,8 @@
         </div>
         <button class="crm-btn ghost" type="button" id="btn-add-contact">Add Contact</button>
       </div>
-      <div style="display:flex; gap:10px; margin-top:24px;">
+            <div class="jco-custom" data-module="organizations" data-idfield="o-id"></div>
+<div style="display:flex; gap:10px; margin-top:24px;">
         <button class="crm-btn" type="submit">Save Organization</button>
         <button class="crm-btn ghost" type="button" data-close="modal-org">Cancel</button>
         <span class="crm-status-msg" id="org-form-status"></span>
@@ -437,7 +440,8 @@
           <button class="crm-btn ghost" type="button" id="btn-post-comment">Post</button>
         </div>
       </div>
-      <div style="display:flex; gap:10px; margin-top:24px;">
+            <div class="jco-custom" data-module="enquiries" data-idfield="e-id"></div>
+<div style="display:flex; gap:10px; margin-top:24px;">
         <button class="crm-btn" type="submit">Save Enquiry</button>
         <button class="crm-btn ghost" type="button" data-close="modal-enq">Cancel</button>
         <span class="crm-status-msg" id="enq-form-status"></span>
@@ -450,6 +454,7 @@
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
+<script src="crm-forms.js"></script>
 <script src="crm-links.js"></script>
 <script src="crm-intl.js"></script>
 <script>

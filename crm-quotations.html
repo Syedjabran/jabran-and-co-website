@@ -239,7 +239,8 @@
           <input type="checkbox" id="v-is_blacklisted" style="width:auto;"> Blacklisted
         </label>
       </div>
-      <div style="display:flex; gap:10px; margin-top:20px;">
+            <div class="jco-custom" data-module="vendors" data-idfield="v-id"></div>
+<div style="display:flex; gap:10px; margin-top:20px;">
         <button class="crm-btn" type="submit">Save Vendor</button>
         <button class="crm-btn ghost" type="button" data-close="modal-vendor">Cancel</button>
         <span class="crm-status-msg" id="vendor-form-status"></span>
@@ -402,7 +403,8 @@
         <p class="crm-mono" id="qtn-workflow-status" style="margin-top:10px;"></p>
       </div>
 
-      <div style="display:flex; gap:10px; margin-top:22px;">
+            <div class="jco-custom" data-module="quotations" data-idfield="q-id"></div>
+<div style="display:flex; gap:10px; margin-top:22px;">
         <button class="crm-btn" type="submit">Save Quotation</button>
         <button class="crm-btn ghost" type="button" data-close="modal-qtn">Cancel</button>
         <span class="crm-status-msg" id="qtn-form-status"></span>
@@ -415,6 +417,7 @@
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
+<script src="crm-forms.js"></script>
 <script src="crm-links.js"></script>
 <script src="crm-intl.js"></script>
 <script>
