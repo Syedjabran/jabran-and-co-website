@@ -107,6 +107,7 @@
     <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
     <div class="crm-nav-label">Modules</div>
     <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
     <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
     <a class="crm-nav-item" href="crm-finance.html">Finance</a>
     <a class="crm-nav-item" href="crm-reports.html">Reports</a>
@@ -342,6 +343,7 @@
 <div class="crm-modal-bg" id="modal-qtn">
   <div class="crm-modal">
     <h2 id="qtn-modal-title">New Quotation</h2>
+    <div id="qtn-links"></div>
     <form id="qtn-form" class="crm-form">
       <input type="hidden" id="q-id">
       <div class="crm-grid2">
@@ -412,6 +414,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
+<script src="crm-links.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -461,6 +464,11 @@ document.addEventListener('DOMContentLoaded', function () {
     isCEO=!ceoErr;
     await Promise.all([loadRefServices(), loadRefOrgs(), loadRefEnquiries(), loadRefVendors(), loadRefCostSheets()]);
     showView('quotations');
+    jcoHash('quotation', id=>{ setTimeout(()=>openQtn(id),600); });
+  }
+  function jcoHash(kind, cb){
+    const m=location.hash.match(new RegExp(kind+'=([0-9a-f-]{36})','i'));
+    if(m) setTimeout(()=>cb(m[1]), 700);
   }
 
   const loaders={quotations:loadQuotations, costsheets:loadCostSheets, offers:loadOffers, vendors:loadVendors};
@@ -748,6 +756,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('btn-new-qtn').addEventListener('click',()=>{
     document.getElementById('qtn-form').reset(); setval('q-id','');
     document.getElementById('qtn-modal-title').textContent='New Quotation';
+    document.getElementById('qtn-links').innerHTML='';
     document.getElementById('qtn-items-block').style.display='none';
     openModal('modal-qtn');
   });
@@ -756,6 +765,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('qtn-form').reset(); setval('q-id',x.id);
     Q_FIELDS.forEach(f=>setval('q-'+f,x[f])); Q_NUMS.forEach(f=>setval('q-'+f,x[f]));
     document.getElementById('qtn-modal-title').textContent=x.quotation_number+' v'+x.version+' — '+x.title;
+    if(window.jcoRenderLinks)window.jcoRenderLinks(document.getElementById('qtn-links'),'quotation',x.id);
     document.getElementById('qtn-items-block').style.display='block';
     document.getElementById('btn-qtn-view').href='quotation-view.html?id='+x.id;
     document.getElementById('btn-qtn-approve').style.display=(isCEO&&x.status==='pending_approval')?'inline-block':'none';

@@ -109,6 +109,7 @@
     <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
     <div class="crm-nav-label">Modules</div>
     <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
     <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
     <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
     <a class="crm-nav-item" href="crm-reports.html">Reports</a>
@@ -209,6 +210,7 @@
 <div class="crm-modal-bg" id="modal-inv">
   <div class="crm-modal">
     <h2 id="inv-modal-title">New Invoice</h2>
+    <div id="in-links"></div>
     <form id="inv-form" class="crm-form">
       <input type="hidden" id="in-id">
       <div class="crm-grid2">
@@ -343,6 +345,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
+<script src="crm-links.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -409,6 +412,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const {error:mgmtErr}=await sb.from('crm_order_ebitda').select('order_id').limit(1);
     document.querySelectorAll('[data-mgmt]').forEach(el=>el.style.display=mgmtErr?'none':'');
     showView('invoices');
+    jcoHash('invoice', id=>{ setTimeout(()=>openInv(id),600); });
+  }
+  function jcoHash(kind, cb){
+    const m=location.hash.match(new RegExp(kind+'=([0-9a-f-]{36})','i'));
+    if(m) setTimeout(()=>cb(m[1]), 700);
   }
 
   const loaders={invoices:loadInvoices, payments:loadPayments, receivables:loadReceivables, expenses:loadExpenses, profit:loadProfit};
@@ -446,6 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('btn-new-inv').addEventListener('click',()=>{
     document.getElementById('inv-form').reset(); setval('in-id','');
     document.getElementById('inv-modal-title').textContent='New Invoice';
+    document.getElementById('in-links').innerHTML='';
     document.getElementById('inv-items-block').style.display='none';
     openModal('modal-inv');
   });
@@ -454,6 +463,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('inv-form').reset(); setval('in-id',i.id);
     IN_FIELDS.forEach(f=>setval('in-'+f,i[f])); IN_NUMS.forEach(f=>setval('in-'+f,i[f]));
     document.getElementById('inv-modal-title').textContent=(i.invoice_number||'Invoice')+' — '+i.title;
+    if(window.jcoRenderLinks)window.jcoRenderLinks(document.getElementById('in-links'),'invoice',i.id);
     document.getElementById('inv-items-block').style.display='block';
     await renderInvItems(i);
     openModal('modal-inv');

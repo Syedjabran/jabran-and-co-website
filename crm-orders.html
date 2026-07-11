@@ -107,6 +107,7 @@
     <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
     <div class="crm-nav-label">Modules</div>
     <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
     <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
     <a class="crm-nav-item" href="crm-finance.html">Finance</a>
     <a class="crm-nav-item" href="crm-reports.html">Reports</a>
@@ -182,6 +183,7 @@
 <div class="crm-modal-bg" id="modal-order">
   <div class="crm-modal">
     <h2 id="order-modal-title">Order</h2>
+    <div id="or-links"></div>
     <form id="order-form" class="crm-form">
       <input type="hidden" id="or-id">
       <div class="crm-grid2">
@@ -356,6 +358,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
+<script src="crm-links.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -418,6 +421,11 @@ document.addEventListener('DOMContentLoaded', function () {
     fillSelect('or-vendor_id',vendorsCache,'legal_name');
     fillSelect('sh-vendor_id',vendorsCache,'legal_name');
     showView('orders');
+    jcoHash('order', id=>{ setTimeout(()=>openOrder(id),600); });
+  }
+  function jcoHash(kind, cb){
+    const m=location.hash.match(new RegExp(kind+'=([0-9a-f-]{36})','i'));
+    if(m) setTimeout(()=>cb(m[1]), 700);
   }
 
   const loaders={orders:loadOrders, projects:loadProjects, shipments:loadShipments};
@@ -478,6 +486,7 @@ document.addEventListener('DOMContentLoaded', function () {
     OR_FIELDS.forEach(f=>setval('or-'+f,o[f]));
     setval('or-purchase_cost',o.purchase_cost); setval('or-landed_cost',o.landed_cost);
     document.getElementById('order-modal-title').textContent=(o.order_number||'Order')+' — '+o.title;
+    if(window.jcoRenderLinks)window.jcoRenderLinks(document.getElementById('or-links'),'order',o.id);
     const {data:items}=await sb.from('crm_order_items').select('*').eq('order_id',id).order('sort_order');
     document.getElementById('or-items').innerHTML=(items&&items.length)
       ? items.map(i=>`<div style="display:grid; grid-template-columns:3fr 1fr 1fr 1fr; gap:8px; font-size:12px; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.1);">

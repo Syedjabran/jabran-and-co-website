@@ -118,6 +118,7 @@
     <a class="crm-nav-item" href="crm-reports.html">Reports</a>
     <div class="crm-nav-label">Pipeline</div>
     <span class="crm-nav-item active" data-view="dashboard">CRM Dashboard</span>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
     <span class="crm-nav-item" data-view="prospects">Prospects</span>
     <span class="crm-nav-item" data-view="clients">Clients</span>
     <span class="crm-nav-item" data-view="enquiries">Enquiries</span>
@@ -376,6 +377,7 @@
 <div class="crm-modal-bg" id="modal-enq">
   <div class="crm-modal">
     <h2 id="enq-modal-title">New Enquiry</h2>
+    <div id="enq-links"></div>
     <form id="enq-form" class="crm-form">
       <input type="hidden" id="e-id">
       <div class="crm-grid2">
@@ -445,6 +447,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
+<script src="crm-links.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -519,6 +522,11 @@ document.addEventListener('DOMContentLoaded', function () {
     await loadServices();
     await loadOrgsCache();
     showView('dashboard');
+    jcoHash('enquiry', id=>{ showView('enquiries'); setTimeout(()=>openEnquiry(id),600); });
+  }
+  function jcoHash(kind, cb){
+    const m=location.hash.match(new RegExp(kind+'=([0-9a-f-]{36})','i'));
+    if(m) setTimeout(()=>cb(m[1]), 700);
   }
 
   /* ---------- navigation ---------- */
@@ -784,6 +792,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('btn-new-enquiry').addEventListener('click',()=>{
     document.getElementById('enq-form').reset(); setval('e-id','');
     document.getElementById('enq-modal-title').textContent='New Enquiry';
+    document.getElementById('enq-links').innerHTML='';
     document.getElementById('enq-timeline-block').style.display='none';
     document.getElementById('enq-submitter-view').textContent='';
     openModal('modal-enq');
@@ -796,6 +805,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setval('e-budget_currency',q.budget_currency||'PKR');
     setval('e-quotation_required',q.quotation_required);
     document.getElementById('enq-modal-title').textContent=(q.enquiry_number||'Enquiry')+' — '+q.title;
+    if(window.jcoRenderLinks)window.jcoRenderLinks(document.getElementById('enq-links'),'enquiry',q.id);
     document.getElementById('enq-submitter-view').textContent =
       q.submitter_name ? `Website submitter: ${q.submitter_name} · ${q.submitter_email||''} · ${q.submitter_phone||''} · ${q.submitter_company||''}` : '';
     document.getElementById('enq-timeline-block').style.display='block';

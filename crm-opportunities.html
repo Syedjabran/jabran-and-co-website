@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opportunities | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:30px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:16px 18px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:22px; color:var(--gold-light);}
+  .crm-kpi .l{font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-top:4px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:500; padding:10px 12px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .crm-table td{padding:12px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-row-link{cursor:pointer;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--line); color:var(--gold-light); border-radius:2px; white-space:nowrap;}
+  .crm-badge.ok{border-color:var(--emerald); color:#5cc9b4;}
+  .crm-badge.bad{border-color:#e57368; color:#e57368;}
+  .crm-badge.warn{border-color:#e08a4a; color:#e08a4a;}
+  .crm-toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center;}
+  .crm-toolbar select, .crm-form input, .crm-form select, .crm-form textarea{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:10px 12px; font-family:'Inter',sans-serif; font-size:13px; border-radius:2px; width:100%;
+  }
+  .crm-toolbar select{width:auto; min-width:180px;}
+  .crm-form textarea{min-height:70px; resize:vertical;}
+  .crm-form label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 5px;}
+  .crm-grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px 16px; margin-bottom:14px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .crm-btn.sm{padding:6px 12px; font-size:10px;}
+  .crm-modal-bg{position:fixed; inset:0; background:rgba(8,17,28,0.86); z-index:80; display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:60px 16px;}
+  .crm-modal{background:var(--bg-alt); border:1px solid var(--line); max-width:880px; width:100%; padding:34px 36px 40px;}
+  .crm-modal h2{margin-bottom:22px;}
+  .crm-fieldset-label{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:22px 0 12px; border-bottom:1px solid var(--line); padding-bottom:6px;}
+  .crm-timeline{border-left:1px solid var(--line); margin:14px 0 0 6px; padding-left:20px;}
+  .crm-tl-item{margin-bottom:16px; position:relative;}
+  .crm-tl-item::before{content:''; position:absolute; left:-24px; top:6px; width:7px; height:7px; background:var(--gold); border-radius:50%;}
+  .crm-empty{color:var(--muted); font-size:13px; padding:30px 0;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:8px;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Client Relationship Management Portal</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Pipeline</div>
+    <span class="crm-nav-item active">Opportunities</span>
+  </aside>
+
+  <main class="crm-main">
+    <section>
+      <div class="crm-topline">
+        <div><div class="eyebrow">Enquiry → Opportunity → Quotation</div><h1>Opportunities</h1></div>
+        <button class="crm-btn" id="btn-new-opp">+ New Opportunity</button>
+      </div>
+
+      <div class="crm-kpis" id="opp-kpis"></div>
+
+      <div id="convertible-block" style="display:none; border:1px solid var(--line); background:var(--bg-alt); padding:16px 20px; margin-bottom:24px;">
+        <div class="eyebrow" style="margin-bottom:10px;">Open Enquiries — Qualify into Opportunities</div>
+        <div id="convertible-list"></div>
+      </div>
+
+      <div class="crm-toolbar">
+        <select id="opp-stage-filter">
+          <option value="">All stages</option>
+          <option value="qualification">Qualification</option>
+          <option value="needs_analysis">Needs Analysis</option>
+          <option value="solution_design">Solution Design</option>
+          <option value="costing">Costing</option>
+          <option value="proposal_preparation">Proposal Preparation</option>
+          <option value="proposal_sent">Proposal Sent</option>
+          <option value="negotiation">Negotiation</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
+          <option value="on_hold">On Hold</option>
+        </select>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Title</th><th>Organization</th><th>Est. Value</th><th>Prob.</th><th>Weighted</th><th>Stage</th><th>Close By</th><th></th></tr></thead>
+        <tbody id="opp-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="opp-empty" style="display:none;">No opportunities yet. Qualify an enquiry above, or create one manually.</p>
+    </section>
+  </main>
+</div>
+
+<!-- OPPORTUNITY MODAL -->
+<div class="crm-modal-bg" id="modal-opp">
+  <div class="crm-modal">
+    <h2 id="opp-modal-title">New Opportunity</h2>
+    <div id="opp-links"></div>
+    <form id="opp-form" class="crm-form">
+      <input type="hidden" id="op-id">
+      <div class="crm-grid2">
+        <div><label>Title *</label><input id="op-title" required></div>
+        <div><label>Organization</label><select id="op-organization_id"><option value="">— (prospect-stage, not yet a client)</option></select></div>
+        <div><label>Service</label><select id="op-service_id"><option value="">—</option></select></div>
+        <div><label>Stage</label>
+          <select id="op-stage">
+            <option value="qualification">Qualification</option>
+            <option value="needs_analysis">Needs Analysis</option>
+            <option value="solution_design">Solution Design</option>
+            <option value="costing">Costing</option>
+            <option value="proposal_preparation">Proposal Preparation</option>
+            <option value="proposal_sent">Proposal Sent</option>
+            <option value="negotiation">Negotiation</option>
+            <option value="won">Won</option>
+            <option value="lost">Lost</option>
+            <option value="on_hold">On Hold</option>
+          </select></div>
+        <div><label>Estimated Value</label><input id="op-estimated_value" type="number" step="0.01" min="0"></div>
+        <div><label>Currency</label><select id="op-currency"><option>PKR</option><option>USD</option><option>EUR</option><option>GBP</option><option>CNY</option><option>AED</option><option>SAR</option></select></div>
+        <div><label>Probability %</label><input id="op-probability_pct" type="number" min="0" max="100"></div>
+        <div><label>Expected Close</label><input id="op-expected_close_date" type="date"></div>
+        <div><label>Priority</label><select id="op-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="critical">Critical</option></select></div>
+        <div><label>Next Step Date</label><input id="op-next_step_date" type="date"></div>
+        <div><label>Competitor</label><input id="op-competitor"></div>
+        <div><label>Loss Reason (if lost)</label><input id="op-loss_reason"></div>
+      </div>
+      <div><label>Description / Requirement</label><textarea id="op-description"></textarea></div>
+      <div style="margin-top:12px;"><label>Next Step</label><input id="op-next_step"></div>
+      <div style="margin-top:12px;"><label>Internal Notes (never client-visible)</label><textarea id="op-internal_notes"></textarea></div>
+      <div id="opp-timeline-block" style="display:none;">
+        <div class="crm-fieldset-label">Activity</div>
+        <div class="crm-timeline" id="opp-timeline"></div>
+        <div style="margin-top:12px;"><label>Add Note</label><textarea id="op-new-note" style="min-height:52px;"></textarea></div>
+        <button class="crm-btn ghost sm" type="button" id="btn-post-opp-note" style="margin-top:8px;">Post Note</button>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
+        <button class="crm-btn" type="submit">Save Opportunity</button>
+        <button class="crm-btn ghost" type="button" id="btn-opp-to-qtn" style="display:none;">Create Quotation</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-opp">Close</button>
+        <span class="crm-status-msg" id="opp-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-links.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function badgeClass(s){
+    if(s==='won')return 'crm-badge ok';
+    if(s==='lost')return 'crm-badge bad';
+    if(['on_hold','negotiation'].includes(s))return 'crm-badge warn';
+    return 'crm-badge';
+  }
+  function val(id){ const el=document.getElementById(id); return el?(el.value.trim()||null):null; }
+  function numval(id){ const v=val(id); return v===null?null:Number(v); }
+  function setval(id,v){ const el=document.getElementById(id); if(el)el.value=v==null?'':v; }
+  function openModal(id){ document.getElementById(id).style.display='flex'; }
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+  function fillSelect(id,rows,labelKey){
+    const sel=document.getElementById(id); if(!sel)return;
+    const first=sel.querySelector('option'); sel.innerHTML=''; sel.appendChild(first);
+    rows.forEach(r=>{ const o=document.createElement('option'); o.value=r.id; o.textContent=r[labelKey]; sel.appendChild(o); });
+  }
+
+  let orgsCache=[], servicesCache=[], oppData=[];
+  function orgName(id){ const o=orgsCache.find(x=>x.id===id); return o?o.legal_name:'—'; }
+
+  /* ---- auth ---- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:probe,error}=await sb.from('crm_settings').select('key').limit(1);
+    if(error||!probe){
+      document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    const [orgs,svcs]=await Promise.all([
+      sb.from('crm_organizations').select('id,legal_name').is('deleted_at',null).order('legal_name'),
+      sb.from('crm_services').select('id,name').eq('is_active',true).order('sort_order')
+    ]);
+    orgsCache=orgs.data||[]; servicesCache=svcs.data||[];
+    fillSelect('op-organization_id',orgsCache,'legal_name');
+    fillSelect('op-service_id',servicesCache,'name');
+    load();
+    // deep link support: crm-opportunities.html#opportunity=<id>
+    const m=location.hash.match(/opportunity=([0-9a-f-]{36})/i);
+    if(m) setTimeout(()=>openOpp(m[1]), 600);
+  }
+
+  /* ---- data ---- */
+  const OP_FIELDS=['title','organization_id','service_id','stage','currency','expected_close_date','priority','next_step','next_step_date','competitor','loss_reason','description','internal_notes'];
+  async function load(){
+    const stF=document.getElementById('opp-stage-filter').value;
+    let q=sb.from('crm_opportunities').select('*').is('deleted_at',null).order('created_at',{ascending:false});
+    if(stF)q=q.eq('stage',stF);
+    const [{data:opps},{data:pipe},{data:enqs}]=await Promise.all([
+      q,
+      sb.from('crm_report_opportunity_pipeline').select('*'),
+      sb.from('crm_enquiries').select('id,enquiry_number,title,estimated_budget,budget_currency')
+        .in('status',['new','under_review','assigned','information_required','feasibility_assessment'])
+        .is('deleted_at',null).order('created_at',{ascending:false}).limit(20)
+    ]);
+    oppData=opps||[];
+    // KPI strip from the pipeline view
+    const rows=pipe||[];
+    const open=rows.filter(r=>!['won','lost'].includes(r.stage));
+    const totalOpen=open.reduce((s,r)=>s+Number(r.opportunities),0);
+    const weighted=open.reduce((s,r)=>s+Number(r.weighted_value),0);
+    const won=rows.find(r=>r.stage==='won'); const lost=rows.find(r=>r.stage==='lost');
+    const decided=(won?Number(won.opportunities):0)+(lost?Number(lost.opportunities):0);
+    document.getElementById('opp-kpis').innerHTML=[
+      {n:totalOpen,l:'Open Opportunities'},
+      {n:weighted.toLocaleString('en-US',{maximumFractionDigits:0}),l:'Weighted Pipeline'},
+      {n:won?Number(won.opportunities):0,l:'Won'},
+      {n:decided?Math.round((won?Number(won.opportunities):0)/decided*100)+'%':'—',l:'Win Rate'}
+    ].map(k=>`<div class="crm-kpi"><div class="n">${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+    // qualifiable enquiries strip
+    const conv=enqs||[];
+    document.getElementById('convertible-block').style.display=conv.length?'block':'none';
+    document.getElementById('convertible-list').innerHTML=conv.map(e=>`
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid rgba(198,165,90,0.1); flex-wrap:wrap;">
+        <span style="font-size:13px;">${esc(e.enquiry_number||'')} — ${esc(e.title)}${e.estimated_budget?' · <span class="crm-mono">'+money(e.estimated_budget,e.budget_currency)+'</span>':''}</span>
+        <button class="crm-btn sm" data-qualify="${e.id}">Qualify as Opportunity</button>
+      </div>`).join('');
+    document.querySelectorAll('[data-qualify]').forEach(b=>b.addEventListener('click',async()=>{
+      const {data:newId,error}=await sb.rpc('crm_create_opportunity_from_enquiry',{p_enquiry_id:b.dataset.qualify});
+      if(error){ alert('Error: '+error.message); return; }
+      await load(); openOpp(newId);
+    }));
+    // table
+    document.getElementById('opp-empty').style.display=oppData.length?'none':'block';
+    document.getElementById('opp-rows').innerHTML=oppData.map(o=>`
+      <tr class="crm-row-link" data-opid="${o.id}">
+        <td class="crm-mono">${esc(o.opportunity_number||'—')}</td>
+        <td>${esc(o.title)}</td>
+        <td>${esc(orgName(o.organization_id))}</td>
+        <td class="crm-mono">${money(o.estimated_value,o.currency)}</td>
+        <td class="crm-mono">${o.probability_pct}%</td>
+        <td class="crm-mono">${money(o.weighted_value,o.currency)}</td>
+        <td><span class="${badgeClass(o.stage)}">${esc(label(o.stage))}</span></td>
+        <td class="crm-mono">${esc(o.expected_close_date||'—')}</td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-opid]').forEach(r=>r.addEventListener('click',()=>openOpp(r.dataset.opid)));
+  }
+  document.getElementById('opp-stage-filter').addEventListener('change',load);
+
+  document.getElementById('btn-new-opp').addEventListener('click',()=>{
+    document.getElementById('opp-form').reset(); setval('op-id',''); setval('op-probability_pct',30);
+    document.getElementById('opp-modal-title').textContent='New Opportunity';
+    document.getElementById('opp-timeline-block').style.display='none';
+    document.getElementById('btn-opp-to-qtn').style.display='none';
+    document.getElementById('opp-links').innerHTML='';
+    openModal('modal-opp');
+  });
+  async function openOpp(id){
+    const o=oppData.find(x=>x.id===id);
+    if(!o){ const {data}=await sb.from('crm_opportunities').select('*').eq('id',id).maybeSingle(); if(!data)return; oppData.push(data); return openOpp(id); }
+    document.getElementById('opp-form').reset(); setval('op-id',o.id);
+    OP_FIELDS.forEach(f=>setval('op-'+f,o[f]));
+    setval('op-estimated_value',o.estimated_value); setval('op-probability_pct',o.probability_pct);
+    document.getElementById('opp-modal-title').textContent=(o.opportunity_number||'Opportunity')+' — '+o.title;
+    document.getElementById('opp-timeline-block').style.display='block';
+    document.getElementById('btn-opp-to-qtn').style.display=o.converted_quotation_id?'none':'inline-block';
+    if(window.jcoRenderLinks)window.jcoRenderLinks(document.getElementById('opp-links'),'opportunity',o.id);
+    await renderTimeline(o.id);
+    openModal('modal-opp');
+  }
+  async function renderTimeline(id){
+    const {data}=await sb.from('crm_opportunity_activity').select('*').eq('opportunity_id',id).order('created_at',{ascending:false}).limit(40);
+    document.getElementById('opp-timeline').innerHTML=(data&&data.length)?data.map(a=>{
+      const body=a.kind==='stage_change'
+        ? `Stage: <strong>${esc(label(a.old_value))}</strong> → <strong>${esc(label(a.new_value))}</strong>`
+        : esc(a.body||'');
+      return `<div class="crm-tl-item"><div style="font-size:13px;">${body}</div>
+        <div class="crm-mono" style="margin-top:3px;">${esc(new Date(a.created_at).toISOString().replace('T',' ').slice(0,16))}</div></div>`;
+    }).join(''):'<p class="crm-empty" style="padding:0;">No activity yet.</p>';
+  }
+  document.getElementById('btn-post-opp-note').addEventListener('click', async ()=>{
+    const id=val('op-id'); const body=val('op-new-note'); if(!id||!body)return;
+    const {error}=await sb.from('crm_opportunity_activity').insert({opportunity_id:id, kind:'comment', body});
+    if(error){document.getElementById('opp-form-status').textContent='Error: '+error.message; return;}
+    setval('op-new-note',''); renderTimeline(id);
+  });
+  document.getElementById('opp-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('opp-form-status'); st.textContent='Saving…';
+    const payload={}; OP_FIELDS.forEach(f=>payload[f]=val('op-'+f));
+    payload.estimated_value=numval('op-estimated_value');
+    payload.probability_pct=numval('op-probability_pct')??30;
+    const id=val('op-id'); let error;
+    if(id){ ({error}=await sb.from('crm_opportunities').update(payload).eq('id',id)); }
+    else{
+      const {data:num}=await sb.rpc('crm_next_number',{p_entity:'opp'});
+      payload.opportunity_number=num;
+      ({error}=await sb.from('crm_opportunities').insert(payload));
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved.'; closeModal('modal-opp'); load();
+  });
+  document.getElementById('btn-opp-to-qtn').addEventListener('click', async ()=>{
+    const id=val('op-id'); if(!id)return;
+    if(!confirm('Create a draft quotation from this opportunity? You will complete pricing in Quotations & Costing.'))return;
+    const st=document.getElementById('opp-form-status'); st.textContent='Creating…';
+    const {data:qid,error}=await sb.rpc('crm_convert_opportunity_to_quotation',{p_opportunity_id:id});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Draft quotation created — opening Quotations module.';
+    setTimeout(()=>{ location.href='crm-quotations.html#quotation='+qid; }, 900);
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
