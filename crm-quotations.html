@@ -364,7 +364,14 @@
         <div><label>Delivery Timeline</label><input id="q-delivery_timeline"></div>
         <div><label>Warranty</label><input id="q-warranty"></div>
       </div>
-      <div><label>Assumptions</label><textarea id="q-assumptions"></textarea></div>
+      <div class="crm-fieldset-label">Executive Document Sections (auto-hidden in the PDF when empty)</div>
+      <div><label>Executive Summary</label><textarea id="q-executive_summary"></textarea></div>
+      <div style="margin-top:12px;"><label>Requirement Understanding</label><textarea id="q-requirement_understanding"></textarea></div>
+      <div style="margin-top:12px;"><label>Scope of Work</label><textarea id="q-scope_of_work"></textarea></div>
+      <div style="margin-top:12px;"><label>Technical Specifications</label><textarea id="q-technical_specifications"></textarea></div>
+      <div style="margin-top:12px;"><label>Timeline &amp; Milestones</label><textarea id="q-timeline_milestones"></textarea></div>
+      <div style="margin-top:12px;"><label>Payment Schedule</label><textarea id="q-payment_schedule"></textarea></div>
+      <div style="margin-top:12px;"><label>Assumptions</label><textarea id="q-assumptions"></textarea></div>
       <div style="margin-top:12px;"><label>Exclusions</label><textarea id="q-exclusions"></textarea></div>
       <div style="margin-top:12px;"><label>Terms &amp; Conditions</label><textarea id="q-terms_conditions"></textarea></div>
       <div style="margin-top:12px;"><label>Client-Visible Notes</label><textarea id="q-client_notes"></textarea></div>
@@ -404,6 +411,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -716,7 +724,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   /* ---------- QUOTATIONS ---------- */
-  const Q_FIELDS=['title','organization_id','service_id','enquiry_id','cost_sheet_id','currency','expiry_date','incoterm','payment_terms','delivery_terms','delivery_timeline','warranty','assumptions','exclusions','terms_conditions','client_notes','internal_notes'];
+  const Q_FIELDS=['title','organization_id','service_id','enquiry_id','cost_sheet_id','currency','expiry_date','incoterm','payment_terms','delivery_terms','delivery_timeline','warranty','assumptions','exclusions','terms_conditions','client_notes','internal_notes','executive_summary','requirement_understanding','scope_of_work','technical_specifications','timeline_milestones','payment_schedule'];
   const Q_NUMS=['discount_pct','tax_pct','freight_amount','other_charges'];
   async function loadQuotations(){
     const stF=document.getElementById('qtn-status-filter').value;

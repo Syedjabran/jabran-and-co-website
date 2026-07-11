@@ -443,6 +443,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -628,6 +629,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setval('p-id',''); setval('p-priority','medium'); setval('p-stage','new');
     document.getElementById('prospect-modal-title').textContent='New Prospect';
     document.getElementById('btn-convert-prospect').style.display='none';
+    if(window.jcoApplyFieldConfig)window.jcoApplyFieldConfig('prospects');
     openModal('modal-prospect');
   });
   function openProspect(id){
@@ -641,6 +643,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setval('p-communication_consent', p.communication_consent);
     document.getElementById('prospect-modal-title').textContent = (p.prospect_number||'Prospect')+' — '+p.full_name;
     document.getElementById('btn-convert-prospect').style.display = p.converted_org_id ? 'none' : 'inline-block';
+    if(window.jcoApplyFieldConfig)window.jcoApplyFieldConfig('prospects');
     openModal('modal-prospect');
   }
   document.getElementById('prospect-form').addEventListener('submit', async e=>{

@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quotation | JABRAN &amp; CO.</title>
+<title>Commercial Proposal | JABRAN &amp; CO.</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
   /* qv- scoped. Brand-token fallbacks (exact style.css values). */
@@ -16,31 +16,48 @@
     --gold:#C6A55A; --gold-light:#E4C98A; --emerald:#0F6B5C;
     --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
   }
-  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.65;}
   .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
-  .qv-wrap{max-width:840px; margin:0 auto; padding:60px 20px 100px;}
-  .qv-doc{background:var(--bg-alt); border:1px solid var(--line); padding:56px 58px;}
-  .qv-head{display:flex; justify-content:space-between; align-items:flex-start; gap:20px; border-bottom:1px solid var(--line); padding-bottom:28px; margin-bottom:30px; flex-wrap:wrap;}
-  .qv-head img{width:120px; height:auto;}
+  .qv-wrap{max-width:860px; margin:0 auto; padding:56px 20px 100px;}
+  .qv-doc{background:var(--bg-alt); border:1px solid var(--line); padding:0;}
+  .qv-page{padding:56px 60px;}
   .qv-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
-  .qv-title{font-family:'Playfair Display',serif; font-size:30px; font-weight:600; margin:4px 0 2px;}
-  .qv-meta{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:30px;}
-  .qv-meta h4{font-size:10px; text-transform:uppercase; letter-spacing:0.2em; color:var(--gold); font-family:'IBM Plex Mono',monospace; font-weight:500; margin-bottom:8px;}
-  .qv-meta p{font-size:13px;}
-  table.qv-items{width:100%; border-collapse:collapse; font-size:13px; margin-bottom:8px;}
-  .qv-items th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-family:'IBM Plex Mono',monospace; font-weight:500; padding:10px 10px; border-bottom:1px solid var(--line);}
+  /* Cover */
+  .qv-cover{text-align:center; padding:88px 60px 72px; border-bottom:1px solid var(--line);}
+  .qv-cover img{width:170px; height:auto; margin-bottom:22px;}
+  .qv-slogan{font-family:'Playfair Display',serif; font-size:22px; color:var(--cream); line-height:1.4;}
+  .qv-slogan em{color:var(--gold-light);}
+  .qv-slogan-sub{font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--gold-light); margin-top:8px;}
+  .qv-cover-rule{width:64px; height:1px; background:var(--gold); margin:34px auto;}
+  .qv-cover-type{font-size:11px; letter-spacing:0.34em; text-transform:uppercase; color:var(--gold); margin-bottom:12px;}
+  .qv-cover-title{font-family:'Playfair Display',serif; font-size:32px; font-weight:600; margin-bottom:10px;}
+  .qv-cover-meta{margin-top:30px;}
+  .qv-cover-meta div{font-size:13px; padding:3px 0;}
+  .qv-cover-meta span{color:var(--muted);}
+  /* Sections */
+  .qv-sec{margin-bottom:34px;}
+  .qv-sec h2{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:var(--gold); font-weight:500; border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:14px;}
+  .qv-sec .qv-num{color:var(--muted); margin-right:10px;}
+  .qv-sec p{font-size:13.5px; white-space:pre-line;}
+  table.qv-items{width:100%; border-collapse:collapse; font-size:13px;}
+  .qv-items th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-family:'IBM Plex Mono',monospace; font-weight:500; padding:10px; border-bottom:1px solid var(--line);}
   .qv-items td{padding:11px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
   .qv-items .num{text-align:right; font-family:'IBM Plex Mono',monospace;}
-  .qv-totals{margin-left:auto; max-width:320px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:14px;}
+  .qv-totals{margin-left:auto; max-width:330px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:16px;}
   .qv-totals div{display:flex; justify-content:space-between; padding:4px 0;}
   .qv-totals .grand{border-top:1px solid var(--gold); margin-top:6px; padding-top:10px; color:var(--gold-light); font-size:15px;}
-  .qv-section{margin-top:26px;}
-  .qv-section h4{font-size:10px; text-transform:uppercase; letter-spacing:0.2em; color:var(--gold); font-family:'IBM Plex Mono',monospace; font-weight:500; margin-bottom:6px;}
-  .qv-section p{font-size:13px; color:var(--cream); white-space:pre-line;}
-  .qv-sign{margin-top:44px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;}
-  .qv-sign img{height:56px; width:auto;}
-  .qv-sign .who{border-top:1px solid var(--line); padding-top:8px; font-size:12px;}
-  .qv-trust{border-top:1px solid var(--line); margin-top:40px; padding-top:16px; display:flex; gap:24px; flex-wrap:wrap;}
+  .qv-terms-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 28px;}
+  .qv-terms-grid div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:3px;}
+  .qv-terms-grid div span{font-size:13px;}
+  /* Acceptance */
+  .qv-accept{border-top:1px solid var(--line);}
+  .qv-sign-row{display:flex; justify-content:space-between; gap:40px; margin-top:34px; flex-wrap:wrap;}
+  .qv-sign-col{flex:1; min-width:230px;}
+  .qv-sign-col img{height:56px; width:auto; display:block; margin-bottom:6px;}
+  .qv-sign-line{border-top:1px solid var(--line); padding-top:8px; font-size:12px; margin-top:44px;}
+  .qv-sign-col.signed .qv-sign-line{margin-top:6px;}
+  #qv-qr{width:92px; height:92px; padding:8px; background:#fff; margin-left:auto;}
+  .qv-foot{border-top:1px solid var(--line); padding:22px 60px; display:flex; gap:22px; flex-wrap:wrap; justify-content:space-between;}
   .qv-status-strip{text-align:center; margin:0 0 22px;}
   .qv-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:5px 14px; border:1px solid var(--line); color:var(--gold-light);}
   .qv-actions{display:flex; gap:12px; justify-content:center; margin-top:32px; flex-wrap:wrap;}
@@ -50,15 +67,19 @@
   #qv-msg{text-align:center; font-size:13px; color:var(--gold-light); margin-top:14px;}
   #qv-gate{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
   #qv-gate input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
-  @media (max-width:640px){ .qv-doc{padding:32px 22px;} .qv-meta{grid-template-columns:1fr;} }
+  @media (max-width:640px){ .qv-page,.qv-cover{padding:34px 22px;} .qv-foot{padding:20px 22px;} .qv-terms-grid{grid-template-columns:1fr;} }
   @media print{
     body{background:#fff; color:#111;}
     .qv-wrap{padding:0; max-width:none;}
-    .qv-doc{border:none; background:#fff; color:#111; padding:20px 0;}
+    .qv-doc{border:none; background:#fff;}
     .qv-doc *{color:#111 !important;}
-    .qv-doc .eyebrow, .qv-doc h4, .qv-totals .grand{color:#8a6d2f !important;}
-    .qv-actions, #qv-print-btn, #qv-msg, #qv-back{display:none !important;}
-    .qv-items th, .qv-items td{border-color:#ddd !important;}
+    .qv-doc .eyebrow,.qv-sec h2,.qv-cover-type,.qv-totals .grand,.qv-terms-grid div b{color:#8a6d2f !important;}
+    .qv-items th,.qv-items td,.qv-sign-line,.qv-sec h2,.qv-foot,.qv-cover{border-color:#ddd !important;}
+    .qv-actions,#qv-print-btn,#qv-msg,#qv-back,.qv-status-strip{display:none !important;}
+    .qv-cover{page-break-after:always;}
+    .qv-accept{page-break-before:always;}
+    .qv-sec{page-break-inside:avoid;}
+    @page{ margin:18mm 16mm; }
   }
 </style>
 </head>
@@ -68,7 +89,7 @@
 <div id="qv-gate">
   <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
   <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
-  <p style="font-size:13px; color:var(--muted); margin-bottom:26px;">Secure Quotation Access</p>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px;">Secure Document Access</p>
   <form id="qv-login-form">
     <input id="qv-email" type="email" autocomplete="email" placeholder="Email Address" required>
     <input id="qv-password" type="password" autocomplete="current-password" placeholder="Password" required>
@@ -77,74 +98,80 @@
   </form>
 </div>
 
-<div class="qv-wrap" id="qv-page" style="display:none;">
+<div class="qv-wrap" id="qv-page-wrap" style="display:none;">
   <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
     <a id="qv-back" href="crm-quotations.html" class="qv-mono" style="color:var(--muted); text-decoration:none;">‹ Back</a>
     <button class="qv-btn ghost" id="qv-print-btn" type="button">Print / Save as PDF</button>
   </div>
-
   <div class="qv-status-strip"><span class="qv-badge" id="qv-status"></span></div>
 
   <article class="qv-doc" id="qv-doc">
-    <header class="qv-head">
-      <div>
-        <img src="logo-full.png" alt="JABRAN &amp; CO.">
-      </div>
-      <div style="text-align:right;">
-        <div class="eyebrow">Quotation</div>
-        <div class="qv-title" id="qv-number"></div>
-        <div class="qv-mono" id="qv-version"></div>
-      </div>
-    </header>
 
-    <div class="qv-meta">
-      <div>
-        <h4>Prepared For</h4>
-        <p id="qv-client"></p>
-      </div>
-      <div>
-        <h4>Details</h4>
-        <p class="qv-mono" id="qv-dates" style="color:var(--cream);"></p>
+    <!-- EXECUTIVE COVER -->
+    <div class="qv-cover">
+      <img src="logo-full.png" alt="JABRAN &amp; CO.">
+      <div class="qv-slogan">Connecting Businesses.<br>Creating <em>Opportunities.</em></div>
+      <div class="qv-slogan-sub">Where Strategy Meets Execution.</div>
+      <div class="qv-cover-rule"></div>
+      <div class="qv-cover-type">Commercial Proposal &amp; Quotation</div>
+      <div class="qv-cover-title" id="qv-title-line"></div>
+      <div class="qv-cover-meta">
+        <div><span>Prepared for </span><strong id="qv-client-name"></strong></div>
+        <div class="qv-mono" id="qv-cover-ref" style="margin-top:10px;"></div>
       </div>
     </div>
 
-    <h4 style="font-size:10px; text-transform:uppercase; letter-spacing:0.2em; color:var(--gold); font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">Subject</h4>
-    <p id="qv-title-line" style="font-size:15px; margin-bottom:24px;"></p>
+    <!-- DYNAMIC BODY: sections render ONLY when content exists -->
+    <div class="qv-page" id="qv-body"></div>
 
-    <table class="qv-items">
-      <thead><tr><th style="width:50%;">Description</th><th class="num">Qty</th><th class="num">Unit Price</th><th class="num">Amount</th></tr></thead>
-      <tbody id="qv-items"></tbody>
-    </table>
-    <div class="qv-totals" id="qv-totals"></div>
-
-    <div class="qv-section" id="qv-terms-wrap"></div>
-
-    <div class="qv-sign">
-      <div>
-        <div id="qv-signature-slot" style="min-height:60px;"></div>
-        <div class="who">
-          <strong>Syed Jabran</strong><br>
-          <span class="qv-mono" style="color:var(--muted);">Chief Executive Officer · M/S Jabran &amp; Co</span>
+    <!-- ACCEPTANCE PAGE -->
+    <div class="qv-page qv-accept">
+      <div class="qv-sec">
+        <h2>Acceptance &amp; Authorisation</h2>
+        <p style="font-size:13px;">By signing below or accepting this document through the JABRAN &amp; CO. client portal, the client confirms acceptance of the commercial proposal, scope, and terms stated herein.</p>
+      </div>
+      <div class="qv-sign-row">
+        <div class="qv-sign-col signed">
+          <div id="qv-signature-slot" style="min-height:60px;"></div>
+          <div class="qv-sign-line">
+            <strong>Syed Jabran</strong><br>
+            <span class="qv-mono">Chief Executive Officer · M/S Jabran &amp; Co</span>
+          </div>
+        </div>
+        <div class="qv-sign-col">
+          <div class="qv-sign-line">
+            <strong>For and on behalf of the Client</strong><br>
+            <span class="qv-mono">Name · Designation · Date · Signature</span>
+          </div>
+          <div class="qv-mono" id="qv-accept-record" style="margin-top:12px; color:var(--gold-light);"></div>
+        </div>
+        <div style="min-width:110px;">
+          <div id="qv-qr"></div>
+          <div class="qv-mono" style="text-align:right; margin-top:6px;">Scan to verify<br><span id="qv-ref"></span></div>
         </div>
       </div>
-      <div class="qv-mono" style="text-align:right;">
-        Document Ref: <span id="qv-ref"></span><br>
-        Status: <span id="qv-doc-status"></span><br>
-        This document is confidential and intended solely for the named recipient.
+    </div>
+
+    <!-- COMPANY PROFILE -->
+    <div class="qv-page" style="border-top:1px solid var(--line);">
+      <div class="qv-sec" style="margin-bottom:0;">
+        <h2>About JABRAN &amp; CO.</h2>
+        <p style="font-size:13px;">JABRAN &amp; CO is an international business group providing strategic advisory, industrial consulting, global procurement, and international trade solutions to organisations seeking sustainable growth, operational excellence, and commercial success. Founded by entrepreneur Syed Jabran Ali Kamran, JABRAN &amp; CO combines international trade expertise with operational consulting to help organisations improve efficiency, strengthen supply chains, and unlock new markets.</p>
+        <p style="font-size:13px; margin-top:12px;">We don't simply connect buyers and sellers. We work through problems with our clients — from the factory floor to the boardroom.</p>
       </div>
     </div>
 
-    <footer class="qv-trust">
-      <span class="qv-mono">FBR REG. NO. J152588</span>
-      <span class="qv-mono">FIRM REG. NO. 6634</span>
-      <span class="qv-mono">JABRANANDCO.COM</span>
+    <!-- CONTACT + CONFIDENTIALITY FOOTER -->
+    <div class="qv-foot">
+      <span class="qv-mono">FBR REG. NO. J152588 · FIRM REG. NO. 6634</span>
       <span class="qv-mono">PK +92 336 4864345 · UK +44 7400 760630</span>
-    </footer>
+      <span class="qv-mono">JABRANANDCO.COM</span>
+      <span class="qv-mono" style="width:100%; text-align:center; margin-top:4px;">CONFIDENTIAL — This document is intended solely for the named recipient. Status: <span id="qv-doc-status"></span>. For printed page numbers, enable "Headers and footers" in the print dialog.</span>
+    </div>
   </article>
 
-  <!-- Client decision actions (shown only for issued/viewed quotations to the client org) -->
   <div class="qv-actions" id="qv-actions" style="display:none;">
-    <button class="qv-btn" id="qv-accept" type="button">Accept Quotation</button>
+    <button class="qv-btn" id="qv-accept-btn" type="button">Accept Proposal</button>
     <button class="qv-btn ghost" id="qv-revision" type="button">Request Revision</button>
     <button class="qv-btn danger" id="qv-reject" type="button">Decline</button>
   </div>
@@ -152,17 +179,19 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
 
   function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
-  function label(s){ return s?s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
   function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
   const qid=new URLSearchParams(location.search).get('id');
 
-  const gate=document.getElementById('qv-gate'), page=document.getElementById('qv-page');
+  const gate=document.getElementById('qv-gate'), wrap=document.getElementById('qv-page-wrap');
   document.getElementById('qv-print-btn').addEventListener('click',()=>window.print());
 
   document.getElementById('qv-login-form').addEventListener('submit', async e=>{
@@ -173,12 +202,64 @@ document.addEventListener('DOMContentLoaded', function () {
     load();
   });
 
+  /* Section builder: renders a numbered executive section ONLY when content
+     exists — empty fields, rows, headings, and clauses never appear. */
+  function buildBody(q, items){
+    const body=document.getElementById('qv-body');
+    let n=0; const parts=[];
+    function sec(title, html){
+      if(!html) return;
+      n++;
+      parts.push(`<div class="qv-sec"><h2><span class="qv-num">${String(n).padStart(2,'0')}</span>${esc(title)}</h2>${html}</div>`);
+    }
+    function para(t){ return t ? '<p>'+esc(t)+'</p>' : null; }
+
+    sec('Executive Summary', para(q.executive_summary));
+    sec('Requirement Understanding', para(q.requirement_understanding));
+    sec('Scope of Work', para(q.scope_of_work));
+
+    // Commercial Proposal — mandatory
+    const rows=(items||[]).map(i=>`
+      <tr><td>${esc(i.description)}</td>
+      <td class="num">${i.quantity} ${esc(i.unit||'')}</td>
+      <td class="num">${money(i.unit_price)}</td>
+      <td class="num">${money(i.line_total)}</td></tr>`).join('');
+    const totals=`
+      <div class="qv-totals">
+        <div><span>Subtotal</span><span>${money(q.subtotal,q.currency)}</span></div>
+        ${Number(q.discount_amount)>0?`<div><span>Discount (${q.discount_pct}%)</span><span>− ${money(q.discount_amount,q.currency)}</span></div>`:''}
+        ${Number(q.tax_amount)>0?`<div><span>Tax (${q.tax_pct}%)</span><span>${money(q.tax_amount,q.currency)}</span></div>`:''}
+        ${Number(q.freight_amount)>0?`<div><span>Freight</span><span>${money(q.freight_amount,q.currency)}</span></div>`:''}
+        ${Number(q.other_charges)>0?`<div><span>Other Charges</span><span>${money(q.other_charges,q.currency)}</span></div>`:''}
+        <div class="grand"><span>Total (${esc(q.currency)})</span><span>${money(q.total)}</span></div>
+      </div>`;
+    sec('Commercial Proposal',
+      `<table class="qv-items"><thead><tr><th style="width:50%;">Description</th><th class="num">Qty</th><th class="num">Unit Price</th><th class="num">Amount</th></tr></thead><tbody>${rows||'<tr><td colspan="4">As per agreed engagement.</td></tr>'}</tbody></table>${totals}`);
+
+    sec('Technical Specifications', para(q.technical_specifications));
+    sec('Timeline & Milestones', para(q.timeline_milestones));
+
+    // Commercial Terms grid — only populated cells render
+    const terms=[['Payment Terms',q.payment_terms],['Payment Schedule',q.payment_schedule],
+      ['Delivery Terms',q.delivery_terms],['Delivery Timeline',q.delivery_timeline],
+      ['Incoterm',q.incoterm],['Warranty',q.warranty],
+      ['Validity',q.expiry_date?('Valid until '+q.expiry_date):null]].filter(t=>t[1]);
+    if(terms.length) sec('Commercial Terms',
+      '<div class="qv-terms-grid">'+terms.map(t=>`<div><b>${esc(t[0])}</b><span>${esc(t[1])}</span></div>`).join('')+'</div>');
+
+    sec('Assumptions', para(q.assumptions));
+    sec('Exclusions', para(q.exclusions));
+    sec('Notes', para(q.client_notes));
+    sec('Terms & Conditions', para(q.terms_conditions));
+
+    body.innerHTML=parts.join('');
+  }
+
   async function load(){
     const {data:sess}=await sb.auth.getSession();
-    if(!sess.session){ gate.style.display='block'; page.style.display='none'; return; }
-    if(!qid){ gate.style.display='none'; page.style.display='block'; document.getElementById('qv-msg').textContent='No quotation specified.'; return; }
+    if(!sess.session){ gate.style.display='block'; wrap.style.display='none'; return; }
+    if(!qid){ gate.style.display='none'; wrap.style.display='block'; document.getElementById('qv-msg').textContent='No document specified.'; return; }
 
-    // Staff read the full table; clients fall back to the client-safe view (RLS-enforced)
     let q=null, isStaff=true;
     let res=await sb.from('crm_quotations').select('*').eq('id',qid).maybeSingle();
     if(res.error||!res.data){
@@ -186,64 +267,43 @@ document.addEventListener('DOMContentLoaded', function () {
       res=await sb.from('crm_client_quotations').select('*').eq('id',qid).maybeSingle();
     }
     q=res.data;
-    gate.style.display='none'; page.style.display='block';
-    if(!q){ document.getElementById('qv-doc').style.display='none'; document.getElementById('qv-msg').textContent='Quotation not found or you are not authorised to view it.'; return; }
+    gate.style.display='none'; wrap.style.display='block';
+    if(!q){ document.getElementById('qv-doc').style.display='none'; document.getElementById('qv-msg').textContent='Document not found or you are not authorised to view it.'; return; }
 
     if(!isStaff){
       document.getElementById('qv-back').style.display='none';
       if(q.status==='issued'){ await sb.rpc('crm_mark_quotation_viewed',{p_quotation_id:qid}); q.status='viewed'; }
     }
 
-    // Organization details (staff: full table; clients: their own via crm_my_organization)
     let org=null;
     if(isStaff){
-      const r=await sb.from('crm_organizations').select('legal_name,city,country,primary_email,billing_address').eq('id',q.organization_id).maybeSingle(); org=r.data;
+      const r=await sb.from('crm_organizations').select('legal_name,trading_name,city,country').eq('id',q.organization_id).maybeSingle(); org=r.data;
     } else {
       const r=await sb.from('crm_my_organization').select('*').eq('id',q.organization_id).maybeSingle(); org=r.data;
     }
-
     const {data:items}=await sb.from('crm_quotation_items').select('*').eq('quotation_id',qid).order('sort_order');
 
     document.getElementById('qv-status').textContent=label(q.status);
-    document.getElementById('qv-number').textContent=q.quotation_number;
-    document.getElementById('qv-version').textContent='Version '+q.version;
-    document.getElementById('qv-ref').textContent=q.quotation_number+'/v'+q.version;
     document.getElementById('qv-doc-status').textContent=label(q.status);
     document.getElementById('qv-title-line').textContent=q.title;
-    document.getElementById('qv-client').innerHTML=org
-      ? esc(org.legal_name)+'<br><span class="qv-mono">'+esc([org.billing_address,org.city,org.country].filter(Boolean).join(', '))+'</span>'
-      : '—';
-    document.getElementById('qv-dates').innerHTML=
-      'Issue Date: '+esc(q.issue_date||'Pending issue')+'<br>'+
-      'Valid Until: '+esc(q.expiry_date||'—')+'<br>'+
-      'Currency: '+esc(q.currency)+(q.incoterm?'<br>Incoterm: '+esc(q.incoterm):'');
+    document.getElementById('qv-client-name').textContent=org?(org.trading_name||org.legal_name)+(org.city?', '+[org.city,org.country].filter(Boolean).join(', '):''):'—';
+    document.getElementById('qv-cover-ref').innerHTML=
+      esc(q.quotation_number)+' · Version '+q.version+
+      (q.issue_date?' · Issued '+esc(q.issue_date):'')+
+      (q.expiry_date?' · Valid until '+esc(q.expiry_date):'');
+    document.getElementById('qv-ref').textContent=q.quotation_number+'/v'+q.version;
 
-    document.getElementById('qv-items').innerHTML=(items||[]).map(i=>`
-      <tr><td>${esc(i.description)}</td>
-      <td class="num">${i.quantity} ${esc(i.unit||'')}</td>
-      <td class="num">${money(i.unit_price)}</td>
-      <td class="num">${money(i.line_total)}</td></tr>`).join('')
-      || '<tr><td colspan="4" style="color:var(--muted);">No line items.</td></tr>';
+    buildBody(q, items);
 
-    document.getElementById('qv-totals').innerHTML=`
-      <div><span>Subtotal</span><span>${money(q.subtotal,q.currency)}</span></div>
-      ${Number(q.discount_amount)>0?`<div><span>Discount (${q.discount_pct}%)</span><span>− ${money(q.discount_amount,q.currency)}</span></div>`:''}
-      ${Number(q.tax_amount)>0?`<div><span>Tax (${q.tax_pct}%)</span><span>${money(q.tax_amount,q.currency)}</span></div>`:''}
-      ${Number(q.freight_amount)>0?`<div><span>Freight</span><span>${money(q.freight_amount,q.currency)}</span></div>`:''}
-      ${Number(q.other_charges)>0?`<div><span>Other Charges</span><span>${money(q.other_charges,q.currency)}</span></div>`:''}
-      <div class="grand"><span>Total</span><span>${money(q.total,q.currency)}</span></div>`;
+    if(q.client_action_at){
+      document.getElementById('qv-accept-record').textContent=
+        'Recorded via client portal: '+label(q.status)+' on '+new Date(q.client_action_at).toISOString().replace('T',' ').slice(0,16)+' UTC';
+    }
 
-    const sections=[
-      ['Payment Terms',q.payment_terms],['Delivery Terms',q.delivery_terms],
-      ['Delivery Timeline',q.delivery_timeline],['Warranty',q.warranty],
-      ['Assumptions',q.assumptions],['Exclusions',q.exclusions],
-      ['Notes',q.client_notes],['Terms & Conditions',q.terms_conditions]
-    ].filter(s=>s[1]);
-    document.getElementById('qv-terms-wrap').innerHTML=sections.map(s=>
-      `<div class="qv-section"><h4>${esc(s[0])}</h4><p>${esc(s[1])}</p></div>`).join('');
+    // QR verification: encodes the secure document URL (login required to open)
+    try{ new QRCode(document.getElementById('qv-qr'),{text:location.origin+location.pathname+'?id='+qid, width:92, height:92, correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
 
-    // SIGNATURE: applied only to issued+ documents, fetched from the PRIVATE
-    // bucket via a short-lived signed URL. Storage RLS decides who may fetch.
+    // Signature: PRIVATE bucket, signed URL, issued+ documents only.
     const slot=document.getElementById('qv-signature-slot');
     if(['issued','viewed','accepted','converted_to_order'].includes(q.status)){
       const {data:signed,error:sigErr}=await sb.storage.from('crm-private')
@@ -259,13 +319,13 @@ document.addEventListener('DOMContentLoaded', function () {
       slot.innerHTML='<span class="qv-mono">Signature applied upon issue</span>';
     }
 
-    // CLIENT ACTIONS
+    // Client decision actions
     if(!isStaff && ['issued','viewed'].includes(q.status)){
       document.getElementById('qv-actions').style.display='flex';
       const act=async(action,promptText)=>{
         let comment=null;
         if(promptText){ comment=prompt(promptText); if(comment===null)return; }
-        else if(!confirm('Confirm: '+label(action)+' this quotation?'))return;
+        else if(!confirm('Confirm: '+label(action)+' this proposal?'))return;
         const {error}=await sb.rpc('crm_client_quotation_action',{p_quotation_id:qid,p_action:action,p_comment:comment});
         const msg=document.getElementById('qv-msg');
         if(error){ msg.textContent='Error: '+error.message; return; }
@@ -273,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('qv-actions').style.display='none';
         document.getElementById('qv-status').textContent=label(action);
       };
-      document.getElementById('qv-accept').addEventListener('click',()=>act('accepted',null));
+      document.getElementById('qv-accept-btn').addEventListener('click',()=>act('accepted',null));
       document.getElementById('qv-reject').addEventListener('click',()=>act('rejected',null));
       document.getElementById('qv-revision').addEventListener('click',()=>act('revision_requested','Please describe the revision you require:'));
     }
