@@ -1,5 +1,10 @@
 // Jabran & Co — Premium interaction layer
-// Loads GSAP + ScrollTrigger + Lenis dynamically, with safe fallbacks if anything fails to load.
+// Native browser scrolling everywhere (fast and consistent on every mouse,
+// trackpad, and touchscreen). GSAP + ScrollTrigger load dynamically for the
+// reveal animations, with safe fallbacks if anything fails to load.
+// NOTE: The previous Lenis smooth-wheel layer was removed deliberately —
+// it hijacked the mouse wheel and made scrolling feel extremely slow on
+// standard mice. Do not reintroduce wheel/scroll interception.
 
 (function () {
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -45,34 +50,26 @@
     }
   });
 
-  if (reducedMotion) return; // Stop here — no smooth scroll, no custom cursor, no GSAP upgrade.
+  if (reducedMotion) return; // Stop here — no GSAP upgrade, no custom cursor.
 
-  // ---------- Load GSAP + ScrollTrigger + Lenis, then upgrade the experience ----------
-  Promise.all([
-    loadScript('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js')
-      .then(function(){ return loadScript('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js'); }),
-    loadScript('https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js').catch(function(){})
-  ]).then(function () {
-    if (!window.gsap) return;
-    gsap.registerPlugin(ScrollTrigger);
+  // ---------- Load GSAP + ScrollTrigger, then upgrade the reveals (native scroll stays untouched) ----------
+  loadScript('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js')
+    .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js'); })
+    .then(function () {
+      if (!window.gsap) return;
+      gsap.registerPlugin(ScrollTrigger);
 
-    // Smooth scrolling via Lenis, wired into GSAP's ticker so ScrollTrigger stays in sync
-    if (window.Lenis) {
-      var lenis = new Lenis({ duration: 1.1, smoothWheel: true });
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
-      gsap.ticker.lagSmoothing(0);
-    }
-
-    // Upgrade reveal: re-animate anything not yet visible using GSAP for smoother easing
-    document.querySelectorAll('.reveal').forEach(function (el) {
-      gsap.fromTo(el, { opacity: 0, y: 18 }, {
-        opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+      // Upgrade reveal: re-animate anything not yet visible using GSAP for smoother easing.
+      // ScrollTrigger listens to the browser's own scroll — no wheel interception.
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        gsap.fromTo(el, { opacity: 0, y: 18 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+        el.classList.add('is-visible'); // prevents the CSS fallback transition from double-firing
       });
-      el.classList.add('is-visible'); // prevents the CSS fallback transition from double-firing
-    });
-  }).catch(function () { /* GSAP/Lenis failed to load — basicReveal() fallback already covers this */ });
+    })
+    .catch(function () { /* GSAP failed to load — basicReveal() fallback already covers this */ });
 
   // ---------- Custom cursor (desktop only, real pointer only) ----------
   if (!isFinePointer) return;
