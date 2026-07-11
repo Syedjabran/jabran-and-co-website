@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Command Center | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .cc-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:14px;}
+  .cc-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px; cursor:pointer; transition:border-color .2s;}
+  .cc-kpi:hover{border-color:var(--gold);}
+  .cc-kpi .n{font-family:'Playfair Display',serif; font-size:24px; color:var(--gold-light); word-break:break-all;}
+  .cc-kpi .l{font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-top:4px;}
+  .cc-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:14px; margin-top:16px;}
+  .cc-card{border:1px solid var(--line); background:var(--bg-alt); padding:20px 22px;}
+  .cc-card h3{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:14px;}
+  .cc-card .hint{font-size:10px; color:var(--muted); margin-top:8px;}
+  .cc-card canvas{max-height:260px;}
+  .cc-table{width:100%; border-collapse:collapse; font-size:12px;}
+  .cc-table th{text-align:left; font-size:9px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); padding:6px 8px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .cc-table td{padding:7px 8px; border-bottom:1px solid rgba(198,165,90,0.10);}
+  .crm-empty{color:var(--muted); font-size:13px; padding:30px 0;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Owner Command Center</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Governance</div>
+    <a class="crm-nav-item" href="crm-employees.html">Employees</a>
+    <span class="crm-nav-item active">Command Center</span>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div><div class="eyebrow">Owner Command Center — restricted</div><h1>Business Overview</h1></div>
+      <span class="crm-mono" id="cc-updated"></span>
+    </div>
+
+    <div class="cc-kpis" id="cc-kpis"></div>
+
+    <div class="cc-grid">
+      <div class="cc-card" style="grid-column:1/-1;">
+        <h3>12-Month Financial Trend</h3>
+        <canvas id="ch-monthly" height="90"></canvas>
+        <div class="hint">Invoiced vs collected vs expenses · click any month to open Finance</div>
+      </div>
+      <div class="cc-card"><h3>Sales Funnel</h3><canvas id="ch-funnel"></canvas><div class="hint">Click a stage to open its module</div></div>
+      <div class="cc-card"><h3>Quotation Outcomes</h3><canvas id="ch-qtn"></canvas><div class="hint">Click to open Quotations</div></div>
+      <div class="cc-card"><h3>Receivables Ageing</h3><canvas id="ch-ageing"></canvas><div class="hint">Click to open Finance → Receivables</div></div>
+      <div class="cc-card"><h3>Revenue by Service</h3><canvas id="ch-service"></canvas><div class="hint">Order value per service line</div></div>
+      <div class="cc-card"><h3>Revenue by Country</h3><canvas id="ch-country"></canvas></div>
+      <div class="cc-card"><h3>Order Status</h3><canvas id="ch-orders"></canvas><div class="hint">Click to open Orders</div></div>
+      <div class="cc-card"><h3>Top Clients by Order Value</h3><table class="cc-table" id="tb-clients"></table></div>
+      <div class="cc-card"><h3>Employee Productivity — YTD</h3><table class="cc-table" id="tb-prod"></table></div>
+      <div class="cc-card"><h3>Shipments &amp; Projects</h3><table class="cc-table" id="tb-ops"></table></div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  const GOLD='#C6A55A', GOLDL='#E4C98A', EMER='#0F6B5C', CREAM='#F5F3EF',
+        MUTED='#9C9690', RED='#e57368', LINE='rgba(198,165,90,0.22)';
+  const PALETTE=[GOLD,EMER,'#8a6d2f','#5cc9b4',GOLDL,'#B86A32','#7a8aa0',RED,MUTED,'#4f6d7a'];
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n){ return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  if (window.Chart){
+    Chart.defaults.color=MUTED; Chart.defaults.borderColor=LINE;
+    Chart.defaults.font.family="'Inter',sans-serif"; Chart.defaults.font.size=11;
+  }
+  const go=url=>()=>{ location.href=url; };
+  function clickable(chart,url){ return { onClick:()=>{ location.href=url; } }; }
+
+  /* ---- auth ---- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    // OWNER GATE — role-based, enforced again by RLS on every dataset below
+    const {data:isOwner,error}=await sb.rpc('crm_has_role',{roles:['owner']});
+    if(error||isOwner!==true){
+      document.getElementById('crm-login-status').textContent='The Command Center is restricted to the Owner.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    document.getElementById('cc-updated').textContent='Live · '+new Date().toISOString().replace('T',' ').slice(0,16)+' UTC';
+    load();
+  }
+
+  async function load(){
+    const [kpis,monthly,funnel,qtn,ageing,svc,ctry,ords,clients,ships,projs]=await Promise.all([
+      sb.from('crm_cc_kpis').select('*').maybeSingle(),
+      sb.from('crm_cc_monthly').select('*'),
+      sb.from('crm_cc_funnel').select('*').order('sort'),
+      sb.from('crm_cc_quotation_outcomes').select('*'),
+      sb.from('crm_cc_ageing').select('*'),
+      sb.from('crm_cc_revenue_service').select('*'),
+      sb.from('crm_cc_revenue_country').select('*'),
+      sb.from('crm_cc_order_status').select('*'),
+      sb.from('crm_cc_revenue_client').select('*'),
+      sb.from('crm_cc_shipment_status').select('*'),
+      sb.from('crm_cc_project_status').select('*')
+    ]);
+    const k=kpis.data||{};
+    const KP=[
+      ['Revenue YTD',money(k.revenue_ytd),'crm-finance.html'],
+      ['Collected YTD',money(k.collected_ytd),'crm-finance.html'],
+      ['Outstanding AR',money(k.outstanding_ar),'crm-finance.html'],
+      ['Expenses YTD',money(k.expenses_ytd),'crm-finance.html'],
+      ['Weighted Pipeline',money(k.weighted_pipeline),'crm-opportunities.html'],
+      ['Open Opportunities',k.open_opportunities??0,'crm-opportunities.html'],
+      ['Quotes with Client',k.quotations_awaiting_client??0,'crm-quotations.html'],
+      ['Quotes Awaiting Approval',k.quotations_awaiting_approval??0,'crm-quotations.html'],
+      ['Open Enquiries',k.open_enquiries??0,'crm.html'],
+      ['Active Orders',k.active_orders??0,'crm-orders.html']
+    ];
+    document.getElementById('cc-kpis').innerHTML=KP.map(x=>
+      `<div class="cc-kpi" data-go="${x[2]}"><div class="n">${esc(x[1])}</div><div class="l">${esc(x[0])}</div></div>`).join('');
+    document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',go(el.dataset.go)));
+    if(!window.Chart) return;
+
+    const mm=monthly.data||[];
+    new Chart(document.getElementById('ch-monthly'),{ type:'line',
+      data:{ labels:mm.map(r=>r.month_label), datasets:[
+        {label:'Invoiced',data:mm.map(r=>r.invoiced),borderColor:GOLD,backgroundColor:GOLD,tension:0.3},
+        {label:'Collected',data:mm.map(r=>r.collected),borderColor:'#5cc9b4',backgroundColor:'#5cc9b4',tension:0.3},
+        {label:'Expenses',data:mm.map(r=>r.expenses),borderColor:RED,backgroundColor:RED,tension:0.3}]},
+      options:{ ...clickable(null,'crm-finance.html'), plugins:{legend:{labels:{color:CREAM}}},
+        scales:{y:{ticks:{callback:v=>money(v)}}} }});
+
+    const ff=funnel.data||[];
+    new Chart(document.getElementById('ch-funnel'),{ type:'bar',
+      data:{ labels:ff.map(r=>r.stage), datasets:[{data:ff.map(r=>r.n), backgroundColor:PALETTE}]},
+      options:{ indexAxis:'y', plugins:{legend:{display:false}},
+        onClick:(e,els)=>{ if(!els.length)return;
+          const pages=['crm.html','crm-opportunities.html','crm-quotations.html','crm-orders.html','crm-finance.html'];
+          location.href=pages[els[0].index]||'crm.html'; } }});
+
+    const qq=qtn.data||[];
+    new Chart(document.getElementById('ch-qtn'),{ type:'doughnut',
+      data:{ labels:qq.map(r=>label(r.status)), datasets:[{data:qq.map(r=>r.n), backgroundColor:PALETTE, borderColor:'#0B0F14'}]},
+      options:{ ...clickable(null,'crm-quotations.html'), plugins:{legend:{position:'right',labels:{color:CREAM,boxWidth:12}}} }});
+
+    const order=['current','1_30','31_60','61_90','91_120','over_120'];
+    const ag=(ageing.data||[]).sort((a,b)=>order.indexOf(a.ageing_bucket)-order.indexOf(b.ageing_bucket));
+    new Chart(document.getElementById('ch-ageing'),{ type:'bar',
+      data:{ labels:ag.map(r=>label(r.ageing_bucket)), datasets:[{data:ag.map(r=>r.outstanding),
+        backgroundColor:[EMER,GOLD,GOLDL,'#B86A32','#e08a4a',RED]}]},
+      options:{ ...clickable(null,'crm-finance.html'), plugins:{legend:{display:false}},
+        scales:{y:{ticks:{callback:v=>money(v)}}} }});
+
+    const sv=(svc.data||[]).slice(0,8);
+    new Chart(document.getElementById('ch-service'),{ type:'bar',
+      data:{ labels:sv.map(r=>r.service), datasets:[{data:sv.map(r=>r.order_value), backgroundColor:GOLD}]},
+      options:{ indexAxis:'y', ...clickable(null,'crm-reports.html'), plugins:{legend:{display:false}},
+        scales:{x:{ticks:{callback:v=>money(v)}}} }});
+
+    const ct=(ctry.data||[]).slice(0,8);
+    new Chart(document.getElementById('ch-country'),{ type:'bar',
+      data:{ labels:ct.map(r=>r.country), datasets:[{data:ct.map(r=>r.order_value), backgroundColor:EMER}]},
+      options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{ticks:{callback:v=>money(v)}}} }});
+
+    const oo=ords.data||[];
+    new Chart(document.getElementById('ch-orders'),{ type:'bar',
+      data:{ labels:oo.map(r=>label(r.status)), datasets:[{data:oo.map(r=>r.n), backgroundColor:PALETTE}]},
+      options:{ ...clickable(null,'crm-orders.html'), plugins:{legend:{display:false}} }});
+
+    document.getElementById('tb-clients').innerHTML=
+      '<tr><th>Client</th><th>Orders</th><th>Order Value</th></tr>'+
+      ((clients.data||[]).map(r=>`<tr><td>${esc(r.client)}</td><td class="crm-mono">${r.orders}</td><td class="crm-mono">${money(r.order_value)}</td></tr>`).join('')||'<tr><td colspan="3" class="crm-empty">No orders yet.</td></tr>');
+
+    const {data:prod}=await sb.rpc('crm_cc_productivity');
+    document.getElementById('tb-prod').innerHTML=
+      '<tr><th>Person</th><th>Opps</th><th>Quotes</th><th>Orders</th></tr>'+
+      ((prod||[]).map(r=>`<tr><td>${esc(r.person)}</td><td class="crm-mono">${r.opportunities}</td><td class="crm-mono">${r.quotations}</td><td class="crm-mono">${r.orders}</td></tr>`).join('')||'<tr><td colspan="4" class="crm-empty">—</td></tr>');
+
+    const opsRows=[...(ships.data||[]).map(r=>['Shipment',r.status,r.n]),
+                   ...(projs.data||[]).map(r=>['Project',r.status,r.n])];
+    document.getElementById('tb-ops').innerHTML=
+      '<tr><th>Kind</th><th>Status</th><th>Count</th></tr>'+
+      (opsRows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(label(r[1]))}</td><td class="crm-mono">${r[2]}</td></tr>`).join('')||'<tr><td colspan="3" class="crm-empty">No shipments or projects yet.</td></tr>');
+  }
+
+  checkSession();
+});
+</script>
+</body>
+</html>
