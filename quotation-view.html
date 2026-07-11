@@ -182,6 +182,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -294,6 +295,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('qv-ref').textContent=q.quotation_number+'/v'+q.version;
 
     buildBody(q, items);
+    if(window.jcoSetActivityContext)window.jcoSetActivityContext('quotation',qid,q.quotation_number+' v'+q.version);
+    if(window.jcoLogActivity)window.jcoLogActivity('view','quotation',qid,q.quotation_number+' v'+q.version);
 
     if(q.client_action_at){
       document.getElementById('qv-accept-record').textContent=

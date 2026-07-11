@@ -119,6 +119,7 @@
       <div class="cc-card"><h3>Top Clients by Order Value</h3><table class="cc-table" id="tb-clients"></table></div>
       <div class="cc-card"><h3>Employee Productivity — YTD</h3><table class="cc-table" id="tb-prod"></table></div>
       <div class="cc-card"><h3>Shipments &amp; Projects</h3><table class="cc-table" id="tb-ops"></table></div>
+      <div class="cc-card" style="grid-column:1/-1;"><h3>Recent Sensitive Activity — Views · Prints · Downloads · Exports</h3><table class="cc-table" id="tb-activity"></table></div>
     </div>
   </main>
 </div>
@@ -127,6 +128,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof sb === 'undefined') return;
@@ -257,6 +259,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('tb-prod').innerHTML=
       '<tr><th>Person</th><th>Opps</th><th>Quotes</th><th>Orders</th></tr>'+
       ((prod||[]).map(r=>`<tr><td>${esc(r.person)}</td><td class="crm-mono">${r.opportunities}</td><td class="crm-mono">${r.quotations}</td><td class="crm-mono">${r.orders}</td></tr>`).join('')||'<tr><td colspan="4" class="crm-empty">—</td></tr>');
+
+    const {data:act}=await sb.rpc('crm_recent_activity',{p_limit:30});
+    document.getElementById('tb-activity').innerHTML=
+      '<tr><th>When (UTC)</th><th>Who</th><th>Event</th><th>Entity</th><th>Detail</th></tr>'+
+      ((act||[]).map(r=>`<tr><td class="crm-mono">${esc(new Date(r.created_at).toISOString().replace('T',' ').slice(0,16))}</td><td>${esc(r.who)}</td><td>${esc(label(r.event))}</td><td>${esc(label(r.entity))}</td><td>${esc(r.detail||'')}</td></tr>`).join('')||'<tr><td colspan="5" class="crm-empty">No read-side activity logged yet.</td></tr>');
 
     const opsRows=[...(ships.data||[]).map(r=>['Shipment',r.status,r.n]),
                    ...(projs.data||[]).map(r=>['Project',r.status,r.n])];
