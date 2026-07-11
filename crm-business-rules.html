@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Rules | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1000px;}
+  .crm-topline{margin-bottom:28px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .br-card{border:1px solid var(--line); background:var(--bg-alt); padding:24px 26px; margin-bottom:18px;}
+  .br-card h3{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:6px;}
+  .br-card .desc{font-size:12px; color:var(--muted); margin-bottom:16px;}
+  .br-row{display:grid; grid-template-columns:1fr 220px; gap:14px 20px; align-items:center; padding:10px 0; border-bottom:1px solid rgba(198,165,90,0.10);}
+  .br-row:last-of-type{border-bottom:none;}
+  .br-row label{font-size:13px;}
+  .br-row label small{display:block; font-size:11px; color:var(--muted);}
+  .br-row input, .br-row textarea{background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 12px; font-size:13px; border-radius:2px; width:100%; font-family:'IBM Plex Mono',monospace;}
+  .br-row textarea{font-family:'Inter',sans-serif; min-height:56px; resize:vertical;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px; margin-top:14px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:10px;}
+  .cl-row{display:grid; grid-template-columns:1fr 150px 150px 90px; gap:12px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(198,165,90,0.10); font-size:13px;}
+  .cl-row input{background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:7px 10px; font-size:12px; border-radius:2px; width:100%; font-family:'IBM Plex Mono',monospace;}
+  .cl-head{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold);}
+  .over{color:#e57368; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .br-row,.cl-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Business Rules — Owner Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%; margin-top:0;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Governance</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-employees.html">Employees</a>
+    <span class="crm-nav-item active">Business Rules</span>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">Owner-configurable — enforced by the database, no code changes</div>
+      <h1>Business Rules</h1>
+    </div>
+    <div id="br-container"></div>
+
+    <div class="br-card">
+      <h3>Client Credit Limits</h3>
+      <div class="desc">Per-client exposure control. Outstanding shows unpaid issued invoices; clients above their limit are flagged here and in Finance decisions. Leave 0 or blank for no limit.</div>
+      <div class="cl-row cl-head"><span>Client</span><span>Credit Limit</span><span>Outstanding</span><span></span></div>
+      <div id="cl-rows"></div>
+      <button class="crm-btn" id="btn-save-credit">Save Credit Limits</button>
+      <span class="crm-status-msg" id="cl-status"></span>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function money(n){ return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0}); }
+
+  /* Rule registry: key ↔ where it is enforced. Values live in crm_settings. */
+  const GROUPS=[
+    { title:'Commercial Rules',
+      desc:'Applied automatically inside the quotation approval workflow and document engine.',
+      rules:[
+        {key:'approval_max_discount_pct', label:'Maximum discount without CEO approval', small:'Quotations discounting above this % are routed to Pending Approval', type:'number', suffix:'%'},
+        {key:'approval_min_margin_pct',   label:'Minimum gross margin without CEO approval', small:'Quotations below this margin (vs linked cost sheet) require approval', type:'number', suffix:'%'},
+        {key:'quotation_validity_days',   label:'Quotation validity', small:'Days added to the issue date when no expiry is set', type:'number', suffix:'days'},
+        {key:'default_payment_terms',     label:'Default payment terms', small:'Suggested wording for new quotations', type:'text'},
+        {key:'default_currency',          label:'Default currency', small:'ISO code, e.g. PKR, USD', type:'string'}
+      ]},
+    { title:'Financial Rules',
+      desc:'Used by the finance engine and profitability reporting.',
+      rules:[
+        {key:'ebitda_overhead_allocation_pct', label:'Overhead allocation for EBITDA', small:'% of order revenue allocated as overhead in EBITDA reporting', type:'number', suffix:'%'},
+        {key:'default_tax_pct',                label:'Default tax rate', small:'Pre-filled on new quotations and invoices', type:'number', suffix:'%'},
+        {key:'credit_limit_default',           label:'Default credit limit for new clients', small:'0 = no limit; per-client overrides below', type:'number'}
+      ]},
+    { title:'Security Rules',
+      desc:'Applied by the session engine on every CRM and portal page.',
+      rules:[
+        {key:'session_idle_timeout_minutes', label:'Idle timeout', small:'Automatic logout after inactivity', type:'number', suffix:'min'},
+        {key:'remember_me_days',             label:'Remember-me duration', small:'Persistent login window when Remember Me is ticked', type:'number', suffix:'days'},
+        {key:'failed_login_lockout',         label:'Failed-login lockout', small:'JSON: {"max_attempts":5,"lockout_minutes":5}', type:'json'}
+      ]},
+    { title:'Numbering & Pipeline',
+      desc:'Document numbering and weighted-pipeline model.',
+      rules:[
+        {key:'numbering_prefix',       label:'Document number prefix', small:'Applied to all new document numbers, e.g. JCO → JCO-QTN-2026-0001', type:'string'},
+        {key:'pipeline_probabilities', label:'Prospect stage probabilities', small:'JSON map of pipeline stage → win probability %', type:'json'}
+      ]}
+  ];
+
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:isOwner,error}=await sb.rpc('crm_has_role',{roles:['owner']});
+    if(error||isOwner!==true){
+      document.getElementById('crm-login-status').textContent='Business Rules are restricted to the Owner.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    await render();
+  }
+
+  function ruleInput(r, current){
+    const v = current===undefined||current===null ? '' :
+      (r.type==='json' ? JSON.stringify(current) : String(current));
+    if(r.type==='text') return `<textarea data-rule="${r.key}" data-type="${r.type}">${esc(v)}</textarea>`;
+    return `<div style="display:flex; align-items:center; gap:8px;">
+      <input data-rule="${r.key}" data-type="${r.type}" value="${esc(v)}">
+      ${r.suffix?`<span class="crm-mono">${esc(r.suffix)}</span>`:''}</div>`;
+  }
+
+  async function render(){
+    const {data:settings}=await sb.from('crm_settings').select('key,value');
+    const map={}; (settings||[]).forEach(s=>{
+      map[s.key]=(typeof s.value==='object')?s.value:s.value;
+    });
+    function currentOf(key,type){
+      const raw=map[key];
+      if(raw===undefined)return null;
+      if(type==='json')return raw;
+      if(typeof raw==='object')return JSON.stringify(raw);
+      return raw;
+    }
+    document.getElementById('br-container').innerHTML=GROUPS.map((g,gi)=>`
+      <div class="br-card">
+        <h3>${esc(g.title)}</h3>
+        <div class="desc">${esc(g.desc)}</div>
+        ${g.rules.map(r=>`
+          <div class="br-row">
+            <label>${esc(r.label)}<small>${esc(r.small)}</small></label>
+            ${ruleInput(r, currentOf(r.key, r.type))}
+          </div>`).join('')}
+        <button class="crm-btn" data-savegroup="${gi}">Save ${esc(g.title)}</button>
+        <span class="crm-status-msg" id="br-status-${gi}"></span>
+      </div>`).join('');
+
+    document.querySelectorAll('[data-savegroup]').forEach(btn=>btn.addEventListener('click', async ()=>{
+      const gi=Number(btn.dataset.savegroup), g=GROUPS[gi];
+      const st=document.getElementById('br-status-'+gi); st.textContent='Saving…';
+      const rows=[];
+      for(const r of g.rules){
+        const el=document.querySelector(`[data-rule="${r.key}"]`);
+        let raw=el.value.trim();
+        if(raw==='')continue;
+        let value;
+        try{
+          if(r.type==='number'){ const n=Number(raw); if(isNaN(n))throw new Error(r.label+' must be a number'); value=n; }
+          else if(r.type==='json'){ value=JSON.parse(raw); }
+          else{ value=raw; }
+        }catch(e){ st.textContent='Error: '+e.message; return; }
+        rows.push({key:r.key, value});
+      }
+      const {error}=await sb.from('crm_settings').upsert(rows,{onConflict:'key'});
+      st.textContent=error?('Error: '+error.message):'Saved — effective immediately.';
+    }));
+
+    // credit limits
+    const {data:credit}=await sb.from('crm_org_credit_status').select('*').order('legal_name');
+    document.getElementById('cl-rows').innerHTML=(credit||[]).map(c=>`
+      <div class="cl-row">
+        <span>${esc(c.legal_name)}</span>
+        <input data-credit="${c.organization_id}" value="${c.credit_limit==null?'':c.credit_limit}" placeholder="0 = no limit">
+        <span class="crm-mono">${money(c.outstanding)}</span>
+        <span class="over">${c.over_limit?'Over limit':''}</span>
+      </div>`).join('')||'<p class="crm-mono" style="padding:8px 0;">No client organizations yet.</p>';
+  }
+
+  document.getElementById('btn-save-credit').addEventListener('click', async ()=>{
+    const st=document.getElementById('cl-status'); st.textContent='Saving…';
+    const inputs=[...document.querySelectorAll('[data-credit]')];
+    for(const el of inputs){
+      const raw=el.value.trim();
+      const v=raw===''?null:Number(raw);
+      if(raw!==''&&isNaN(v)){ st.textContent='Credit limits must be numbers.'; return; }
+      const {error}=await sb.from('crm_organizations').update({credit_limit:v}).eq('id',el.dataset.credit);
+      if(error){ st.textContent='Error: '+error.message; return; }
+    }
+    st.textContent='Saved.'; 
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
