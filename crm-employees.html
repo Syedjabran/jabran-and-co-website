@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employees | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:500; padding:10px 12px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .crm-table td{padding:12px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-row-link{cursor:pointer;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--line); color:var(--gold-light); border-radius:2px; white-space:nowrap; margin:1px 2px 1px 0;}
+  .crm-badge.ok{border-color:var(--emerald); color:#5cc9b4;}
+  .crm-badge.bad{border-color:#e57368; color:#e57368;}
+  .crm-form input, .crm-form select, .crm-form textarea{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:10px 12px; font-family:'Inter',sans-serif; font-size:13px; border-radius:2px; width:100%;
+  }
+  .crm-form label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 5px;}
+  .crm-grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px 16px; margin-bottom:14px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .crm-btn.danger{background:transparent; border:1px solid #e57368; color:#e57368;}
+  .crm-btn.sm{padding:6px 12px; font-size:10px;}
+  .crm-modal-bg{position:fixed; inset:0; background:rgba(8,17,28,0.86); z-index:80; display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:60px 16px;}
+  .crm-modal{background:var(--bg-alt); border:1px solid var(--line); max-width:860px; width:100%; padding:34px 36px 40px;}
+  .crm-modal h2{margin-bottom:22px;}
+  .crm-fieldset-label{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:22px 0 12px; border-bottom:1px solid var(--line); padding-bottom:6px;}
+  .crm-roles{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px 18px;}
+  .crm-roles label{display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0; font-size:13px; color:var(--cream); cursor:pointer;}
+  .crm-roles input{width:auto;}
+  .crm-empty{color:var(--muted); font-size:13px; padding:30px 0;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:8px;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Client Relationship Management Portal</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Governance</div>
+    <span class="crm-nav-item active">Employees</span>
+  </aside>
+
+  <main class="crm-main">
+    <section>
+      <div class="crm-topline">
+        <div><div class="eyebrow">Governance — Owner / Super Admin / CEO</div><h1>Employees</h1></div>
+        <button class="crm-btn" id="btn-invite">+ Invite Employee</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>Employee</th><th>Department / Designation</th><th>Roles</th><th>Authorities</th><th>Last Login</th><th>Status</th><th></th></tr></thead>
+        <tbody id="emp-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="emp-empty" style="display:none;">No staff accounts found, or your role does not include governance access.</p>
+    </section>
+  </main>
+</div>
+
+<!-- EMPLOYEE MODAL -->
+<div class="crm-modal-bg" id="modal-emp">
+  <div class="crm-modal">
+    <h2 id="emp-modal-title">Employee</h2>
+    <form id="emp-form" class="crm-form">
+      <input type="hidden" id="em-user_id">
+      <div class="crm-grid2">
+        <div><label>Full Name</label><input id="em-full_name"></div>
+        <div><label>Email</label><input id="em-email" readonly style="opacity:0.6;"></div>
+        <div><label>Department</label><input id="em-department"></div>
+        <div><label>Designation</label><input id="em-designation"></div>
+        <div><label>Reporting Manager</label><select id="em-reporting_manager"><option value="">—</option></select></div>
+        <div><label>Approval Limit (PKR)</label><input id="em-approval_limit" type="number" step="0.01" min="0"></div>
+      </div>
+      <div class="crm-fieldset-label">Authorities</div>
+      <div class="crm-roles">
+        <label><input type="checkbox" id="em-quotation_authority"> Quotation Authority</label>
+        <label><input type="checkbox" id="em-finance_authority"> Finance Authority</label>
+        <label><input type="checkbox" id="em-sourcing_authority"> Sourcing Authority</label>
+        <label><input type="checkbox" id="em-project_authority"> Project Authority</label>
+      </div>
+      <div class="crm-fieldset-label">Roles (module access — enforced by the database)</div>
+      <div class="crm-roles" id="em-roles"></div>
+      <div class="crm-fieldset-label">Recent Logins</div>
+      <div id="em-history" class="crm-mono" style="line-height:2;"></div>
+      <div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
+        <button class="crm-btn" type="submit">Save Employee</button>
+        <button class="crm-btn ghost" type="button" id="btn-reset-pass">Send Password Reset</button>
+        <button class="crm-btn danger" type="button" id="btn-suspend">Suspend</button>
+        <button class="crm-btn ghost" type="button" id="btn-reactivate" style="display:none;">Reactivate</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-emp">Close</button>
+        <span class="crm-status-msg" id="emp-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- INVITE MODAL -->
+<div class="crm-modal-bg" id="modal-invite">
+  <div class="crm-modal" style="max-width:640px;">
+    <h2>Invite Employee</h2>
+    <form id="invite-form" class="crm-form">
+      <div class="crm-grid2">
+        <div><label>Email *</label><input id="iv-email" type="email" required></div>
+        <div><label>Full Name</label><input id="iv-full_name"></div>
+        <div><label>Department</label><input id="iv-department"></div>
+        <div><label>Designation</label><input id="iv-designation"></div>
+      </div>
+      <div class="crm-fieldset-label">Initial Roles</div>
+      <div class="crm-roles" id="iv-roles"></div>
+      <p class="crm-mono" style="margin-top:14px;">The employee receives a secure invitation email from Supabase to set their own password. The Owner role cannot be granted through invitation.</p>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="crm-btn" type="submit">Send Invitation</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-invite">Cancel</button>
+        <span class="crm-status-msg" id="invite-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  const ROLES=['super_admin','ceo','finance_manager','trade_sourcing_manager','customs_manager','consultancy_manager','operations_manager','business_development','account_manager','project_manager','document_controller','read_only_auditor'];
+  const OWNER='owner';
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function val(id){ const el=document.getElementById(id); return el?(el.type==='checkbox'?el.checked:(el.value.trim()||null)):null; }
+  function setval(id,v){ const el=document.getElementById(id); if(!el)return; if(el.type==='checkbox'){el.checked=!!v;}else{el.value=v==null?'':v;} }
+  function openModal(id){ document.getElementById(id).style.display='flex'; }
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+
+  let staff=[];
+
+  /* ---- auth ---- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:rows,error}=await sb.rpc('crm_list_staff');
+    if(error||!rows||!rows.length){
+      const st=document.getElementById('crm-login-status');
+      st.textContent='This account does not have governance access to Employee Management.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    staff=rows; renderStaff();
+    // role checkbox grids
+    ['em-roles','iv-roles'].forEach(id=>{
+      document.getElementById(id).innerHTML=ROLES.map(r=>
+        `<label><input type="checkbox" value="${r}" data-grid="${id}"> ${label(r)}</label>`).join('');
+    });
+    // reporting manager dropdown
+    const {data:names}=await sb.rpc('crm_staff_names');
+    const sel=document.getElementById('em-reporting_manager');
+    (names||[]).forEach(n=>{ const o=document.createElement('option'); o.value=n.user_id; o.textContent=n.display_name; sel.appendChild(o); });
+  }
+
+  function authBadges(e){
+    const a=[];
+    if(e.quotation_authority)a.push('QTN'); if(e.finance_authority)a.push('FIN');
+    if(e.sourcing_authority)a.push('SRC'); if(e.project_authority)a.push('PRJ');
+    if(e.approval_limit)a.push('≤ '+Number(e.approval_limit).toLocaleString());
+    return a.map(x=>`<span class="crm-badge">${x}</span>`).join('')||'<span class="crm-mono">—</span>';
+  }
+  function renderStaff(){
+    document.getElementById('emp-empty').style.display=staff.length?'none':'block';
+    document.getElementById('emp-rows').innerHTML=staff
+      .sort((a,b)=>(a.email||'').localeCompare(b.email||''))
+      .map(e=>`
+      <tr class="crm-row-link" data-uid="${e.user_id}">
+        <td>${esc(e.full_name||'—')}<br><span class="crm-mono">${esc(e.email)}</span></td>
+        <td>${esc(e.department||'—')}${e.designation?'<br><span class="crm-mono">'+esc(e.designation)+'</span>':''}</td>
+        <td>${(e.roles||[]).map(r=>`<span class="crm-badge${r==='owner'?' ok':''}">${esc(label(r))}</span>`).join('')||'<span class="crm-mono">No CRM role</span>'}</td>
+        <td>${authBadges(e)}</td>
+        <td class="crm-mono">${e.last_login?esc(new Date(e.last_login).toISOString().replace('T',' ').slice(0,16)):'—'}</td>
+        <td>${e.is_active?'<span class="crm-badge ok">Active</span>':'<span class="crm-badge bad">Suspended</span>'}</td>
+        <td><span class="crm-mono" style="color:var(--gold-light);">Open ›</span></td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-uid]').forEach(r=>r.addEventListener('click',()=>openEmp(r.dataset.uid)));
+  }
+
+  async function openEmp(uid){
+    const e=staff.find(x=>x.user_id===uid); if(!e)return;
+    document.getElementById('emp-form').reset();
+    setval('em-user_id',uid); setval('em-email',e.email);
+    setval('em-full_name',e.full_name); setval('em-department',e.department);
+    setval('em-designation',e.designation); setval('em-approval_limit',e.approval_limit);
+    setval('em-quotation_authority',e.quotation_authority);
+    setval('em-finance_authority',e.finance_authority);
+    setval('em-sourcing_authority',e.sourcing_authority);
+    setval('em-project_authority',e.project_authority);
+    // profile extras not in list RPC
+    const {data:prof}=await sb.from('crm_employee_profiles').select('reporting_manager').eq('user_id',uid).maybeSingle();
+    setval('em-reporting_manager',prof?prof.reporting_manager:null);
+    document.querySelectorAll('#em-roles input').forEach(cb=>{ cb.checked=(e.roles||[]).includes(cb.value); });
+    const isOwner=(e.roles||[]).includes(OWNER);
+    document.getElementById('emp-modal-title').innerHTML=esc(e.full_name||e.email)+(isOwner?' <span class="crm-badge ok">Owner</span>':'');
+    document.getElementById('btn-suspend').style.display=e.is_active?'inline-block':'none';
+    document.getElementById('btn-reactivate').style.display=e.is_active?'none':'inline-block';
+    const {data:hist}=await sb.from('crm_login_history').select('event,created_at,user_agent').eq('user_id',uid).order('created_at',{ascending:false}).limit(8);
+    document.getElementById('em-history').innerHTML=(hist&&hist.length)?hist.map(h=>
+      `${esc(new Date(h.created_at).toISOString().replace('T',' ').slice(0,16))} · ${esc(label(h.event))} · ${esc((h.user_agent||'').slice(0,60))}`).join('<br>'):'No login history yet.';
+    openModal('modal-emp');
+  }
+
+  async function refresh(){ const {data}=await sb.rpc('crm_list_staff'); staff=data||staff; renderStaff(); }
+
+  document.getElementById('emp-form').addEventListener('submit', async ev=>{
+    ev.preventDefault();
+    const st=document.getElementById('emp-form-status'); st.textContent='Saving…';
+    const uid=val('em-user_id'); if(!uid)return;
+    const profile={
+      user_id:uid, full_name:val('em-full_name'), department:val('em-department'),
+      designation:val('em-designation'), reporting_manager:val('em-reporting_manager'),
+      approval_limit:val('em-approval_limit')?Number(val('em-approval_limit')):null,
+      quotation_authority:val('em-quotation_authority')||false,
+      finance_authority:val('em-finance_authority')||false,
+      sourcing_authority:val('em-sourcing_authority')||false,
+      project_authority:val('em-project_authority')||false
+    };
+    const {error:pErr}=await sb.from('crm_employee_profiles').upsert(profile);
+    if(pErr){ st.textContent='Error: '+pErr.message; return; }
+    // roles: keep owner if already held (not editable here), apply checkboxes
+    const emp=staff.find(x=>x.user_id===uid);
+    const picked=[...document.querySelectorAll('#em-roles input:checked')].map(cb=>cb.value);
+    if((emp.roles||[]).includes(OWNER)) picked.push(OWNER);
+    const {error:rErr}=await sb.rpc('crm_set_roles',{p_user_id:uid, p_roles:picked});
+    if(rErr){ st.textContent='Error: '+rErr.message; return; }
+    st.textContent='Saved.'; refresh();
+  });
+
+  document.getElementById('btn-reset-pass').addEventListener('click', async ()=>{
+    const email=val('em-email'); if(!email)return;
+    const st=document.getElementById('emp-form-status');
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/crm.html'});
+    st.textContent=error?('Error: '+error.message):'Password reset email sent to '+email+'.';
+  });
+  document.getElementById('btn-suspend').addEventListener('click', async ()=>{
+    const uid=val('em-user_id'); if(!uid)return;
+    if(!confirm('Suspend this employee? They will immediately lose all CRM access on every device.'))return;
+    const st=document.getElementById('emp-form-status');
+    const {error}=await sb.rpc('crm_set_employee_active',{p_user_id:uid, p_active:false});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Employee suspended.'; closeModal('modal-emp'); refresh();
+  });
+  document.getElementById('btn-reactivate').addEventListener('click', async ()=>{
+    const uid=val('em-user_id'); if(!uid)return;
+    const st=document.getElementById('emp-form-status');
+    const {error}=await sb.rpc('crm_set_employee_active',{p_user_id:uid, p_active:true});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Employee reactivated.'; closeModal('modal-emp'); refresh();
+  });
+
+  /* ---- invite (Edge Function; service key never touches the browser) ---- */
+  document.getElementById('btn-invite').addEventListener('click',()=>{
+    document.getElementById('invite-form').reset();
+    openModal('modal-invite');
+  });
+  document.getElementById('invite-form').addEventListener('submit', async ev=>{
+    ev.preventDefault();
+    const st=document.getElementById('invite-status'); st.textContent='Sending invitation…';
+    const roles=[...document.querySelectorAll('#iv-roles input:checked')].map(cb=>cb.value);
+    const {data:sess}=await sb.auth.getSession();
+    try{
+      const resp=await fetch(sb.supabaseUrl+'/functions/v1/admin-invite',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+sess.session.access_token},
+        body:JSON.stringify({
+          email:val('iv-email'), full_name:val('iv-full_name'),
+          department:val('iv-department'), designation:val('iv-designation'), roles
+        })
+      });
+      const out=await resp.json();
+      if(!resp.ok){ st.textContent='Error: '+(out.error||resp.status); return; }
+      st.textContent='Invitation sent to '+out.email+'.';
+      closeModal('modal-invite'); refresh();
+    }catch(e){
+      st.textContent='Could not reach the invite service. Confirm the admin-invite Edge Function is deployed.';
+    }
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
