@@ -146,9 +146,7 @@
           </div>
           <div class="qv-mono" id="qv-accept-record" style="margin-top:12px; color:var(--gold-light);"></div>
         </div>
-      </div>
-      <div style="display:flex; justify-content:flex-end; margin-top:30px;">
-        <div style="text-align:right;">
+        <div style="min-width:110px; align-self:flex-start; text-align:right; margin-left:auto;">
           <div id="qv-qr" style="margin-left:auto;"></div>
           <div class="qv-mono" style="text-align:right; margin-top:8px;">Scan to verify<br><span id="qv-ref"></span></div>
         </div>
@@ -264,10 +262,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if(!sess.session){ gate.style.display='block'; wrap.style.display='none'; return; }
     if(!qid){ gate.style.display='none'; wrap.style.display='block'; document.getElementById('qv-msg').textContent='No document specified.'; return; }
 
-    let q=null, isStaff=true;
-    let res=await sb.from('crm_quotations').select('*').eq('id',qid).maybeSingle();
-    if(res.error||!res.data){
-      isStaff=false;
+    let q=null, isStaff=false;
+    try{ const sr=await sb.rpc('crm_is_staff'); isStaff=(sr.data===true); }catch(e){ isStaff=false; }
+    let res;
+    if(isStaff){
+      res=await sb.from('crm_quotations').select('*').eq('id',qid).maybeSingle();
+    } else {
       res=await sb.from('crm_client_quotations').select('*').eq('id',qid).maybeSingle();
     }
     q=res.data;
