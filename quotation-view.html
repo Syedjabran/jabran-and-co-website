@@ -134,7 +134,7 @@
         <div class="qv-sign-col signed">
           <div id="qv-signature-slot" style="min-height:64px; display:flex; align-items:flex-end;"></div>
           <div class="qv-sign-line">
-            <strong>Syed Jabran</strong><br>
+            <strong>Syed Jabran Ali Kamran</strong><br>
             <span class="qv-mono">Chief Executive Officer · M/S Jabran &amp; Co</span>
           </div>
         </div>
@@ -146,9 +146,11 @@
           </div>
           <div class="qv-mono" id="qv-accept-record" style="margin-top:12px; color:var(--gold-light);"></div>
         </div>
-        <div style="min-width:110px;">
-          <div id="qv-qr"></div>
-          <div class="qv-mono" style="text-align:right; margin-top:6px;">Scan to verify<br><span id="qv-ref"></span></div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; margin-top:30px;">
+        <div style="text-align:right;">
+          <div id="qv-qr" style="margin-left:auto;"></div>
+          <div class="qv-mono" style="text-align:right; margin-top:8px;">Scan to verify<br><span id="qv-ref"></span></div>
         </div>
       </div>
       <div class="qv-actions" id="qv-actions" style="display:none; border-top:1px solid var(--line); padding-top:26px; margin-top:38px;">
@@ -340,6 +342,9 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('qv-accept-btn').addEventListener('click',()=>act('accepted',null));
       document.getElementById('qv-reject').addEventListener('click',()=>act('rejected',null));
       document.getElementById('qv-revision').addEventListener('click',()=>act('revision_requested','Please describe the revision you require:'));
+    } else if(!isStaff){
+      document.getElementById('qv-msg').textContent=
+        'No response is required — this quotation is currently marked "'+label(q.status)+'".';
     }
   }
 
