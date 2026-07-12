@@ -57,6 +57,19 @@
   #ma-login input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
   #ma-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
   .ma-status{font-size:12px; color:var(--gold-light); margin-top:10px;}
+  /* journey stepper */
+  .ma-steps{display:flex; gap:0; margin:16px 0 6px; flex-wrap:wrap;}
+  .ma-step{flex:1; min-width:96px; text-align:center; position:relative; padding-top:18px; font-size:10.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted);}
+  .ma-step::before{content:''; position:absolute; top:5px; left:50%; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; border:1px solid var(--line); background:var(--bg-deep); z-index:1;}
+  .ma-step::after{content:''; position:absolute; top:10px; left:calc(-50% + 6px); width:calc(100% - 12px); height:1px; background:var(--line);}
+  .ma-step:first-child::after{display:none;}
+  .ma-step.done{color:var(--cream);}
+  .ma-step.done::before{background:var(--gold); border-color:var(--gold);}
+  .ma-step.done::after{background:var(--gold);}
+  .ma-step.now{color:var(--gold-light); font-weight:500;}
+  .ma-step.now::before{background:var(--bg-deep); border-color:var(--gold-light); box-shadow:0 0 0 3px rgba(228,201,138,0.18);}
+  .ma-step.stop{color:#e57368;}
+  .ma-step.stop::before{background:#e57368; border-color:#e57368;}
 </style>
 </head>
 <body>
@@ -91,12 +104,20 @@
   </div>
 
   <div class="ma-tabs">
-    <span class="ma-tab active" data-view="quotes">Quotations</span>
+    <span class="ma-tab active" data-view="journey">Track Progress</span>
+    <span class="ma-tab" data-view="quotes">Quotations</span>
     <span class="ma-tab" data-view="orders">Orders</span>
     <span class="ma-tab" data-view="projects">Projects</span>
     <span class="ma-tab" data-view="invoices">Invoices &amp; Payments</span>
     <span class="ma-tab" data-view="enquiry">Submit an Enquiry</span>
   </div>
+
+  <!-- TRACK PROGRESS — the enquiry → quotation → order → delivery journey -->
+  <section id="mav-journey">
+    <p class="ma-mono" style="margin-bottom:18px;">Every request you send us, tracked end-to-end — from first enquiry to final delivery.</p>
+    <div id="ma-journey-list"></div>
+    <p class="ma-empty" id="ma-journey-empty" style="display:none;">No enquiries yet — submit your first from the "Submit an Enquiry" tab.</p>
+  </section>
 
   <!-- QUOTATIONS -->
   <section id="mav-quotes">
@@ -206,13 +227,57 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:svcs}=await sb.from('crm_services').select('id,name').eq('is_active',true).order('sort_order');
     const sel=document.getElementById('me-service');
     (svcs||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sel.appendChild(o); });
-    showView('quotes');
+    showView('journey');
   }
 
-  const loaders={quotes:loadQuotes, orders:loadOrders, projects:loadProjects, invoices:loadInvoices, enquiry:loadEnquiries};
+  /* ---- TRACK PROGRESS: enquiry → quotation → order → delivery journey.
+     Server-side function returns ONLY client-safe fields (no internal
+     opportunity stages, costs, margins, or supplier data — by design). ---- */
+  async function loadJourney(){
+    const {data,error}=await sb.rpc('crm_my_enquiry_journey');
+    const rows=(!error&&data)?data:[];
+    document.getElementById('ma-journey-empty').style.display=rows.length?'none':'block';
+    const STEPS=['Enquiry Received','Under Review','Quotation Issued','Order Confirmed','Delivered'];
+    document.getElementById('ma-journey-list').innerHTML=rows.map(j=>{
+      const qOK=!!j.quotation_id, oOK=!!j.order_id;
+      const enqDone=true;
+      const reviewDone=qOK||!['new'].includes(String(j.enquiry_status||'').toLowerCase());
+      const oDelivered=['delivered','completed'].includes(String(j.order_status||'').toLowerCase());
+      const qRejected=['rejected'].includes(String(j.quotation_status||'').toLowerCase());
+      const closedOut=['closed','rejected','cancelled'].includes(String(j.enquiry_status||'').toLowerCase())&&!qOK;
+      const flags=[enqDone, reviewDone, qOK, oOK, oDelivered];
+      let current=flags.lastIndexOf(true);
+      const steps=STEPS.map((s,i)=>{
+        let cls='ma-step'+(flags[i]?' done':'');
+        if(i===current&&!oDelivered) cls+=' now';
+        if(i===2&&qRejected) cls='ma-step stop';
+        if(i===1&&closedOut) cls='ma-step stop';
+        return `<div class="${cls}">${s}</div>`;
+      }).join('');
+      const refs=[
+        j.enquiry_number?`<span class="ma-mono">${esc(j.enquiry_number)} · ${esc(j.enquiry_date||'')}</span>`:'',
+        qOK?`<a class="ma-mono" style="color:var(--gold-light); text-decoration:none;" href="quotation-view.html?id=${j.quotation_id}">${esc(j.quotation_number)} v${j.quotation_version} · ${esc(label(j.quotation_status))} · ${money(j.quotation_total,j.currency)}</a>`:'',
+        oOK?`<span class="ma-mono">${esc(j.order_number)} · ${esc(label(j.order_status))}${j.promised_date?' · Promised '+esc(j.promised_date):''}</span>`:''
+      ].filter(Boolean).join('<span class="ma-mono"> &nbsp;→&nbsp; </span>');
+      const cta=qOK&&['issued','viewed'].includes(String(j.quotation_status||'').toLowerCase())
+        ?`<a class="ma-btn sm" href="quotation-view.html?id=${j.quotation_id}">Review &amp; Respond</a>`:'';
+      return `<div class="ma-card">
+        <div class="ma-row">
+          <div><h3 style="font-size:16px;">${esc(j.title)}</h3></div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="${badge(oOK?j.order_status:(qOK?j.quotation_status:j.enquiry_status))}">${esc(label(oOK?j.order_status:(qOK?j.quotation_status:j.enquiry_status)))}</span>${cta}
+          </div>
+        </div>
+        <div class="ma-steps">${steps}</div>
+        <div style="margin-top:10px;">${refs}</div>
+      </div>`;
+    }).join('');
+  }
+
+  const loaders={journey:loadJourney, quotes:loadQuotes, orders:loadOrders, projects:loadProjects, invoices:loadInvoices, enquiry:loadEnquiries};
   function showView(v){
     document.querySelectorAll('.ma-tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
-    ['quotes','orders','projects','invoices','enquiry'].forEach(x=>document.getElementById('mav-'+x).style.display=x===v?'':'none');
+    ['journey','quotes','orders','projects','invoices','enquiry'].forEach(x=>document.getElementById('mav-'+x).style.display=x===v?'':'none');
     loaders[v]&&loaders[v]();
   }
   document.querySelectorAll('.ma-tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
@@ -363,7 +428,20 @@ document.addEventListener('DOMContentLoaded', function () {
         <div><h3 style="font-size:15px;">${esc(e.title)}</h3>
         <span class="ma-mono">${esc(e.enquiry_number||'')} · ${esc(new Date(e.created_at).toISOString().slice(0,10))}</span></div>
         <span class="${badge(e.status)}">${esc(label(e.status))}</span>
-      </div></div>`).join(''):'<p class="ma-empty">No enquiries submitted yet.</p>';
+      </div><div class="ma-tl" id="ma-enq-tl-${e.id}"></div></div>`).join(''):'<p class="ma-empty">No enquiries submitted yet.</p>';
+    // client-visible timeline entries only (RLS enforces; anything internal never arrives)
+    for(const e of (data||[])){
+      try{
+        const {data:ev}=await sb.from('crm_enquiry_activity').select('*').eq('enquiry_id',e.id).order('created_at',{ascending:false}).limit(8);
+        const el=document.getElementById('ma-enq-tl-'+e.id); if(!el)continue;
+        el.innerHTML=(ev&&ev.length)?ev.map(a=>{
+          const body=a.kind==='status_change'
+            ? 'Status updated to <strong>'+esc(label(a.new_value))+'</strong>'
+            : esc(a.body||'');
+          return `<div class="ma-tl-item">${body}<div class="ma-mono">${esc(new Date(a.created_at).toISOString().slice(0,10))}</div></div>`;
+        }).join(''):'';
+      }catch(err){}
+    }
   }
   document.getElementById('ma-enq-form').addEventListener('submit', async e=>{
     e.preventDefault();
