@@ -10,88 +10,75 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  /* qv- scoped. WHITE EXECUTIVE DOCUMENT THEME (issued documents are never
-     dark — company standard; only the training certificate stays dark).
-     The dark tokens remain for the login gate, which is site-branded. */
+  /* qv- scoped. Brand-token fallbacks (exact style.css values). */
   :root{
     --bg:#0B0F14; --bg-alt:#111820; --bg-deep:#08111C;
     --gold:#C6A55A; --gold-light:#E4C98A; --emerald:#0F6B5C;
     --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
-    /* document (paper) palette */
-    --paper:#FFFFFF; --paper-bg:#F1EFEA; --ink:#141A22; --ink-soft:#5A6470;
-    --gold-ink:#8A6A2C; --gold-ink-light:#A9812F; --line-l:#E6E0D2;
   }
-  body{background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; font-weight:300; line-height:1.65;}
-  body.qv-paper{background:var(--paper-bg);}
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.65;}
   .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
   .qv-wrap{max-width:860px; margin:0 auto; padding:56px 20px 100px;}
-  .qv-doc{background:var(--paper); border:1px solid var(--line-l); box-shadow:0 2px 24px rgba(20,26,34,0.08); padding:0;}
+  .qv-doc{background:var(--bg-alt); border:1px solid var(--line); padding:0;}
   .qv-page{padding:56px 60px;}
-  .qv-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--ink-soft);}
-  /* Cover — electronic letterhead */
-  .qv-cover{text-align:center; padding:72px 60px 64px; border-bottom:1px solid var(--line-l);}
-  .qv-cover img.qv-letterhead{width:230px; max-width:70%; height:auto; margin-bottom:18px;}
-  .qv-slogan{font-family:'Playfair Display',serif; font-size:22px; color:var(--ink); line-height:1.4;}
-  .qv-slogan em{color:var(--gold-ink-light);}
-  .qv-slogan-sub{font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--gold-ink-light); margin-top:8px;}
-  .qv-cover-rule{width:64px; height:1px; background:var(--gold-ink); margin:34px auto;}
-  .qv-cover-type{font-size:11px; letter-spacing:0.34em; text-transform:uppercase; color:var(--gold-ink); margin-bottom:12px;}
-  .qv-cover-title{font-family:'Playfair Display',serif; font-size:32px; font-weight:600; margin-bottom:10px; color:var(--ink);}
+  .qv-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  /* Cover */
+  .qv-cover{text-align:center; padding:88px 60px 72px; border-bottom:1px solid var(--line);}
+  .qv-cover img{width:170px; height:auto; margin-bottom:22px;}
+  .qv-slogan{font-family:'Playfair Display',serif; font-size:22px; color:var(--cream); line-height:1.4;}
+  .qv-slogan em{color:var(--gold-light);}
+  .qv-slogan-sub{font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--gold-light); margin-top:8px;}
+  .qv-cover-rule{width:64px; height:1px; background:var(--gold); margin:34px auto;}
+  .qv-cover-type{font-size:11px; letter-spacing:0.34em; text-transform:uppercase; color:var(--gold); margin-bottom:12px;}
+  .qv-cover-title{font-family:'Playfair Display',serif; font-size:32px; font-weight:600; margin-bottom:10px;}
   .qv-cover-meta{margin-top:30px;}
   .qv-cover-meta div{font-size:13px; padding:3px 0;}
-  .qv-cover-meta span{color:var(--ink-soft);}
+  .qv-cover-meta span{color:var(--muted);}
   /* Sections */
   .qv-sec{margin-bottom:34px;}
-  .qv-sec h2{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:var(--gold-ink); font-weight:500; border-bottom:1px solid var(--line-l); padding-bottom:8px; margin-bottom:14px;}
-  .qv-sec .qv-num{color:var(--ink-soft); margin-right:10px;}
-  .qv-sec p{font-size:13.5px; white-space:pre-line; color:var(--ink);}
+  .qv-sec h2{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:var(--gold); font-weight:500; border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:14px;}
+  .qv-sec .qv-num{color:var(--muted); margin-right:10px;}
+  .qv-sec p{font-size:13.5px; white-space:pre-line;}
   table.qv-items{width:100%; border-collapse:collapse; font-size:13px;}
-  .qv-items th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold-ink); font-family:'IBM Plex Mono',monospace; font-weight:500; padding:10px; border-bottom:1px solid var(--line-l);}
-  .qv-items td{padding:11px 10px; border-bottom:1px solid #EFEAE0; vertical-align:top; color:var(--ink);}
+  .qv-items th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-family:'IBM Plex Mono',monospace; font-weight:500; padding:10px; border-bottom:1px solid var(--line);}
+  .qv-items td{padding:11px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
   .qv-items .num{text-align:right; font-family:'IBM Plex Mono',monospace;}
-  .qv-totals{margin-left:auto; max-width:330px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:16px; color:var(--ink);}
+  .qv-totals{margin-left:auto; max-width:330px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:16px;}
   .qv-totals div{display:flex; justify-content:space-between; padding:4px 0;}
-  .qv-totals .grand{border-top:1px solid var(--gold-ink); margin-top:6px; padding-top:10px; color:var(--gold-ink); font-size:15px; font-weight:500;}
+  .qv-totals .grand{border-top:1px solid var(--gold); margin-top:6px; padding-top:10px; color:var(--gold-light); font-size:15px;}
   .qv-terms-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 28px;}
-  .qv-terms-grid div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-ink); font-weight:500; margin-bottom:3px;}
-  .qv-terms-grid div span{font-size:13px; color:var(--ink);}
+  .qv-terms-grid div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:3px;}
+  .qv-terms-grid div span{font-size:13px;}
   /* Acceptance */
-  .qv-accept{border-top:1px solid var(--line-l);}
+  .qv-accept{border-top:1px solid var(--line);}
   .qv-sign-row{display:flex; justify-content:space-between; gap:40px; margin-top:34px; flex-wrap:wrap;}
   .qv-sign-col{flex:1; min-width:230px;}
-  .qv-sign-col img.qv-sig{height:58px; width:auto; display:block; margin-bottom:6px;}
-  .qv-sign-line{border-top:1px solid var(--line-l); padding-top:8px; font-size:12px; margin-top:44px; color:var(--ink);}
+  .qv-sign-col img{height:56px; width:auto; display:block; margin-bottom:6px;}
+  .qv-sign-line{border-top:1px solid var(--line); padding-top:8px; font-size:12px; margin-top:44px;}
   .qv-sign-col.signed .qv-sign-line{margin-top:6px;}
-  .qv-seal{position:relative;}
-  .qv-seal img.qv-stamp{height:104px; width:auto; display:block; margin:10px 0 0; opacity:0.94;}
-  /* QR — fixed-size block; JS keeps exactly one rendering (img OR canvas) */
-  .qv-qr-col{min-width:120px; text-align:right;}
-  #qv-qr{width:100px; height:100px; padding:8px; background:#fff; border:1px solid var(--line-l); margin-left:auto; box-sizing:content-box; overflow:hidden;}
-  #qv-qr img,#qv-qr canvas{width:100px !important; height:100px !important; display:block;}
-  .qv-foot{border-top:1px solid var(--line-l); padding:22px 60px; display:flex; gap:22px; flex-wrap:wrap; justify-content:space-between; background:#FBFAF7;}
+  #qv-qr{width:92px; height:92px; padding:8px; background:#fff; margin-left:auto;}
+  .qv-foot{border-top:1px solid var(--line); padding:22px 60px; display:flex; gap:22px; flex-wrap:wrap; justify-content:space-between;}
   .qv-status-strip{text-align:center; margin:0 0 22px;}
-  .qv-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:5px 14px; border:1px solid var(--gold-ink); color:var(--gold-ink); background:#fff;}
+  .qv-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:5px 14px; border:1px solid var(--line); color:var(--gold-light);}
   .qv-actions{display:flex; gap:12px; justify-content:center; margin-top:32px; flex-wrap:wrap;}
   .qv-btn{background:var(--gold); color:#0a0a0b; border:none; padding:12px 26px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
-  .qv-btn.ghost{background:transparent; border:1px solid var(--gold-ink); color:var(--gold-ink);}
-  .qv-btn.danger{background:transparent; border:1px solid #C0392B; color:#C0392B;}
-  #qv-msg{text-align:center; font-size:13px; color:var(--gold-ink); margin-top:14px;}
-  /* Login gate keeps the dark site identity */
+  .qv-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .qv-btn.danger{background:transparent; border:1px solid #e57368; color:#e57368;}
+  #qv-msg{text-align:center; font-size:13px; color:var(--gold-light); margin-top:14px;}
   #qv-gate{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
-  #qv-gate .eyebrow{color:var(--gold);}
-  #qv-gate p{color:var(--muted);}
   #qv-gate input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
   @media (max-width:640px){ .qv-page,.qv-cover{padding:34px 22px;} .qv-foot{padding:20px 22px;} .qv-terms-grid{grid-template-columns:1fr;} }
   @media print{
     body{background:#fff; color:#111;}
     .qv-wrap{padding:0; max-width:none;}
-    .qv-doc{border:none; box-shadow:none; background:#fff;}
-    .qv-foot{background:#fff;}
+    .qv-doc{border:none; background:#fff;}
+    .qv-doc *{color:#111 !important;}
+    .qv-doc .eyebrow,.qv-sec h2,.qv-cover-type,.qv-totals .grand,.qv-terms-grid div b{color:#8a6d2f !important;}
+    .qv-items th,.qv-items td,.qv-sign-line,.qv-sec h2,.qv-foot,.qv-cover{border-color:#ddd !important;}
     .qv-actions,#qv-print-btn,#qv-msg,#qv-back,.qv-status-strip{display:none !important;}
     .qv-cover{page-break-after:always;}
     .qv-accept{page-break-before:always;}
     .qv-sec{page-break-inside:avoid;}
-    .qv-seal img.qv-stamp,#qv-qr img,#qv-qr canvas,.qv-sign-col img.qv-sig{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
     @page{ margin:18mm 16mm; }
   }
 </style>
@@ -122,8 +109,9 @@
 
     <!-- EXECUTIVE COVER -->
     <div class="qv-cover">
-      <img src="letterhead-logo.png" alt="JABRAN &amp; CO. — Where Strategy Meets Execution" class="qv-letterhead" onerror="this.onerror=null;this.src='logo-full.png';">
+      <img src="logo-full.png" alt="JABRAN &amp; CO.">
       <div class="qv-slogan">Connecting Businesses.<br>Creating <em>Opportunities.</em></div>
+      <div class="qv-slogan-sub">Where Strategy Meets Execution.</div>
       <div class="qv-cover-rule"></div>
       <div class="qv-cover-type">Commercial Proposal &amp; Quotation</div>
       <div class="qv-cover-title" id="qv-title-line"></div>
@@ -143,25 +131,30 @@
         <p style="font-size:13px;">By signing below or accepting this document through the JABRAN &amp; CO. client portal, the client confirms acceptance of the commercial proposal, scope, and terms stated herein.</p>
       </div>
       <div class="qv-sign-row">
-        <div class="qv-sign-col signed qv-seal">
-          <div id="qv-signature-slot" style="min-height:60px;"></div>
+        <div class="qv-sign-col signed">
+          <div id="qv-signature-slot" style="min-height:64px; display:flex; align-items:flex-end;"></div>
           <div class="qv-sign-line">
             <strong>Syed Jabran</strong><br>
             <span class="qv-mono">Chief Executive Officer · M/S Jabran &amp; Co</span>
           </div>
-          <div id="qv-stamp-slot"></div>
         </div>
-        <div class="qv-sign-col">
+        <div class="qv-sign-col signed">
+          <div style="min-height:64px;"></div>
           <div class="qv-sign-line">
             <strong>For and on behalf of the Client</strong><br>
             <span class="qv-mono">Name · Designation · Date · Signature</span>
           </div>
           <div class="qv-mono" id="qv-accept-record" style="margin-top:12px; color:var(--gold-light);"></div>
         </div>
-        <div class="qv-qr-col">
+        <div style="min-width:110px;">
           <div id="qv-qr"></div>
-          <div class="qv-mono" style="text-align:right; margin-top:8px;">Scan to verify<br><span id="qv-ref"></span></div>
+          <div class="qv-mono" style="text-align:right; margin-top:6px;">Scan to verify<br><span id="qv-ref"></span></div>
         </div>
+      </div>
+      <div class="qv-actions" id="qv-actions" style="display:none; border-top:1px solid var(--line); padding-top:26px; margin-top:38px;">
+        <button class="qv-btn" id="qv-accept-btn" type="button">Accept Proposal</button>
+        <button class="qv-btn ghost" id="qv-revision" type="button">Request Revision</button>
+        <button class="qv-btn danger" id="qv-reject" type="button">Decline</button>
       </div>
     </div>
 
@@ -183,11 +176,6 @@
     </div>
   </article>
 
-  <div class="qv-actions" id="qv-actions" style="display:none;">
-    <button class="qv-btn" id="qv-accept-btn" type="button">Accept Proposal</button>
-    <button class="qv-btn ghost" id="qv-revision" type="button">Request Revision</button>
-    <button class="qv-btn danger" id="qv-reject" type="button">Decline</button>
-  </div>
   <p id="qv-msg"></p>
 </div>
 
@@ -271,8 +259,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function load(){
     const {data:sess}=await sb.auth.getSession();
-    if(!sess.session){ gate.style.display='block'; wrap.style.display='none'; document.body.classList.remove('qv-paper'); return; }
-    if(!qid){ gate.style.display='none'; wrap.style.display='block'; document.body.classList.add('qv-paper'); document.getElementById('qv-msg').textContent='No document specified.'; return; }
+    if(!sess.session){ gate.style.display='block'; wrap.style.display='none'; return; }
+    if(!qid){ gate.style.display='none'; wrap.style.display='block'; document.getElementById('qv-msg').textContent='No document specified.'; return; }
 
     let q=null, isStaff=true;
     let res=await sb.from('crm_quotations').select('*').eq('id',qid).maybeSingle();
@@ -281,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
       res=await sb.from('crm_client_quotations').select('*').eq('id',qid).maybeSingle();
     }
     q=res.data;
-    gate.style.display='none'; wrap.style.display='block'; document.body.classList.add('qv-paper');
+    gate.style.display='none'; wrap.style.display='block';
     if(!q){ document.getElementById('qv-doc').style.display='none'; document.getElementById('qv-msg').textContent='Document not found or you are not authorised to view it.'; return; }
 
     if(!isStaff){
@@ -316,42 +304,20 @@ document.addEventListener('DOMContentLoaded', function () {
         'Recorded via client portal: '+label(q.status)+' on '+new Date(q.client_action_at).toISOString().replace('T',' ').slice(0,16)+' UTC';
     }
 
-    // QR verification: encodes the secure document URL (login required to open).
-    // qrcode.js appends BOTH a <canvas> and an <img> to the container — on some
-    // mobile browsers both render, producing the overlapping double-QR artifact.
-    // Fix: generate once, then keep exactly one element (prefer the <img>).
-    try{
-      const qrEl=document.getElementById('qv-qr');
-      qrEl.innerHTML='';
-      new QRCode(qrEl,{text:location.origin+location.pathname+'?id='+qid, width:100, height:100, colorDark:'#141A22', colorLight:'#FFFFFF', correctLevel:QRCode.CorrectLevel.M});
-      setTimeout(function(){
-        const img=qrEl.querySelector('img'), cv=qrEl.querySelector('canvas');
-        if(img && img.src){ if(cv) cv.remove(); img.style.display='block'; }
-        else if(cv){ if(img) img.remove(); cv.style.display='block'; }
-      },150);
-    }catch(e){}
+    // QR verification: encodes the secure document URL (login required to open)
+    try{ new QRCode(document.getElementById('qv-qr'),{text:location.origin+location.pathname+'?id='+qid, width:92, height:92, correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
 
-    // CEO signature + company e-stamp: PRIVATE bucket, signed URLs,
-    // issued+ documents only. Gold artwork on the white document standard.
+    // Signature: PRIVATE bucket, signed URL, issued+ documents only.
     const slot=document.getElementById('qv-signature-slot');
-    const stampSlot=document.getElementById('qv-stamp-slot');
     if(['issued','viewed','accepted','converted_to_order'].includes(q.status)){
-      let sig=await sb.storage.from('crm-private').createSignedUrl('signature/signature-gold.png',300);
-      if(sig.error||!sig.data||!sig.data.signedUrl){
-        sig=await sb.storage.from('crm-private').createSignedUrl('signature/signature-light.png',300); // legacy fallback
-      }
-      if(!sig.error&&sig.data&&sig.data.signedUrl){
+      const {data:signed,error:sigErr}=await sb.storage.from('crm-private')
+        .createSignedUrl('signature/signature-light.png',300);
+      if(!sigErr&&signed&&signed.signedUrl){
         const img=document.createElement('img');
-        img.src=sig.data.signedUrl; img.alt='Authorised signature'; img.className='qv-sig';
+        img.src=signed.signedUrl; img.alt='Authorised signature';
         slot.appendChild(img);
       } else {
         slot.innerHTML='<span class="qv-mono">Digitally authorised — original signature on record</span>';
-      }
-      const stamp=await sb.storage.from('crm-private').createSignedUrl('stamp/estamp-gold.png',300);
-      if(!stamp.error&&stamp.data&&stamp.data.signedUrl){
-        const s=document.createElement('img');
-        s.src=stamp.data.signedUrl; s.alt='JABRAN & CO. company seal'; s.className='qv-stamp';
-        stampSlot.appendChild(s);
       }
     } else {
       slot.innerHTML='<span class="qv-mono">Signature applied upon issue</span>';
@@ -382,8 +348,3 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
-
-
-
-================================================
-FILE: report-view.html
