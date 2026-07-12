@@ -50,7 +50,13 @@
   .qv-terms-grid div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:3px;}
   .qv-terms-grid div span{font-size:13px;}
   /* Acceptance */
-  .qv-accept{border-top:1px solid var(--line);}
+  .qv-accept{border-top:1px solid var(--line); position:relative;}
+  .qv-qr-anchor{position:absolute; top:50px; right:60px; width:110px; text-align:right;}
+  .qv-accept .qv-sec{margin-right:150px;}
+  @media (max-width:700px){
+    .qv-qr-anchor{position:static; width:auto; margin:28px 0 0; display:flex; flex-direction:column; align-items:flex-end;}
+    .qv-accept .qv-sec{margin-right:0;}
+  }
   .qv-sign-row{display:flex; justify-content:space-between; gap:40px; margin-top:34px; flex-wrap:wrap;}
   .qv-sign-col{flex:1; min-width:230px;}
   .qv-sign-col img{height:56px; width:auto; display:block; margin-bottom:6px;}
@@ -146,10 +152,10 @@
           </div>
           <div class="qv-mono" id="qv-accept-record" style="margin-top:12px; color:var(--gold-light);"></div>
         </div>
-        <div style="min-width:110px; align-self:flex-start; text-align:right; margin-left:auto;">
-          <div id="qv-qr" style="margin-left:auto;"></div>
-          <div class="qv-mono" style="text-align:right; margin-top:8px;">Scan to verify<br><span id="qv-ref"></span></div>
-        </div>
+      </div>
+      <div class="qv-qr-anchor">
+        <div id="qv-qr" style="margin-left:auto;"></div>
+        <div class="qv-mono" style="text-align:right; margin-top:8px;">Scan to verify<br><span id="qv-ref"></span></div>
       </div>
       <div class="qv-actions" id="qv-actions" style="display:none; border-top:1px solid var(--line); padding-top:26px; margin-top:38px;">
         <button class="qv-btn" id="qv-accept-btn" type="button">Accept Proposal</button>
