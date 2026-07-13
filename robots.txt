@@ -1,5 +1,25 @@
+# JABRAN & CO. — robots.txt (canonical, Increment 11)
+# Internal, client, and document routes are excluded from crawling.
+# Note: robots.txt is a crawl directive, not a security mechanism —
+# every route below is independently protected by authentication and RLS.
+
 User-agent: *
 Allow: /
+
+# Administration & CRM (prefix rule covers crm.html and every crm-*.html,
+# including future CRM pages automatically)
 Disallow: /admin.html
+Disallow: /crm
+
+# Client portal
+Disallow: /client-portal.html
+Disallow: /my-account.html
+
+# Login-gated document views
+Disallow: /quotation-view.html
+Disallow: /invoice-view.html
+Disallow: /receipt-view.html
+Disallow: /report-view.html
+Disallow: /certificate-view.html
 
 Sitemap: https://www.jabranandco.com/sitemap.xml
