@@ -108,8 +108,10 @@
       bubble.style.display='none';
       track('chat_opened');
       if(!conv) start(); else if(!msgs.childElementCount) resume();
+      startPolling();
       setTimeout(function(){ input.focus(); },100);
     } else {
+      stopPolling();
       launcher.focus();
     }
   }
@@ -141,9 +143,32 @@
     (r.messages||[]).forEach(function(m){
       add(m.sender_type==='assistant'?'a':(m.sender_type==='staff'?'a':'v'), m.content||'');
     });
+    lastCount=(r.messages||[]).length;
     if(r.status==='human_active') humanMode=true;
     if(!r.messages||!r.messages.length) add('a', cfg.greeting);
   }
+
+  /* live polling — lets the visitor see staff replies during human takeover */
+  var lastCount=0, pollTimer=null;
+  async function poll(){
+    if(!open||!conv||busy) return;
+    try{
+      var r=await api({ action:'history', conversation_id:conv.id, visitor_token:conv.token });
+      if(r.error) return;
+      if(r.status==='human_active'&&!humanMode){ humanMode=true; add('s','A member of the Jabran & Co. team has joined this conversation.'); }
+      if(r.status==='ai_active'&&humanMode){ humanMode=false; }
+      var m=r.messages||[];
+      if(m.length>lastCount){
+        m.slice(lastCount).forEach(function(x){
+          if(x.sender_type==='visitor') return;           // own messages already rendered
+          add(x.sender_type==='staff'?'a':'a', x.content||'');
+        });
+        lastCount=m.length;
+      } else if(m.length>0){ lastCount=m.length; }
+    }catch(e){}
+  }
+  function startPolling(){ if(pollTimer) return; pollTimer=setInterval(poll, 9000); }
+  function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer=null; } }
 
   async function send(){
     var text=input.value.trim();
@@ -156,7 +181,8 @@
       var r=await api({ action:'message', conversation_id:conv.id, visitor_token:conv.token,
                         content:text, page:document.title+' — '+location.pathname });
       tip.remove();
-      if(r.human && !r.reply){ humanMode=true; add('s','A member of the team will reply here — keep this tab open or note your reference '+(conv.ref||'')+'.'); }
+      lastCount+=2; /* own message + expected reply slot; poll() self-corrects */
+      if(r.human && !r.reply){ humanMode=true; lastCount-=1; add('s','A member of the team will reply here — keep this tab open or note your reference '+(conv.ref||'')+'.'); }
       if(r.reply) add('a', r.reply);
       if(r.qualified) track('qualified_lead_created');
       if(r.handoff){ track('human_takeover_requested'); }
