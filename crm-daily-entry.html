@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Expenses | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm-/de- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1080px;}
+  .crm-topline{margin-bottom:28px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:26px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:24px; color:var(--gold-light);}
+  .crm-kpi .l{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:4px;}
+  .de-tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:26px; overflow-x:auto;}
+  .de-tab{padding:11px 20px; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .de-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .de-card{border:1px solid var(--line); background:var(--bg-alt); padding:24px 26px; margin-bottom:22px;}
+  .crm-form label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:12px 0 5px;}
+  .crm-form input, .crm-form select, .crm-form textarea{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 12px; font-size:13px; border-radius:2px; font-family:'Inter',sans-serif;}
+  .crm-grid2{display:grid; grid-template-columns:1fr 1fr; gap:0 18px;}
+  .de-hint{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--gold-light); margin-top:6px; min-height:16px;}
+  .de-warn{font-family:'IBM Plex Mono',monospace; font-size:11px; color:#e57368; margin-top:6px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); text-align:left; padding:10px 12px; border-bottom:1px solid var(--line);}
+  .crm-table td{padding:11px 12px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted);}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  .crm-empty{font-size:13px; color:var(--muted); padding:22px 0;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.danger{background:transparent; color:#e57368; border:1px solid rgba(229,115,104,0.4);}
+  .crm-btn.small{padding:6px 12px; font-size:10px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:10px;}
+  .de-appr{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px; margin-bottom:16px;}
+  .de-appr .who{font-size:14px; color:var(--cream);}
+  .de-appr .amt{font-family:'Playfair Display',serif; font-size:20px; color:var(--gold-light);}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-grid2{grid-template-columns:1fr;}
+    .crm-table{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Daily Expenses — Staff Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%; margin-top:0;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <span class="crm-nav-item active">Daily Expenses</span>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-business-rules.html">Business Rules</a>
+    <a class="crm-nav-item" href="crm-financial-settings.html">Financial Settings</a>
+    <a class="crm-nav-item" href="crm-employee-costs.html">Employee Costs</a>
+    <a class="crm-nav-item" href="crm-employees.html">Employees</a>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">Enter it in seconds — approval posts it to the ledger</div>
+      <h1>Daily Expenses</h1>
+    </div>
+
+    <div class="crm-kpis" id="de-kpis"></div>
+
+    <div class="de-tabs">
+      <div class="de-tab active" data-tab="entry">My Entries</div>
+      <div class="de-tab" data-tab="review" id="tab-review-btn" style="display:none;">Approval Queue <span id="pending-count" class="crm-badge warn" style="margin-left:6px;"></span></div>
+    </div>
+
+    <!-- ENTRY -->
+    <section id="tab-entry">
+      <div class="de-card">
+        <div class="eyebrow" style="margin-bottom:6px;">Today I spent…</div>
+        <form id="de-form" class="crm-form">
+          <label>What was it? *</label>
+          <input id="de-description" required placeholder="e.g. Fuel for client visit / Lunch with client / Courier to Karachi">
+          <div class="de-hint" id="de-class-hint"></div>
+          <div class="crm-grid2">
+            <div><label>Amount *</label><input id="de-amount" type="number" step="0.01" min="0.01" required></div>
+            <div><label>Currency</label><select id="de-currency"><option>PKR</option><option>USD</option><option>GBP</option><option>EUR</option><option>AED</option><option>SAR</option></select></div>
+            <div><label>Date</label><input id="de-entry_date" type="date"></div>
+            <div><label>Category</label>
+              <select id="de-category">
+                <option value="fuel">Fuel</option><option value="travel">Travel</option>
+                <option value="food_entertainment">Food / Entertainment</option><option value="courier">Courier</option>
+                <option value="parking_toll">Parking / Toll</option><option value="office_supplies">Office Supplies</option>
+                <option value="software_subscription">Software Subscription</option><option value="domain_hosting">Domain / Hosting</option>
+                <option value="marketing">Marketing</option><option value="utilities">Utilities</option>
+                <option value="phone_internet">Phone / Internet</option><option value="repairs">Repairs</option>
+                <option value="professional_fees">Professional Fees</option><option value="customs">Customs</option>
+                <option value="other" selected>Other</option>
+              </select></div>
+            <div><label>Related Order (optional)</label><select id="de-order_id"><option value="">—</option></select></div>
+            <div><label>Related Project (optional)</label><select id="de-project_id"><option value="">—</option></select></div>
+          </div>
+          <label>Receipt Photo (optional)</label><input id="de-file" type="file" accept="image/*,.pdf" capture="environment">
+          <div class="de-warn" id="de-dup-warn" style="display:none;"></div>
+          <div style="display:flex; gap:10px; margin-top:18px; align-items:center;">
+            <button class="crm-btn" type="submit" id="de-save-btn">Submit for Approval</button>
+            <span class="crm-status-msg" id="de-form-status"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="eyebrow" style="margin-bottom:12px;">My Recent Entries</div>
+      <table class="crm-table">
+        <thead><tr><th>No.</th><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+        <tbody id="my-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="my-empty" style="display:none;">No entries yet — your submissions appear here with their approval status.</p>
+    </section>
+
+    <!-- REVIEW -->
+    <section id="tab-review" style="display:none;">
+      <div id="appr-list"></div>
+      <p class="crm-empty" id="appr-empty" style="display:none;">Nothing pending — all daily entries are reviewed.</p>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  function val(id){ const el=document.getElementById(id); if(!el)return null; return el.value===''?null:el.value; }
+  function setval(id,v){ const el=document.getElementById(id); if(el)el.value=v==null?'':v; }
+  function numval(id){ const v=val(id); return v==null?null:Number(v); }
+
+  var isMgmt=false, myUid=null, myEntries=[], pendingCache=[], staffNames={}, ordersCache=[], projectsCache=[];
+
+  /* Auto-classification: keyword → category. The suggestion is editable. */
+  const CLASS_RULES=[
+    ['fuel', /fuel|petrol|diesel|cng|gas station/i],
+    ['parking_toll', /parking|toll|motorway|m2 |m3 /i],
+    ['travel', /travel|taxi|uber|careem|rickshaw|flight|air ?ticket|train|bus fare|hotel|accommodation/i],
+    ['food_entertainment', /lunch|dinner|breakfast|tea|coffee|food|meal|restaurant|entertain/i],
+    ['courier', /courier|tcs|leopard|dhl|fedex|parcel|shipment doc|dispatch/i],
+    ['software_subscription', /subscription|chatgpt|claude|canva|adobe|microsoft|office 365|zoom|saas|license renew/i],
+    ['domain_hosting', /domain|hosting|vercel|supabase|server|ssl|hostinger/i],
+    ['phone_internet', /phone|mobile|sim|internet|wifi|data package|ptcl/i],
+    ['utilities', /electricity|water bill|gas bill|utility|k-electric|lesco/i],
+    ['marketing', /marketing|ads?|facebook|instagram|linkedin|boost|campaign|printing flyer|banner/i],
+    ['office_supplies', /stationery|paper|toner|ink|printer|office suppl|furniture|chair|desk/i],
+    ['repairs', /repair|maintenance|fix|service (car|vehicle|ac|generator)/i],
+    ['professional_fees', /lawyer|legal|notary|accountant|audit fee|consultant fee|fbr|secp|registration fee/i],
+    ['customs', /customs|clearance|gd |duty|port charges|demurrage/i]
+  ];
+  function classify(text){
+    for(const [cat,re] of CLASS_RULES){ if(re.test(text))return cat; }
+    return null;
+  }
+  const LEDGER_MAP={fuel:'travel',travel:'travel',parking_toll:'travel',courier:'logistics',customs:'logistics',
+    marketing:'marketing',professional_fees:'professional_fees',food_entertainment:'office',office_supplies:'office',
+    software_subscription:'office',domain_hosting:'office',utilities:'office',phone_internet:'office',repairs:'office',other:'other'};
+  const LEDGER_CATS=['travel','inspection','commission','marketing','professional_fees','logistics','office','other'];
+
+  document.getElementById('de-description').addEventListener('input', function(){
+    const c=classify(this.value);
+    const hint=document.getElementById('de-class-hint');
+    if(c){ document.getElementById('de-category').value=c; hint.textContent='Auto-classified as '+label(c)+' — change below if wrong.'; }
+    else hint.textContent='';
+    dupCheck();
+  });
+  document.getElementById('de-amount').addEventListener('input', dupCheck);
+  function dupCheck(){
+    const warn=document.getElementById('de-dup-warn');
+    const amt=numval('de-amount'); const desc=(val('de-description')||'').toLowerCase();
+    if(!amt){ warn.style.display='none'; return; }
+    const hit=myEntries.find(e=>Number(e.amount)===amt
+      && Math.abs((new Date(e.entry_date)-new Date(val('de-entry_date')||new Date().toISOString().slice(0,10))))/86400000<=3
+      && (desc.length<4||e.description.toLowerCase().includes(desc.slice(0,12))));
+    if(hit){ warn.textContent='Possible duplicate: '+hit.description+' ('+money(hit.amount,hit.currency)+' on '+hit.entry_date+', '+hit.status+'). Submit only if this is a separate expense.'; warn.style.display='block'; }
+    else warn.style.display='none';
+  }
+
+  /* ---------- AUTH ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  if(passToggle)passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:staff,error}=await sb.rpc('crm_is_staff');
+    if(error||staff!==true){
+      document.getElementById('crm-login-status').textContent='Daily Expenses are for staff accounts only.';
+      await sb.auth.signOut(); return;
+    }
+    const {data:sess}=await sb.auth.getSession(); myUid=sess&&sess.session?sess.session.user.id:null;
+    try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']}); isMgmt=r.data===true; }catch(e){ isMgmt=false; }
+    if(isMgmt)document.getElementById('tab-review-btn').style.display='block';
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    setval('de-entry_date',new Date().toISOString().slice(0,10));
+    await Promise.all([loadLinks(), loadNames()]);
+    await loadMine(); if(isMgmt)await loadPending();
+    renderKpis();
+  }
+
+  /* ---------- TABS ---------- */
+  document.querySelectorAll('.de-tab').forEach(t=>t.addEventListener('click',()=>{
+    document.querySelectorAll('.de-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('tab-entry').style.display = t.dataset.tab==='entry'?'block':'none';
+    document.getElementById('tab-review').style.display = t.dataset.tab==='review'?'block':'none';
+  }));
+
+  /* ---------- LOOKUPS ---------- */
+  async function loadLinks(){
+    try{
+      const {data:o}=await sb.from('crm_orders').select('id,order_number,title').is('deleted_at',null).order('created_at',{ascending:false}).limit(100);
+      ordersCache=(o||[]).map(x=>({id:x.id,name:((x.order_number||'')+' '+(x.title||'')).trim()}));
+      const so=document.getElementById('de-order_id');
+      so.innerHTML='<option value="">—</option>'+ordersCache.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');
+    }catch(e){}
+    try{
+      const {data:p}=await sb.from('crm_projects').select('id,title').is('deleted_at',null).order('created_at',{ascending:false}).limit(100);
+      projectsCache=(p||[]).map(x=>({id:x.id,name:x.title}));
+      const sp=document.getElementById('de-project_id');
+      sp.innerHTML='<option value="">—</option>'+projectsCache.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');
+    }catch(e){}
+  }
+  async function loadNames(){
+    try{
+      const {data}=await sb.rpc('crm_staff_names');
+      (data||[]).forEach(n=>{ staffNames[n.user_id]=n.display_name; });
+    }catch(e){}
+  }
+
+  /* ---------- KPIs ---------- */
+  function renderKpis(){
+    const month=new Date().toISOString().slice(0,7);
+    const mine=myEntries.filter(e=>String(e.entry_date).slice(0,7)===month);
+    const by={}; mine.filter(e=>e.status!=='rejected').forEach(e=>{ by[e.currency]=(by[e.currency]||0)+Number(e.amount); });
+    const mySum=Object.keys(by).sort().map(c=>c+' '+Number(by[c]).toLocaleString('en-US',{maximumFractionDigits:0})).join(' · ')||'0';
+    const kpis=[
+      {n:mySum,l:'My Spend This Month'},
+      {n:String(myEntries.filter(e=>e.status==='pending').length),l:'My Pending'},
+      {n:String(myEntries.filter(e=>e.status==='approved').length),l:'My Approved'}
+    ];
+    if(isMgmt)kpis.push({n:String(pendingCache.length),l:'Awaiting Review (all staff)'});
+    document.getElementById('de-kpis').innerHTML=kpis.map(k=>
+      `<div class="crm-kpi"><div class="n" style="font-size:${String(k.n).length>14?'16px':'24px'};">${esc(String(k.n))}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+    const pc=document.getElementById('pending-count'); if(pc)pc.textContent=pendingCache.length||'';
+  }
+
+  /* ---------- MY ENTRIES ---------- */
+  async function loadMine(){
+    const {data,error}=await sb.from('crm_daily_entries').select('*').eq('entered_by',myUid).order('created_at',{ascending:false}).limit(60);
+    myEntries=data||[];
+    document.getElementById('my-empty').style.display=(error||!myEntries.length)?'block':'none';
+    document.getElementById('my-rows').innerHTML=myEntries.map(e=>`
+      <tr>
+        <td class="crm-mono">${esc(e.entry_number||'—')}</td>
+        <td class="crm-mono">${esc(e.entry_date)}</td>
+        <td>${esc(e.description)}${e.review_note?'<div class="crm-mono" style="margin-top:3px;">Note: '+esc(e.review_note)+'</div>':''}</td>
+        <td class="crm-mono">${esc(label(e.category))}</td>
+        <td class="crm-mono">${money(e.amount,e.currency)}</td>
+        <td>${e.status==='approved'?'<span class="crm-badge ok">Approved</span>':(e.status==='rejected'?'<span class="crm-badge bad">Rejected</span>':'<span class="crm-badge warn">Pending</span>')}</td>
+        <td>${e.status==='pending'?'<button class="crm-btn danger small" data-wd="'+e.id+'">Withdraw</button>':''}</td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-wd]').forEach(b=>b.addEventListener('click', async ()=>{
+      if(!confirm('Withdraw this entry?'))return;
+      await sb.from('crm_daily_entries').delete().eq('id',b.dataset.wd);
+      await loadMine(); renderKpis();
+    }));
+  }
+
+  /* ---------- SUBMIT ---------- */
+  document.getElementById('de-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('de-form-status'), btn=document.getElementById('de-save-btn');
+    st.textContent='Submitting…'; btn.disabled=true;
+    const payload={
+      description:val('de-description'),
+      amount:numval('de-amount'),
+      currency:val('de-currency')||'PKR',
+      entry_date:val('de-entry_date')||new Date().toISOString().slice(0,10),
+      category:val('de-category')||'other',
+      order_id:val('de-order_id'),
+      project_id:val('de-project_id'),
+      entered_by:myUid
+    };
+    if(!payload.description||!payload.amount){ st.textContent='Description and amount are required.'; btn.disabled=false; return; }
+    try{ const {data:num}=await sb.rpc('crm_next_number',{p_entity:'dce'}); payload.entry_number=num||null; }catch(e2){ payload.entry_number=null; }
+    const ins=await sb.from('crm_daily_entries').insert(payload).select('id').single();
+    if(ins.error){ st.textContent='Error: '+ins.error.message; btn.disabled=false; return; }
+    const input=document.getElementById('de-file');
+    if(input&&input.files&&input.files.length){
+      try{
+        const f=input.files[0];
+        const safe=f.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+        const path='daily/'+myUid+'/'+Date.now()+'_'+safe;
+        const up=await sb.storage.from('finance-docs').upload(path,f,{upsert:false});
+        if(!up.error)await sb.from('crm_daily_entries').update({receipt_path:path}).eq('id',ins.data.id);
+      }catch(e3){}
+    }
+    document.getElementById('de-form').reset();
+    setval('de-entry_date',new Date().toISOString().slice(0,10));
+    document.getElementById('de-class-hint').textContent='';
+    document.getElementById('de-dup-warn').style.display='none';
+    st.textContent='Submitted — awaiting approval.'; btn.disabled=false;
+    await loadMine(); if(isMgmt)await loadPending(); renderKpis();
+  });
+
+  /* ---------- APPROVAL QUEUE ---------- */
+  async function loadPending(){
+    const {data,error}=await sb.from('crm_daily_entries').select('*').eq('status','pending').order('created_at');
+    pendingCache=data||[];
+    document.getElementById('appr-empty').style.display=(error||!pendingCache.length)?'block':'none';
+    const box=document.getElementById('appr-list');
+    box.innerHTML=pendingCache.map(e=>{
+      const ord=ordersCache.find(o=>o.id===e.order_id); const prj=projectsCache.find(p=>p.id===e.project_id);
+      const led=LEDGER_MAP[e.category]||'other';
+      return `<div class="de-appr" data-eid="${e.id}">
+        <div style="display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:baseline;">
+          <div>
+            <div class="who">${esc(staffNames[e.entered_by]||'Staff member')} · <span class="crm-mono">${esc(e.entry_number||'')}</span></div>
+            <div style="font-size:13px; margin-top:4px;">${esc(e.description)}</div>
+            <div class="crm-mono" style="margin-top:4px;">${esc(e.entry_date)} · ${esc(label(e.category))}${ord?' · Order: '+esc(ord.name):''}${prj?' · Project: '+esc(prj.name):''}${e.receipt_path?' · <a href="#" data-rc="'+esc(e.receipt_path)+'" style="color:var(--gold-light);">receipt</a>':''}</div>
+          </div>
+          <div class="amt">${money(e.amount,e.currency)}</div>
+        </div>
+        <div class="crm-grid2" style="margin-top:12px;">
+          <div><label class="crm-mono" style="display:block; margin-bottom:4px;">LEDGER CATEGORY</label>
+            <select data-led style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:8px 10px; font-size:12px;">
+              ${LEDGER_CATS.map(c=>`<option value="${c}" ${c===led?'selected':''}>${label(c)}</option>`).join('')}
+            </select></div>
+          <div><label class="crm-mono" style="display:block; margin-bottom:4px;">NOTE (optional)</label>
+            <input data-note style="width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:8px 10px; font-size:12px;"></div>
+        </div>
+        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--cream); margin-top:10px;">
+          <input type="checkbox" data-direct ${e.order_id?'checked':''} style="width:auto;"> Direct expense (counts against the linked order's EBITDA)
+        </label>
+        <div style="display:flex; gap:10px; margin-top:12px; align-items:center;">
+          <button class="crm-btn small" data-approve>Approve → Ledger</button>
+          <button class="crm-btn danger small" data-reject>Reject</button>
+          <span class="crm-status-msg" data-st></span>
+        </div>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('[data-rc]').forEach(a=>a.addEventListener('click', async ev=>{
+      ev.preventDefault();
+      try{
+        const {data}=await sb.storage.from('finance-docs').createSignedUrl(a.dataset.rc,600);
+        if(data&&data.signedUrl)window.open(data.signedUrl,'_blank');
+      }catch(e2){}
+    }));
+    box.querySelectorAll('.de-appr').forEach(card=>{
+      const id=card.dataset.eid;
+      const st=card.querySelector('[data-st]');
+      card.querySelector('[data-approve]').addEventListener('click', async ()=>{
+        st.textContent='Posting…';
+        const {error}=await sb.rpc('crm_review_daily_entry',{
+          p_entry_id:id, p_decision:'approve',
+          p_ledger_category:card.querySelector('[data-led]').value,
+          p_is_direct:card.querySelector('[data-direct]').checked,
+          p_note:card.querySelector('[data-note]').value||null
+        });
+        if(error){ st.textContent='Error: '+error.message; return; }
+        await loadPending(); await loadMine(); renderKpis();
+      });
+      card.querySelector('[data-reject]').addEventListener('click', async ()=>{
+        const note=card.querySelector('[data-note]').value;
+        if(!note&&!confirm('Reject without a note?'))return;
+        st.textContent='Rejecting…';
+        const {error}=await sb.rpc('crm_review_daily_entry',{p_entry_id:id, p_decision:'reject', p_note:note||null});
+        if(error){ st.textContent='Error: '+error.message; return; }
+        await loadPending(); await loadMine(); renderKpis();
+      });
+    });
+  }
+
+  checkSession();
+});
+</script>
+</body>
+</html>

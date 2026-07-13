@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Costs | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm-/ec- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1080px;}
+  .crm-topline{margin-bottom:28px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:26px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:24px; color:var(--gold-light);}
+  .crm-kpi .l{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:4px;}
+  .ec-basis{border:1px solid var(--line); background:var(--bg-alt); padding:18px 22px; margin-bottom:28px; display:flex; gap:22px; align-items:flex-end; flex-wrap:wrap;}
+  .ec-basis label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:5px;}
+  .ec-basis input{width:110px; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:8px 10px; font-size:13px; border-radius:2px; font-family:'IBM Plex Mono',monospace;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); text-align:left; padding:10px 12px; border-bottom:1px solid var(--line);}
+  .crm-table td{padding:11px 12px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .crm-row-link{cursor:pointer;}
+  .crm-row-link:hover td{background:rgba(198,165,90,0.05);}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted);}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  .crm-empty{font-size:13px; color:var(--muted); padding:22px 0;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.danger{background:transparent; color:#e57368; border:1px solid rgba(229,115,104,0.4);}
+  .crm-btn.small{padding:6px 12px; font-size:10px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:10px;}
+  .crm-modal-bg{display:none; position:fixed; inset:0; background:rgba(4,8,12,0.82); z-index:120; overflow-y:auto; padding:40px 16px;}
+  .crm-modal-bg.open{display:block;}
+  .crm-modal{max-width:680px; margin:0 auto; background:var(--bg-alt); border:1px solid var(--line); padding:30px 30px 26px;}
+  .crm-modal h2{font-size:21px; margin-bottom:18px;}
+  .crm-form label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:12px 0 5px;}
+  .crm-form input, .crm-form select, .crm-form textarea{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 12px; font-size:13px; border-radius:2px; font-family:'Inter',sans-serif;}
+  .crm-form textarea{min-height:60px; resize:vertical;}
+  .crm-grid2{display:grid; grid-template-columns:1fr 1fr; gap:0 18px;}
+  .ec-section{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); border-bottom:1px solid var(--line); padding-bottom:6px; margin:22px 0 4px;}
+  .ec-preview{background:var(--bg-deep); border:1px solid var(--line); padding:12px 16px; margin-top:14px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--gold-light); line-height:1.9;}
+  .ec-al-row{display:grid; grid-template-columns:110px 1fr 100px 32px 32px; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.08); font-size:12px;}
+  .ec-al-row select,.ec-al-row input{padding:6px 8px; font-size:12px;}
+  .ec-al-head{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold);}
+  .fs-hist{border-top:1px solid var(--line); margin-top:20px; padding-top:14px;}
+  .fs-hist-item{font-size:12px; color:var(--muted); padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.08);}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-grid2{grid-template-columns:1fr;}
+    .crm-table{display:block; overflow-x:auto;}
+    .ec-al-row{grid-template-columns:1fr 1fr; grid-auto-rows:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Employee Costs — Management Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%; margin-top:0;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-business-rules.html">Business Rules</a>
+    <a class="crm-nav-item" href="crm-financial-settings.html">Financial Settings</a>
+    <span class="crm-nav-item active">Employee Costs</span>
+    <a class="crm-nav-item" href="crm-employees.html">Employees</a>
+    <a class="crm-nav-item" href="crm-form-builder.html">Form Builder</a>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div>
+        <div class="eyebrow">Management Only — Never Client-Visible</div>
+        <h1>Employee Costs</h1>
+      </div>
+      <button class="crm-btn" id="btn-new-emp">+ New Employee Cost</button>
+    </div>
+    <p id="ec-readonly-note" class="crm-mono" style="display:none; margin-bottom:18px; color:var(--gold-light);">Read-only access — changes are restricted to the Owner and Super Admin.</p>
+
+    <div class="crm-kpis" id="ec-kpis"></div>
+
+    <div class="ec-basis">
+      <div>
+        <label for="basis-hours">Working Hours / Day</label>
+        <input id="basis-hours" type="number" min="1" max="24" step="0.5">
+      </div>
+      <div>
+        <label for="basis-days">Working Days / Month</label>
+        <input id="basis-days" type="number" min="1" max="31" step="1">
+      </div>
+      <div>
+        <button class="crm-btn small" id="btn-save-basis" type="button">Save Cost Basis</button>
+        <span class="crm-status-msg" id="basis-status"></span>
+      </div>
+      <p class="crm-mono" style="flex-basis:100%; margin:0;">Hourly and daily rates are derived from these values unless a manual override is set on the employee.</p>
+    </div>
+
+    <table class="crm-table">
+      <thead><tr><th>Name</th><th>Designation</th><th>Cost Centre</th><th>Type</th><th>Salary</th><th>Allowances</th><th>Total / Month</th><th>Hourly</th><th>Status</th></tr></thead>
+      <tbody id="emp-rows"></tbody>
+    </table>
+    <p class="crm-empty" id="emp-empty" style="display:none;">No employee cost records yet.</p>
+  </main>
+</div>
+
+<!-- EMPLOYEE COST MODAL -->
+<div class="crm-modal-bg" id="modal-emp">
+  <div class="crm-modal">
+    <h2 id="emp-modal-title">New Employee Cost</h2>
+    <form id="emp-form" class="crm-form">
+      <input type="hidden" id="ec-id">
+
+      <div class="ec-section">Identity</div>
+      <div class="crm-grid2">
+        <div><label>Employee Name *</label><input id="ec-employee_name" required></div>
+        <div><label>Link to CRM Login (optional)</label><select id="ec-user_id"><option value="">— no login / external —</option></select></div>
+        <div><label>Designation</label><input id="ec-designation"></div>
+        <div><label>Employment Type</label>
+          <select id="ec-employment_type">
+            <option value="full_time" selected>Full Time</option><option value="part_time">Part Time</option>
+            <option value="contract">Contract</option><option value="consultant">Consultant</option>
+            <option value="intern">Intern</option><option value="daily_wage">Daily Wage</option>
+          </select></div>
+        <div><label>Joining Date</label><input id="ec-joining_date" type="date"></div>
+        <div><label>Cost Centre</label><select id="ec-cost_centre_id"><option value="">—</option></select></div>
+        <div><label>Status</label>
+          <select id="ec-status"><option value="active" selected>Active</option><option value="inactive">Inactive</option></select></div>
+        <div><label>Currency</label><select id="ec-currency"><option>PKR</option><option>USD</option><option>GBP</option><option>EUR</option><option>AED</option><option>SAR</option></select></div>
+      </div>
+
+      <div class="ec-section">Compensation (monthly)</div>
+      <div class="crm-grid2">
+        <div><label>Monthly Salary *</label><input id="ec-monthly_salary" type="number" step="0.01" min="0" required></div>
+        <div><label>Avg Monthly Bonus</label><input id="ec-monthly_bonus_avg" type="number" step="0.01" min="0"></div>
+        <div><label>Employer Contributions (EOBI etc.)</label><input id="ec-employer_contributions" type="number" step="0.01" min="0"></div>
+        <div><label>Commission %</label><input id="ec-commission_pct" type="number" step="0.01" min="0"></div>
+      </div>
+
+      <div class="ec-section">Rates (leave blank to auto-derive from salary + basis)</div>
+      <div class="crm-grid2">
+        <div><label>Hourly Rate — manual override</label><input id="ec-hourly_rate_manual" type="number" step="0.01" min="0" placeholder="auto"></div>
+        <div><label>Daily Rate — manual override</label><input id="ec-daily_rate_manual" type="number" step="0.01" min="0" placeholder="auto"></div>
+        <div><label>Overtime Rate / hr</label><input id="ec-overtime_rate" type="number" step="0.01" min="0"></div>
+        <div><label>Consultancy Rate / hr (billable)</label><input id="ec-consultancy_rate" type="number" step="0.01" min="0"></div>
+        <div><label>Opportunity Cost / hr</label><input id="ec-opportunity_cost_hour" type="number" step="0.01" min="0"></div>
+      </div>
+      <div class="ec-preview" id="ec-preview"></div>
+
+      <div class="ec-section">Allowances &amp; Deductions</div>
+      <div id="ec-allow-locked" class="crm-mono" style="padding:8px 0;">Save the employee first — allowances unlock immediately after.</div>
+      <div id="ec-allow-box" style="display:none;">
+        <div class="ec-al-row ec-al-head"><span>Type</span><span>Label</span><span>Monthly</span><span>Ded.</span><span></span></div>
+        <div id="ec-al-rows"></div>
+        <button class="crm-btn ghost small" type="button" id="btn-add-allow" style="margin-top:10px;">+ Add Allowance / Deduction</button>
+        <p class="crm-mono" style="margin-top:8px;">Deduction = reduces what the company actually pays (e.g. unpaid-leave dock). Government withholdings stay inside the salary figure.</p>
+      </div>
+
+      <div><label>Notes</label><textarea id="ec-notes"></textarea></div>
+
+      <div style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; align-items:center;">
+        <button class="crm-btn" type="submit" id="emp-save-btn">Save</button>
+        <button class="crm-btn ghost" type="button" id="emp-hist-btn" style="display:none;">History</button>
+        <button class="crm-btn danger" type="button" id="emp-del-btn" style="display:none;">Delete</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-emp">Close</button>
+        <span class="crm-status-msg" id="emp-form-status"></span>
+      </div>
+      <div class="fs-hist" id="emp-history" style="display:none;"></div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  function val(id){ const el=document.getElementById(id); if(!el)return null; if(el.type==='checkbox')return el.checked; return el.value===''?null:el.value; }
+  function setval(id,v){ const el=document.getElementById(id); if(!el)return; if(el.type==='checkbox'){el.checked=!!v;} else {el.value=v==null?'':v;} }
+  function numval(id){ const v=val(id); return v==null?null:Number(v); }
+  function openModal(id){ const m=document.getElementById(id); if(m)m.classList.add('open'); }
+  function closeModal(id){ const m=document.getElementById(id); if(m)m.classList.remove('open'); }
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+
+  var canEdit=false, empCache=[], ccCache=[], basis={hours:8, days:22}, curAllowances=[];
+
+  /* ---------- AUTH ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  if(passToggle)passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:allowed,error}=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']});
+    if(error||allowed!==true){
+      document.getElementById('crm-login-status').textContent='Employee Costs are restricted to management.';
+      await sb.auth.signOut(); return;
+    }
+    try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); canEdit=r.data===true; }catch(e){ canEdit=false; }
+    if(!canEdit){
+      document.getElementById('ec-readonly-note').style.display='block';
+      const b=document.getElementById('btn-new-emp'); if(b)b.style.display='none';
+      const sb2=document.getElementById('btn-save-basis'); if(sb2)sb2.style.display='none';
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    await Promise.all([loadBasis(), loadCostCentres(), loadStaffNames()]);
+    await loadEmployees();
+  }
+
+  /* ---------- COST BASIS ---------- */
+  async function loadBasis(){
+    const {data}=await sb.from('crm_settings').select('key,value').in('key',['working_hours_per_day','working_days_per_month']);
+    (data||[]).forEach(r=>{
+      if(r.key==='working_hours_per_day')basis.hours=Number(r.value)||8;
+      if(r.key==='working_days_per_month')basis.days=Number(r.value)||22;
+    });
+    setval('basis-hours',basis.hours); setval('basis-days',basis.days);
+  }
+  document.getElementById('btn-save-basis').addEventListener('click', async ()=>{
+    const st=document.getElementById('basis-status'); st.textContent='Saving…';
+    const h=numval('basis-hours'), d=numval('basis-days');
+    if(!h||!d){ st.textContent='Both values required.'; return; }
+    const {error}=await sb.from('crm_settings').upsert([
+      {key:'working_hours_per_day', value:String(h)},
+      {key:'working_days_per_month', value:String(d)}
+    ],{onConflict:'key'});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    basis.hours=h; basis.days=d; st.textContent='Saved — rates recalculated.';
+    await loadEmployees(); preview();
+  });
+
+  /* ---------- LOOKUPS ---------- */
+  async function loadCostCentres(){
+    const {data}=await sb.from('crm_cost_centres').select('id,name,is_active').order('sort_order');
+    ccCache=data||[];
+    const sel=document.getElementById('ec-cost_centre_id');
+    sel.innerHTML='<option value="">—</option>'+ccCache.filter(c=>c.is_active).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  }
+  function ccName(id){ const c=ccCache.find(x=>x.id===id); return c?c.name:'—'; }
+  async function loadStaffNames(){
+    try{
+      const {data}=await sb.rpc('crm_staff_names');
+      const sel=document.getElementById('ec-user_id');
+      (data||[]).forEach(n=>{ const o=document.createElement('option'); o.value=n.user_id; o.textContent=n.display_name; sel.appendChild(o); });
+    }catch(e){}
+  }
+
+  /* ---------- LIST + KPIs ---------- */
+  async function loadEmployees(){
+    const {data,error}=await sb.from('crm_employee_cost_rates').select('*').order('employee_name');
+    empCache=data||[];
+    document.getElementById('emp-empty').style.display=(error||!empCache.length)?'block':'none';
+    document.getElementById('emp-rows').innerHTML=empCache.map(e2=>`
+      <tr class="crm-row-link" data-ecid="${e2.id}">
+        <td>${esc(e2.employee_name)}</td>
+        <td style="color:var(--muted);">${esc(e2.designation||'—')}</td>
+        <td>${esc(ccName(e2.cost_centre_id))}</td>
+        <td class="crm-mono">${esc(label(e2.employment_type))}</td>
+        <td class="crm-mono">${money(e2.monthly_salary,e2.currency)}</td>
+        <td class="crm-mono">${money(e2.allowances_monthly,e2.currency)}${Number(e2.deductions_monthly)>0?' <span class="crm-badge warn">−'+esc(String(Math.round(e2.deductions_monthly)))+'</span>':''}</td>
+        <td class="crm-mono" style="color:var(--gold-light);">${money(e2.total_monthly_cost,e2.currency)}</td>
+        <td class="crm-mono">${money(e2.effective_hourly_rate,e2.currency)}${e2.hourly_is_manual?' <span class="crm-badge">manual</span>':''}</td>
+        <td>${e2.status==='active'?'<span class="crm-badge ok">Active</span>':'<span class="crm-badge">Inactive</span>'}</td>
+      </tr>`).join('');
+    document.querySelectorAll('[data-ecid]').forEach(r=>r.addEventListener('click',()=>openEmp(r.dataset.ecid)));
+    renderKpis();
+  }
+  function renderKpis(){
+    const act=empCache.filter(e2=>e2.status==='active');
+    const by={};
+    act.forEach(e2=>{ by[e2.currency]=(by[e2.currency]||0)+Number(e2.total_monthly_cost||0); });
+    const payroll=Object.keys(by).sort().map(c=>c+' '+Number(by[c]).toLocaleString('en-US',{maximumFractionDigits:0})).join(' · ')||'0';
+    const kpis=[
+      {n:String(act.length),l:'Active Employees'},
+      {n:payroll,l:'Monthly Payroll Cost'},
+      {n:basis.hours+'h × '+basis.days+'d',l:'Cost Basis'},
+      {n:String(empCache.filter(e2=>e2.hourly_is_manual||e2.daily_is_manual).length),l:'Manual Rate Overrides'}
+    ];
+    document.getElementById('ec-kpis').innerHTML=kpis.map(k=>
+      `<div class="crm-kpi"><div class="n" style="font-size:${String(k.n).length>14?'16px':'24px'};">${esc(String(k.n))}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+  }
+
+  /* ---------- LIVE RATE PREVIEW ---------- */
+  function preview(){
+    const box=document.getElementById('ec-preview');
+    const cur=val('ec-currency')||'PKR';
+    const total=(numval('ec-monthly_salary')||0)
+      + (numval('ec-monthly_bonus_avg')||0)
+      + (numval('ec-employer_contributions')||0)
+      + curAllowances.reduce((s,a)=>s+(a.is_active?(a.is_deduction?-1:1)*Number(a.monthly_amount||0):0),0);
+    const dDaily=basis.days?total/basis.days:0;
+    const dHourly=(basis.days&&basis.hours)?total/(basis.days*basis.hours):0;
+    const mh=numval('ec-hourly_rate_manual'), md=numval('ec-daily_rate_manual');
+    box.innerHTML=
+      'Total monthly cost: '+esc(money(Math.round(total*100)/100,cur))+'<br>'+
+      'Daily rate: '+esc(money(Math.round((md!=null?md:dDaily)*100)/100,cur))+(md!=null?' (manual)':' (derived)')+'<br>'+
+      'Hourly rate: '+esc(money(Math.round((mh!=null?mh:dHourly)*100)/100,cur))+(mh!=null?' (manual)':' (derived)');
+  }
+  ['ec-monthly_salary','ec-monthly_bonus_avg','ec-employer_contributions','ec-hourly_rate_manual','ec-daily_rate_manual','ec-currency']
+    .forEach(id=>{ const el=document.getElementById(id); if(el)el.addEventListener('input',preview); });
+
+  /* ---------- ALLOWANCES ---------- */
+  function renderAllowRows(){
+    const box=document.getElementById('ec-al-rows');
+    box.innerHTML=curAllowances.filter(a=>a.is_active!==false).map((a,i)=>`
+      <div class="ec-al-row" data-ai="${i}">
+        <select data-af="allowance_type" ${canEdit?'':'disabled'}>
+          ${['fuel','travel','food','accommodation','phone','medical','other'].map(t=>`<option value="${t}" ${a.allowance_type===t?'selected':''}>${label(t)}</option>`).join('')}
+        </select>
+        <input data-af="allowance_name" value="${esc(a.allowance_name||'')}" placeholder="optional label" ${canEdit?'':'disabled'}>
+        <input data-af="monthly_amount" type="number" step="0.01" min="0" value="${esc(String(a.monthly_amount??''))}" ${canEdit?'':'disabled'}>
+        <input data-af="is_deduction" type="checkbox" ${a.is_deduction?'checked':''} title="Deduction" ${canEdit?'':'disabled'}>
+        ${canEdit?'<button type="button" class="crm-btn danger small" data-arem="'+i+'">×</button>':'<span></span>'}
+      </div>`).join('');
+    box.querySelectorAll('[data-af]').forEach(el=>{
+      el.addEventListener('input',()=>{
+        const i=Number(el.closest('[data-ai]').dataset.ai);
+        const f=el.dataset.af;
+        curAllowances[i][f]=el.type==='checkbox'?el.checked:el.value;
+        preview();
+      });
+    });
+    box.querySelectorAll('[data-arem]').forEach(b=>b.addEventListener('click', async ()=>{
+      const i=Number(b.dataset.arem);
+      const a=curAllowances[i];
+      if(a.id){ await sb.from('crm_employee_allowances').delete().eq('id',a.id); }
+      curAllowances.splice(i,1); renderAllowRows(); preview();
+    }));
+  }
+  document.getElementById('btn-add-allow').addEventListener('click',()=>{
+    curAllowances.push({allowance_type:'other', allowance_name:'', monthly_amount:0, is_deduction:false, is_active:true});
+    renderAllowRows();
+  });
+  async function saveAllowances(empId){
+    for(const a of curAllowances){
+      const row={
+        employee_cost_id:empId,
+        allowance_type:a.allowance_type||'other',
+        allowance_name:a.allowance_name||null,
+        monthly_amount:Number(a.monthly_amount||0),
+        is_deduction:!!a.is_deduction,
+        is_active:a.is_active!==false
+      };
+      if(a.id){ await sb.from('crm_employee_allowances').update(row).eq('id',a.id); }
+      else{
+        const {data}=await sb.from('crm_employee_allowances').insert(row).select('id').single();
+        if(data)a.id=data.id;
+      }
+    }
+  }
+  async function loadAllowances(empId){
+    const {data}=await sb.from('crm_employee_allowances').select('*').eq('employee_cost_id',empId).order('created_at');
+    curAllowances=(data||[]);
+    renderAllowRows();
+  }
+
+  /* ---------- MODAL ---------- */
+  const EC_FIELDS=['employee_name','user_id','designation','employment_type','joining_date','cost_centre_id','status','currency','notes'];
+  const EC_NUMS=['monthly_salary','monthly_bonus_avg','employer_contributions','commission_pct','hourly_rate_manual','daily_rate_manual','overtime_rate','consultancy_rate','opportunity_cost_hour'];
+  document.getElementById('btn-new-emp').addEventListener('click',()=>{
+    document.getElementById('emp-form').reset(); setval('ec-id','');
+    curAllowances=[];
+    document.getElementById('emp-modal-title').textContent='New Employee Cost';
+    document.getElementById('ec-allow-locked').style.display='block';
+    document.getElementById('ec-allow-box').style.display='none';
+    ['emp-hist-btn','emp-del-btn'].forEach(id=>document.getElementById(id).style.display='none');
+    document.getElementById('emp-history').style.display='none';
+    preview(); openModal('modal-emp');
+  });
+  async function openEmp(id){
+    const e2=empCache.find(x=>x.id===id); if(!e2)return;
+    document.getElementById('emp-form').reset(); setval('ec-id',e2.id);
+    EC_FIELDS.forEach(k=>setval('ec-'+k,e2[k]));
+    EC_NUMS.forEach(k=>setval('ec-'+k,e2[k]));
+    document.getElementById('emp-modal-title').textContent='Edit — '+e2.employee_name;
+    document.getElementById('ec-allow-locked').style.display='none';
+    document.getElementById('ec-allow-box').style.display='block';
+    document.getElementById('emp-hist-btn').style.display='inline-block';
+    document.getElementById('emp-del-btn').style.display=canEdit?'inline-block':'none';
+    document.getElementById('emp-history').style.display='none';
+    await loadAllowances(e2.id);
+    preview(); openModal('modal-emp');
+  }
+  document.getElementById('emp-hist-btn').addEventListener('click', async ()=>{
+    const id=val('ec-id'); if(!id)return;
+    const box=document.getElementById('emp-history');
+    const {data}=await sb.from('crm_employee_cost_history').select('*').eq('employee_cost_id',id).order('changed_at',{ascending:false}).limit(20);
+    box.innerHTML='<div class="crm-mono" style="color:var(--gold); margin-bottom:6px;">CHANGE HISTORY</div>'+
+      ((data&&data.length)?data.map(h=>{
+        const o=h.old_data||{};
+        return `<div class="fs-hist-item">${esc(new Date(h.changed_at).toISOString().replace('T',' ').slice(0,16))} · ${esc(label(h.action))} — was: salary ${esc(o.currency||'')} ${esc(String(o.monthly_salary??''))}, ${esc(label(o.employment_type||''))}, status ${esc(o.status||'')}</div>`;
+      }).join(''):'<div class="fs-hist-item">No changes recorded yet.</div>');
+    box.style.display='block';
+  });
+  document.getElementById('emp-del-btn').addEventListener('click', async ()=>{
+    const id=val('ec-id'); if(!id)return;
+    if(!confirm('Delete this employee cost record? It is removed from payroll figures (history is kept).'))return;
+    const st=document.getElementById('emp-form-status'); st.textContent='Deleting…';
+    const {error}=await sb.from('crm_employee_costs').update({deleted_at:new Date().toISOString()}).eq('id',id);
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent=''; closeModal('modal-emp'); await loadEmployees();
+  });
+  document.getElementById('emp-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('emp-form-status'); st.textContent='Saving…';
+    const payload={};
+    EC_FIELDS.forEach(k=>payload[k]=val('ec-'+k));
+    EC_NUMS.forEach(k=>payload[k]=numval('ec-'+k));
+    ['monthly_salary','monthly_bonus_avg','employer_contributions'].forEach(k=>payload[k]=payload[k]||0);
+    if(!payload.employee_name){ st.textContent='Employee name is required.'; return; }
+    let id=val('ec-id'), error;
+    if(id){ ({error}=await sb.from('crm_employee_costs').update(payload).eq('id',id)); }
+    else{
+      const ins=await sb.from('crm_employee_costs').insert(payload).select('id').single();
+      error=ins.error; if(ins.data)id=ins.data.id;
+    }
+    if(error){ st.textContent='Error: '+error.message; return; }
+    if(canEdit&&curAllowances.length){ try{ await saveAllowances(id); }catch(e2){ st.textContent='Saved, but an allowance failed: '+e2.message; } }
+    if(!val('ec-id')){
+      // First save of a new record: unlock allowances and stay open.
+      setval('ec-id',id);
+      document.getElementById('ec-allow-locked').style.display='none';
+      document.getElementById('ec-allow-box').style.display='block';
+      document.getElementById('emp-modal-title').textContent='Edit — '+(payload.employee_name||'');
+      document.getElementById('emp-hist-btn').style.display='inline-block';
+      document.getElementById('emp-del-btn').style.display=canEdit?'inline-block':'none';
+      st.textContent='Saved — you can now add allowances below.';
+    } else {
+      st.textContent='Saved.'; closeModal('modal-emp');
+    }
+    await loadEmployees();
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>

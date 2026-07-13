@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alerts | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm-/al- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:940px;}
+  .crm-topline{margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-end; gap:14px; flex-wrap:wrap;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:26px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:24px; color:var(--gold-light);}
+  .crm-kpi .l{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:4px;}
+  .al-item{border:1px solid var(--line); border-left-width:3px; background:var(--bg-alt); padding:16px 18px; margin-bottom:12px; display:flex; justify-content:space-between; gap:14px; align-items:flex-start;}
+  .al-item.critical{border-left-color:#e57368;}
+  .al-item.warning{border-left-color:var(--gold);}
+  .al-item.info{border-left-color:var(--muted);}
+  .al-item .cat{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:4px;}
+  .al-item.critical .cat{color:#e57368;}
+  .al-item.warning .cat{color:var(--gold-light);}
+  .al-item.info .cat{color:var(--muted);}
+  .al-item .t{font-size:14px; color:var(--cream);}
+  .al-item .d{font-size:12px; color:var(--muted); margin-top:3px; font-family:'IBM Plex Mono',monospace;}
+  .al-card{border:1px solid var(--line); background:var(--bg-alt); padding:22px 24px; margin:28px 0 22px;}
+  .al-card h3{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:6px;}
+  .al-card .desc{font-size:12px; color:var(--muted); margin-bottom:14px;}
+  .crm-form label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:12px 0 5px;}
+  .crm-form input{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 12px; font-size:13px; border-radius:2px;}
+  .crm-grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 18px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.small{padding:6px 12px; font-size:10px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:10px;}
+  .crm-empty{font-size:13px; color:var(--muted); padding:20px 0;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-grid3{grid-template-columns:1fr;}
+    .al-item{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Alerts — Management Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%; margin-top:0;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-daily-entry.html">Daily Expenses</a>
+    <a class="crm-nav-item" href="crm-ai-accountant.html">AI Accountant</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-business-rules.html">Business Rules</a>
+    <a class="crm-nav-item" href="crm-financial-settings.html">Financial Settings</a>
+    <a class="crm-nav-item" href="crm-employee-costs.html">Employee Costs</a>
+    <a class="crm-nav-item" href="crm-project-costing.html">Project Costing</a>
+    <a class="crm-nav-item" href="crm-finance-reports.html">Financial Reports</a>
+    <span class="crm-nav-item active">Alerts</span>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div>
+        <div class="eyebrow">Evaluated live against current data — nothing queued, nothing stale</div>
+        <h1>Alerts</h1>
+      </div>
+      <div>
+        <button class="crm-btn ghost small" id="btn-show-dismissed">Show Dismissed</button>
+        <button class="crm-btn small" id="btn-refresh">Refresh</button>
+      </div>
+    </div>
+
+    <div class="crm-kpis" id="al-kpis"></div>
+
+    <div id="al-list"></div>
+    <p class="crm-empty" id="al-empty" style="display:none;">All clear — no active alerts.</p>
+
+    <div class="al-card">
+      <h3>Alert Thresholds</h3>
+      <div class="desc">Owner and Super Admin only. Employee cost cap of 0 disables that rule. The expense-spike rule activates automatically once three real months of ledger data exist.</div>
+      <div class="crm-grid3 crm-form">
+        <div><label>Min Order Margin %</label><input id="th-margin" type="number" min="0" step="0.5"></div>
+        <div><label>Large Entry Threshold (PKR)</label><input id="th-large" type="number" min="0" step="1000"></div>
+        <div><label>Employee Cost Cap (PKR, 0 = off)</label><input id="th-empcap" type="number" min="0" step="1000"></div>
+      </div>
+      <div style="margin-top:14px;">
+        <button class="crm-btn" id="btn-save-th" type="button">Save Thresholds</button>
+        <span class="crm-status-msg" id="th-status"></span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function val(id){ const el=document.getElementById(id); if(!el)return null; return el.value===''?null:el.value; }
+  function setval(id,v){ const el=document.getElementById(id); if(el)el.value=v==null?'':v; }
+
+  var canEdit=false, alerts=[], dismissed=new Set(), showDismissed=false;
+
+  /* ---------- AUTH ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  if(passToggle)passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:allowed,error}=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']});
+    if(error||allowed!==true){
+      document.getElementById('crm-login-status').textContent='Alerts are restricted to management.';
+      await sb.auth.signOut(); return;
+    }
+    try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); canEdit=r.data===true; }catch(e){ canEdit=false; }
+    if(!canEdit){ const b=document.getElementById('btn-save-th'); if(b)b.disabled=true; }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    await loadThresholds();
+    await refresh();
+  }
+
+  /* ---------- LOAD + RENDER ---------- */
+  async function refresh(){
+    const [a,d]=await Promise.all([
+      sb.rpc('crm_alerts_now'),
+      sb.from('crm_alert_dismissals').select('alert_key')
+    ]);
+    alerts=a.data||[];
+    dismissed=new Set((d.data||[]).map(r=>r.alert_key));
+    render();
+  }
+  document.getElementById('btn-refresh').addEventListener('click',refresh);
+  document.getElementById('btn-show-dismissed').addEventListener('click',function(){
+    showDismissed=!showDismissed;
+    this.textContent=showDismissed?'Hide Dismissed':'Show Dismissed';
+    render();
+  });
+
+  function render(){
+    const order={critical:1,warning:2,info:3};
+    const visible=alerts
+      .filter(a=>showDismissed||!dismissed.has(a.alert_key))
+      .sort((x,y)=>(order[x.severity]||9)-(order[y.severity]||9));
+    const live=alerts.filter(a=>!dismissed.has(a.alert_key));
+    const kpis=[
+      {n:String(live.filter(a=>a.severity==='critical').length),l:'Critical'},
+      {n:String(live.filter(a=>a.severity==='warning').length),l:'Warnings'},
+      {n:String(live.filter(a=>a.severity==='info').length),l:'Info'},
+      {n:String(dismissed.size),l:'Dismissed'}
+    ];
+    document.getElementById('al-kpis').innerHTML=kpis.map(k=>
+      `<div class="crm-kpi"><div class="n">${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+    document.getElementById('al-empty').style.display=visible.length?'none':'block';
+    document.getElementById('al-list').innerHTML=visible.map(a=>{
+      const isDis=dismissed.has(a.alert_key);
+      return `<div class="al-item ${esc(a.severity)}" ${isDis?'style="opacity:0.5;"':''}>
+        <div>
+          <div class="cat">${esc(a.severity)} · ${esc(a.category)}</div>
+          <div class="t">${esc(a.title)}</div>
+          <div class="d">${esc(a.detail)}</div>
+        </div>
+        <button class="crm-btn ghost small" data-key="${esc(a.alert_key)}" data-mode="${isDis?'restore':'dismiss'}">${isDis?'Restore':'Dismiss'}</button>
+      </div>`;
+    }).join('');
+    document.querySelectorAll('[data-key]').forEach(b=>b.addEventListener('click', async ()=>{
+      if(b.dataset.mode==='dismiss'){
+        await sb.from('crm_alert_dismissals').upsert({alert_key:b.dataset.key},{onConflict:'user_id,alert_key'});
+      } else {
+        await sb.from('crm_alert_dismissals').delete().eq('alert_key',b.dataset.key);
+      }
+      await refresh();
+    }));
+  }
+
+  /* ---------- THRESHOLDS ---------- */
+  async function loadThresholds(){
+    const {data}=await sb.from('crm_settings').select('key,value')
+      .in('key',['alert_min_margin_pct','alert_large_entry_pkr','alert_max_employee_cost_pkr']);
+    (data||[]).forEach(r=>{
+      if(r.key==='alert_min_margin_pct')setval('th-margin',r.value);
+      if(r.key==='alert_large_entry_pkr')setval('th-large',r.value);
+      if(r.key==='alert_max_employee_cost_pkr')setval('th-empcap',r.value);
+    });
+  }
+  document.getElementById('btn-save-th').addEventListener('click', async ()=>{
+    const st=document.getElementById('th-status'); st.textContent='Saving…';
+    const {error}=await sb.from('crm_settings').upsert([
+      {key:'alert_min_margin_pct', value:String(val('th-margin')||'10')},
+      {key:'alert_large_entry_pkr', value:String(val('th-large')||'100000')},
+      {key:'alert_max_employee_cost_pkr', value:String(val('th-empcap')||'0')}
+    ],{onConflict:'key'});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Saved — alerts re-evaluated.';
+    await refresh();
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>

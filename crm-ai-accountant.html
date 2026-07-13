@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Accountant | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm-/aa- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:860px;}
+  .crm-topline{margin-bottom:20px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .aa-chat{border:1px solid var(--line); background:var(--bg-alt); min-height:340px; max-height:52vh; overflow-y:auto; padding:20px;}
+  .aa-msg{max-width:85%; padding:10px 14px; margin-bottom:12px; font-size:13px; border:1px solid var(--line); border-radius:2px;}
+  .aa-msg.user{margin-left:auto; background:rgba(198,165,90,0.10); border-color:rgba(198,165,90,0.35);}
+  .aa-msg.bot{background:var(--bg-deep);}
+  .aa-msg.sys{background:transparent; border-style:dashed; color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:11px;}
+  .aa-card{border:1px solid var(--gold); background:var(--bg-deep); padding:16px 18px; margin:0 0 12px;}
+  .aa-card .t{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;}
+  .aa-kv{display:grid; grid-template-columns:150px 1fr; gap:2px 12px; font-size:12px;}
+  .aa-kv .k{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding-top:2px;}
+  .aa-warn{font-family:'IBM Plex Mono',monospace; font-size:11px; color:#e57368; margin-top:8px;}
+  .aa-input{display:flex; gap:10px; margin-top:14px;}
+  .aa-input input{flex:1; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; font-size:14px; border-radius:2px;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.small{padding:6px 12px; font-size:10px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .aa-hints{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
+  .aa-hint{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.06em; color:var(--muted); border:1px solid var(--line); padding:5px 10px; cursor:pointer;}
+  .aa-hint:hover{color:var(--gold-light); border-color:var(--gold);}
+  .crm-table{width:100%; border-collapse:collapse; font-size:12px; margin-top:10px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);}
+  .crm-table td{padding:8px 10px; border-bottom:1px solid rgba(198,165,90,0.10);}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted);}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .aa-kv{grid-template-columns:110px 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">AI Accountant — Staff Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%; margin-top:0;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-daily-entry.html">Daily Expenses</a>
+    <span class="crm-nav-item active">AI Accountant</span>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-business-rules.html">Business Rules</a>
+    <a class="crm-nav-item" href="crm-financial-settings.html">Financial Settings</a>
+    <a class="crm-nav-item" href="crm-employee-costs.html">Employee Costs</a>
+    <a class="crm-nav-item" href="crm-project-costing.html">Project Costing</a>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">Speak naturally — nothing posts without your confirmation</div>
+      <h1>AI Accountant</h1>
+    </div>
+
+    <div class="aa-chat" id="aa-chat"></div>
+    <div id="aa-confirm"></div>
+    <div class="aa-input">
+      <input id="aa-text" placeholder="e.g. I spent Rs 1,800 on fuel today" autocomplete="off">
+      <button class="crm-btn" id="aa-send">Send</button>
+    </div>
+    <div class="aa-hints" id="aa-hints">
+      <span class="aa-hint">I spent Rs 1,800 on fuel today</span>
+      <span class="aa-hint">Paid ChatGPT subscription Rs 5,700</span>
+      <span class="aa-hint">I worked 6 hours on the Tehseen order</span>
+      <span class="aa-hint">What is our monthly overhead?</span>
+    </div>
+
+    <div class="eyebrow" style="margin:34px 0 4px;">My Recent AI Actions</div>
+    <p class="crm-mono" style="margin-bottom:6px;">Every proposal is recorded — confirmed, cancelled, or failed — with the original wording.</p>
+    <table class="crm-table">
+      <thead><tr><th>When</th><th>Request</th><th>Type</th><th>Status</th><th>Ref</th></tr></thead>
+      <tbody id="aa-log-rows"></tbody>
+    </table>
+    <p class="crm-mono" id="aa-log-empty" style="display:none; padding:14px 0;">No AI actions yet.</p>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  function val(id){ const el=document.getElementById(id); if(!el)return null; return el.value===''?null:el.value; }
+  function setval(id,v){ const el=document.getElementById(id); if(el)el.value=v==null?'':v; }
+
+  var isMgmt=false, canOwn=false, myUid=null, myEmp=null;
+  var history=[], subsCache=[], empCache=[], ordersCache=[], myEntries=[], pendingAction=null, pendingLogId=null;
+
+  /* ---------- CHAT RENDER ---------- */
+  const chat=document.getElementById('aa-chat');
+  function push(role,text){
+    const div=document.createElement('div');
+    div.className='aa-msg '+(role==='user'?'user':(role==='sys'?'sys':'bot'));
+    div.innerHTML=esc(text);
+    chat.appendChild(div); chat.scrollTop=chat.scrollHeight;
+  }
+
+  /* ---------- AUTH ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  if(passToggle)passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:staff,error}=await sb.rpc('crm_is_staff');
+    if(error||staff!==true){
+      document.getElementById('crm-login-status').textContent='The AI Accountant is for staff accounts only.';
+      await sb.auth.signOut(); return;
+    }
+    const {data:sess}=await sb.auth.getSession(); myUid=sess&&sess.session?sess.session.user.id:null;
+    try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']}); isMgmt=r.data===true; }catch(e){}
+    try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); canOwn=r.data===true; }catch(e){}
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    await loadContext(); await loadLog();
+    push('bot','Tell me what you spent or worked on — for example "Fuel Rs 2,500 for the client visit" or "I worked 6 hours on the plant audit". I prepare the entry; you confirm; expenses still go through the Owner approval queue.');
+  }
+
+  /* ---------- CONTEXT (permission-filtered by RLS on each read) ---------- */
+  async function loadContext(){
+    try{
+      const {data}=await sb.from('crm_orders').select('id,order_number,title').is('deleted_at',null).order('created_at',{ascending:false}).limit(80);
+      ordersCache=(data||[]).map(x=>({id:x.id,name:((x.order_number||'')+' '+(x.title||'')).trim()}));
+    }catch(e){}
+    try{
+      const {data}=await sb.from('crm_subscriptions').select('id,software_name,cost,billing_cycle,currency,renewal_date,status').is('deleted_at',null);
+      subsCache=data||[];
+    }catch(e){}
+    try{
+      const {data}=await sb.from('crm_employee_cost_rates').select('id,employee_name,currency,status');
+      empCache=(data||[]).filter(x=>x.status==='active');
+    }catch(e){}
+    try{
+      const {data}=await sb.rpc('crm_my_employee_cost_id');
+      if(data&&data.length)myEmp=data[0];
+    }catch(e){}
+    try{
+      const {data}=await sb.from('crm_daily_entries').select('description,amount,currency,entry_date,status').eq('entered_by',myUid).order('created_at',{ascending:false}).limit(20);
+      myEntries=data||[];
+    }catch(e){}
+  }
+  async function buildContext(){
+    const ctx={ role:isMgmt?'management':'staff', can_edit_owner_data:canOwn, my_name:myEmp?myEmp.employee_name:null,
+      orders:ordersCache.slice(0,40).map(o=>o.name),
+      subscriptions:subsCache.filter(s=>s.status==='active').map(s=>s.software_name),
+      employees:empCache.map(e=>e.employee_name) };
+    if(isMgmt){
+      try{
+        const {data}=await sb.from('crm_monthly_overhead_actual').select('*');
+        ctx.monthly_overhead_pkr=(data||[]).filter(r=>r.currency==='PKR').reduce((s,r)=>s+Number(r.monthly_total),0);
+      }catch(e){}
+      try{
+        const {data}=await sb.from('crm_monthly_employee_cost').select('*');
+        ctx.monthly_payroll_pkr=(data||[]).filter(r=>r.currency==='PKR').reduce((s,r)=>s+Number(r.monthly_total),0);
+      }catch(e){}
+    }
+    return ctx;
+  }
+
+  /* ---------- SEND ---------- */
+  document.querySelectorAll('.aa-hint').forEach(h=>h.addEventListener('click',()=>{ setval('aa-text',h.textContent); document.getElementById('aa-text').focus(); }));
+  document.getElementById('aa-text').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault(); send();} });
+  document.getElementById('aa-send').addEventListener('click',send);
+  async function send(){
+    const text=val('aa-text'); if(!text)return;
+    if(pendingAction){ push('sys','Confirm or cancel the pending action first.'); return; }
+    setval('aa-text','');
+    push('user',text);
+    history.push({role:'user',content:text});
+    const btn=document.getElementById('aa-send'); btn.disabled=true; btn.textContent='…';
+    try{
+      const ctx=await buildContext();
+      const {data,error}=await sb.functions.invoke('ai-accountant',{body:{messages:history, context:ctx}});
+      btn.disabled=false; btn.textContent='Send';
+      if(error||!data||data.error){ push('sys','Error: '+esc((error&&error.message)||(data&&data.error)||'no response')); return; }
+      push('bot',data.reply||'…');
+      history.push({role:'assistant',content:data.reply||''});
+      if(data.action&&data.action.type){ await propose(text, data.action); }
+    }catch(e){
+      btn.disabled=false; btn.textContent='Send';
+      push('sys','Error: '+esc(e.message||String(e)));
+    }
+  }
+
+  /* ---------- PROPOSAL → CONFIRM CARD ---------- */
+  async function propose(requestText, action){
+    pendingAction=action; pendingLogId=null;
+    try{
+      const {data}=await sb.from('crm_ai_actions').insert({
+        request_text:requestText, action_type:action.type, intent:action, status:'proposed', user_id:myUid
+      }).select('id').single();
+      if(data)pendingLogId=data.id;
+    }catch(e){}
+    const box=document.getElementById('aa-confirm');
+    const fields=Object.keys(action).filter(k=>k!=='type'&&action[k]!=null&&action[k]!=='');
+    let warn='';
+    if(action.type==='record_expense'&&action.amount){
+      const hit=myEntries.find(en=>Number(en.amount)===Number(action.amount)
+        &&Math.abs((new Date(en.entry_date)-new Date(action.entry_date||new Date())))/86400000<=3);
+      if(hit)warn='Possible duplicate of "'+hit.description+'" ('+hit.currency+' '+hit.amount+' on '+hit.entry_date+', '+hit.status+').';
+    }
+    if(['add_subscription','update_subscription','cancel_subscription','renew_subscription','add_fixed_expense','update_salary'].includes(action.type)&&!canOwn){
+      warn=(warn?warn+' ':'')+'This change is Owner/Super Admin-restricted — the database will refuse it for your account.';
+    }
+    box.innerHTML=`<div class="aa-card">
+      <div class="t">Confirm: ${esc(label(action.type))}</div>
+      <div class="aa-kv">${fields.map(k=>`<div class="k">${esc(label(k))}</div><div>${esc(String(action[k]))}</div>`).join('')}</div>
+      ${warn?'<div class="aa-warn">'+esc(warn)+'</div>':''}
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="crm-btn small" id="aa-confirm-btn">Confirm</button>
+        <button class="crm-btn ghost small" id="aa-cancel-btn">Cancel</button>
+      </div>
+    </div>`;
+    document.getElementById('aa-confirm-btn').addEventListener('click',executePending);
+    document.getElementById('aa-cancel-btn').addEventListener('click', async ()=>{
+      if(pendingLogId)await sb.from('crm_ai_actions').update({status:'cancelled'}).eq('id',pendingLogId);
+      pendingAction=null; pendingLogId=null; box.innerHTML='';
+      push('sys','Cancelled — nothing was recorded.'); await loadLog();
+    });
+  }
+
+  function findOrder(ref){
+    if(!ref)return null;
+    const r=String(ref).toLowerCase();
+    const o=ordersCache.find(x=>x.name.toLowerCase().includes(r));
+    return o?o.id:null;
+  }
+  function findSub(name){
+    if(!name)return null;
+    const n=String(name).toLowerCase();
+    return subsCache.find(s=>s.software_name.toLowerCase().includes(n)||n.includes(s.software_name.toLowerCase()))||null;
+  }
+  function findEmp(name){
+    if(!name)return null;
+    const n=String(name).toLowerCase();
+    return empCache.find(e=>e.employee_name.toLowerCase().includes(n)||n.includes(e.employee_name.toLowerCase()))||null;
+  }
+  function addMonths(dateStr,m){
+    const d=new Date(dateStr); d.setMonth(d.getMonth()+m);
+    return d.toISOString().slice(0,10);
+  }
+
+  /* ---------- DETERMINISTIC EXECUTION (user's own session; RLS decides) ---------- */
+  async function executePending(){
+    const a=pendingAction; if(!a)return;
+    const box=document.getElementById('aa-confirm');
+    let ref=null, err=null;
+    try{
+      if(a.type==='record_expense'){
+        const payload={
+          description:a.description||'Expense', amount:Number(a.amount),
+          currency:a.currency||'PKR', entry_date:a.entry_date||new Date().toISOString().slice(0,10),
+          category:a.category&&a.category!=='null'?a.category:'other',
+          order_id:findOrder(a.order_ref), entered_by:myUid
+        };
+        if(!payload.amount)throw new Error('Amount missing.');
+        try{ const {data:num}=await sb.rpc('crm_next_number',{p_entity:'dce'}); payload.entry_number=num||null; }catch(e){}
+        const {data,error}=await sb.from('crm_daily_entries').insert(payload).select('entry_number,id').single();
+        if(error)throw error; ref=data.entry_number||data.id;
+        push('sys','Recorded '+ref+' — pending Owner approval in Daily Expenses.');
+      }
+      else if(a.type==='log_hours'){
+        let empId=null;
+        if(a.employee_name){ const e2=findEmp(a.employee_name); if(!e2)throw new Error('No employee record matches "'+a.employee_name+'". Add them in Employee Costs first.'); empId=e2.id; }
+        else if(myEmp){ empId=myEmp.id; }
+        else throw new Error('Your login is not linked to an Employee Cost record yet — the Owner can link it in Employee Costs.');
+        const payload={ employee_cost_id:empId, hours:Number(a.hours),
+          work_date:a.work_date||new Date().toISOString().slice(0,10),
+          order_id:findOrder(a.order_ref), description:a.description||null };
+        if(!payload.hours)throw new Error('Hours missing.');
+        const {data,error}=await sb.from('crm_timesheets').insert(payload).select('id').single();
+        if(error)throw error; ref=data.id;
+        push('sys','Hours logged'+(payload.order_id?' against the order — they will appear as Direct Labour in Project Costing.':'.'));
+      }
+      else if(a.type==='add_subscription'){
+        const payload={ software_name:a.software_name, cost:Number(a.cost),
+          billing_cycle:a.billing_cycle||'monthly', currency:a.currency||'PKR',
+          renewal_date:a.renewal_date||null };
+        if(!payload.software_name||!payload.cost)throw new Error('Software name and cost are required.');
+        try{ const {data:num}=await sb.rpc('crm_next_number',{p_entity:'sub'}); payload.subscription_number=num||null; }catch(e){}
+        const {data,error}=await sb.from('crm_subscriptions').insert(payload).select('subscription_number,id').single();
+        if(error)throw error; ref=data.subscription_number||data.id;
+        push('sys','Subscription added ('+ref+') — visible in Financial Settings.');
+      }
+      else if(a.type==='update_subscription'||a.type==='cancel_subscription'||a.type==='renew_subscription'){
+        const s=findSub(a.software_name);
+        if(!s)throw new Error('No subscription matches "'+(a.software_name||'')+'".');
+        let changes={};
+        if(a.type==='cancel_subscription')changes.status='cancelled';
+        if(a.type==='update_subscription'){
+          if(a.new_cost!=null)changes.cost=Number(a.new_cost);
+          if(a.new_billing_cycle)changes.billing_cycle=a.new_billing_cycle;
+          if(!Object.keys(changes).length)throw new Error('No change stated.');
+        }
+        if(a.type==='renew_subscription'){
+          if(!s.renewal_date)throw new Error(s.software_name+' has no renewal date on record — set it in Financial Settings first.');
+          const m=s.billing_cycle==='yearly'?12:(s.billing_cycle==='quarterly'?3:1);
+          changes.renewal_date=addMonths(s.renewal_date,m);
+        }
+        const {error}=await sb.from('crm_subscriptions').update(changes).eq('id',s.id);
+        if(error)throw error; ref=s.software_name;
+        push('sys',s.software_name+' updated'+(changes.renewal_date?' — next renewal '+changes.renewal_date:'')+'. Price changes are kept in its price history.');
+      }
+      else if(a.type==='add_fixed_expense'){
+        const payload={ name:a.name, category:'other', frequency:a.frequency||'monthly',
+          amount:Number(a.amount), currency:a.currency||'PKR' };
+        if(!payload.name||!payload.amount)throw new Error('Name and amount are required.');
+        try{ const {data:num}=await sb.rpc('crm_next_number',{p_entity:'fxp'}); payload.expense_number=num||null; }catch(e){}
+        const {data,error}=await sb.from('crm_fixed_expenses').insert(payload).select('expense_number,id').single();
+        if(error)throw error; ref=data.expense_number||data.id;
+        push('sys','Fixed expense added ('+ref+') — category set to Other; refine it in Financial Settings if needed.');
+      }
+      else if(a.type==='update_salary'){
+        const e2=findEmp(a.employee_name);
+        if(!e2)throw new Error('No employee record matches "'+(a.employee_name||'')+'".');
+        if(!Number(a.new_monthly_salary))throw new Error('New salary missing.');
+        const {error}=await sb.from('crm_employee_costs').update({monthly_salary:Number(a.new_monthly_salary)}).eq('id',e2.id);
+        if(error)throw error; ref=e2.employee_name;
+        push('sys',e2.employee_name+"'s salary updated — the previous figure is preserved in change history, and every derived rate has recalculated.");
+      }
+      else throw new Error('Unsupported action type.');
+    }catch(e){ err=e.message||String(e); }
+
+    if(pendingLogId){
+      await sb.from('crm_ai_actions').update(err?{status:'failed',error:err}:{status:'executed',result_ref:String(ref)}).eq('id',pendingLogId);
+    }
+    if(err)push('sys','Not recorded — '+err);
+    pendingAction=null; pendingLogId=null; box.innerHTML='';
+    await loadContext(); await loadLog();
+  }
+
+  /* ---------- LOG ---------- */
+  async function loadLog(){
+    const {data,error}=await sb.from('crm_ai_actions').select('*').eq('user_id',myUid).order('created_at',{ascending:false}).limit(10);
+    const rows=data||[];
+    document.getElementById('aa-log-empty').style.display=(error||!rows.length)?'block':'none';
+    document.getElementById('aa-log-rows').innerHTML=rows.map(r=>`
+      <tr>
+        <td class="crm-mono">${esc(String(r.created_at).replace('T',' ').slice(0,16))}</td>
+        <td>${esc(r.request_text)}</td>
+        <td class="crm-mono">${esc(label(r.action_type||''))}</td>
+        <td>${r.status==='executed'?'<span class="crm-badge ok">Executed</span>':(r.status==='failed'?'<span class="crm-badge bad">Failed</span>':(r.status==='cancelled'?'<span class="crm-badge">Cancelled</span>':'<span class="crm-badge warn">'+esc(label(r.status))+'</span>'))}</td>
+        <td class="crm-mono">${esc(r.result_ref||r.error||'—')}</td>
+      </tr>`).join('');
+  }
+
+  checkSession();
+});
+</script>
+</body>
+</html>

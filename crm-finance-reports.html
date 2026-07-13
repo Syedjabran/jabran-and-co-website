@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Reports | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm-/fr- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1120px;}
+  .crm-topline{margin-bottom:24px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .fr-tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:26px; overflow-x:auto;}
+  .fr-tab{padding:11px 20px; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .fr-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .fr-card{border:1px solid var(--line); background:var(--bg-alt); padding:22px 24px; margin-bottom:22px;}
+  .fr-card h3{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:6px;}
+  .fr-note{font-size:12px; color:var(--muted); margin-bottom:14px;}
+  .fr-chart{position:relative; height:280px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:12px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); text-align:left; padding:9px 10px; border-bottom:1px solid var(--line);}
+  .crm-table td{padding:9px 10px; border-bottom:1px solid rgba(198,165,90,0.10); font-family:'IBM Plex Mono',monospace; font-size:11px;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted);}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  .crm-empty{font-size:13px; color:var(--muted); padding:20px 0;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.danger{background:transparent; color:#e57368; border:1px solid rgba(229,115,104,0.4);}
+  .crm-btn.small{padding:6px 12px; font-size:10px;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:10px;}
+  .fr-brow{display:grid; grid-template-columns:120px 1fr 130px 1fr 40px; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.08);}
+  .fr-brow input,.fr-brow select{background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:7px 9px; font-size:12px; border-radius:2px; width:100%;}
+  .fr-forecast{background:var(--bg-deep); border:1px solid var(--line); padding:14px 16px; margin-top:14px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--gold-light); line-height:1.9;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+    .fr-brow{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Financial Reports — Management Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%; margin-top:0;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-daily-entry.html">Daily Expenses</a>
+    <a class="crm-nav-item" href="crm-ai-accountant.html">AI Accountant</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-business-rules.html">Business Rules</a>
+    <a class="crm-nav-item" href="crm-financial-settings.html">Financial Settings</a>
+    <a class="crm-nav-item" href="crm-employee-costs.html">Employee Costs</a>
+    <a class="crm-nav-item" href="crm-project-costing.html">Project Costing</a>
+    <span class="crm-nav-item active">Financial Reports</span>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">Management Only — Never Client-Visible · All figures PKR</div>
+      <h1>Financial Reports</h1>
+    </div>
+
+    <div class="fr-tabs">
+      <div class="fr-tab active" data-tab="pl">P&amp;L (Actual)</div>
+      <div class="fr-tab" data-tab="cash">Cash Flow</div>
+      <div class="fr-tab" data-tab="cc">Cost Centres</div>
+      <div class="fr-tab" data-tab="budget">Budgets</div>
+    </div>
+
+    <!-- P&L -->
+    <section id="tab-pl">
+      <div class="fr-card">
+        <h3>Monthly P&amp;L — Actual Model</h3>
+        <div class="fr-note">EBITDA Actual = Gross Profit − direct ledger expenses − direct labour − allocated overheads. Months without an allocation run are flagged incomplete; the notional column is the 8%-of-revenue model for comparison. Interest, tax, depreciation, and amortisation are excluded by construction.</div>
+        <div class="fr-chart"><canvas id="chart-pl"></canvas></div>
+      </div>
+      <button class="crm-btn ghost small" id="btn-csv-pl">Export CSV</button>
+      <table class="crm-table" style="margin-top:12px;">
+        <thead><tr><th>Period</th><th>Invoiced</th><th>Gross Profit</th><th>Direct Exp.</th><th>Direct Labour</th><th>Allocated</th><th>EBITDA Actual</th><th>EBITDA Notional</th><th>Status</th></tr></thead>
+        <tbody id="pl-rows"></tbody>
+      </table>
+      <div class="fr-forecast" id="pl-forecast" style="display:none;"></div>
+    </section>
+
+    <!-- CASH FLOW -->
+    <section id="tab-cash" style="display:none;">
+      <div class="fr-card">
+        <h3>Operating Cash Flow</h3>
+        <div class="fr-note">Cash in = verified collections. Cash out = ledger expenses, treated as paid on their expense date. Recurring costs and payroll appear here only once they are actually entered in the ledger — this report never models cash it hasn't seen.</div>
+        <div class="fr-chart"><canvas id="chart-cash"></canvas></div>
+      </div>
+      <button class="crm-btn ghost small" id="btn-csv-cash">Export CSV</button>
+      <table class="crm-table" style="margin-top:12px;">
+        <thead><tr><th>Period</th><th>Cash In (Collected)</th><th>Cash Out (Ledger)</th><th>Net Operating Cash</th></tr></thead>
+        <tbody id="cash-rows"></tbody>
+      </table>
+    </section>
+
+    <!-- COST CENTRES -->
+    <section id="tab-cc" style="display:none;">
+      <div class="fr-card">
+        <h3>Monthly Burn by Cost Centre</h3>
+        <div class="fr-note">Recurring (fixed expenses + subscriptions) and payroll at current rates, plus this month's approved daily entries — sources shown separately.</div>
+        <div class="fr-chart"><canvas id="chart-cc"></canvas></div>
+      </div>
+      <button class="crm-btn ghost small" id="btn-csv-cc">Export CSV</button>
+      <table class="crm-table" style="margin-top:12px;">
+        <thead><tr><th>Cost Centre</th><th>Recurring</th><th>Payroll</th><th>Daily (This Month)</th><th>Total / Month</th></tr></thead>
+        <tbody id="cc-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="cc-empty" style="display:none;">No cost data yet.</p>
+    </section>
+
+    <!-- BUDGETS -->
+    <section id="tab-budget" style="display:none;">
+      <div class="fr-card">
+        <h3>Budgets</h3>
+        <div class="fr-note">Company-wide or per cost centre, per month. Actuals combine hard ledger figures with recurring/payroll modelled at current rates — the composition is shown so nothing is blended silently. Owner and Super Admin edit; others view.</div>
+        <div class="fr-brow crm-mono" style="border-bottom:1px solid var(--line);"><span>PERIOD</span><span>SCOPE</span><span>BUDGET (PKR)</span><span>NOTES</span><span></span></div>
+        <div id="budget-rows"></div>
+        <button class="crm-btn ghost small" id="btn-add-budget" type="button" style="margin-top:10px;">+ Add Budget</button>
+        <div style="margin-top:12px;">
+          <button class="crm-btn" id="btn-save-budgets" type="button">Save Budgets</button>
+          <span class="crm-status-msg" id="budget-status"></span>
+        </div>
+      </div>
+      <button class="crm-btn ghost small" id="btn-csv-bva">Export CSV</button>
+      <table class="crm-table" style="margin-top:12px;">
+        <thead><tr><th>Period</th><th>Scope</th><th>Budget</th><th>Ledger Actual</th><th>Labour</th><th>Recurring*</th><th>Payroll*</th><th>Total</th><th>Variance</th></tr></thead>
+        <tbody id="bva-rows"></tbody>
+      </table>
+      <p class="crm-mono" style="margin-top:8px;">* modelled at current rates, not historical snapshots.</p>
+      <p class="crm-empty" id="bva-empty" style="display:none;">No budgets set yet.</p>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function money(n){ return n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  function val(id){ const el=document.getElementById(id); if(!el)return null; return el.value===''?null:el.value; }
+
+  var canEdit=false, plData=[], cashData=[], ccData=[], budgets=[], bvaData=[], centres=[], charts={};
+  const GOLD='#C6A55A', GOLDL='#E4C98A', RED='#e57368', GREEN='#7fc8a9', MUTED='#9C9690';
+  const PAL=[GOLD,'#0F6B5C',GOLDL,'#B86A32',GREEN,'#8a93a6','#c98a8a','#7a9cc9','#a68ac9','#c9b57a','#6bbcb0','#b0776b','#9C9690'];
+
+  /* ---------- AUTH ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  if(passToggle)passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:allowed,error}=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']});
+    if(error||allowed!==true){
+      document.getElementById('crm-login-status').textContent='Financial Reports are restricted to management.';
+      await sb.auth.signOut(); return;
+    }
+    try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); canEdit=r.data===true; }catch(e){ canEdit=false; }
+    if(!canEdit)['btn-add-budget','btn-save-budgets'].forEach(id=>{ const b=document.getElementById(id); if(b)b.disabled=true; });
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    await Promise.all([loadCentres(), loadPl(), loadCash(), loadCc(), loadBudgets(), loadBva()]);
+  }
+
+  /* ---------- TABS ---------- */
+  document.querySelectorAll('.fr-tab').forEach(t=>t.addEventListener('click',()=>{
+    document.querySelectorAll('.fr-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    ['pl','cash','cc','budget'].forEach(k=>{ document.getElementById('tab-'+k).style.display = (t.dataset.tab===k)?'block':'none'; });
+  }));
+
+  /* ---------- CSV ---------- */
+  function csv(name, headers, rows){
+    const body=[headers.join(',')].concat(rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(','))).join('\r\n');
+    const blob=new Blob(['\ufeff'+body],{type:'text/csv;charset=utf-8;'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='JABRAN-CO-'+name+'-'+new Date().toISOString().slice(0,10)+'.csv';
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  function mkChart(id,cfg){
+    if(charts[id])charts[id].destroy();
+    const ctx=document.getElementById(id); if(!ctx||typeof Chart==='undefined')return;
+    charts[id]=new Chart(ctx,cfg);
+  }
+  const gridOpts={grid:{color:'rgba(198,165,90,0.10)'},ticks:{color:MUTED,font:{family:'IBM Plex Mono',size:10}}};
+  const legendOpts={labels:{color:MUTED,font:{family:'IBM Plex Mono',size:10}}};
+
+  /* ---------- P&L ---------- */
+  async function loadPl(){
+    const {data}=await sb.from('crm_pl_actual_monthly').select('*').order('period');
+    plData=data||[];
+    document.getElementById('pl-rows').innerHTML=plData.map(r=>`
+      <tr>
+        <td>${esc(r.period)}</td>
+        <td>${money(r.invoiced)}</td>
+        <td>${money(r.gross_profit)}</td>
+        <td>${money(r.direct_expenses)}</td>
+        <td>${money(r.direct_labour)}</td>
+        <td>${money(r.allocated_overheads)}</td>
+        <td style="color:${Number(r.ebitda_actual)<0?RED:GOLDL};">${money(r.ebitda_actual)}</td>
+        <td style="color:${MUTED};">${money(r.ebitda_notional)}</td>
+        <td>${r.complete?'<span class="crm-badge ok">Complete</span>':'<span class="crm-badge warn">No allocation run</span>'}</td>
+      </tr>`).join('');
+    mkChart('chart-pl',{type:'line',data:{labels:plData.map(r=>r.period),datasets:[
+      {label:'Invoiced',data:plData.map(r=>r.invoiced),borderColor:GOLD,backgroundColor:GOLD,tension:.3},
+      {label:'Gross Profit',data:plData.map(r=>r.gross_profit),borderColor:GREEN,backgroundColor:GREEN,tension:.3},
+      {label:'EBITDA Actual',data:plData.map(r=>r.ebitda_actual),borderColor:GOLDL,backgroundColor:GOLDL,tension:.3},
+      {label:'EBITDA Notional',data:plData.map(r=>r.ebitda_notional),borderColor:MUTED,backgroundColor:MUTED,borderDash:[5,4],tension:.3}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:legendOpts},scales:{x:gridOpts,y:gridOpts}}});
+    // Forecast — only with >= 3 months of real revenue, clearly labelled.
+    const active=plData.filter(r=>Number(r.invoiced)>0);
+    const fbox=document.getElementById('pl-forecast');
+    if(active.length>=3){
+      const last3=active.slice(-3);
+      const avg=k=>Math.round(last3.reduce((s,r)=>s+Number(r[k]||0),0)/3);
+      fbox.style.display='block';
+      fbox.textContent='Trend estimate for next month (simple 3-month average of '
+        +last3.map(r=>r.period).join(', ')+'):\n'
+        +'Invoiced ≈ PKR '+avg('invoiced').toLocaleString()
+        +' · Gross Profit ≈ PKR '+avg('gross_profit').toLocaleString()
+        +' · EBITDA Actual ≈ PKR '+avg('ebitda_actual').toLocaleString()
+        +'\nThis is an arithmetic trend, not a prediction or a guarantee.';
+    } else {
+      fbox.style.display='block';
+      fbox.textContent='Forecasts unlock after 3 months of real invoicing data — currently '+active.length+' month(s). Nothing is estimated before then.';
+    }
+  }
+  document.getElementById('btn-csv-pl').addEventListener('click',()=>csv('PL-Actual',
+    ['Period','Invoiced','Collected','Gross Profit','Direct Expenses','Direct Labour','Allocated','EBITDA Actual','EBITDA Notional','Complete'],
+    plData.map(r=>[r.period,r.invoiced,r.collected,r.gross_profit,r.direct_expenses,r.direct_labour,r.allocated_overheads,r.ebitda_actual,r.ebitda_notional,r.complete?'yes':'no'])));
+
+  /* ---------- CASH ---------- */
+  async function loadCash(){
+    const {data}=await sb.from('crm_cashflow_monthly').select('*').order('period');
+    cashData=data||[];
+    document.getElementById('cash-rows').innerHTML=cashData.map(r=>`
+      <tr>
+        <td>${esc(r.period)}</td>
+        <td style="color:${GREEN};">${money(r.cash_in)}</td>
+        <td style="color:${RED};">${money(r.cash_out_ledger)}</td>
+        <td style="color:${Number(r.net_operating_cash)<0?RED:GOLDL};">${money(r.net_operating_cash)}</td>
+      </tr>`).join('');
+    mkChart('chart-cash',{type:'bar',data:{labels:cashData.map(r=>r.period),datasets:[
+      {label:'Cash In',data:cashData.map(r=>r.cash_in),backgroundColor:'rgba(127,200,169,0.7)'},
+      {label:'Cash Out',data:cashData.map(r=>r.cash_out_ledger),backgroundColor:'rgba(229,115,104,0.7)'},
+      {label:'Net',data:cashData.map(r=>r.net_operating_cash),type:'line',borderColor:GOLDL,backgroundColor:GOLDL,tension:.3}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:legendOpts},scales:{x:gridOpts,y:gridOpts}}});
+  }
+  document.getElementById('btn-csv-cash').addEventListener('click',()=>csv('CashFlow',
+    ['Period','Cash In','Cash Out (Ledger)','Net Operating Cash'],
+    cashData.map(r=>[r.period,r.cash_in,r.cash_out_ledger,r.net_operating_cash])));
+
+  /* ---------- COST CENTRES ---------- */
+  async function loadCc(){
+    const {data,error}=await sb.from('crm_cost_centre_report').select('*');
+    const rows=(data||[]).filter(r=>r.currency==='PKR');
+    const map={};
+    rows.forEach(r=>{
+      map[r.cost_centre]=map[r.cost_centre]||{recurring:0,payroll:0,daily:0};
+      if(r.source==='recurring')map[r.cost_centre].recurring+=Number(r.monthly_total);
+      else if(r.source==='payroll')map[r.cost_centre].payroll+=Number(r.monthly_total);
+      else map[r.cost_centre].daily+=Number(r.monthly_total);
+    });
+    ccData=Object.keys(map).map(k=>({centre:k,...map[k],total:map[k].recurring+map[k].payroll+map[k].daily}))
+      .sort((a,b)=>b.total-a.total);
+    document.getElementById('cc-empty').style.display=(error||!ccData.length)?'block':'none';
+    document.getElementById('cc-rows').innerHTML=ccData.map(r=>`
+      <tr>
+        <td>${esc(r.centre)}</td>
+        <td>${money(r.recurring)}</td>
+        <td>${money(r.payroll)}</td>
+        <td>${money(r.daily)}</td>
+        <td style="color:${GOLDL};">${money(r.total)}</td>
+      </tr>`).join('');
+    mkChart('chart-cc',{type:'doughnut',data:{labels:ccData.map(r=>r.centre),datasets:[
+      {data:ccData.map(r=>r.total),backgroundColor:ccData.map((_,i)=>PAL[i%PAL.length]),borderColor:'#0B0F14'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:MUTED,font:{family:'IBM Plex Mono',size:10}}}}}});
+  }
+  document.getElementById('btn-csv-cc').addEventListener('click',()=>csv('CostCentres',
+    ['Cost Centre','Recurring','Payroll','Daily (This Month)','Total'],
+    ccData.map(r=>[r.centre,r.recurring,r.payroll,r.daily,r.total])));
+
+  /* ---------- BUDGETS ---------- */
+  async function loadCentres(){
+    const {data}=await sb.from('crm_cost_centres').select('id,name,is_active').order('sort_order');
+    centres=(data||[]).filter(c=>c.is_active);
+  }
+  async function loadBudgets(){
+    const {data}=await sb.from('crm_budgets').select('*').order('period',{ascending:false});
+    budgets=(data||[]).map(b=>({id:b.id,period:b.period,cost_centre_id:b.cost_centre_id,amount:b.amount,notes:b.notes}));
+    renderBudgets();
+  }
+  function renderBudgets(){
+    document.getElementById('budget-rows').innerHTML=budgets.map((b,i)=>`
+      <div class="fr-brow" data-bi="${i}">
+        <input data-bf="period" type="month" value="${esc(b.period||'')}" ${canEdit?'':'disabled'}>
+        <select data-bf="cost_centre_id" ${canEdit?'':'disabled'}>
+          <option value="">Whole Company</option>
+          ${centres.map(c=>`<option value="${c.id}" ${b.cost_centre_id===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}
+        </select>
+        <input data-bf="amount" type="number" min="0" step="1" value="${esc(String(b.amount??''))}" ${canEdit?'':'disabled'}>
+        <input data-bf="notes" value="${esc(b.notes||'')}" ${canEdit?'':'disabled'}>
+        ${canEdit?'<button type="button" class="crm-btn danger small" data-brem="'+i+'">×</button>':'<span></span>'}
+      </div>`).join('');
+    document.querySelectorAll('[data-bf]').forEach(el=>el.addEventListener('input',()=>{
+      const i=Number(el.closest('[data-bi]').dataset.bi);
+      budgets[i][el.dataset.bf]=el.value||null;
+    }));
+    document.querySelectorAll('[data-brem]').forEach(btn=>btn.addEventListener('click', async ()=>{
+      const i=Number(btn.dataset.brem);
+      if(budgets[i].id)await sb.from('crm_budgets').delete().eq('id',budgets[i].id);
+      budgets.splice(i,1); renderBudgets(); await loadBva();
+    }));
+  }
+  document.getElementById('btn-add-budget').addEventListener('click',()=>{
+    budgets.unshift({period:new Date().toISOString().slice(0,7),cost_centre_id:null,amount:'',notes:''});
+    renderBudgets();
+  });
+  document.getElementById('btn-save-budgets').addEventListener('click', async ()=>{
+    const st=document.getElementById('budget-status'); st.textContent='Saving…';
+    for(const b of budgets){
+      if(!b.period||!Number(b.amount))continue;
+      const row={period:b.period, cost_centre_id:b.cost_centre_id||null, amount:Number(b.amount), notes:b.notes||null};
+      let res;
+      if(b.id){ res=await sb.from('crm_budgets').update(row).eq('id',b.id); }
+      else{ res=await sb.from('crm_budgets').insert(row).select('id').single(); if(res.data)b.id=res.data.id; }
+      if(res.error){ st.textContent='Error: '+res.error.message; return; }
+    }
+    st.textContent='Saved.'; await loadBva();
+  });
+  async function loadBva(){
+    const {data,error}=await sb.from('crm_budget_vs_actual').select('*').order('period',{ascending:false});
+    bvaData=data||[];
+    document.getElementById('bva-empty').style.display=(error||!bvaData.length)?'block':'none';
+    document.getElementById('bva-rows').innerHTML=bvaData.map(r=>{
+      const total=Number(r.actual_ledger)+Number(r.actual_labour)+Number(r.modelled_recurring)+Number(r.modelled_payroll);
+      const variance=Number(r.budget)-total;
+      return `<tr>
+        <td>${esc(r.period)}</td>
+        <td>${esc(r.scope)}</td>
+        <td>${money(r.budget)}</td>
+        <td>${money(r.actual_ledger)}</td>
+        <td>${money(r.actual_labour)}</td>
+        <td style="color:${MUTED};">${money(r.modelled_recurring)}</td>
+        <td style="color:${MUTED};">${money(r.modelled_payroll)}</td>
+        <td>${money(total)}</td>
+        <td style="color:${variance<0?RED:GREEN};">${(variance<0?'':'+')+money(variance)} ${variance<0?'<span class="crm-badge bad">Over</span>':'<span class="crm-badge ok">Within</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('btn-csv-bva').addEventListener('click',()=>csv('BudgetVsActual',
+    ['Period','Scope','Budget','Ledger Actual','Labour','Recurring (modelled)','Payroll (modelled)','Total','Variance'],
+    bvaData.map(r=>{
+      const total=Number(r.actual_ledger)+Number(r.actual_labour)+Number(r.modelled_recurring)+Number(r.modelled_payroll);
+      return [r.period,r.scope,r.budget,r.actual_ledger,r.actual_labour,r.modelled_recurring,r.modelled_payroll,total,Number(r.budget)-total];
+    })));
+
+  checkSession();
+});
+</script>
+</body>
+</html>
