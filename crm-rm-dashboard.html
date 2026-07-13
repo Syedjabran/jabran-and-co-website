@@ -96,6 +96,12 @@
 
     <div class="crm-kpis" id="rm-kpis"></div>
 
+    <div class="crm-card" id="rm-alerts-card">
+      <h3 style="font-size:16px; margin-bottom:6px;">Attention Feed</h3>
+      <p class="crm-mono" style="margin-bottom:10px;">Overdue milestones, milestones due within the configured window, and orders with no tracking update.</p>
+      <div id="rm-alerts"></div>
+    </div>
+
     <div class="crm-card" id="rm-unassigned-card" style="display:none; border-color:#e08a4a;">
       <h3 style="font-size:16px; margin-bottom:6px; color:#e08a4a;">Orders without a Relationship Manager</h3>
       <p class="crm-mono" style="margin-bottom:10px;">These orders are blocked from progressing. Open each in Orders &amp; Fulfilment and assign an RM.</p>
@@ -171,6 +177,23 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   async function load(){
+    /* Attention feed — live delay engine (migration 020) */
+    try{
+      var al=await sb.rpc('crm_tracking_alerts');
+      var arows=al.data||[];
+      var KIND={overdue:['OVERDUE','#e57368'], due_soon:['DUE SOON','#e08a4a'], stale:['STALE','var(--muted)']};
+      document.getElementById('rm-alerts').innerHTML=arows.length?arows.slice(0,30).map(function(a){
+        var k=KIND[a.kind]||KIND.stale;
+        return '<div style="display:flex; gap:10px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.08); font-size:13px; flex-wrap:wrap;">'+
+          '<span style="font-family:\'IBM Plex Mono\',monospace; font-size:9px; letter-spacing:0.06em; border:1px solid '+k[1]+'; color:'+k[1]+'; padding:2px 6px; border-radius:2px;">'+k[0]+'</span>'+
+          '<span class="crm-mono" style="color:var(--gold-light);">'+esc(a.order_number||'')+'</span>'+
+          '<span style="flex:1; min-width:120px;">'+esc(a.detail||'')+'</span>'+
+          '<span class="crm-mono">'+esc(a.due_at||'')+'</span></div>';
+      }).join(''):'<p class="crm-empty">Nothing needs attention — all milestones are on plan.</p>';
+    }catch(e){
+      document.getElementById('rm-alerts').innerHTML='<p class="crm-empty">Attention feed unavailable (run migration 020).</p>';
+    }
+
     var d=await sb.rpc('crm_rm_dashboard');
     var k=d.data||{};
     var kpis=[
