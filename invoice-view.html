@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* iv- scoped. Brand-token fallbacks (exact style.css values). */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.65;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  .iv-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .iv-wrap{max-width:880px; margin:0 auto; padding:110px 20px 80px;}
+  .iv-doc{background:var(--bg-alt); border:1px solid var(--line);}
+  .iv-head{display:flex; justify-content:space-between; align-items:flex-start; gap:26px; padding:48px 60px 34px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
+  .iv-head img{width:150px; height:auto;}
+  .iv-head-right{text-align:right;}
+  .iv-type{font-size:11px; letter-spacing:0.34em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;}
+  .iv-number{font-family:'Playfair Display',serif; font-size:26px; font-weight:600;}
+  .iv-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:5px 14px; border:1px solid var(--line); color:var(--gold-light); margin-top:10px;}
+  .iv-body{padding:40px 60px;}
+  .iv-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px 30px; margin-bottom:32px;}
+  .iv-grid div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:3px;}
+  .iv-grid div span{font-size:13.5px;}
+  table.iv-items{width:100%; border-collapse:collapse; font-size:13px;}
+  .iv-items th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-family:'IBM Plex Mono',monospace; font-weight:500; padding:10px; border-bottom:1px solid var(--line);}
+  .iv-items td{padding:11px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .iv-items .num{text-align:right; font-family:'IBM Plex Mono',monospace;}
+  .iv-totals{margin-left:auto; max-width:340px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:16px;}
+  .iv-totals div{display:flex; justify-content:space-between; padding:4px 0;}
+  .iv-totals .grand{border-top:1px solid var(--gold); margin-top:6px; padding-top:10px; color:var(--gold-light); font-size:15px;}
+  .iv-pay{border:1px solid var(--line); background:var(--bg-alt-2); padding:22px 26px; margin-top:34px;}
+  .iv-pay b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:8px;}
+  .iv-pay p{font-size:13px; white-space:pre-line; margin:0;}
+  .iv-note{font-size:12.5px; color:var(--muted); margin-top:26px; white-space:pre-line;}
+  .iv-foot{border-top:1px solid var(--line); padding:22px 60px; display:flex; gap:18px; flex-wrap:wrap; justify-content:space-between;}
+  .iv-btnrow{display:flex; justify-content:space-between; margin-bottom:20px;}
+  .iv-btn{background:var(--gold); color:#0a0a0b; border:none; padding:12px 26px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .iv-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  #iv-msg{text-align:center; font-size:13px; color:var(--gold-light); margin-top:14px;}
+  #iv-gate{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #iv-gate input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  @media (max-width:640px){ .iv-head,.iv-body{padding:34px 22px;} .iv-foot{padding:20px 22px;} .iv-grid{grid-template-columns:1fr;} .iv-head-right{text-align:left;} }
+  @media print{
+    body{background:#fff; color:#111;}
+    .iv-wrap{padding:0; max-width:none;}
+    .iv-doc{border:none; background:#fff;}
+    .iv-doc *{color:#111 !important;}
+    .iv-doc .iv-type,.iv-grid div b,.iv-items th,.iv-pay b,.iv-totals .grand{color:#8a6d2f !important;}
+    .iv-items th,.iv-items td,.iv-foot,.iv-head,.iv-totals .grand,.iv-pay{border-color:#ddd !important;}
+    .iv-pay{background:#f6f4ef !important;}
+    .iv-badge{border-color:#ddd !important;}
+    .iv-btnrow,#iv-msg{display:none !important;}
+    .iv-items tr{page-break-inside:avoid;}
+    @page{ margin:18mm 16mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="iv-gate">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px;">Secure Document Access</p>
+  <form id="iv-login-form">
+    <input id="iv-email" type="email" autocomplete="email" placeholder="Email Address" required>
+    <input id="iv-password" type="password" autocomplete="current-password" placeholder="Password" required>
+    <button class="iv-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="iv-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div class="iv-wrap" id="iv-page-wrap" style="display:none;">
+  <div class="iv-btnrow">
+    <a id="iv-back" href="crm-finance.html" class="iv-mono" style="color:var(--muted); text-decoration:none; align-self:center;">‹ Back</a>
+    <button class="iv-btn ghost" id="iv-print-btn" type="button">Print / Save as PDF</button>
+  </div>
+
+  <article class="iv-doc" id="iv-doc">
+    <div class="iv-head">
+      <div>
+        <img src="logo-full.png" alt="JABRAN &amp; CO.">
+        <div class="iv-mono" style="margin-top:12px;">M/S JABRAN &amp; CO</div>
+      </div>
+      <div class="iv-head-right">
+        <div class="iv-type" id="iv-type">Invoice</div>
+        <div class="iv-number" id="iv-number">—</div>
+        <span class="iv-badge" id="iv-status"></span>
+      </div>
+    </div>
+    <div class="iv-body">
+      <div class="iv-grid">
+        <div><b>Billed To</b><span id="iv-org">—</span></div>
+        <div><b>Issue Date</b><span id="iv-issued">—</span></div>
+        <div id="iv-due-wrap" style="display:none;"><b>Due Date</b><span id="iv-due"></span></div>
+        <div id="iv-terms-wrap" style="display:none;"><b>Payment Terms</b><span id="iv-terms"></span></div>
+        <div id="iv-order-wrap" style="display:none;"><b>Related Order</b><span id="iv-order"></span></div>
+        <div id="iv-fx-wrap" style="display:none;"><b>Exchange Rate → PKR</b><span id="iv-fx"></span></div>
+      </div>
+
+      <table class="iv-items" id="iv-items-table" style="display:none;">
+        <thead><tr><th style="width:52%;">Description</th><th class="num">Qty</th><th class="num">Unit Price</th><th class="num">Amount</th></tr></thead>
+        <tbody id="iv-items-rows"></tbody>
+      </table>
+
+      <div class="iv-totals" id="iv-totals"></div>
+
+      <div class="iv-pay" id="iv-pay-wrap" style="display:none;">
+        <b>Payment Instructions</b>
+        <p id="iv-pay-text"></p>
+      </div>
+
+      <div class="iv-note" id="iv-notes" style="display:none;"></div>
+      <p class="iv-note" style="margin-top:30px;">This invoice is issued electronically through the JABRAN &amp; CO. finance system and is valid without a physical signature.</p>
+    </div>
+    <div class="iv-foot">
+      <span class="iv-mono">FBR REG. NO. J152588 · FIRM REG. NO. 6634</span>
+      <span class="iv-mono">PK +92 336 4864345 · UK +44 7400 760630</span>
+      <span class="iv-mono">JABRANANDCO.COM</span>
+    </div>
+  </article>
+  <p id="iv-msg"></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  const params=new URLSearchParams(location.search);
+  const iid=params.get('id');
+  const gate=document.getElementById('iv-gate');
+  const wrap=document.getElementById('iv-page-wrap');
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function money(n,cur){ const v=Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); return (cur?cur+' ':'')+v; }
+  function label(s){ return String(s||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }
+  function show(id,val){ if(val){ document.getElementById(id+'-wrap').style.display='block'; document.getElementById(id).textContent=val; } }
+
+  document.getElementById('iv-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('iv-login-status'); st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('iv-email').value, password:document.getElementById('iv-password').value});
+    if(error){ st.textContent='Incorrect email or password.'; return; }
+    load();
+  });
+  document.getElementById('iv-print-btn').addEventListener('click',()=>window.print());
+
+  async function load(){
+    const {data:sess}=await sb.auth.getSession();
+    if(!sess.session){ gate.style.display='block'; wrap.style.display='none'; return; }
+    if(!iid){ gate.style.display='none'; wrap.style.display='block'; document.getElementById('iv-msg').textContent='No invoice specified.'; return; }
+
+    let isStaff=false;
+    try{ const sr=await sb.rpc('crm_is_staff'); isStaff=(sr.data===true); }catch(e){ isStaff=false; }
+    if(!isStaff) document.getElementById('iv-back').style.display='none';
+
+    const src=isStaff?'crm_invoices':'crm_client_invoices';
+    const {data:i}=await sb.from(src).select('*').eq('id',iid).maybeSingle();
+    gate.style.display='none'; wrap.style.display='block';
+    if(!i){ document.getElementById('iv-doc').style.display='none'; document.getElementById('iv-msg').textContent='Invoice not found or you are not authorised to view it.'; return; }
+
+    const typeMap={pro_forma:'Pro Forma Invoice', advance:'Advance Invoice', commercial:'Commercial Invoice', tax:'Tax Invoice', milestone:'Milestone Invoice', final:'Final Invoice', debit_note:'Debit Note', credit_note:'Credit Note'};
+    document.getElementById('iv-type').textContent=typeMap[i.invoice_type]||'Invoice';
+    document.getElementById('iv-number').textContent=i.invoice_number||'—';
+    document.getElementById('iv-status').textContent=label(i.status);
+    document.getElementById('iv-issued').textContent=i.issue_date||(i.issued_at?String(i.issued_at).slice(0,10):(i.created_at?String(i.created_at).slice(0,10):'—'));
+    show('iv-due', i.due_date||null);
+    show('iv-terms', i.payment_terms||null);
+    if(i.exchange_rate&&Number(i.exchange_rate)!==1&&i.currency!=='PKR') show('iv-fx', String(i.exchange_rate));
+
+    /* Organization */
+    let orgName=null;
+    if(i.organization_id){
+      if(isStaff){
+        const {data:o}=await sb.from('crm_organizations').select('legal_name,trading_name').eq('id',i.organization_id).maybeSingle();
+        if(o) orgName=o.trading_name||o.legal_name;
+      } else {
+        const {data:o}=await sb.from('crm_my_organization').select('*').eq('id',i.organization_id).maybeSingle();
+        if(o) orgName=o.trading_name||o.legal_name||null;
+      }
+    }
+    document.getElementById('iv-org').textContent=orgName||'—';
+
+    /* Related order number */
+    if(i.order_id){
+      try{
+        const osrc=isStaff?'crm_orders':'crm_client_orders';
+        const {data:o}=await sb.from(osrc).select('order_number,title').eq('id',i.order_id).maybeSingle();
+        if(o) show('iv-order',(o.order_number||'')+(o.title?' · '+o.title:''));
+      }catch(e){}
+    }
+
+    /* Line items — client-safe fallback: totals always render even if items are restricted */
+    try{
+      const {data:items}=await sb.from('crm_invoice_items').select('*').eq('invoice_id',iid).order('sort_order');
+      if(items&&items.length){
+        document.getElementById('iv-items-rows').innerHTML=items.map(x=>`
+          <tr><td>${esc(x.description)}</td>
+          <td class="num">${Number(x.quantity)} ${esc(x.unit||'')}</td>
+          <td class="num">${money(x.unit_price)}</td>
+          <td class="num">${money(x.line_total)}</td></tr>`).join('');
+        document.getElementById('iv-items-table').style.display='table';
+      }
+    }catch(e){}
+
+    /* Totals */
+    const t=[];
+    if(i.subtotal!=null) t.push(['Subtotal', money(i.subtotal,i.currency)]);
+    if(Number(i.discount_amount)>0) t.push(['Discount'+(i.discount_pct?' ('+i.discount_pct+'%)':''), '− '+money(i.discount_amount,i.currency)]);
+    if(Number(i.tax_amount)>0) t.push(['Tax'+(i.tax_pct?' ('+i.tax_pct+'%)':''), money(i.tax_amount,i.currency)]);
+    if(Number(i.freight_amount)>0) t.push(['Freight', money(i.freight_amount,i.currency)]);
+    if(Number(i.other_charges)>0) t.push(['Other Charges', money(i.other_charges,i.currency)]);
+    let html=t.map(r=>`<div><span>${esc(r[0])}</span><span>${esc(r[1])}</span></div>`).join('');
+    html+=`<div class="grand"><span>Total (${esc(i.currency||'')})</span><span>${money(i.total)}</span></div>`;
+    if(Number(i.paid_amount)>0){
+      html+=`<div><span>Paid</span><span>${money(i.paid_amount,i.currency)}</span></div>`;
+      html+=`<div><span>Outstanding</span><span>${money(i.outstanding!=null?i.outstanding:(Number(i.total)-Number(i.paid_amount)),i.currency)}</span></div>`;
+    }
+    document.getElementById('iv-totals').innerHTML=html;
+
+    if(i.payment_instructions){ document.getElementById('iv-pay-wrap').style.display='block'; document.getElementById('iv-pay-text').textContent=i.payment_instructions; }
+    if(i.notes){ const n=document.getElementById('iv-notes'); n.style.display='block'; n.textContent=i.notes; }
+  }
+
+  load();
+});
+</script>
+</body>
+</html>
