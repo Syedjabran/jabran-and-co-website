@@ -154,7 +154,11 @@
       });
     }
 
-    /* ---- SUPPORTING DOCUMENTS ---- */
+    /* ---- SUPPORTING DOCUMENTS ----
+       Superseded by crm-attachments.js (Increment 2). When that module is
+       loaded it sets window.JCO_ATTACH_V2 and renders the enterprise panel
+       (categories, visibility, versioning) in this exact spot instead. */
+    if (window.JCO_ATTACH_V2) { if (window.jcoAttachRender) window.jcoAttachRender(form, module, host); return; }
     var attach=el(
       '<div>'+
       '<div style="font-family:\'IBM Plex Mono\',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold,#C6A55A); margin-bottom:8px;">Supporting Documents — receipts, invoices, bank proofs, GDs</div>'+
@@ -244,3 +248,5 @@
   }
   document.addEventListener('DOMContentLoaded', function(){ watch(); setTimeout(watch,1500); });
 })();
+
+

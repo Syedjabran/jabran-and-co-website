@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RM Dashboard | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0;}
+  .crm-topline{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:30px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:16px 18px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:22px; color:var(--gold-light);}
+  .crm-kpi .l{font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-top:4px;}
+  .crm-kpi.warn .n{color:#e08a4a;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-weight:500; padding:10px 12px; border-bottom:1px solid var(--line); font-family:'IBM Plex Mono',monospace;}
+  .crm-table td{padding:12px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--line); color:var(--gold-light); border-radius:2px; white-space:nowrap;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .crm-btn.sm{padding:6px 12px; font-size:10px;}
+  .crm-card{border:1px solid var(--line); background:var(--bg-alt); padding:20px 22px; margin-bottom:24px;}
+  .crm-empty{color:var(--muted); font-size:13px; padding:20px 0;}
+  .notif{padding:10px 0; border-bottom:1px solid rgba(198,165,90,0.1);}
+  .notif.unread{border-left:2px solid var(--gold); padding-left:10px;}
+  .notif .t{font-size:13px; color:var(--cream);}
+  .notif .b{font-size:12px; color:var(--muted);}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:820px){ .crm-shell{flex-direction:column;} .crm-side{width:100%; height:auto; position:static; padding:90px 0 6px; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);} .crm-side .crm-brand,.crm-nav-label{display:none;} .crm-nav-item{white-space:nowrap;} .crm-main{padding:26px 18px 70px;} }
+</style>
+</head>
+<body>
+
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Relationship Manager Dashboard</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">My Work</div>
+    <span class="crm-nav-item active">RM Dashboard</span>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div><div class="eyebrow">Client Ownership &amp; Accountability</div><h1>Relationship Manager Dashboard</h1></div>
+      <span class="crm-mono" id="rm-me"></span>
+    </div>
+
+    <div class="crm-kpis" id="rm-kpis"></div>
+
+    <div class="crm-card" id="rm-unassigned-card" style="display:none; border-color:#e08a4a;">
+      <h3 style="font-size:16px; margin-bottom:6px; color:#e08a4a;">Orders without a Relationship Manager</h3>
+      <p class="crm-mono" style="margin-bottom:10px;">These orders are blocked from progressing. Open each in Orders &amp; Fulfilment and assign an RM.</p>
+      <div id="rm-unassigned-list"></div>
+    </div>
+
+    <div class="crm-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <h3 style="font-size:16px;">Notifications</h3>
+        <button class="crm-btn ghost sm" id="rm-read-all" type="button">Mark all read</button>
+      </div>
+      <div id="rm-notifs"></div>
+    </div>
+
+    <div class="crm-card">
+      <h3 style="font-size:16px; margin-bottom:12px;">My Active Orders</h3>
+      <div style="overflow-x:auto;">
+        <table class="crm-table">
+          <thead><tr><th>Order</th><th>Client</th><th>Status</th><th>Assigned Since</th><th></th></tr></thead>
+          <tbody id="rm-orders"></tbody>
+        </table>
+      </div>
+      <p class="crm-empty" id="rm-orders-empty" style="display:none;">No active orders are assigned to you.</p>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  if (typeof sb === 'undefined') return;
+  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  var loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'),
+      logoutBtn=document.getElementById('crm-logout');
+
+  document.getElementById('crm-pass-toggle').addEventListener('click', function(){
+    var p=document.getElementById('crm-password');
+    p.type=p.type==='password'?'text':'password'; this.textContent=p.type==='password'?'Show':'Hide';
+  });
+
+  async function checkSession(){
+    var r=await sb.auth.getSession();
+    if(r.data && r.data.session){ await boot(); }
+    else { loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none'; }
+  }
+  document.getElementById('crm-login-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    st.textContent=''; btn.disabled=true; btn.textContent='Logging in…';
+    var r=await sb.auth.signInWithPassword({
+      email:document.getElementById('crm-email').value.trim(),
+      password:document.getElementById('crm-password').value });
+    btn.disabled=false; btn.textContent='Log In';
+    if(r.error){ st.textContent=r.error.message; return; }
+    checkSession();
+  });
+  logoutBtn.addEventListener('click', async function(){ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    /* authoritative staff gate — crm_is_staff() RPC, never a table probe */
+    var gate=await sb.rpc('crm_is_staff');
+    if(gate.error || gate.data!==true){
+      document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
+      await sb.auth.signOut(); return;
+    }
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    var u=await sb.auth.getUser();
+    if(u.data&&u.data.user) document.getElementById('rm-me').textContent=u.data.user.email;
+    load();
+  }
+
+  async function load(){
+    var d=await sb.rpc('crm_rm_dashboard');
+    var k=d.data||{};
+    var kpis=[
+      ['My Active Orders', k.active_orders],
+      ['All-Time Orders',  k.total_orders],
+      ['Unread Notifications', k.unread_notifications]
+    ];
+    if(k.unassigned_orders!==null && k.unassigned_orders!==undefined)
+      kpis.push(['Unassigned Orders ⚠', k.unassigned_orders, k.unassigned_orders>0]);
+    document.getElementById('rm-kpis').innerHTML=kpis.map(function(x){
+      return '<div class="crm-kpi'+(x[2]?' warn':'')+'"><div class="n">'+(x[1]===undefined?'—':esc(String(x[1])))+'</div><div class="l">'+esc(x[0])+'</div></div>';
+    }).join('');
+
+    if(k.unassigned_orders>0){
+      var un=await sb.from('crm_orders')
+        .select('id,order_number,status,created_at')
+        .is('relationship_manager_id',null).eq('rm_exempt',false)
+        .not('status','in','("completed","cancelled","refunded","closed")')
+        .order('created_at',{ascending:false}).limit(20);
+      document.getElementById('rm-unassigned-card').style.display='block';
+      document.getElementById('rm-unassigned-list').innerHTML=(un.data||[]).map(function(o){
+        return '<div style="display:flex; gap:10px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.08); font-size:13px;">'+
+          '<span class="crm-mono" style="color:var(--gold-light);">'+esc(o.order_number||o.id.slice(0,8))+'</span>'+
+          '<span class="crm-badge">'+esc(o.status||'—')+'</span>'+
+          '<a class="crm-btn ghost sm" style="margin-left:auto; text-decoration:none;" href="crm-orders.html">Open</a></div>';
+      }).join('');
+    } else {
+      document.getElementById('rm-unassigned-card').style.display='none';
+    }
+
+    var n=await sb.from('crm_notifications').select('*').order('created_at',{ascending:false}).limit(25);
+    var nl=n.data||[];
+    document.getElementById('rm-notifs').innerHTML=nl.length?nl.map(function(x){
+      return '<div class="notif'+(x.read_at?'':' unread')+'">'+
+        '<div class="t">'+esc(x.title)+'</div>'+
+        (x.body?'<div class="b">'+esc(x.body)+'</div>':'')+
+        '<div class="crm-mono" style="font-size:10px;">'+esc((x.created_at||'').replace('T',' ').slice(0,16))+'</div></div>';
+    }).join(''):'<p class="crm-empty">No notifications yet.</p>';
+
+    var uid=(await sb.auth.getUser()).data.user.id;
+    var ords=await sb.from('crm_orders')
+      .select('id,order_number,status,organization_id,created_at')
+      .eq('relationship_manager_id',uid)
+      .not('status','in','("completed","cancelled","refunded","closed")')
+      .order('created_at',{ascending:false}).limit(50);
+    var rows=ords.data||[];
+    var orgIds=Array.from(new Set(rows.map(function(o){return o.organization_id;}).filter(Boolean)));
+    var orgMap={};
+    if(orgIds.length){
+      var og=await sb.from('crm_organizations').select('id,legal_name').in('id',orgIds);
+      (og.data||[]).forEach(function(o){ orgMap[o.id]=o.legal_name; });
+    }
+    var asg=await sb.from('crm_record_assignments').select('entity_id,effective_from')
+      .eq('assignment_type','relationship_manager').eq('user_id',uid).eq('status','active');
+    var since={}; (asg.data||[]).forEach(function(a){ since[a.entity_id]=(a.effective_from||'').slice(0,10); });
+
+    document.getElementById('rm-orders-empty').style.display=rows.length?'none':'block';
+    document.getElementById('rm-orders').innerHTML=rows.map(function(o){
+      return '<tr>'+
+        '<td class="crm-mono" style="color:var(--gold-light);">'+esc(o.order_number||o.id.slice(0,8))+'</td>'+
+        '<td>'+esc(orgMap[o.organization_id]||'—')+'</td>'+
+        '<td><span class="crm-badge">'+esc(o.status||'—')+'</span></td>'+
+        '<td class="crm-mono">'+esc(since[o.id]||(o.created_at||'').slice(0,10))+'</td>'+
+        '<td><a class="crm-btn ghost sm" style="text-decoration:none;" href="crm-orders.html">Open</a></td></tr>';
+    }).join('');
+  }
+
+  document.getElementById('rm-read-all').addEventListener('click', async function(){
+    await sb.from('crm_notifications').update({read_at:new Date().toISOString()}).is('read_at',null);
+    load();
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
