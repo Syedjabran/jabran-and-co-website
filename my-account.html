@@ -57,19 +57,16 @@
   #ma-login input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
   #ma-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
   .ma-status{font-size:12px; color:var(--gold-light); margin-top:10px;}
-  /* journey stepper */
-  .ma-steps{display:flex; gap:0; margin:16px 0 6px; flex-wrap:wrap;}
-  .ma-step{flex:1; min-width:96px; text-align:center; position:relative; padding-top:18px; font-size:10.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted);}
-  .ma-step::before{content:''; position:absolute; top:5px; left:50%; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; border:1px solid var(--line); background:var(--bg-deep); z-index:1;}
-  .ma-step::after{content:''; position:absolute; top:10px; left:calc(-50% + 6px); width:calc(100% - 12px); height:1px; background:var(--line);}
-  .ma-step:first-child::after{display:none;}
-  .ma-step.done{color:var(--cream);}
-  .ma-step.done::before{background:var(--gold); border-color:var(--gold);}
-  .ma-step.done::after{background:var(--gold);}
-  .ma-step.now{color:var(--gold-light); font-weight:500;}
-  .ma-step.now::before{background:var(--bg-deep); border-color:var(--gold-light); box-shadow:0 0 0 3px rgba(228,201,138,0.18);}
-  .ma-step.stop{color:#e57368;}
-  .ma-step.stop::before{background:#e57368; border-color:#e57368;}
+  .ma-journey{display:flex; align-items:flex-start; gap:0; margin:18px 0 6px; overflow-x:auto; padding-bottom:4px;}
+  .ma-jstep{flex:1; min-width:74px; text-align:center; position:relative;}
+  .ma-jstep::before{content:''; position:absolute; top:7px; left:-50%; width:100%; height:1px; background:var(--line);}
+  .ma-jstep:first-child::before{display:none;}
+  .ma-jstep.done::before{background:var(--gold);}
+  .ma-jdot{width:15px; height:15px; border-radius:50%; border:1px solid var(--line); background:var(--bg-deep); margin:0 auto 7px; position:relative; z-index:1;}
+  .ma-jstep.done .ma-jdot{background:var(--gold); border-color:var(--gold);}
+  .ma-jstep.current .ma-jdot{border-color:var(--gold-light); box-shadow:0 0 0 3px rgba(198,165,90,0.18);}
+  .ma-jlabel{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); line-height:1.5;}
+  .ma-jstep.done .ma-jlabel,.ma-jstep.current .ma-jlabel{color:var(--gold-light);}
 </style>
 </head>
 <body>
@@ -104,20 +101,12 @@
   </div>
 
   <div class="ma-tabs">
-    <span class="ma-tab active" data-view="journey">Track Progress</span>
-    <span class="ma-tab" data-view="quotes">Quotations</span>
+    <span class="ma-tab active" data-view="quotes">Quotations</span>
     <span class="ma-tab" data-view="orders">Orders</span>
     <span class="ma-tab" data-view="projects">Projects</span>
     <span class="ma-tab" data-view="invoices">Invoices &amp; Payments</span>
     <span class="ma-tab" data-view="enquiry">Submit an Enquiry</span>
   </div>
-
-  <!-- TRACK PROGRESS — the enquiry → quotation → order → delivery journey -->
-  <section id="mav-journey">
-    <p class="ma-mono" style="margin-bottom:18px;">Every request you send us, tracked end-to-end — from first enquiry to final delivery.</p>
-    <div id="ma-journey-list"></div>
-    <p class="ma-empty" id="ma-journey-empty" style="display:none;">No enquiries yet — submit your first from the "Submit an Enquiry" tab.</p>
-  </section>
 
   <!-- QUOTATIONS -->
   <section id="mav-quotes">
@@ -227,57 +216,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:svcs}=await sb.from('crm_services').select('id,name').eq('is_active',true).order('sort_order');
     const sel=document.getElementById('me-service');
     (svcs||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sel.appendChild(o); });
-    showView('journey');
+    showView('quotes');
   }
 
-  /* ---- TRACK PROGRESS: enquiry → quotation → order → delivery journey.
-     Server-side function returns ONLY client-safe fields (no internal
-     opportunity stages, costs, margins, or supplier data — by design). ---- */
-  async function loadJourney(){
-    const {data,error}=await sb.rpc('crm_my_enquiry_journey');
-    const rows=(!error&&data)?data:[];
-    document.getElementById('ma-journey-empty').style.display=rows.length?'none':'block';
-    const STEPS=['Enquiry Received','Under Review','Quotation Issued','Order Confirmed','Delivered'];
-    document.getElementById('ma-journey-list').innerHTML=rows.map(j=>{
-      const qOK=!!j.quotation_id, oOK=!!j.order_id;
-      const enqDone=true;
-      const reviewDone=qOK||!['new'].includes(String(j.enquiry_status||'').toLowerCase());
-      const oDelivered=['delivered','completed'].includes(String(j.order_status||'').toLowerCase());
-      const qRejected=['rejected'].includes(String(j.quotation_status||'').toLowerCase());
-      const closedOut=['closed','rejected','cancelled'].includes(String(j.enquiry_status||'').toLowerCase())&&!qOK;
-      const flags=[enqDone, reviewDone, qOK, oOK, oDelivered];
-      let current=flags.lastIndexOf(true);
-      const steps=STEPS.map((s,i)=>{
-        let cls='ma-step'+(flags[i]?' done':'');
-        if(i===current&&!oDelivered) cls+=' now';
-        if(i===2&&qRejected) cls='ma-step stop';
-        if(i===1&&closedOut) cls='ma-step stop';
-        return `<div class="${cls}">${s}</div>`;
-      }).join('');
-      const refs=[
-        j.enquiry_number?`<span class="ma-mono">${esc(j.enquiry_number)} · ${esc(j.enquiry_date||'')}</span>`:'',
-        qOK?`<a class="ma-mono" style="color:var(--gold-light); text-decoration:none;" href="quotation-view.html?id=${j.quotation_id}">${esc(j.quotation_number)} v${j.quotation_version} · ${esc(label(j.quotation_status))} · ${money(j.quotation_total,j.currency)}</a>`:'',
-        oOK?`<span class="ma-mono">${esc(j.order_number)} · ${esc(label(j.order_status))}${j.promised_date?' · Promised '+esc(j.promised_date):''}</span>`:''
-      ].filter(Boolean).join('<span class="ma-mono"> &nbsp;→&nbsp; </span>');
-      const cta=qOK&&['issued','viewed'].includes(String(j.quotation_status||'').toLowerCase())
-        ?`<a class="ma-btn sm" href="quotation-view.html?id=${j.quotation_id}">Review &amp; Respond</a>`:'';
-      return `<div class="ma-card">
-        <div class="ma-row">
-          <div><h3 style="font-size:16px;">${esc(j.title)}</h3></div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <span class="${badge(oOK?j.order_status:(qOK?j.quotation_status:j.enquiry_status))}">${esc(label(oOK?j.order_status:(qOK?j.quotation_status:j.enquiry_status)))}</span>${cta}
-          </div>
-        </div>
-        <div class="ma-steps">${steps}</div>
-        <div style="margin-top:10px;">${refs}</div>
-      </div>`;
-    }).join('');
-  }
-
-  const loaders={journey:loadJourney, quotes:loadQuotes, orders:loadOrders, projects:loadProjects, invoices:loadInvoices, enquiry:loadEnquiries};
+  const loaders={quotes:loadQuotes, orders:loadOrders, projects:loadProjects, invoices:loadInvoices, enquiry:loadEnquiries};
   function showView(v){
     document.querySelectorAll('.ma-tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
-    ['journey','quotes','orders','projects','invoices','enquiry'].forEach(x=>document.getElementById('mav-'+x).style.display=x===v?'':'none');
+    ['quotes','orders','projects','invoices','enquiry'].forEach(x=>document.getElementById('mav-'+x).style.display=x===v?'':'none');
     loaders[v]&&loaders[v]();
   }
   document.querySelectorAll('.ma-tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
@@ -305,11 +250,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---- ORDERS ---- */
   async function loadOrders(){
-    const [{data:orders},{data:ships}]=await Promise.all([
+    const [{data:orders},{data:ships},{data:jinvs},{data:jrecs}]=await Promise.all([
       sb.from('crm_client_orders').select('*').order('order_date',{ascending:false}),
-      sb.from('crm_client_shipments').select('*')
+      sb.from('crm_client_shipments').select('*'),
+      sb.from('crm_client_invoices').select('*'),
+      sb.from('crm_receipts').select('*')
     ]);
-    const rows=orders||[]; const shipRows=ships||[];
+    const rows=orders||[]; const shipRows=ships||[]; const invRows=jinvs||[]; const recRows=jrecs||[];
+    /* Journey: Enquiry → Quotation → Order → Production → Shipment → Delivered → Invoiced → Paid */
+    function journey(o){
+      const s=String(o.status||'').toLowerCase();
+      let reached=2; // order exists ⇒ enquiry + quotation + order confirmed
+      if(/production|processing|preparing/.test(s)) reached=3;
+      if(/transit|dispatch|shipment|shipped|delivery|customs|cleared/.test(s)) reached=4;
+      if(/delivered|completed/.test(s)) reached=5;
+      const oi=invRows.filter(i=>i.order_id===o.id);
+      const invoiced=oi.length>0;
+      const paid=invoiced&&oi.every(i=>String(i.status||'').toLowerCase()==='paid');
+      if(invoiced&&reached<6) reached=6;
+      if(paid) reached=7;
+      const steps=['Enquiry','Quotation','Order Confirmed','Production','Shipment','Delivered','Invoiced','Paid'];
+      return '<div class="ma-journey">'+steps.map((t,idx)=>{
+        const cls=idx<reached?'done':(idx===reached?'current':'');
+        return `<div class="ma-jstep ${cls}"><div class="ma-jdot"></div><div class="ma-jlabel">${t}</div></div>`;
+      }).join('')+'</div>';
+    }
     document.getElementById('ma-orders-empty').style.display=rows.length?'none':'block';
     const container=document.getElementById('ma-orders-list');
     container.innerHTML=rows.map(o=>{
@@ -330,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="${badge(o.status)}">${esc(o.status)}</span>
           </div>
         </div>
+        ${journey(o)}
         <div class="ma-tl" id="ma-ord-tl-${o.id}"></div>
       </div>`;
     }).join('');
@@ -398,13 +364,19 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             ${i.payment_instructions?'<div class="ma-mono" style="margin-top:10px; white-space:pre-line; color:var(--cream);">'+esc(i.payment_instructions)+'</div>':''}
           </div>
-          <span class="${badge(i.status)}">${esc(label(i.status))}</span>
+          <div style="text-align:right; display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
+            <span class="${badge(i.status)}">${esc(label(i.status))}</span>
+            <a href="invoice-view.html?id=${i.id}" target="_blank" class="ma-mono" style="color:var(--gold-light); text-decoration:none; border:1px solid var(--line); padding:6px 12px;">View &amp; Print ›</a>
+          </div>
         </div>
       </div>`).join('') +
       ((receipts&&receipts.length)?'<div class="eyebrow" style="margin:22px 0 12px;">Payment Receipts</div>'+receipts.map(r=>
         `<div class="ma-card"><div class="ma-row">
           <span class="ma-mono" style="color:var(--cream);">${esc(r.receipt_number)} · ${esc(new Date(r.issued_at).toISOString().slice(0,10))}</span>
-          <span class="ma-mono" style="color:var(--gold-light);">${money(r.amount,r.currency)}</span>
+          <span style="display:flex; gap:14px; align-items:center;">
+            <span class="ma-mono" style="color:var(--gold-light);">${money(r.amount,r.currency)}</span>
+            <a href="receipt-view.html?id=${r.id}" target="_blank" class="ma-mono" style="color:var(--gold-light); text-decoration:none; border:1px solid var(--line); padding:6px 12px;">View &amp; Print ›</a>
+          </span>
         </div></div>`).join(''):'');
   }
   document.getElementById('ma-proof-btn').addEventListener('click', async ()=>{
@@ -428,20 +400,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div><h3 style="font-size:15px;">${esc(e.title)}</h3>
         <span class="ma-mono">${esc(e.enquiry_number||'')} · ${esc(new Date(e.created_at).toISOString().slice(0,10))}</span></div>
         <span class="${badge(e.status)}">${esc(label(e.status))}</span>
-      </div><div class="ma-tl" id="ma-enq-tl-${e.id}"></div></div>`).join(''):'<p class="ma-empty">No enquiries submitted yet.</p>';
-    // client-visible timeline entries only (RLS enforces; anything internal never arrives)
-    for(const e of (data||[])){
-      try{
-        const {data:ev}=await sb.from('crm_enquiry_activity').select('*').eq('enquiry_id',e.id).order('created_at',{ascending:false}).limit(8);
-        const el=document.getElementById('ma-enq-tl-'+e.id); if(!el)continue;
-        el.innerHTML=(ev&&ev.length)?ev.map(a=>{
-          const body=a.kind==='status_change'
-            ? 'Status updated to <strong>'+esc(label(a.new_value))+'</strong>'
-            : esc(a.body||'');
-          return `<div class="ma-tl-item">${body}<div class="ma-mono">${esc(new Date(a.created_at).toISOString().slice(0,10))}</div></div>`;
-        }).join(''):'';
-      }catch(err){}
-    }
+      </div></div>`).join(''):'<p class="ma-empty">No enquiries submitted yet.</p>';
   }
   document.getElementById('ma-enq-form').addEventListener('submit', async e=>{
     e.preventDefault();

@@ -249,6 +249,7 @@
         <div class="crm-totals" id="inv-totals"></div>
         <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
           <button class="crm-btn ghost" type="button" id="btn-issue-inv">Issue Invoice</button>
+          <button class="crm-btn ghost" type="button" id="btn-view-inv-doc">View Document</button>
         </div>
       </div>
             <div class="jco-custom" data-module="invoices" data-idfield="in-id"></div>
@@ -297,6 +298,7 @@
         <div class="crm-totals" id="pay-totals"></div>
         <div style="display:flex; gap:10px; margin-top:14px;">
           <button class="crm-btn ghost" type="button" id="btn-verify-pay">Verify Payment &amp; Generate Receipt</button>
+          <button class="crm-btn ghost" type="button" id="btn-view-receipt" style="display:none;">View Receipt</button>
         </div>
       </div>
       <div style="display:flex; gap:10px; margin-top:22px;">
@@ -512,6 +514,11 @@ document.addEventListener('DOMContentLoaded', function () {
     ['ini-description','ini-quantity','ini-unit','ini-unit_price'].forEach(f=>setval(f,''));
     await refreshInv(id);
   });
+  document.getElementById('btn-view-inv-doc').addEventListener('click', ()=>{
+    const id=val('in-id');
+    if(!id){ document.getElementById('inv-form-status').textContent='Save the invoice first.'; return; }
+    window.open('invoice-view.html?id='+id,'_blank');
+  });
   document.getElementById('btn-issue-inv').addEventListener('click', async ()=>{
     const id=val('in-id'); if(!id)return;
     if(!confirm('Issue this invoice to the client? Financials will be locked.'))return;
@@ -575,6 +582,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('pay-modal-title').textContent=(p.payment_number||'Payment')+' — '+orgName(p.organization_id);
     document.getElementById('pay-alloc-block').style.display='block';
     document.getElementById('btn-verify-pay').style.display=p.is_verified?'none':'inline-block';
+    const vr=document.getElementById('btn-view-receipt');
+    vr.style.display='none'; vr.onclick=null;
+    if(p.is_verified){
+      const {data:rc}=await sb.from('crm_receipts').select('id').eq('payment_id',p.id).maybeSingle();
+      if(rc){ vr.style.display='inline-block'; vr.onclick=()=>window.open('receipt-view.html?id='+rc.id,'_blank'); }
+    }
     // Open invoices of this org for allocation
     const {data:openInv}=await sb.from('crm_invoices').select('id,invoice_number,total,outstanding,currency')
       .eq('organization_id',p.organization_id).in('status',['issued','partially_paid','overdue']).is('deleted_at',null);

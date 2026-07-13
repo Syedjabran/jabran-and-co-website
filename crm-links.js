@@ -42,12 +42,15 @@
         var isSelf = r.id === id;
         var chip = document.createElement(isSelf ? 'span' : 'a');
         if (!isSelf) {
-          chip.href = r.page === 'quotation-view.html'
-            ? r.page + '?id=' + r.id
-            : r.page + '#' + (r.kind || '').toLowerCase() + '=' + r.id;
-          chip.target = r.page === 'quotation-view.html' ? '_blank' : '_self';
+          var kindL = String(r.kind || '').toLowerCase();
+          var docPage = r.page === 'quotation-view.html' ? 'quotation-view.html'
+                      : (kindL === 'invoice' ? 'invoice-view.html' : null);
+          chip.href = docPage
+            ? docPage + '?id=' + r.id
+            : r.page + '#' + kindL + '=' + r.id;
+          chip.target = docPage ? '_blank' : '_self';
           chip.style.textDecoration = 'none';
-          chip.title = 'Open ' + r.kind + ' in ' + r.page;
+          chip.title = 'Open ' + r.kind + (docPage ? ' document' : ' in ' + r.page);
         }
         chip.style.cssText += ';display:inline-block; font-family:"IBM Plex Mono",monospace;' +
           'font-size:10px; letter-spacing:0.04em; padding:4px 10px; border-radius:2px;' +
