@@ -44,47 +44,93 @@
 
 
 /* ============================================================================
-   MODULE AUTO-LOADER (Increment 12) — zero-HTML-edit deployment.
-   crm-activity.js is already present on every staff page and the client
-   portal, so it now injects each page's enterprise modules automatically.
-   To integrate a future module: add one line to MODULES below, upload this
-   file — done. No page markup ever changes again.
+   NAV-SYNC ADDITION (Financial Intelligence phase)
+   Appended so that uploading this ONE file adds the new module links to the
+   sidebar of every CRM page that loads crm-activity.js — no page editing.
+   • Links styled by the existing .crm-nav-item class.
+   • Skips any link a page already has (the new pages ship with full menus).
+   • Daily Expenses + AI Accountant appear for all staff; the management
+     modules appear only for owner / super_admin / ceo / finance_manager —
+     and every page enforces its own access regardless of what the menu shows.
+   • Wrapped so it can never break a page.
 ============================================================================ */
 (function () {
-  'use strict';
-  if (typeof window === 'undefined' || window.__jcoLoader) return;
-  window.__jcoLoader = true;
+  if (window.__jcoNavSync) return;
+  window.__jcoNavSync = true;
 
-  var path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  var isPortal = path === 'my-account.html';
-  var isStaff  = path.indexOf('crm') === 0;   /* crm.html + every crm-*.html */
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof sb === 'undefined') return;
 
-  /* modules register on DOMContentLoaded; injected scripts may load after it
-     fired — make late registrations run immediately */
-  var origAdd = document.addEventListener.bind(document);
-  document.addEventListener = function (type, fn, opts) {
-    if (type === 'DOMContentLoaded' && document.readyState !== 'loading') {
-      try { fn(); } catch (e) {}
-      return;
+    var STAFF_LINKS = [
+      { href: 'crm-daily-entry.html',   label: 'Daily Expenses' },
+      { href: 'crm-ai-accountant.html', label: 'AI Accountant' }
+    ];
+    var ADMIN_LINKS = [
+      { href: 'crm-financial-settings.html', label: 'Financial Settings' },
+      { href: 'crm-employee-costs.html',     label: 'Employee Costs' },
+      { href: 'crm-project-costing.html',    label: 'Project Costing' },
+      { href: 'crm-finance-reports.html',    label: 'Financial Reports' },
+      { href: 'crm-alerts.html',             label: 'Alerts' }
+    ];
+
+    function inject() {
+      var side = document.querySelector('.crm-side');
+      if (!side) return;
+
+      var existing = {};
+      side.querySelectorAll('a').forEach(function (a) {
+        existing[(a.getAttribute('href') || '').split('#')[0]] = true;
+      });
+      var here = (location.pathname.split('/').pop() || '');
+
+      function makeLink(item) {
+        var a = document.createElement('a');
+        a.className = 'crm-nav-item';
+        a.href = item.href;
+        a.textContent = item.label;
+        return a;
+      }
+      function place(items, anchorHref) {
+        var pending = items.filter(function (i) {
+          return !existing[i.href] && i.href !== here;
+        });
+        if (!pending.length) return;
+        var anchor = side.querySelector('a[href="' + anchorHref + '"]');
+        pending.forEach(function (i) {
+          var a = makeLink(i);
+          if (anchor && anchor.parentNode) {
+            anchor.parentNode.insertBefore(a, anchor.nextSibling);
+            anchor = a;
+          } else {
+            side.appendChild(a);
+          }
+          existing[i.href] = true;
+        });
+      }
+
+      sb.rpc('crm_is_staff').then(function (r) {
+        if (!r || r.data !== true) return;
+        place(STAFF_LINKS, 'crm-finance.html');
+        sb.rpc('crm_has_role', { roles: ['owner', 'super_admin', 'ceo', 'finance_manager'] })
+          .then(function (r2) {
+            if (r2 && r2.data === true) place(ADMIN_LINKS, 'crm-business-rules.html');
+          }, function () {});
+      }, function () {});
     }
-    return origAdd(type, fn, opts);
-  };
 
-  var MODULES = [];
-  if (isStaff) {
-    MODULES.push('crm-nav.js');                                   /* unified nav + attention bell */
-    MODULES.push('crm-attachments.js');                           /* universal documents panel   */
-    if (path === 'crm-orders.html') MODULES.push('crm-rm.js', 'crm-tracking.js');
-    if (path === 'crm-command-center.html') MODULES.push('crm-ai-kpis.js');
-  }
-  if (isPortal) {
-    MODULES.push('portal-documents.js', 'portal-tracking.js', 'client-ai-agent.js');
-  }
+    try { inject(); } catch (e) { /* the menu must never break a page */ }
 
-  MODULES.forEach(function (src) {
-    if (document.querySelector('script[src="' + src + '"]')) return;  /* respect manual tags */
-    var s = document.createElement('script');
-    s.src = src; s.defer = true;
-    document.head.appendChild(s);
+    // Sidebars rendered after login (dashboard shows login first): re-check
+    // briefly once a session exists, then stop.
+    try {
+      var tries = 0;
+      var t = setInterval(function () {
+        tries++;
+        var side = document.querySelector('.crm-side');
+        var visible = side && side.offsetParent !== null;
+        if (visible) { try { inject(); } catch (e) {} }
+        if (tries > 20) clearInterval(t);
+      }, 1500);
+    } catch (e) {}
   });
 })();
