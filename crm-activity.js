@@ -68,6 +68,7 @@
     var ADMIN_LINKS = [
       { href: 'crm-financial-settings.html', label: 'Financial Settings' },
       { href: 'crm-employee-costs.html',     label: 'Employee Costs' },
+      { href: 'crm-organization.html',       label: 'Organization' },
       { href: 'crm-project-costing.html',    label: 'Project Costing' },
       { href: 'crm-finance-reports.html',    label: 'Financial Reports' },
       { href: 'crm-alerts.html',             label: 'Alerts' }

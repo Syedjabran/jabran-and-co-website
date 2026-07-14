@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organization | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1040px;}
+  .crm-topline{margin-bottom:24px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .og-tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:26px; overflow-x:auto;}
+  .og-tab{padding:11px 20px; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .og-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); text-align:left; padding:10px 12px; border-bottom:1px solid var(--line);}
+  .crm-table td{padding:10px 12px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:middle;}
+  .crm-table select, .crm-table input{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:7px 9px; font-size:12px; border-radius:2px;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted);}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.gold{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-empty{font-size:13px; color:var(--muted); padding:20px 0;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.small{padding:6px 12px; font-size:10px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:10px;}
+  .og-node{border-left:2px solid var(--line); margin:6px 0 6px 0; padding:8px 0 8px 16px;}
+  .og-node .who{font-size:14px;}
+  .og-node .meta{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; color:var(--muted); margin-top:2px;}
+  .og-card{border:1px solid var(--line); background:var(--bg-alt); padding:20px 22px; margin-bottom:20px;}
+  .og-card h3{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:12px;}
+  .og-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:0 16px;}
+  .og-grid label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:10px 0 5px;}
+  .og-grid input,.og-grid select{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:8px 10px; font-size:13px; border-radius:2px;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px;">Organization — Management Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <input id="crm-password" type="password" autocomplete="current-password" required>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="width:110px; height:auto;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-daily-entry.html">Daily Expenses</a>
+    <a class="crm-nav-item" href="crm-ai-accountant.html">AI Accountant</a>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-business-rules.html">Business Rules</a>
+    <a class="crm-nav-item" href="crm-employees.html">Employees</a>
+    <a class="crm-nav-item" href="crm-employee-costs.html">Employee Costs</a>
+    <span class="crm-nav-item active">Organization</span>
+    <a class="crm-nav-item" href="crm-alerts.html">Alerts</a>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">Departments · Role Ladder · Reporting Lines</div>
+      <h1>Organization</h1>
+    </div>
+    <p class="crm-mono" style="margin-bottom:20px;">Security roles (owner, super admin…) control ACCESS and stay in the Employees console. This console defines the ORG: who sits in which department, on which rung, reporting to whom. The top of the organisation reports to no one.</p>
+
+    <div class="og-tabs">
+      <div class="og-tab active" data-tab="chart">Org Chart</div>
+      <div class="og-tab" data-tab="assign">Assignments</div>
+      <div class="og-tab" data-tab="depts">Departments</div>
+      <div class="og-tab" data-tab="roles">Role Ladder</div>
+    </div>
+
+    <section id="tab-chart">
+      <div id="chart-box"></div>
+      <p class="crm-empty" id="chart-empty" style="display:none;">No reporting lines yet — set them in Assignments.</p>
+    </section>
+
+    <section id="tab-assign" style="display:none;">
+      <table class="crm-table">
+        <thead><tr><th>Person</th><th>Department</th><th>Job Role</th><th>Reports To</th></tr></thead>
+        <tbody id="assign-rows"></tbody>
+      </table>
+      <div style="margin-top:16px;">
+        <button class="crm-btn" id="btn-save-assign" type="button">Save Assignments</button>
+        <span class="crm-status-msg" id="assign-status"></span>
+      </div>
+    </section>
+
+    <section id="tab-depts" style="display:none;">
+      <table class="crm-table">
+        <thead><tr><th>Code</th><th>Department</th><th>Head</th><th>Cost Centre</th><th>Headcount</th><th>Status</th></tr></thead>
+        <tbody id="dept-rows"></tbody>
+      </table>
+      <div class="og-card" id="dept-add-card" style="margin-top:20px;">
+        <h3>Add Department</h3>
+        <div class="og-grid">
+          <div><label>Code</label><input id="nd-code" maxlength="8" style="text-transform:uppercase;"></div>
+          <div><label>Name</label><input id="nd-name"></div>
+          <div><label>Cost Centre</label><select id="nd-cc"><option value="">—</option></select></div>
+        </div>
+        <div style="margin-top:14px;">
+          <button class="crm-btn small" id="btn-add-dept" type="button">Add</button>
+          <button class="crm-btn small" id="btn-save-depts" type="button" style="margin-left:8px;">Save Heads/Status</button>
+          <span class="crm-status-msg" id="dept-status"></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-roles" style="display:none;">
+      <table class="crm-table">
+        <thead><tr><th>Level</th><th>Title</th><th>Code</th><th>Home Dept</th><th>Management</th></tr></thead>
+        <tbody id="role-rows"></tbody>
+      </table>
+      <div class="og-card" style="margin-top:20px;">
+        <h3>Add Custom Role</h3>
+        <div class="og-grid">
+          <div><label>Code</label><input id="nr-code" maxlength="12" style="text-transform:uppercase;"></div>
+          <div><label>Title</label><input id="nr-title"></div>
+          <div><label>Level (1 top – 7 internee)</label><input id="nr-level" type="number" min="1" max="7" value="6"></div>
+          <div><label>Management?</label><select id="nr-mgmt"><option value="false">No</option><option value="true">Yes</option></select></div>
+        </div>
+        <div style="margin-top:14px;">
+          <button class="crm-btn small" id="btn-add-role" type="button">Add Role</button>
+          <span class="crm-status-msg" id="role-status"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function val(id){ const el=document.getElementById(id); if(!el)return null; return el.value===''?null:el.value; }
+
+  var canEdit=false, names={}, staffList=[], assigns=[], depts=[], roles=[], ccs=[];
+
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:val('crm-email'), password:document.getElementById('crm-password').value});
+    btn.disabled=false;
+    if(error){ st.textContent='Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    const {data:allowed,error}=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager','hr_manager']});
+    if(error||allowed!==true){
+      document.getElementById('crm-login-status').textContent='Organization is restricted to management.';
+      await sb.auth.signOut(); return;
+    }
+    try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','hr_manager']}); canEdit=r.data===true; }catch(e){}
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    await Promise.all([loadNames(), loadDepts(), loadRoles(), loadCcs()]);
+    await loadAssigns();
+    renderAll();
+    if(!canEdit)['btn-save-assign','btn-add-dept','btn-save-depts','btn-add-role'].forEach(id=>{const b=document.getElementById(id); if(b)b.disabled=true;});
+  }
+
+  document.querySelectorAll('.og-tab').forEach(t=>t.addEventListener('click',()=>{
+    document.querySelectorAll('.og-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    ['chart','assign','depts','roles'].forEach(k=>{ document.getElementById('tab-'+k).style.display=(t.dataset.tab===k)?'block':'none'; });
+  }));
+
+  async function loadNames(){
+    try{
+      const {data}=await sb.rpc('crm_staff_names');
+      staffList=data||[];
+      staffList.forEach(n=>{ names[n.user_id]=n.display_name; });
+    }catch(e){}
+  }
+  async function loadDepts(){ const {data}=await sb.from('crm_department_directory').select('*').order('sort_order'); depts=data||[]; }
+  async function loadRoles(){ const {data}=await sb.from('crm_job_roles').select('*').eq('is_active',true).order('level').order('title'); roles=data||[]; }
+  async function loadCcs(){ try{ const {data}=await sb.from('crm_cost_centres').select('id,name').order('sort_order'); ccs=data||[]; }catch(e){} }
+  async function loadAssigns(){
+    const {data}=await sb.from('crm_org_assignments').select('*');
+    const byId={}; (data||[]).forEach(a=>{ byId[a.user_id]=a; });
+    assigns=staffList.map(s=>byId[s.user_id]||{user_id:s.user_id, reporting_manager:null, department_id:null, job_role_id:null});
+  }
+
+  function renderAll(){ renderChart(); renderAssign(); renderDepts(); renderRoles(); }
+
+  /* ---- ORG CHART ---- */
+  function renderChart(){
+    const box=document.getElementById('chart-box');
+    const byMgr={};
+    assigns.forEach(a=>{ const k=a.reporting_manager||'ROOT'; (byMgr[k]=byMgr[k]||[]).push(a); });
+    const seen={};
+    function node(a,depth){
+      if(seen[a.user_id]||depth>9)return '';
+      seen[a.user_id]=true;
+      const r=roles.find(x=>x.id===a.job_role_id);
+      const d=depts.find(x=>x.id===a.department_id);
+      const kids=(byMgr[a.user_id]||[]).map(k=>node(k,depth+1)).join('');
+      return '<div class="og-node" style="margin-left:'+(depth*18)+'px;">'
+        +'<div class="who">'+esc(names[a.user_id]||'Staff member')
+        +(r&&r.level===1?' <span class="crm-badge gold">Top of Organisation</span>':'')+'</div>'
+        +'<div class="meta">'+esc(r?('L'+r.level+' · '+r.title):'No role assigned')+(d?' · '+esc(d.name):'')+'</div>'
+        +'</div>'+kids;
+    }
+    const roots=(byMgr['ROOT']||[]);
+    const html=roots.map(a=>node(a,0)).join('')
+      + assigns.filter(a=>!seen[a.user_id]).map(a=>node(a,0)).join('');
+    box.innerHTML=html;
+    document.getElementById('chart-empty').style.display=assigns.length?'none':'block';
+  }
+
+  /* ---- ASSIGNMENTS ---- */
+  function renderAssign(){
+    const deptOpts='<option value="">—</option>'+depts.filter(d=>d.is_active).map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('');
+    const roleOpts='<option value="">—</option>'+roles.map(r=>`<option value="${r.id}">L${r.level} · ${esc(r.title)}</option>`).join('');
+    document.getElementById('assign-rows').innerHTML=assigns.map((a,i)=>{
+      const mgrOpts='<option value="">— None (top of organisation) —</option>'
+        +staffList.filter(s=>s.user_id!==a.user_id).map(s=>`<option value="${s.user_id}" ${a.reporting_manager===s.user_id?'selected':''}>${esc(s.display_name)}</option>`).join('');
+      return `<tr data-ai="${i}">
+        <td>${esc(names[a.user_id]||'')}</td>
+        <td><select data-f="department_id" ${canEdit?'':'disabled'}>${deptOpts.replace(`value="${a.department_id}"`,`value="${a.department_id}" selected`)}</select></td>
+        <td><select data-f="job_role_id" ${canEdit?'':'disabled'}>${roleOpts.replace(`value="${a.job_role_id}"`,`value="${a.job_role_id}" selected`)}</select></td>
+        <td><select data-f="reporting_manager" ${canEdit?'':'disabled'}>${mgrOpts}</select></td>
+      </tr>`;
+    }).join('');
+    document.querySelectorAll('#assign-rows select').forEach(el=>el.addEventListener('change',()=>{
+      const i=Number(el.closest('tr').dataset.ai);
+      assigns[i][el.dataset.f]=el.value||null;
+      renderChart();
+    }));
+  }
+  document.getElementById('btn-save-assign').addEventListener('click', async ()=>{
+    const st=document.getElementById('assign-status'); st.textContent='Saving…';
+    for(const a of assigns){
+      const {error}=await sb.from('crm_employee_profiles').upsert({
+        user_id:a.user_id,
+        department_id:a.department_id,
+        job_role_id:a.job_role_id,
+        reporting_manager:a.reporting_manager
+      },{onConflict:'user_id'});
+      if(error){ st.textContent='Error: '+error.message; return; }
+    }
+    st.textContent='Saved.'; renderChart();
+  });
+
+  /* ---- DEPARTMENTS ---- */
+  function renderDepts(){
+    const heads='<option value="">—</option>'+staffList.map(s=>`<option value="${s.user_id}">${esc(s.display_name)}</option>`).join('');
+    document.getElementById('dept-rows').innerHTML=depts.map((d,i)=>`
+      <tr data-di="${i}">
+        <td class="crm-mono">${esc(d.code)}</td>
+        <td>${esc(d.name)}</td>
+        <td><select data-f="head_user_id" ${canEdit?'':'disabled'}>${heads.replace(`value="${d.head_user_id}"`,`value="${d.head_user_id}" selected`)}</select></td>
+        <td>${esc(d.cost_centre||'—')}</td>
+        <td class="crm-mono">${d.headcount}</td>
+        <td><select data-f="is_active" ${canEdit?'':'disabled'}>
+          <option value="true" ${d.is_active?'selected':''}>Active</option>
+          <option value="false" ${!d.is_active?'selected':''}>Inactive</option></select></td>
+      </tr>`).join('');
+    document.querySelectorAll('#dept-rows select').forEach(el=>el.addEventListener('change',()=>{
+      const i=Number(el.closest('tr').dataset.di);
+      depts[i][el.dataset.f]=el.dataset.f==='is_active'?(el.value==='true'):(el.value||null);
+    }));
+    const cc=document.getElementById('nd-cc');
+    cc.innerHTML='<option value="">—</option>'+ccs.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  }
+  document.getElementById('btn-save-depts').addEventListener('click', async ()=>{
+    const st=document.getElementById('dept-status'); st.textContent='Saving…';
+    for(const d of depts){
+      const {error}=await sb.from('crm_departments').update({head_user_id:d.head_user_id, is_active:d.is_active}).eq('id',d.id);
+      if(error){ st.textContent='Error: '+error.message; return; }
+    }
+    st.textContent='Saved.';
+  });
+  document.getElementById('btn-add-dept').addEventListener('click', async ()=>{
+    const st=document.getElementById('dept-status');
+    const code=(val('nd-code')||'').toUpperCase(), name=val('nd-name');
+    if(!code||!name){ st.textContent='Code and name required.'; return; }
+    const {error}=await sb.from('crm_departments').insert({code, name, cost_centre_id:val('nd-cc')});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Added.'; await loadDepts(); renderDepts(); renderAssign();
+  });
+
+  /* ---- ROLE LADDER ---- */
+  function renderRoles(){
+    document.getElementById('role-rows').innerHTML=roles.map(r=>`
+      <tr>
+        <td class="crm-mono">L${r.level}</td>
+        <td>${esc(r.title)}</td>
+        <td class="crm-mono">${esc(r.code)}</td>
+        <td class="crm-mono">${esc(r.dept_code||'—')}</td>
+        <td>${r.is_management?'<span class="crm-badge ok">Yes</span>':'<span class="crm-badge">No</span>'}</td>
+      </tr>`).join('');
+  }
+  document.getElementById('btn-add-role').addEventListener('click', async ()=>{
+    const st=document.getElementById('role-status');
+    const code=(val('nr-code')||'').toUpperCase(), title=val('nr-title'), level=Number(val('nr-level')||6);
+    if(!code||!title){ st.textContent='Code and title required.'; return; }
+    const {error}=await sb.from('crm_job_roles').insert({code, title, level, is_management:val('nr-mgmt')==='true'});
+    if(error){ st.textContent='Error: '+error.message; return; }
+    st.textContent='Added.'; await loadRoles(); renderRoles(); renderAssign();
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
