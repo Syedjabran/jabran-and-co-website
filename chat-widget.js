@@ -38,16 +38,26 @@
   }
 
   function build() {
+    var pos = { right: 20, bottom: 96 };            /* default sits ABOVE the WhatsApp float */
+    try {
+      var saved = JSON.parse(localStorage.getItem('jco_chat_pos') || 'null');
+      if (saved && saved.right >= 0 && saved.bottom >= 0) pos = saved;
+    } catch (e) {}
     var btn = el('div',
-      'position:fixed;right:20px;bottom:20px;z-index:98;width:56px;height:56px;border-radius:50%;' +
-      'background:#C6A55A;color:#0B0F14;display:flex;align-items:center;justify-content:center;' +
-      'cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,0.5);font-family:"Playfair Display",serif;' +
-      'font-size:22px;font-weight:600;user-select:none;', 'J&');
+      'position:fixed;z-index:2147483000;width:58px;height:58px;border-radius:50%;' +
+      'background:#08111C;border:2px solid #C6A55A;display:flex;align-items:center;justify-content:center;' +
+      'cursor:grab;box-shadow:0 6px 22px rgba(0,0,0,0.55);user-select:none;touch-action:none;');
+    btn.style.right = pos.right + 'px';
+    btn.style.bottom = pos.bottom + 'px';
+    btn.innerHTML =
+      '<img src="favicon.png" alt="Jabran & Co." draggable="false" ' +
+      'style="width:64%;height:64%;object-fit:contain;pointer-events:none;" ' +
+      'onerror="this.outerHTML=\'<span style=&quot;color:#E4C98A;font-family:\\\'Playfair Display\\\',serif;font-size:19px;font-weight:600;&quot;>J&amp;Co</span>\'">';
     btn.setAttribute('role', 'button');
-    btn.setAttribute('aria-label', 'Chat with Jabran & Co.');
+    btn.setAttribute('aria-label', 'Chat with Jabran & Co. (drag to move)');
 
     var panel = el('div',
-      'position:fixed;right:16px;bottom:88px;z-index:99;width:min(360px,92vw);max-height:min(560px,78vh);' +
+      'position:fixed;right:16px;bottom:164px;z-index:2147483001;width:min(360px,92vw);max-height:min(560px,72vh);' +
       'display:none;flex-direction:column;background:#0B0F14;border:1px solid rgba(198,165,90,0.35);' +
       'border-radius:4px;box-shadow:0 12px 40px rgba(0,0,0,0.6);overflow:hidden;' +
       "font-family:Inter,-apple-system,sans-serif;");
@@ -97,8 +107,47 @@
       if (!history.length) push('assistant', GREETING);
       try { localStorage.setItem('jco_chat_last_open', String(Date.now())); } catch (e) {}
     }
-    function toggle() { if (open) { open = false; panel.style.display = 'none'; } else { openPanel(); input.focus(); } }
-    btn.addEventListener('click', toggle);
+    function anchorPanel() {
+      var r = btn.getBoundingClientRect();
+      var right = Math.max(8, window.innerWidth - r.right);
+      var bottom = Math.min(window.innerHeight - 80, window.innerHeight - r.top + 12);
+      panel.style.right = Math.min(right, window.innerWidth - 60) + 'px';
+      panel.style.bottom = Math.max(12, bottom) + 'px';
+    }
+    function toggle() { if (open) { open = false; panel.style.display = 'none'; } else { anchorPanel(); openPanel(); input.focus(); } }
+
+    /* Drag to float anywhere; a tap (< 8px movement) opens the chat */
+    var drag = null;
+    btn.addEventListener('pointerdown', function (e) {
+      drag = { x: e.clientX, y: e.clientY, r: parseFloat(btn.style.right), b: parseFloat(btn.style.bottom), moved: false };
+      btn.setPointerCapture(e.pointerId);
+      btn.style.cursor = 'grabbing';
+    });
+    btn.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var dx = drag.x - e.clientX, dy = drag.y - e.clientY;
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) drag.moved = true;
+      if (!drag.moved) return;
+      var right = Math.min(Math.max(drag.r + dx, 6), window.innerWidth - 64);
+      var bottom = Math.min(Math.max(drag.b + dy, 6), window.innerHeight - 64);
+      btn.style.right = right + 'px';
+      btn.style.bottom = bottom + 'px';
+      if (open) anchorPanel();
+    });
+    btn.addEventListener('pointerup', function (e) {
+      btn.style.cursor = 'grab';
+      var wasDrag = drag && drag.moved;
+      if (wasDrag) {
+        try {
+          localStorage.setItem('jco_chat_pos', JSON.stringify({
+            right: parseFloat(btn.style.right), bottom: parseFloat(btn.style.bottom)
+          }));
+        } catch (e2) {}
+      }
+      drag = null;
+      if (!wasDrag) toggle();
+    });
+    btn.addEventListener('pointercancel', function () { drag = null; btn.style.cursor = 'grab'; });
 
     async function submit() {
       var text = (input.value || '').trim();
@@ -143,7 +192,7 @@
     } catch (e) {}
     if (can) {
       var done = false;
-      function fire() { if (!done) { done = true; openPanel(); } }
+      function fire() { if (!done) { done = true; anchorPanel(); openPanel(); } }
       setTimeout(fire, PROACTIVE_MS);
       window.addEventListener('scroll', function onS() {
         var h = document.documentElement;
