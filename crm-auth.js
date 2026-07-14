@@ -350,3 +350,49 @@ document.addEventListener('DOMContentLoaded', function () {
     sb.auth.onAuthStateChange(function () { if (!document.getElementById('jco-wm')) apply(); });
   });
 })();
+
+/* ============================================================================
+   4 · STAFF GATE — STRICT CLIENT LOCKOUT (security fix)
+   Every page whose filename starts with "crm" now verifies the session is a
+   STAFF account via crm_is_staff() the moment a session exists. Clients are
+   signed out and sent to the Client Portal before any dashboard renders.
+   Strict policy: only an explicit TRUE passes; an explicit FALSE ejects
+   immediately; a failed check is retried once and then ejects. Every page's
+   own gate still applies on top — this is the outer wall.
+============================================================================ */
+(function () {
+  if (window.__jcoStaffGate) return;
+  window.__jcoStaffGate = true;
+  var page = (location.pathname.split('/').pop() || '').toLowerCase();
+  if (page.indexOf('crm') !== 0) return;              /* CRM pages only */
+
+  function eject(sb) {
+    try { sb.auth.signOut(); } catch (e) {}
+    try { alert('This area is for Jabran & Co. staff only. Taking you to the Client Portal.'); } catch (e) {}
+    location.replace('my-account.html');
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof sb === 'undefined') return;
+    async function enforce(attempt) {
+      try {
+        var s = await sb.auth.getSession();
+        if (!s.data || !s.data.session) return;       /* not logged in → login screen handles it */
+        var r = await sb.rpc('crm_is_staff');
+        if (r && r.data === true) return;             /* staff — carry on */
+        if (r && r.error && attempt < 1) {            /* transient failure → one retry */
+          setTimeout(function () { enforce(attempt + 1); }, 1500);
+          return;
+        }
+        eject(sb);                                    /* explicit false, or still failing */
+      } catch (e) {
+        if (attempt < 1) setTimeout(function () { enforce(attempt + 1); }, 1500);
+        else eject(sb);
+      }
+    }
+    enforce(0);
+    sb.auth.onAuthStateChange(function (ev) {
+      if (ev === 'SIGNED_IN') enforce(0);
+    });
+  });
+})();
