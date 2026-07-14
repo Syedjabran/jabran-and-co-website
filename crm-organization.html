@@ -115,6 +115,7 @@
       <div class="og-tab" data-tab="assign">Assignments</div>
       <div class="og-tab" data-tab="depts">Departments</div>
       <div class="og-tab" data-tab="roles">Role Ladder</div>
+      <div class="og-tab" data-tab="cred" id="tab-cred-btn" style="display:none;">Credentials</div>
     </div>
 
     <section id="tab-chart">
@@ -172,6 +173,22 @@
         </div>
       </div>
     </section>
+
+    <section id="tab-cred" style="display:none;">
+      <div class="og-card">
+        <h3>Set Employee Password (Owner / Super Admin only)</h3>
+        <p class="crm-mono" style="margin-bottom:14px;">Sets the password directly — no email involved. Every use is written to the audit log (who changed whose password; the password itself is never stored). Tell the employee their new password through a channel you trust.</p>
+        <div class="og-grid">
+          <div><label>Employee</label><select id="cp-user"></select></div>
+          <div><label>New Password (min 8)</label><input id="cp-pass1" type="password" autocomplete="new-password"></div>
+          <div><label>Confirm</label><input id="cp-pass2" type="password" autocomplete="new-password"></div>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="crm-btn" id="btn-set-pass" type="button">Set Password</button>
+          <span class="crm-status-msg" id="cp-status"></span>
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -186,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
   function val(id){ const el=document.getElementById(id); if(!el)return null; return el.value===''?null:el.value; }
 
-  var canEdit=false, names={}, staffList=[], assigns=[], depts=[], roles=[], ccs=[];
+  var canEdit=false, canOwn=false, names={}, staffList=[], assigns=[], depts=[], roles=[], ccs=[];
 
   const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
   async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
@@ -207,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
       await sb.auth.signOut(); return;
     }
     try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','hr_manager']}); canEdit=r.data===true; }catch(e){}
+    try{ const r2=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); if(r2.data===true){canOwn=true; document.getElementById('tab-cred-btn').style.display='block';} }catch(e){}
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     await Promise.all([loadNames(), loadDepts(), loadRoles(), loadCcs()]);
     await loadAssigns();
@@ -217,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.og-tab').forEach(t=>t.addEventListener('click',()=>{
     document.querySelectorAll('.og-tab').forEach(x=>x.classList.remove('active'));
     t.classList.add('active');
-    ['chart','assign','depts','roles'].forEach(k=>{ document.getElementById('tab-'+k).style.display=(t.dataset.tab===k)?'block':'none'; });
+    ['chart','assign','depts','roles','cred'].forEach(k=>{ document.getElementById('tab-'+k).style.display=(t.dataset.tab===k)?'block':'none'; });
   }));
 
   async function loadNames(){
@@ -236,7 +254,10 @@ document.addEventListener('DOMContentLoaded', function () {
     assigns=staffList.map(s=>byId[s.user_id]||{user_id:s.user_id, reporting_manager:null, department_id:null, job_role_id:null});
   }
 
-  function renderAll(){ renderChart(); renderAssign(); renderDepts(); renderRoles(); }
+  function renderAll(){ renderChart(); renderAssign(); renderDepts(); renderRoles();
+    const cu=document.getElementById('cp-user');
+    if(cu)cu.innerHTML='<option value="">— select —</option>'+staffList.map(s=>`<option value="${s.user_id}">${esc(s.display_name)}</option>`).join('');
+  }
 
   /* ---- ORG CHART ---- */
   function renderChart(){
@@ -353,6 +374,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const {error}=await sb.from('crm_job_roles').insert({code, title, level, is_management:val('nr-mgmt')==='true'});
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Added.'; await loadRoles(); renderRoles(); renderAssign();
+  });
+
+  document.getElementById('btn-set-pass').addEventListener('click', async ()=>{
+    const st=document.getElementById('cp-status');
+    const uid=val('cp-user'), p1=document.getElementById('cp-pass1').value, p2=document.getElementById('cp-pass2').value;
+    if(!canOwn){ st.textContent='Owner / Super Admin only.'; return; }
+    if(!uid){ st.textContent='Select an employee.'; return; }
+    if(p1.length<8){ st.textContent='Minimum 8 characters.'; return; }
+    if(p1!==p2){ st.textContent='Passwords do not match.'; return; }
+    if(!confirm('Set a new password for '+(names[uid]||'this employee')+'? Their old password stops working immediately.'))return;
+    st.textContent='Setting…';
+    const {data,error}=await sb.functions.invoke('admin-set-password',{body:{user_id:uid, password:p1}});
+    if(error){
+      let msg=error.message;
+      try{ if(error.context&&error.context.json){ const j=await error.context.json(); if(j&&j.error)msg=j.error; } }catch(e2){}
+      st.textContent='Error: '+msg; return;
+    }
+    if(data&&data.error){ st.textContent='Error: '+data.error; return; }
+    document.getElementById('cp-pass1').value=''; document.getElementById('cp-pass2').value='';
+    st.textContent='Done — password set and audit-logged.';
   });
 
   checkSession();
