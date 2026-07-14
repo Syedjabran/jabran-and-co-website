@@ -231,3 +231,122 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (e) { /* configuration must never break data entry */ }
   };
 });
+
+
+
+
+/* ============================================================================
+   ADDITIONS (Financial Intelligence phase) — appended to crm-auth.js because
+   EVERY CRM page, including crm.html, loads this file. Three features:
+   1) Recovery-link catcher: password-reset emails that land on any CRM page
+      are forwarded to reset-password.html with their token intact.
+   2) Nav-sync: injects the new module links into any management sidebar that
+      lacks them (guarded — safe alongside the copy in crm-activity.js).
+   3) Session watermark: every session EXCEPT owner/super_admin gets a faint
+      traceable overlay (name · date) across CRM pages. Deterrence and
+      traceability — see the honest note in chat: no website can technically
+      BLOCK screenshots; this makes any leak attributable instead.
+============================================================================ */
+
+/* 1 · recovery-link catcher */
+(function () {
+  try {
+    var h = location.hash || '';
+    if (h.indexOf('type=recovery') > -1 &&
+        (location.pathname.split('/').pop() || '') !== 'reset-password.html') {
+      location.replace('reset-password.html' + h);
+    }
+  } catch (e) {}
+})();
+
+/* 2 · nav-sync (identical logic to crm-activity.js; double-load guarded) */
+(function () {
+  if (window.__jcoNavSync) return;
+  window.__jcoNavSync = true;
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof sb === 'undefined') return;
+    var STAFF_LINKS = [
+      { href: 'crm-daily-entry.html',   label: 'Daily Expenses' },
+      { href: 'crm-ai-accountant.html', label: 'AI Accountant' }
+    ];
+    var ADMIN_LINKS = [
+      { href: 'crm-financial-settings.html', label: 'Financial Settings' },
+      { href: 'crm-employee-costs.html',     label: 'Employee Costs' },
+      { href: 'crm-organization.html',       label: 'Organization' },
+      { href: 'crm-project-costing.html',    label: 'Project Costing' },
+      { href: 'crm-finance-reports.html',    label: 'Financial Reports' },
+      { href: 'crm-alerts.html',             label: 'Alerts' }
+    ];
+    function inject() {
+      var side = document.querySelector('.crm-side');
+      if (!side) return;
+      var existing = {};
+      side.querySelectorAll('a').forEach(function (a) {
+        existing[(a.getAttribute('href') || '').split('#')[0]] = true;
+      });
+      var here = (location.pathname.split('/').pop() || '');
+      function place(items, anchorHref) {
+        var pending = items.filter(function (i) { return !existing[i.href] && i.href !== here; });
+        if (!pending.length) return;
+        var anchor = side.querySelector('a[href="' + anchorHref + '"]');
+        pending.forEach(function (i) {
+          var a = document.createElement('a');
+          a.className = 'crm-nav-item'; a.href = i.href; a.textContent = i.label;
+          if (anchor && anchor.parentNode) { anchor.parentNode.insertBefore(a, anchor.nextSibling); anchor = a; }
+          else { side.appendChild(a); }
+          existing[i.href] = true;
+        });
+      }
+      sb.rpc('crm_is_staff').then(function (r) {
+        if (!r || r.data !== true) return;
+        place(STAFF_LINKS, 'crm-finance.html');
+        sb.rpc('crm_has_role', { roles: ['owner','super_admin','ceo','finance_manager'] })
+          .then(function (r2) { if (r2 && r2.data === true) place(ADMIN_LINKS, 'crm-business-rules.html'); }, function () {});
+      }, function () {});
+    }
+    try { inject(); } catch (e) {}
+    try {
+      var tries = 0;
+      var t = setInterval(function () {
+        tries++;
+        var side = document.querySelector('.crm-side');
+        if (side && side.offsetParent !== null) { try { inject(); } catch (e) {} }
+        if (tries > 20) clearInterval(t);
+      }, 1500);
+    } catch (e) {}
+  });
+})();
+
+/* 3 · session watermark for every non-owner session */
+(function () {
+  if (window.__jcoWatermark) return;
+  window.__jcoWatermark = true;
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof sb === 'undefined') return;
+    async function apply() {
+      try {
+        var s = await sb.auth.getSession();
+        if (!s.data || !s.data.session) return;
+        var r = await sb.rpc('crm_has_role', { roles: ['owner', 'super_admin'] });
+        if (r && r.data === true) return;                    /* owner sees clean screens */
+        var who = (s.data.session.user.email || 'user');
+        var stamp = who + ' \u00b7 ' + new Date().toISOString().slice(0, 10);
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="420" height="220">' +
+          '<text x="0" y="120" font-family="monospace" font-size="15" fill="rgba(198,165,90,0.09)" ' +
+          'transform="rotate(-28 210 110)">' + stamp.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text></svg>';
+        var wm = document.createElement('div');
+        wm.id = 'jco-wm';
+        wm.style.cssText = 'position:fixed;inset:0;z-index:2147482000;pointer-events:none;' +
+          'background-image:url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '");' +
+          'background-repeat:repeat;';
+        document.body.appendChild(wm);
+        /* if someone deletes the overlay via devtools, it comes back */
+        new MutationObserver(function () {
+          if (!document.getElementById('jco-wm')) document.body.appendChild(wm);
+        }).observe(document.body, { childList: true });
+      } catch (e) {}
+    }
+    apply();
+    sb.auth.onAuthStateChange(function () { if (!document.getElementById('jco-wm')) apply(); });
+  });
+})();

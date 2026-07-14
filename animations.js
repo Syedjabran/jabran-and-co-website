@@ -122,3 +122,15 @@
     document.head.appendChild(s);
   } catch (e) {}
 })();
+
+/* recovery-link catcher: reset emails landing on any public page are
+   forwarded to reset-password.html with their token intact. */
+(function () {
+  try {
+    var h = location.hash || '';
+    if (h.indexOf('type=recovery') > -1 &&
+        (location.pathname.split('/').pop() || '') !== 'reset-password.html') {
+      location.replace('reset-password.html' + h);
+    }
+  } catch (e) {}
+})();
