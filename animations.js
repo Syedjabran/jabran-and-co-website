@@ -107,3 +107,21 @@
     }
   });
 })();
+
+
+
+
+/* ============================================================================
+   WIDGET LOADER (appended): loads the public AI chat widget on every page
+   that includes animations.js — no page edits needed. The widget itself
+   refuses to run on CRM/portal/document pages.
+============================================================================ */
+(function () {
+  try {
+    if (window.__jcoChatWidget) return;
+    var s = document.createElement('script');
+    s.src = 'chat-widget.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  } catch (e) {}
+})();
