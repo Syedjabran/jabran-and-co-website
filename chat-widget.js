@@ -1,17 +1,16 @@
 /* ============================================================================
-   JABRAN & CO. — chat-widget.js · PUBLIC AI ADVISORY WIDGET
-   Self-contained floating chat for public pages. Loaded automatically by
-   animations.js — no page edits. Never appears on CRM/portal pages.
-   Backend: the advisory-agent Edge Function (verified-facts-only, capped).
-   Limits mirror the AI Control Center policy: proactive after 45s or 60%
-   scroll (max once per 24h per visitor), 6 msgs/min, 40 msgs/conversation,
-   2,000 chars/message. All wrapped so it can never break a page.
+   JABRAN & CO. — chat-widget.js · PUBLIC AI ADVISORY WIDGET · v3
+   Floating, draggable launcher with the J&Co mark; brand panel; capped chat.
+   Loaded by animations.js on every public page. Never runs on CRM/portal
+   pages. Backend: the advisory-agent Edge Function (verified facts, capped).
+   BROWSER JS ONLY — the .ts Edge Function files must never be uploaded to
+   the website repo.
 ============================================================================ */
 (function () {
   if (window.__jcoChatWidget) return;
   window.__jcoChatWidget = true;
+  try { console.log('[J&Co widget] v3 loaded'); } catch (e) {}
 
-  /* Public pages only */
   var path = (location.pathname.split('/').pop() || '').toLowerCase();
   if (path.indexOf('crm') === 0 || path === 'my-account.html' ||
       path.indexOf('-view.html') > -1) return;
@@ -38,29 +37,43 @@
   }
 
   function build() {
-    var pos = { right: 20, bottom: 96 };            /* default sits ABOVE the WhatsApp float */
+    /* ---- launcher (draggable) ---- */
+    var pos = { right: 20, bottom: 96 };   /* default: above the WhatsApp float */
     try {
       var saved = JSON.parse(localStorage.getItem('jco_chat_pos') || 'null');
       if (saved && saved.right >= 0 && saved.bottom >= 0) pos = saved;
     } catch (e) {}
+
     var btn = el('div',
       'position:fixed;z-index:2147483000;width:58px;height:58px;border-radius:50%;' +
-      'background:#08111C;border:2px solid #C6A55A;display:flex;align-items:center;justify-content:center;' +
-      'cursor:grab;box-shadow:0 6px 22px rgba(0,0,0,0.55);user-select:none;touch-action:none;');
+      'background:#08111C;border:2px solid #C6A55A;display:flex;align-items:center;' +
+      'justify-content:center;cursor:grab;box-shadow:0 6px 22px rgba(0,0,0,0.55);' +
+      'user-select:none;touch-action:none;');
     btn.style.right = pos.right + 'px';
     btn.style.bottom = pos.bottom + 'px';
-    btn.innerHTML =
-      '<img src="favicon.png" alt="Jabran & Co." draggable="false" ' +
-      'style="width:64%;height:64%;object-fit:contain;pointer-events:none;" ' +
-      'onerror="this.outerHTML=\'<span style=&quot;color:#E4C98A;font-family:\\\'Playfair Display\\\',serif;font-size:19px;font-weight:600;&quot;>J&amp;Co</span>\'">';
     btn.setAttribute('role', 'button');
     btn.setAttribute('aria-label', 'Chat with Jabran & Co. (drag to move)');
 
+    var mark = document.createElement('img');
+    mark.src = 'favicon.png';
+    mark.alt = 'Jabran & Co.';
+    mark.draggable = false;
+    mark.style.cssText = 'width:64%;height:64%;object-fit:contain;pointer-events:none;';
+    mark.onerror = function () {
+      var s = el('span',
+        "color:#E4C98A;font-family:'Playfair Display',serif;font-size:18px;font-weight:600;pointer-events:none;",
+        'J&amp;Co');
+      btn.replaceChild(s, mark);
+    };
+    btn.appendChild(mark);
+
+    /* ---- panel ---- */
     var panel = el('div',
-      'position:fixed;right:16px;bottom:164px;z-index:2147483001;width:min(360px,92vw);max-height:min(560px,72vh);' +
-      'display:none;flex-direction:column;background:#0B0F14;border:1px solid rgba(198,165,90,0.35);' +
-      'border-radius:4px;box-shadow:0 12px 40px rgba(0,0,0,0.6);overflow:hidden;' +
-      "font-family:Inter,-apple-system,sans-serif;");
+      'position:fixed;right:16px;bottom:164px;z-index:2147483001;width:min(360px,92vw);' +
+      'max-height:min(560px,72vh);display:none;flex-direction:column;background:#0B0F14;' +
+      'border:1px solid rgba(198,165,90,0.35);border-radius:4px;' +
+      'box-shadow:0 12px 40px rgba(0,0,0,0.6);overflow:hidden;' +
+      'font-family:Inter,-apple-system,sans-serif;');
 
     panel.appendChild(el('div',
       'padding:14px 16px;border-bottom:1px solid rgba(198,165,90,0.22);background:#08111C;',
@@ -72,13 +85,13 @@
 
     var bar = el('div', 'display:flex;gap:8px;padding:12px;border-top:1px solid rgba(198,165,90,0.22);background:#08111C;');
     var input = el('textarea',
-      'flex:1;background:#111820;border:1px solid rgba(198,165,90,0.22);color:#F5F3EF;padding:9px 11px;' +
-      'font-size:13px;border-radius:2px;resize:none;height:40px;font-family:inherit;');
+      'flex:1;background:#111820;border:1px solid rgba(198,165,90,0.22);color:#F5F3EF;' +
+      'padding:9px 11px;font-size:13px;border-radius:2px;resize:none;height:40px;font-family:inherit;');
     input.maxLength = MAX_LEN;
     input.placeholder = 'Type your question\u2026';
     var send = el('button',
-      'background:#C6A55A;color:#0B0F14;border:none;padding:0 16px;font-size:11px;letter-spacing:0.08em;' +
-      'text-transform:uppercase;cursor:pointer;border-radius:2px;font-weight:600;', 'Send');
+      'background:#C6A55A;color:#0B0F14;border:none;padding:0 16px;font-size:11px;' +
+      'letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:2px;font-weight:600;', 'Send');
     bar.appendChild(input); bar.appendChild(send);
     panel.appendChild(bar);
 
@@ -92,21 +105,15 @@
     function push(role, text) {
       var mine = role === 'user';
       var b = el('div',
-        'max-width:85%;margin:0 0 10px ' + (mine ? 'auto' : '0') + ';padding:9px 12px;font-size:13px;line-height:1.55;' +
-        'border-radius:3px;color:#F5F3EF;border:1px solid rgba(198,165,90,' + (mine ? '0.4' : '0.18') + ');' +
+        'max-width:85%;margin:0 0 10px ' + (mine ? 'auto' : '0') + ';padding:9px 12px;' +
+        'font-size:13px;line-height:1.55;border-radius:3px;color:#F5F3EF;' +
+        'border:1px solid rgba(198,165,90,' + (mine ? '0.4' : '0.18') + ');' +
         'background:' + (mine ? 'rgba(198,165,90,0.12)' : '#111820') + ';');
       b.innerHTML = esc(text);
       log.appendChild(b);
       log.scrollTop = log.scrollHeight;
     }
 
-    function openPanel() {
-      if (open) return;
-      open = true;
-      panel.style.display = 'flex';
-      if (!history.length) push('assistant', GREETING);
-      try { localStorage.setItem('jco_chat_last_open', String(Date.now())); } catch (e) {}
-    }
     function anchorPanel() {
       var r = btn.getBoundingClientRect();
       var right = Math.max(8, window.innerWidth - r.right);
@@ -114,13 +121,25 @@
       panel.style.right = Math.min(right, window.innerWidth - 60) + 'px';
       panel.style.bottom = Math.max(12, bottom) + 'px';
     }
-    function toggle() { if (open) { open = false; panel.style.display = 'none'; } else { anchorPanel(); openPanel(); input.focus(); } }
+    function openPanel() {
+      if (open) return;
+      open = true;
+      panel.style.display = 'flex';
+      if (!history.length) push('assistant', GREETING);
+      try { localStorage.setItem('jco_chat_last_open', String(Date.now())); } catch (e) {}
+    }
+    function toggle() {
+      if (open) { open = false; panel.style.display = 'none'; }
+      else { anchorPanel(); openPanel(); input.focus(); }
+    }
 
-    /* Drag to float anywhere; a tap (< 8px movement) opens the chat */
+    /* drag to move; a tap (<8px movement) toggles */
     var drag = null;
     btn.addEventListener('pointerdown', function (e) {
-      drag = { x: e.clientX, y: e.clientY, r: parseFloat(btn.style.right), b: parseFloat(btn.style.bottom), moved: false };
-      btn.setPointerCapture(e.pointerId);
+      drag = { x: e.clientX, y: e.clientY,
+               r: parseFloat(btn.style.right) || 20,
+               b: parseFloat(btn.style.bottom) || 96, moved: false };
+      try { btn.setPointerCapture(e.pointerId); } catch (e2) {}
       btn.style.cursor = 'grabbing';
     });
     btn.addEventListener('pointermove', function (e) {
@@ -128,13 +147,11 @@
       var dx = drag.x - e.clientX, dy = drag.y - e.clientY;
       if (Math.abs(dx) > 8 || Math.abs(dy) > 8) drag.moved = true;
       if (!drag.moved) return;
-      var right = Math.min(Math.max(drag.r + dx, 6), window.innerWidth - 64);
-      var bottom = Math.min(Math.max(drag.b + dy, 6), window.innerHeight - 64);
-      btn.style.right = right + 'px';
-      btn.style.bottom = bottom + 'px';
+      btn.style.right = Math.min(Math.max(drag.r + dx, 6), window.innerWidth - 64) + 'px';
+      btn.style.bottom = Math.min(Math.max(drag.b + dy, 6), window.innerHeight - 64) + 'px';
       if (open) anchorPanel();
     });
-    btn.addEventListener('pointerup', function (e) {
+    btn.addEventListener('pointerup', function () {
       btn.style.cursor = 'grab';
       var wasDrag = drag && drag.moved;
       if (wasDrag) {
@@ -154,7 +171,10 @@
       if (!text || busy) return;
       var now = Date.now();
       sendTimes = sendTimes.filter(function (t) { return now - t < 60000; });
-      if (sendTimes.length >= PER_MIN) { push('assistant', 'One moment please \u2014 a short pause between messages keeps me responsive.'); return; }
+      if (sendTimes.length >= PER_MIN) {
+        push('assistant', 'One moment please \u2014 a short pause between messages keeps me responsive.');
+        return;
+      }
       if (history.filter(function (m) { return m.role === 'user'; }).length >= MAX_MSGS) {
         push('assistant', 'We\u2019ve covered a lot \u2014 for anything further, our team would love to continue on WhatsApp: +92 336 4864345.');
         return;
@@ -184,7 +204,7 @@
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
     });
 
-    /* Proactive open: 45s or 60% scroll, at most once per 24h per visitor */
+    /* proactive: 45s or 60% scroll, once per visitor per 24h */
     var can = true;
     try {
       var last = Number(localStorage.getItem('jco_chat_last_open') || 0);
