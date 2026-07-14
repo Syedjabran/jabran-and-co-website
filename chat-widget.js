@@ -1,248 +1,161 @@
 /* ============================================================================
-   JABRAN & CO. — chat-widget.js · ADVISORY AGENT (v2, Increment 7)
-   Replaces the previous widget. Include on public pages before </body>:
-       <script src="chat-widget.js" defer></script>
-   No SDK, no dependencies — one async fetch to the ai-agent Edge Function.
-   Features: conversation persistence + resume (reference number shown),
-   config-driven behaviour with a server-side kill switch, context-aware
-   proactive openers with frequency caps and dismissal persistence,
-   reduced-motion respect, analytics events, AI disclosure line.
+   JABRAN & CO. — chat-widget.js · PUBLIC AI ADVISORY WIDGET
+   Self-contained floating chat for public pages. Loaded automatically by
+   animations.js — no page edits. Never appears on CRM/portal pages.
+   Backend: the advisory-agent Edge Function (verified-facts-only, capped).
+   Limits mirror the AI Control Center policy: proactive after 45s or 60%
+   scroll (max once per 24h per visitor), 6 msgs/min, 40 msgs/conversation,
+   2,000 chars/message. All wrapped so it can never break a page.
 ============================================================================ */
 (function () {
-  'use strict';
-  if (typeof window === 'undefined' || window.__jcoWidget) return;
-  window.__jcoWidget = true;
+  if (window.__jcoChatWidget) return;
+  window.__jcoChatWidget = true;
 
-  var FN = 'https://dvsaqjvcxqlzgpbvexnu.supabase.co/functions/v1/ai-agent';
-  var LS_CONV = 'jco_ai_conv', LS_PRO = 'jco_ai_proactive';
-  var cfg = null, conv = null, open = false, busy = false, humanMode = false;
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Public pages only */
+  var path = (location.pathname.split('/').pop() || '').toLowerCase();
+  if (path.indexOf('crm') === 0 || path === 'my-account.html' ||
+      path.indexOf('-view.html') > -1) return;
 
-  var PROACTIVE = {
-    'global-trade-sourcing': 'Are you currently looking for a supplier, comparing quotations, or trying to resolve a sourcing problem?',
-    'production-plant-audit': 'Are you investigating production loss, quality variation, downtime, or workforce inefficiency?',
-    'custom-clearance': 'Is your shipment being planned, already in transit, or currently facing a customs issue?',
-    'training-academy': 'Are you planning training for leadership, sales, operations, AI adoption, or business development?',
-    'architecture-interiors': 'Are you planning a new build, a fit-out, or renovating an existing space?',
-    'advisory': 'Would it help to talk through the business challenge you are working on?'
-  };
+  var FN_URL = 'https://dvsaqjvcxqlzgpbvexnu.supabase.co/functions/v1/advisory-agent';
+  var GREETING = "Welcome to Jabran & Co. I\u2019m the firm\u2019s AI Advisory Agent \u2014 I can help identify the right service, answer initial questions, collect your requirements and connect you with a specialist. How can I assist?";
+  var DISCLOSURE = "You are chatting with Jabran & Co.\u2019s AI Advisory Agent. Please don\u2019t share passwords or payment-card details.";
+  var WHATSAPP = 'https://wa.me/923364864345';
+  var PROACTIVE_MS = 45000, PROACTIVE_SCROLL = 0.6, FREQ_CAP_H = 24;
+  var MAX_LEN = 2000, MAX_MSGS = 40, PER_MIN = 6;
 
-  function api(payload){
-    return fetch(FN, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload) })
-      .then(function(r){ return r.json(); });
+  var history = [], sendTimes = [], open = false, busy = false;
+
+  function el(tag, css, html) {
+    var e = document.createElement(tag);
+    if (css) e.style.cssText = css;
+    if (html != null) e.innerHTML = html;
+    return e;
   }
-  function track(ev){
-    try{ if(window.gtag) gtag('event', ev, {event_category:'ai_agent'}); }catch(e){}
-    try{ if(window.fbq) fbq('trackCustom', ev); }catch(e){}
-  }
-  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
-
-  /* ------------------------------------------------------------------ UI */
-  var root, panel, msgs, input, launcher, bubble;
-  function build(){
-    root=document.createElement('div');
-    root.innerHTML=
-    '<style>'+
-    '.jcw-launch{position:fixed;right:20px;bottom:20px;z-index:9990;width:56px;height:56px;border-radius:50%;background:#C6A55A;color:#0B0F14;border:none;cursor:pointer;font-size:22px;box-shadow:0 6px 24px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;}'+
-    (reduceMotion?'':'.jcw-launch{transition:transform .2s;}.jcw-launch:hover{transform:scale(1.06);}')+
-    '.jcw-bubble{position:fixed;right:88px;bottom:30px;z-index:9990;max-width:270px;background:#111820;border:1px solid rgba(198,165,90,0.4);color:#F5F3EF;font:13px/1.5 Inter,system-ui,sans-serif;padding:12px 14px;border-radius:6px;box-shadow:0 6px 24px rgba(0,0,0,0.45);display:none;}'+
-    '.jcw-bubble .x{position:absolute;top:4px;right:8px;color:#9C9690;cursor:pointer;font-size:14px;background:none;border:none;}'+
-    '.jcw-panel{position:fixed;right:16px;bottom:88px;z-index:9991;width:min(370px,calc(100vw - 32px));height:min(560px,calc(100vh - 120px));background:#0B0F14;border:1px solid rgba(198,165,90,0.35);border-radius:8px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 14px 44px rgba(0,0,0,0.6);font-family:Inter,system-ui,sans-serif;}'+
-    '.jcw-head{background:#08111C;border-bottom:1px solid rgba(198,165,90,0.25);padding:14px 16px 10px;}'+
-    '.jcw-head .n{font-family:"Playfair Display",serif;font-size:16px;color:#F5F3EF;}'+
-    '.jcw-head .d{font-size:10px;color:#9C9690;margin-top:3px;line-height:1.45;}'+
-    '.jcw-head .r{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:0.08em;color:#C6A55A;margin-top:5px;}'+
-    '.jcw-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}'+
-    '.jcw-m{max-width:86%;padding:9px 12px;border-radius:6px;font-size:13px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;}'+
-    '.jcw-m.a{background:#111820;border:1px solid rgba(198,165,90,0.2);color:#F5F3EF;align-self:flex-start;}'+
-    '.jcw-m.v{background:rgba(198,165,90,0.14);border:1px solid rgba(198,165,90,0.3);color:#F5F3EF;align-self:flex-end;}'+
-    '.jcw-m.s{background:none;border:none;color:#9C9690;font-size:11px;align-self:center;text-align:center;}'+
-    '.jcw-in{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(198,165,90,0.25);background:#08111C;}'+
-    '.jcw-in textarea{flex:1;resize:none;background:#111820;border:1px solid rgba(198,165,90,0.25);color:#F5F3EF;border-radius:4px;padding:9px 11px;font:13px Inter,sans-serif;height:42px;}'+
-    '.jcw-in button{background:#C6A55A;color:#0B0F14;border:none;border-radius:4px;padding:0 16px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-weight:600;}'+
-    '.jcw-in button:disabled{opacity:0.5;cursor:default;}'+
-    '.jcw-x{position:absolute;top:10px;right:12px;background:none;border:none;color:#9C9690;font-size:18px;cursor:pointer;}'+
-    '</style>'+
-    '<button class="jcw-launch" aria-label="Chat with the Jabran & Co. Advisory Agent">✦</button>'+
-    '<div class="jcw-bubble" role="status"><button class="x" aria-label="Dismiss">×</button><span class="t"></span></div>'+
-    '<div class="jcw-panel" role="dialog" aria-label="Jabran and Co Advisory Agent">'+
-      '<button class="jcw-x" aria-label="Close chat">×</button>'+
-      '<div class="jcw-head"><div class="n"></div><div class="d"></div><div class="r"></div></div>'+
-      '<div class="jcw-msgs" aria-live="polite"></div>'+
-      '<div class="jcw-in"><textarea rows="1" placeholder="Type your message…" aria-label="Your message"></textarea><button type="button">Send</button></div>'+
-    '</div>';
-    document.body.appendChild(root);
-    launcher=root.querySelector('.jcw-launch'); bubble=root.querySelector('.jcw-bubble');
-    panel=root.querySelector('.jcw-panel'); msgs=root.querySelector('.jcw-msgs');
-    input=root.querySelector('.jcw-in textarea');
-    root.querySelector('.jcw-head .n').textContent=cfg.agent_name;
-    root.querySelector('.jcw-head .d').textContent=cfg.disclosure;
-
-    launcher.addEventListener('click', toggle);
-    root.querySelector('.jcw-x').addEventListener('click', toggle);
-    root.querySelector('.jcw-in button').addEventListener('click', send);
-    input.addEventListener('keydown', function(e){
-      if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); }
-    });
-    bubble.querySelector('.x').addEventListener('click', function(){
-      bubble.style.display='none';
-      try{ localStorage.setItem(LS_PRO, JSON.stringify({dismissed:true, at:Date.now()})); }catch(e){}
-    });
-    bubble.addEventListener('click', function(e){
-      if(e.target.classList.contains('x')) return;
-      bubble.style.display='none'; if(!open) toggle();
-    });
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
   }
 
-  function add(kind, text){
-    var m=document.createElement('div');
-    m.className='jcw-m '+kind; m.textContent=text;
-    msgs.appendChild(m); msgs.scrollTop=msgs.scrollHeight;
-    return m;
-  }
+  function build() {
+    var btn = el('div',
+      'position:fixed;right:20px;bottom:20px;z-index:98;width:56px;height:56px;border-radius:50%;' +
+      'background:#C6A55A;color:#0B0F14;display:flex;align-items:center;justify-content:center;' +
+      'cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,0.5);font-family:"Playfair Display",serif;' +
+      'font-size:22px;font-weight:600;user-select:none;', 'J&');
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('aria-label', 'Chat with Jabran & Co.');
 
-  function toggle(){
-    open=!open;
-    panel.style.display=open?'flex':'none';
-    if(open){
-      bubble.style.display='none';
-      track('chat_opened');
-      if(!conv) start(); else if(!msgs.childElementCount) resume();
-      startPolling();
-      setTimeout(function(){ input.focus(); },100);
-    } else {
-      stopPolling();
-      launcher.focus();
+    var panel = el('div',
+      'position:fixed;right:16px;bottom:88px;z-index:99;width:min(360px,92vw);max-height:min(560px,78vh);' +
+      'display:none;flex-direction:column;background:#0B0F14;border:1px solid rgba(198,165,90,0.35);' +
+      'border-radius:4px;box-shadow:0 12px 40px rgba(0,0,0,0.6);overflow:hidden;' +
+      "font-family:Inter,-apple-system,sans-serif;");
+
+    panel.appendChild(el('div',
+      'padding:14px 16px;border-bottom:1px solid rgba(198,165,90,0.22);background:#08111C;',
+      '<div style="font-family:\'Playfair Display\',serif;font-size:16px;color:#E4C98A;">Jabran &amp; Co. \u2014 AI Advisory</div>' +
+      '<div style="font-size:10px;color:#9C9690;margin-top:3px;line-height:1.5;">' + esc(DISCLOSURE) + '</div>'));
+
+    var log = el('div', 'flex:1;overflow-y:auto;padding:14px;min-height:180px;');
+    panel.appendChild(log);
+
+    var bar = el('div', 'display:flex;gap:8px;padding:12px;border-top:1px solid rgba(198,165,90,0.22);background:#08111C;');
+    var input = el('textarea',
+      'flex:1;background:#111820;border:1px solid rgba(198,165,90,0.22);color:#F5F3EF;padding:9px 11px;' +
+      'font-size:13px;border-radius:2px;resize:none;height:40px;font-family:inherit;');
+    input.maxLength = MAX_LEN;
+    input.placeholder = 'Type your question\u2026';
+    var send = el('button',
+      'background:#C6A55A;color:#0B0F14;border:none;padding:0 16px;font-size:11px;letter-spacing:0.08em;' +
+      'text-transform:uppercase;cursor:pointer;border-radius:2px;font-weight:600;', 'Send');
+    bar.appendChild(input); bar.appendChild(send);
+    panel.appendChild(bar);
+
+    panel.appendChild(el('div', 'padding:8px 12px;background:#08111C;text-align:center;',
+      '<a href="' + WHATSAPP + '" target="_blank" rel="noopener" style="font-size:11px;color:#E4C98A;text-decoration:none;">' +
+      'Prefer a human? WhatsApp us \u2192</a>'));
+
+    document.body.appendChild(btn);
+    document.body.appendChild(panel);
+
+    function push(role, text) {
+      var mine = role === 'user';
+      var b = el('div',
+        'max-width:85%;margin:0 0 10px ' + (mine ? 'auto' : '0') + ';padding:9px 12px;font-size:13px;line-height:1.55;' +
+        'border-radius:3px;color:#F5F3EF;border:1px solid rgba(198,165,90,' + (mine ? '0.4' : '0.18') + ');' +
+        'background:' + (mine ? 'rgba(198,165,90,0.12)' : '#111820') + ';');
+      b.innerHTML = esc(text);
+      log.appendChild(b);
+      log.scrollTop = log.scrollHeight;
     }
-  }
 
-  /* --------------------------------------------------------- conversation */
-  function saveConv(){ try{ localStorage.setItem(LS_CONV, JSON.stringify(conv)); }catch(e){} }
-  function loadConv(){ try{ conv=JSON.parse(localStorage.getItem(LS_CONV)||'null'); }catch(e){ conv=null; } }
+    function openPanel() {
+      if (open) return;
+      open = true;
+      panel.style.display = 'flex';
+      if (!history.length) push('assistant', GREETING);
+      try { localStorage.setItem('jco_chat_last_open', String(Date.now())); } catch (e) {}
+    }
+    function toggle() { if (open) { open = false; panel.style.display = 'none'; } else { openPanel(); input.focus(); } }
+    btn.addEventListener('click', toggle);
 
-  async function start(){
-    add('s','Connecting…');
-    var u=new URLSearchParams(location.search);
-    var r=await api({ action:'start',
-      session_id:(Date.now().toString(36)+Math.random().toString(36).slice(2,8)),
-      url:location.href, landing:location.pathname,
-      utm_source:u.get('utm_source'), utm_medium:u.get('utm_medium'), utm_campaign:u.get('utm_campaign') });
-    msgs.innerHTML='';
-    if(!r.conversation_id){ add('s','The assistant is unavailable right now — reach us on WhatsApp +92 336 4864345.'); return; }
-    conv={ id:r.conversation_id, token:r.visitor_token, ref:r.reference }; saveConv();
-    root.querySelector('.jcw-head .r').textContent='Ref '+conv.ref;
-    add('a', cfg.greeting);
-  }
-
-  async function resume(){
-    add('s','Restoring your conversation…');
-    var r=await api({ action:'history', conversation_id:conv.id, visitor_token:conv.token });
-    msgs.innerHTML='';
-    if(r.error){ conv=null; try{localStorage.removeItem(LS_CONV);}catch(e){} return start(); }
-    root.querySelector('.jcw-head .r').textContent='Ref '+(r.reference||conv.ref);
-    (r.messages||[]).forEach(function(m){
-      add(m.sender_type==='assistant'?'a':(m.sender_type==='staff'?'a':'v'), m.content||'');
-    });
-    lastCount=(r.messages||[]).length;
-    if(r.status==='human_active') humanMode=true;
-    if(!r.messages||!r.messages.length) add('a', cfg.greeting);
-  }
-
-  /* live polling — lets the visitor see staff replies during human takeover */
-  var lastCount=0, pollTimer=null;
-  async function poll(){
-    if(!open||!conv||busy) return;
-    try{
-      var r=await api({ action:'history', conversation_id:conv.id, visitor_token:conv.token });
-      if(r.error) return;
-      if(r.status==='human_active'&&!humanMode){ humanMode=true; add('s','A member of the Jabran & Co. team has joined this conversation.'); }
-      if(r.status==='ai_active'&&humanMode){ humanMode=false; }
-      var m=r.messages||[];
-      if(m.length>lastCount){
-        m.slice(lastCount).forEach(function(x){
-          if(x.sender_type==='visitor') return;           // own messages already rendered
-          add(x.sender_type==='staff'?'a':'a', x.content||'');
+    async function submit() {
+      var text = (input.value || '').trim();
+      if (!text || busy) return;
+      var now = Date.now();
+      sendTimes = sendTimes.filter(function (t) { return now - t < 60000; });
+      if (sendTimes.length >= PER_MIN) { push('assistant', 'One moment please \u2014 a short pause between messages keeps me responsive.'); return; }
+      if (history.filter(function (m) { return m.role === 'user'; }).length >= MAX_MSGS) {
+        push('assistant', 'We\u2019ve covered a lot \u2014 for anything further, our team would love to continue on WhatsApp: +92 336 4864345.');
+        return;
+      }
+      sendTimes.push(now);
+      input.value = '';
+      push('user', text);
+      history.push({ role: 'user', content: text });
+      busy = true; send.disabled = true; send.textContent = '\u2026';
+      try {
+        var r = await fetch(FN_URL, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ messages: history })
         });
-        lastCount=m.length;
-      } else if(m.length>0){ lastCount=m.length; }
-    }catch(e){}
-  }
-  function startPolling(){ if(pollTimer) return; pollTimer=setInterval(poll, 9000); }
-  function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer=null; } }
+        var d = await r.json();
+        var reply = (d && d.reply) || (d && d.error) || 'Please try again, or reach us on WhatsApp: +92 336 4864345.';
+        push('assistant', reply);
+        if (d && d.reply) history.push({ role: 'assistant', content: d.reply });
+      } catch (e) {
+        push('assistant', 'Connection hiccup \u2014 please try again, or WhatsApp us: +92 336 4864345.');
+      }
+      busy = false; send.disabled = false; send.textContent = 'Send';
+    }
+    send.addEventListener('click', submit);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
+    });
 
-  async function send(){
-    var text=input.value.trim();
-    if(!text||busy||!conv) return;
-    busy=true; input.value='';
-    add('v', text);
-    var tip=add('s', humanMode?'Sent to the team.':'…');
-    track('chat_message_sent');
-    try{
-      var r=await api({ action:'message', conversation_id:conv.id, visitor_token:conv.token,
-                        content:text, page:document.title+' — '+location.pathname });
-      tip.remove();
-      lastCount+=2; /* own message + expected reply slot; poll() self-corrects */
-      if(r.human && !r.reply){ humanMode=true; lastCount-=1; add('s','A member of the team will reply here — keep this tab open or note your reference '+(conv.ref||'')+'.'); }
-      if(r.reply) add('a', r.reply);
-      if(r.qualified) track('qualified_lead_created');
-      if(r.handoff){ track('human_takeover_requested'); }
-      if(r.error==='closed') add('s','This conversation is closed — refresh the page to start a new one.');
-    }catch(e){
-      tip.remove();
-      add('s','Connection problem — please try again, or WhatsApp +92 336 4864345.');
+    /* Proactive open: 45s or 60% scroll, at most once per 24h per visitor */
+    var can = true;
+    try {
+      var last = Number(localStorage.getItem('jco_chat_last_open') || 0);
+      can = (Date.now() - last) > FREQ_CAP_H * 3600000;
+    } catch (e) {}
+    if (can) {
+      var done = false;
+      function fire() { if (!done) { done = true; openPanel(); } }
+      setTimeout(fire, PROACTIVE_MS);
+      window.addEventListener('scroll', function onS() {
+        var h = document.documentElement;
+        var depth = (h.scrollTop + window.innerHeight) / Math.max(h.scrollHeight, 1);
+        if (depth >= PROACTIVE_SCROLL) { window.removeEventListener('scroll', onS); fire(); }
+      }, { passive: true });
     }
-    busy=false;
-  }
-
-  /* ------------------------------------------------------------ proactive */
-  function proactiveKey(){
-    var p=location.pathname.toLowerCase();
-    if(p.indexOf('global-trade')>-1||p.indexOf('trading')>-1) return 'global-trade-sourcing';
-    if(p.indexOf('plant-audit')>-1||p.indexOf('factory')>-1) return 'production-plant-audit';
-    if(p.indexOf('clearance')>-1||p.indexOf('customs')>-1) return 'custom-clearance';
-    if(p.indexOf('training')>-1) return 'training-academy';
-    if(p.indexOf('architecture')>-1||p.indexOf('construction')>-1||p.indexOf('interior')>-1) return 'architecture-interiors';
-    if(p.indexOf('advisory')>-1) return 'advisory';
-    return null;
-  }
-  function armProactive(){
-    if(!cfg.proactive||open) return;
-    var key=proactiveKey(); if(!key) return;
-    var st=null; try{ st=JSON.parse(localStorage.getItem(LS_PRO)||'null'); }catch(e){}
-    if(st){
-      if(st.dismissed) return;
-      if(st.at && (Date.now()-st.at) < cfg.proactive.cap_hours*3600000) return;
-    }
-    var fired=false;
-    function fire(){
-      if(fired||open) return;
-      var ae=document.activeElement;
-      if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.tagName==='SELECT')) return; // never interrupt a form
-      fired=true;
-      bubble.querySelector('.t').textContent=PROACTIVE[key];
-      bubble.style.display='block';
-      try{ localStorage.setItem(LS_PRO, JSON.stringify({at:Date.now()})); }catch(e){}
-      track('proactive_chat_shown');
-      setTimeout(function(){ bubble.style.display='none'; }, 25000);
-    }
-    setTimeout(fire, cfg.proactive.seconds*1000);
-    var onScroll=function(){
-      var h=document.documentElement;
-      var pct=(h.scrollTop+h.clientHeight)/h.scrollHeight*100;
-      if(pct>=cfg.proactive.scroll_pct){ fire(); window.removeEventListener('scroll', onScroll); }
-    };
-    window.addEventListener('scroll', onScroll, {passive:true});
   }
 
-  /* ----------------------------------------------------------------- boot */
-  function boot(){
-    api({action:'config'}).then(function(c){
-      if(!c||!c.enabled) return;         // server-side kill switch
-      cfg=c; loadConv(); build();
-      if(conv&&conv.ref) root.querySelector('.jcw-head .r').textContent='Ref '+conv.ref;
-      armProactive();
-    }).catch(function(){});
-  }
-  if(document.readyState==='complete') setTimeout(boot,800);
-  else window.addEventListener('load', function(){ setTimeout(boot,800); });
+  try {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', build);
+    } else { build(); }
+  } catch (e) { /* the widget must never break a page */ }
 })();
