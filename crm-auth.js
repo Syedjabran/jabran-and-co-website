@@ -396,3 +396,53 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 })();
+
+/* ============================================================================
+   5 · RESPONSIVE OVERRIDES — portrait tablet + mobile usability for EVERY
+   CRM page (injected here so all ~20 pages get it from one file). Applies
+   under 920px wide, and also in portrait up to 1100px so Chrome's
+   "Desktop site" mode on tablets is covered too.
+============================================================================ */
+(function () {
+  if (window.__jcoResponsive) return;
+  window.__jcoResponsive = true;
+  try {
+    var css = document.createElement('style');
+    css.id = 'jco-responsive';
+    css.textContent =
+      '@media (max-width: 920px), (orientation: portrait) and (max-width: 1100px) {' +
+      '  html, body { overflow-x: hidden !important; }' +
+      '  .crm-shell { display: block !important; }' +
+      '  .crm-side { position: static !important; width: 100% !important; height: auto !important;' +
+      '    display: flex !important; flex-wrap: nowrap !important; overflow-x: auto !important;' +
+      '    -webkit-overflow-scrolling: touch; padding: 10px 6px !important;' +
+      '    border-right: 0 !important; border-bottom: 1px solid rgba(198,165,90,0.22) !important; }' +
+      '  .crm-side .crm-brand, .crm-nav-label { display: none !important; }' +
+      '  .crm-nav-item { white-space: nowrap !important; border-left: 0 !important;' +
+      '    border-bottom: 2px solid transparent !important; padding: 10px 14px !important; font-size: 13px !important; }' +
+      '  .crm-nav-item.active { border-bottom-color: #C6A55A !important; background: transparent !important; }' +
+      '  .crm-main { width: 100% !important; max-width: 100% !important; margin: 0 !important;' +
+      '    padding: 18px 14px 80px !important; }' +
+      '  .crm-topline { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }' +
+      '  .crm-topline h1, h1 { font-size: 22px !important; }' +
+      '  .crm-grid2, .crm-grid3, .og-grid { grid-template-columns: 1fr !important; }' +
+      '  .crm-kpis { grid-template-columns: repeat(2, 1fr) !important; }' +
+      '  .crm-table { display: block !important; overflow-x: auto !important;' +
+      '    -webkit-overflow-scrolling: touch; }' +
+      '  .crm-table th, .crm-table td { white-space: nowrap !important; }' +
+      '  .crm-modal { max-width: 96vw !important; padding: 20px 16px !important; }' +
+      '  .crm-modal-bg { padding: 16px 8px !important; }' +
+      '  input, select, textarea { font-size: 16px !important; }' +          /* stops mobile zoom-on-focus */
+      '  .crm-btn { padding: 12px 18px !important; }' +
+      '  #crm-logout { top: 10px !important; right: 12px !important; font-size: 10px !important; }' +
+      '  .aa-chat { min-height: 240px !important; max-height: 46vh !important; }' +
+      '  .aa-msg { max-width: 94% !important; }' +
+      '  .aa-input { flex-direction: column !important; }' +
+      '  .aa-input input, .aa-input textarea { width: 100% !important; }' +
+      '  .aa-kv { grid-template-columns: 110px 1fr !important; }' +
+      '  .fs-tabs, .de-tabs, .pc-tabs, .fr-tabs, .og-tabs { overflow-x: auto !important; }' +
+      '  .de-appr, .fr-brow, .pc-wrow, .ec-al-row { grid-template-columns: 1fr !important; display: grid !important; }' +
+      '}';
+    document.head.appendChild(css);
+  } catch (e) {}
+})();
