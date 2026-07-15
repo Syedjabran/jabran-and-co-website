@@ -74,3 +74,81 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     try { sb.auth.onAuthStateChange(function () { apply(); }); } catch (e) {}
   });
 })();
+
+/* ============================================================================
+   EXPLICIT-SUBMIT LOGIN GUARD  (Issue 2)
+   Loaded by EVERY authenticated surface (CRM, admin, employee, client portal,
+   modals, legacy forms), so this is the single chokepoint every login path
+   must pass through — the centralisation the fix needs without introducing a
+   framework or rewriting each form.
+
+   RULE ENFORCED: sb.auth.signInWithPassword() only proceeds when it is the
+   direct consequence of an explicit user submission — a real form submit, a
+   click on a submit/Log In control, or Enter pressed inside a form. Any call
+   arriving from an input/change/blur handler, a watcher, a timer, a restored-
+   credential path, or browser/password-manager autofill is refused before it
+   reaches the network, and the reason is logged to the console with the page
+   that attempted it.
+
+   Also enforced here: no duplicate in-flight sign-in from rapid double-clicks.
+   The intent is consumed on use, so one click can authorise exactly one call.
+
+   NOT changed: session restoration. A previously signed-in user still resumes
+   their session on load — that is persistence, not a login event, and it does
+   not touch signInWithPassword.
+============================================================================ */
+(function () {
+  if (typeof sb === 'undefined' || !sb || !sb.auth || !sb.auth.signInWithPassword) return;
+  if (window.__jcoLoginGuard) return;
+  window.__jcoLoginGuard = true;
+
+  var INTENT_WINDOW_MS = 4000;
+  var intentAt = 0, inFlight = false;
+
+  function mark() { intentAt = Date.now(); }
+
+  /* capture phase: recorded before any page handler runs */
+  document.addEventListener('submit', mark, true);
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var t = e.target;
+    if (t && t.closest && (t.closest('form') || t.closest('[data-login-form]'))) mark();
+  }, true);
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('button, input[type="submit"], [role="button"]') : null;
+    if (!t) return;
+    var label = (t.textContent || t.value || '') + ' ' + (t.id || '');
+    if (t.type === 'submit' || /log\s*in|sign\s*in|login|continue/i.test(label)) mark();
+  }, true);
+
+  var original = sb.auth.signInWithPassword.bind(sb.auth);
+
+  sb.auth.signInWithPassword = function (credentials) {
+    if (Date.now() - intentAt > INTENT_WINDOW_MS) {
+      try {
+        console.warn('[J&Co] Sign-in refused: no explicit submit. Page: ' +
+          location.pathname + ' — a reactive trigger (input/change/blur/effect/autofill) attempted it.');
+      } catch (e) {}
+      return Promise.resolve({
+        data: { user: null, session: null },
+        error: { name: 'ExplicitSubmitRequired', status: 400,
+                 message: 'Click the Log In button to sign in.' }
+      });
+    }
+    if (inFlight) {
+      return Promise.resolve({
+        data: { user: null, session: null },
+        error: { name: 'SignInInProgress', status: 429, message: 'Sign-in already in progress.' }
+      });
+    }
+    intentAt = 0;                    /* one explicit action authorises one call */
+    inFlight = true;
+    return original(credentials).then(function (r) {
+      setTimeout(function () { inFlight = false; }, 500);
+      return r;
+    }, function (err) {
+      setTimeout(function () { inFlight = false; }, 500);
+      throw err;
+    });
+  };
+})();

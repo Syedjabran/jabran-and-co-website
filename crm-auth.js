@@ -448,65 +448,307 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 /* ============================================================================
-   6 · LOGOUT BAR — portrait/mobile only.
-   On narrow screens the sidebar becomes a horizontal nav strip along the top,
-   which collided with the fixed top-right Log Out controls. Here the logout
-   controls are lifted out of the corner into their own full-width sticky bar
-   ABOVE the nav strip: nothing overlaps, nothing is hidden, and the nav can
-   scroll its full length. Desktop is untouched (bar class is removed there).
+   6 · ACCOUNT MENU — consolidates BOTH logout controls into ONE account
+   control, and ends the header collision at its root.
+
+   ROOT CAUSE of the collision: "Log Out" / "Log Out Everywhere" were loose
+   text links in a position:fixed top-right box. On desktop the nav is a LEFT
+   sidebar so nothing collided; in portrait the sidebar becomes a horizontal
+   strip along the SAME top edge, so the nav tabs (Services, Audit Logs,
+   Alerts…) ran underneath the fixed box. Fix = remove the loose links, give
+   the authenticated user one account control, and give it its own space:
+     · desktop  → fixed top-right, clear of the left sidebar
+     · portrait → sticky full-width bar ABOVE the nav strip (nothing overlaps,
+                  the strip keeps its full scroll length, no tab is hidden)
+
+   Actions:
+     · Sign out from this device → sb.auth.signOut({scope:'local'})
+     · Sign out from all devices → sb.auth.signOut({scope:'global'}), which
+       revokes every refresh token for the user server-side (real revocation,
+       not a localStorage wipe, and no service-role key in the browser).
+       Confirmed first, audit-logged, success/error feedback shown.
+
+   A11y: aria-haspopup/aria-expanded, role="menu"/"menuitem", Escape closes and
+   restores focus, outside-click closes, :focus-visible rings, 44px targets.
 ============================================================================ */
 (function () {
-  if (window.__jcoLogoutBar) return;
-  window.__jcoLogoutBar = true;
+  if (window.__jcoAccountMenu) return;
+  window.__jcoAccountMenu = true;
+
+  var page = (location.pathname.split('/').pop() || '').toLowerCase();
+  if (page.indexOf('crm') !== 0) return;              /* CRM surfaces only */
 
   var MQ = '(max-width: 920px), (orientation: portrait) and (max-width: 1100px)';
 
+  /* ---- styles ---- */
   try {
     var css = document.createElement('style');
-    css.id = 'jco-logout-bar-css';
-    css.textContent =
-      '@media ' + MQ + ' {' +
-      '  #crm-logout.jco-logout-bar:not([style*="none"]) {' +
-      '    position: sticky !important; top: 0 !important; right: auto !important;' +
-      '    z-index: 120 !important; width: 100% !important;' +
-      '    display: flex !important; justify-content: flex-end !important; align-items: center !important;' +
-      '    gap: 18px !important; padding: 9px 14px !important; margin: 0 !important;' +
-      '    background: #08111C !important;' +
-      '    border-bottom: 1px solid rgba(198,165,90,0.22) !important;' +
-      '    font-family: "IBM Plex Mono", monospace !important; font-size: 10px !important;' +
-      '    letter-spacing: 0.14em !important; text-transform: uppercase !important;' +
-      '    color: #9C9690 !important; text-align: right !important; line-height: 1.4 !important;' +
-      '  }' +
-      '  #crm-logout.jco-logout-bar > * {' +
-      '    display: inline-block !important; margin: 0 !important; padding: 0 !important;' +
-      '    white-space: nowrap !important; cursor: pointer !important;' +
-      '  }' +
-      '  #crm-logout.jco-logout-bar > *:hover { color: #E4C98A !important; }' +
-      '  .crm-side { padding-top: 8px !important; }' +
-      '}';
+    css.id = 'jco-account-css';
+    css.textContent = [
+      /* legacy controls: hidden by stylesheet !important so inline display
+         changes from page scripts cannot bring them back, and left in the DOM
+         so existing page code that references them never throws */
+      '#crm-logout, #crm-logout-all, .jco-legacy-logout { display: none !important; }',
+
+      '#jco-topbar { position: fixed; top: 14px; right: 22px; z-index: 130; }',
+      '#jco-account { position: relative; }',
+      '#jco-acct-btn { display: flex; align-items: center; gap: 9px; min-height: 42px;',
+      '  background: #08111C; border: 1px solid rgba(198,165,90,0.28); border-radius: 999px;',
+      '  color: #F5F3EF; padding: 6px 14px 6px 6px; cursor: pointer;',
+      '  font-family: Inter, sans-serif; font-size: 12px; letter-spacing: 0.04em; }',
+      '#jco-acct-btn:hover { border-color: #C6A55A; }',
+      '#jco-acct-btn:focus-visible { outline: 2px solid #E4C98A; outline-offset: 2px; }',
+      '.jco-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;',
+      '  background: linear-gradient(135deg,#C6A55A,#B86A32); color: #0B0F14;',
+      '  display: flex; align-items: center; justify-content: center;',
+      '  font-family: "Playfair Display", serif; font-size: 12px; font-weight: 600; }',
+      '.jco-acct-name { white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; }',
+      '.jco-caret { color: #9C9690; font-size: 9px; }',
+
+      '#jco-acct-menu { position: absolute; right: 0; top: calc(100% + 8px); width: 268px;',
+      '  background: #0B0F14; border: 1px solid rgba(198,165,90,0.30); border-radius: 4px;',
+      '  box-shadow: 0 16px 44px rgba(0,0,0,0.6); overflow: hidden; }',
+      '#jco-acct-menu[hidden] { display: none; }',
+      '.jco-m-head { padding: 14px 16px; background: #08111C; border-bottom: 1px solid rgba(198,165,90,0.18); }',
+      '.jco-m-name { font-family: "Playfair Display", serif; font-size: 15px; color: #F5F3EF; }',
+      '.jco-m-email { font-family: "IBM Plex Mono", monospace; font-size: 10px; color: #9C9690;',
+      '  margin-top: 3px; word-break: break-all; }',
+      '.jco-m-role { display: inline-block; margin-top: 9px; padding: 2px 8px;',
+      '  font-family: "IBM Plex Mono", monospace; font-size: 9px; letter-spacing: 0.16em;',
+      '  text-transform: uppercase; color: #E4C98A; border: 1px solid rgba(228,201,138,0.4); border-radius: 2px; }',
+      '.jco-m-sec { font-family: "IBM Plex Mono", monospace; font-size: 9px; letter-spacing: 0.20em;',
+      '  text-transform: uppercase; color: #C6A55A; padding: 12px 16px 4px; }',
+      '.jco-m-item { display: block; width: 100%; min-height: 44px; text-align: left;',
+      '  background: transparent; border: 0; color: #F5F3EF; cursor: pointer;',
+      '  font-family: Inter, sans-serif; font-size: 13px; padding: 12px 16px; }',
+      '.jco-m-item:hover { background: rgba(198,165,90,0.08); }',
+      '.jco-m-item:focus-visible { outline: 2px solid #E4C98A; outline-offset: -2px; }',
+      '.jco-m-item.danger { color: #e57368; }',
+      '.jco-m-item.danger:hover { background: rgba(229,115,104,0.08); }',
+      '.jco-m-div { height: 1px; background: rgba(198,165,90,0.18); margin: 6px 0; }',
+      '.jco-m-note { font-family: "IBM Plex Mono", monospace; font-size: 9px; color: #9C9690;',
+      '  padding: 0 16px 12px; line-height: 1.5; }',
+
+      '#jco-confirm-bg { position: fixed; inset: 0; background: rgba(4,7,10,0.74); z-index: 140;',
+      '  display: none; align-items: center; justify-content: center; padding: 20px; }',
+      '#jco-confirm-bg.open { display: flex; }',
+      '.jco-confirm { width: 100%; max-width: 420px; background: #111820;',
+      '  border: 1px solid rgba(198,165,90,0.30); border-radius: 4px; padding: 26px; }',
+      '.jco-confirm h2 { font-family: "Playfair Display", serif; font-size: 20px; color: #F5F3EF; margin: 0 0 10px; }',
+      '.jco-confirm p { font-size: 13px; color: #9C9690; line-height: 1.6; margin: 0 0 20px; }',
+      '.jco-crow { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }',
+      '.jco-cbtn { min-height: 44px; padding: 11px 18px; font-size: 12px; letter-spacing: 0.08em;',
+      '  text-transform: uppercase; border-radius: 2px; cursor: pointer; font-family: Inter, sans-serif; }',
+      '.jco-cbtn:focus-visible { outline: 2px solid #E4C98A; outline-offset: 2px; }',
+      '.jco-cbtn.ghost { background: transparent; color: #E4C98A; border: 1px solid rgba(198,165,90,0.35); }',
+      '.jco-cbtn.danger { background: #e57368; color: #0B0F14; border: 0; font-weight: 600; }',
+      '.jco-cbtn[disabled] { opacity: 0.55; cursor: not-allowed; }',
+      '.jco-cmsg { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: #E4C98A;',
+      '  margin-top: 12px; text-align: right; min-height: 14px; }',
+      '.jco-cmsg.bad { color: #e57368; }',
+
+      '@media ' + MQ + ' {',
+      '  #jco-topbar { position: sticky; top: 0; right: auto; width: 100%; display: flex;',
+      '    justify-content: flex-end; padding: 8px 12px; background: #08111C;',
+      '    border-bottom: 1px solid rgba(198,165,90,0.22); }',
+      '  #jco-acct-menu { width: min(300px, calc(100vw - 24px)); }',
+      '  .crm-side { padding-top: 8px !important; }',
+      '}',
+      '@media (max-width: 380px) { .jco-acct-name { display: none; } }'
+    ].join('\n');
     document.head.appendChild(css);
   } catch (e) {}
 
-  document.addEventListener('DOMContentLoaded', function () {
+  /* ---- helpers ---- */
+  var ROLES = [
+    ['owner', 'Owner'], ['super_admin', 'Super Admin'], ['ceo', 'CEO'],
+    ['finance_manager', 'Finance Manager'], ['hr_manager', 'HR Manager'],
+    ['operations_manager', 'Operations Manager'], ['business_development', 'Business Development']
+  ];
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+  function initials(name) {
+    var p = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return 'JC';
+    return ((p[0][0] || '') + (p.length > 1 ? (p[p.length - 1][0] || '') : '')).toUpperCase();
+  }
+  async function roleLabel() {
+    for (var i = 0; i < ROLES.length; i++) {
+      try {
+        var r = await sb.rpc('crm_has_role', { roles: [ROLES[i][0]] });
+        if (r && r.data === true) return ROLES[i][1];
+      } catch (e) {}
+    }
+    return 'Staff';
+  }
+  async function displayName(uid, email) {
     try {
-      var lo = document.getElementById('crm-logout');
-      if (!lo) return;
-      var narrow = window.matchMedia(MQ);
-      function place() {
-        if (narrow.matches) {
-          /* must sit above the shell in DOM order for the sticky bar to read right */
-          if (document.body.firstElementChild !== lo) {
-            document.body.insertBefore(lo, document.body.firstElementChild);
-          }
-          lo.classList.add('jco-logout-bar');
-        } else {
-          lo.classList.remove('jco-logout-bar');
-        }
-      }
-      place();
-      if (narrow.addEventListener) narrow.addEventListener('change', place);
-      window.addEventListener('orientationchange', function () { setTimeout(place, 150); });
-      window.addEventListener('resize', place);
+      var r = await sb.rpc('crm_staff_names');
+      var m = (r.data || []).filter(function (x) { return x.user_id === uid; })[0];
+      if (m && m.display_name) return m.display_name;
     } catch (e) {}
+    return String(email || 'Account').split('@')[0];
+  }
+
+  function hideLegacy() {
+    try {
+      var rx = /^\s*(log|sign)\s*out(\s*(everywhere|from all devices|of all devices))?\s*$/i;
+      var nodes = document.querySelectorAll('a, button, span, div, p');
+      Array.prototype.forEach.call(nodes, function (el) {
+        if (el.id === 'jco-topbar' || el.closest('#jco-topbar') || el.closest('#jco-confirm-bg')) return;
+        if (el.children.length) return;                       /* leaf nodes only */
+        if (rx.test(el.textContent || '')) el.classList.add('jco-legacy-logout');
+      });
+    } catch (e) {}
+  }
+
+  /* ---- build ---- */
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof sb === 'undefined') return;
+    var built = false, lastFocus = null;
+
+    async function build() {
+      if (built) return;
+      var s;
+      try { s = await sb.auth.getSession(); } catch (e) { return; }
+      if (!s || !s.data || !s.data.session) return;           /* login screen: nothing to show */
+      var user = s.data.session.user;
+      var uid = user.id, email = user.email || '';
+      built = true;
+
+      hideLegacy();
+      var name = await displayName(uid, email);
+      var role = await roleLabel();
+
+      var bar = document.createElement('div');
+      bar.id = 'jco-topbar';
+      bar.innerHTML =
+        '<div id="jco-account">' +
+          '<button id="jco-acct-btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="jco-acct-menu">' +
+            '<span class="jco-avatar" aria-hidden="true">' + esc(initials(name)) + '</span>' +
+            '<span class="jco-acct-name">' + esc(name) + '</span>' +
+            '<span class="jco-caret" aria-hidden="true">&#9662;</span>' +
+          '</button>' +
+          '<div id="jco-acct-menu" role="menu" aria-label="Account and security" hidden>' +
+            '<div class="jco-m-head">' +
+              '<div class="jco-m-name">' + esc(name) + '</div>' +
+              '<div class="jco-m-email">' + esc(email) + '</div>' +
+              '<div class="jco-m-role">' + esc(role) + '</div>' +
+            '</div>' +
+            '<div class="jco-m-sec">Session &amp; Security</div>' +
+            '<button class="jco-m-item" role="menuitem" id="jco-signout" type="button">Sign out from this device</button>' +
+            '<div class="jco-m-div"></div>' +
+            '<button class="jco-m-item danger" role="menuitem" id="jco-signout-all" type="button">Sign out from all devices</button>' +
+            '<div class="jco-m-note">Ends every active session, including phones and other browsers.</div>' +
+          '</div>' +
+        '</div>';
+      document.body.insertBefore(bar, document.body.firstElementChild);
+
+      var btn = document.getElementById('jco-acct-btn');
+      var menu = document.getElementById('jco-acct-menu');
+
+      function openMenu() {
+        lastFocus = document.activeElement;
+        menu.hidden = false;
+        btn.setAttribute('aria-expanded', 'true');
+        var first = menu.querySelector('.jco-m-item');
+        if (first) first.focus();
+      }
+      function closeMenu(restore) {
+        menu.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        if (restore) (lastFocus && lastFocus.focus ? lastFocus : btn).focus();
+      }
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (menu.hidden) openMenu(); else closeMenu(true);
+      });
+      document.addEventListener('click', function (e) {
+        if (!menu.hidden && !e.target.closest('#jco-account')) closeMenu(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !menu.hidden) { e.preventDefault(); closeMenu(true); }
+      });
+
+      /* ---- sign out: this device only ---- */
+      document.getElementById('jco-signout').addEventListener('click', async function () {
+        closeMenu(false);
+        try { await sb.auth.signOut({ scope: 'local' }); }
+        catch (e) { try { await sb.auth.signOut(); } catch (e2) {} }
+        location.replace('crm.html');                          /* replace() → no back-button return */
+      });
+
+      /* ---- sign out: all devices (confirmed + audited) ---- */
+      var cbg = document.createElement('div');
+      cbg.id = 'jco-confirm-bg';
+      cbg.innerHTML =
+        '<div class="jco-confirm" role="dialog" aria-modal="true" aria-labelledby="jco-ctitle">' +
+          '<h2 id="jco-ctitle">Sign out from all devices?</h2>' +
+          '<p>This will end your active sessions on this and every other device. You will need to sign in again.</p>' +
+          '<div class="jco-crow">' +
+            '<button class="jco-cbtn ghost" id="jco-cancel" type="button">Cancel</button>' +
+            '<button class="jco-cbtn danger" id="jco-go" type="button">Sign out everywhere</button>' +
+          '</div>' +
+          '<div class="jco-cmsg" id="jco-cmsg" role="status"></div>' +
+        '</div>';
+      document.body.appendChild(cbg);
+
+      var goBtn = document.getElementById('jco-go');
+      var cmsg = document.getElementById('jco-cmsg');
+      function closeConfirm() {
+        cbg.classList.remove('open');
+        cmsg.textContent = ''; cmsg.className = 'jco-cmsg';
+        goBtn.disabled = false; goBtn.textContent = 'Sign out everywhere';
+        btn.focus();
+      }
+      document.getElementById('jco-signout-all').addEventListener('click', function () {
+        closeMenu(false);
+        cbg.classList.add('open');
+        goBtn.focus();
+      });
+      document.getElementById('jco-cancel').addEventListener('click', closeConfirm);
+      cbg.addEventListener('click', function (e) { if (e.target === cbg) closeConfirm(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && cbg.classList.contains('open')) closeConfirm();
+      });
+
+      goBtn.addEventListener('click', async function () {
+        if (goBtn.disabled) return;                            /* double-submit guard */
+        goBtn.disabled = true; goBtn.textContent = 'Ending sessions…';
+        cmsg.className = 'jco-cmsg'; cmsg.textContent = 'Revoking every active session…';
+
+        /* audit while the session is still valid (best-effort: blocked silently
+           if crm_audit_logs RLS forbids client inserts) */
+        try {
+          await sb.from('crm_audit_logs').insert({
+            action: 'sign_out_all_devices',
+            entity: 'auth.users',
+            entity_id: uid,
+            after_value: { at: new Date().toISOString(), agent: String(navigator.userAgent).slice(0, 120) }
+          });
+        } catch (e) {}
+
+        var res;
+        try { res = await sb.auth.signOut({ scope: 'global' }); }
+        catch (e) { res = { error: { message: String(e && e.message ? e.message : e) } }; }
+
+        if (res && res.error) {
+          cmsg.className = 'jco-cmsg bad';
+          cmsg.textContent = 'Could not end all sessions: ' + res.error.message;
+          goBtn.disabled = false; goBtn.textContent = 'Try again';
+          return;
+        }
+        cmsg.textContent = 'All sessions ended. Redirecting…';
+        setTimeout(function () { location.replace('crm.html'); }, 700);
+      });
+    }
+
+    build();
+    try {
+      sb.auth.onAuthStateChange(function (ev) {
+        if (ev === 'SIGNED_IN' || ev === 'INITIAL_SESSION' || ev === 'TOKEN_REFRESHED') build();
+      });
+    } catch (e) {}
+    /* pages that reveal their shell only after login: re-check briefly */
+    var n = 0, t = setInterval(function () { n++; build(); if (n > 8 || built) clearInterval(t); }, 1200);
   });
 })();
