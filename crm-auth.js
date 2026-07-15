@@ -446,3 +446,67 @@ document.addEventListener('DOMContentLoaded', function () {
     document.head.appendChild(css);
   } catch (e) {}
 })();
+
+/* ============================================================================
+   6 · LOGOUT BAR — portrait/mobile only.
+   On narrow screens the sidebar becomes a horizontal nav strip along the top,
+   which collided with the fixed top-right Log Out controls. Here the logout
+   controls are lifted out of the corner into their own full-width sticky bar
+   ABOVE the nav strip: nothing overlaps, nothing is hidden, and the nav can
+   scroll its full length. Desktop is untouched (bar class is removed there).
+============================================================================ */
+(function () {
+  if (window.__jcoLogoutBar) return;
+  window.__jcoLogoutBar = true;
+
+  var MQ = '(max-width: 920px), (orientation: portrait) and (max-width: 1100px)';
+
+  try {
+    var css = document.createElement('style');
+    css.id = 'jco-logout-bar-css';
+    css.textContent =
+      '@media ' + MQ + ' {' +
+      '  #crm-logout.jco-logout-bar:not([style*="none"]) {' +
+      '    position: sticky !important; top: 0 !important; right: auto !important;' +
+      '    z-index: 120 !important; width: 100% !important;' +
+      '    display: flex !important; justify-content: flex-end !important; align-items: center !important;' +
+      '    gap: 18px !important; padding: 9px 14px !important; margin: 0 !important;' +
+      '    background: #08111C !important;' +
+      '    border-bottom: 1px solid rgba(198,165,90,0.22) !important;' +
+      '    font-family: "IBM Plex Mono", monospace !important; font-size: 10px !important;' +
+      '    letter-spacing: 0.14em !important; text-transform: uppercase !important;' +
+      '    color: #9C9690 !important; text-align: right !important; line-height: 1.4 !important;' +
+      '  }' +
+      '  #crm-logout.jco-logout-bar > * {' +
+      '    display: inline-block !important; margin: 0 !important; padding: 0 !important;' +
+      '    white-space: nowrap !important; cursor: pointer !important;' +
+      '  }' +
+      '  #crm-logout.jco-logout-bar > *:hover { color: #E4C98A !important; }' +
+      '  .crm-side { padding-top: 8px !important; }' +
+      '}';
+    document.head.appendChild(css);
+  } catch (e) {}
+
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      var lo = document.getElementById('crm-logout');
+      if (!lo) return;
+      var narrow = window.matchMedia(MQ);
+      function place() {
+        if (narrow.matches) {
+          /* must sit above the shell in DOM order for the sticky bar to read right */
+          if (document.body.firstElementChild !== lo) {
+            document.body.insertBefore(lo, document.body.firstElementChild);
+          }
+          lo.classList.add('jco-logout-bar');
+        } else {
+          lo.classList.remove('jco-logout-bar');
+        }
+      }
+      place();
+      if (narrow.addEventListener) narrow.addEventListener('change', place);
+      window.addEventListener('orientationchange', function () { setTimeout(place, 150); });
+      window.addEventListener('resize', place);
+    } catch (e) {}
+  });
+})();
