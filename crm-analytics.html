@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Analytics | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm-/an- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1140px;}
+  .crm-topline{margin-bottom:22px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .an-tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:22px; overflow-x:auto;}
+  .an-tab{padding:11px 20px; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .an-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .an-card{border:1px solid var(--line); background:var(--bg-alt); padding:22px 24px; margin-bottom:20px;}
+  .an-card h3{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:6px;}
+  .an-note{font-size:12px; color:var(--muted); margin-bottom:14px; line-height:1.7;}
+  .an-range{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:18px;}
+  .an-range label{display:block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:4px;}
+  .an-range input, .an-range select{background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 10px; font-size:13px; border-radius:2px;}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:12px; margin-bottom:22px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:16px 18px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:23px; color:var(--gold-light); line-height:1.2;}
+  .crm-kpi .l{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); margin-top:5px;}
+  .crm-kpi .d{font-family:'IBM Plex Mono',monospace; font-size:10px; margin-top:5px;}
+  .crm-kpi .d.up{color:#7fc8a9;} .crm-kpi .d.dn{color:#e57368;} .crm-kpi .d.flat{color:var(--muted);}
+  .an-charts{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .an-chart{position:relative; height:260px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:12px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); text-align:left; padding:9px 10px; border-bottom:1px solid var(--line);}
+  .crm-table td{padding:9px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted); border-radius:2px;}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 20px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px; min-height:42px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.small{padding:6px 12px; font-size:10px; min-height:34px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-btn:focus-visible{outline:2px solid var(--gold-light); outline-offset:2px;}
+  .crm-empty{font-size:13px; color:var(--muted); padding:18px 0;}
+  .an-skel{height:14px; background:linear-gradient(90deg,rgba(198,165,90,0.08),rgba(198,165,90,0.16),rgba(198,165,90,0.08)); background-size:200% 100%; animation:sk 1.2s infinite; border-radius:2px; margin:6px 0;}
+  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .an-ask textarea{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:12px 14px; font-size:14px; border-radius:2px; resize:vertical; min-height:78px; font-family:'Inter',sans-serif;}
+  .an-chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .an-chip{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); border:1px solid var(--line); padding:6px 10px; cursor:pointer; border-radius:2px;}
+  .an-chip:hover{color:var(--gold-light); border-color:var(--gold);}
+  .an-answer{border:1px solid var(--gold); background:var(--bg-deep); padding:20px 22px; margin-top:18px; white-space:pre-wrap; font-size:13px; line-height:1.7;}
+  .an-meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px solid var(--line);}
+  .an-src{border:1px solid var(--line); background:var(--bg-alt); padding:14px 16px; margin-bottom:10px;}
+  .an-src .top{display:flex; justify-content:space-between; gap:12px; align-items:baseline; flex-wrap:wrap;}
+  .an-src .nm{font-size:14px; color:var(--cream);}
+  .an-src .note{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); margin-top:6px; line-height:1.7;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .an-charts{grid-template-columns:1fr;}
+    .crm-table{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px;">AI Analytics — Authorised Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <input id="crm-password" type="password" autocomplete="current-password" required>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="width:110px; height:auto;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-daily-entry.html">Daily Expenses</a>
+    <a class="crm-nav-item" href="crm-ai-accountant.html">AI Accountant</a>
+    <span class="crm-nav-item active">AI Analytics</span>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-financial-settings.html">Financial Settings</a>
+    <a class="crm-nav-item" href="crm-project-costing.html">Project Costing</a>
+    <a class="crm-nav-item" href="crm-finance-reports.html">Financial Reports</a>
+    <a class="crm-nav-item" href="crm-organization.html">Organization</a>
+    <a class="crm-nav-item" href="crm-alerts.html">Alerts</a>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">Grounded in connected data — never estimated</div>
+      <h1>AI Analytics</h1>
+    </div>
+
+    <div class="an-tabs">
+      <div class="an-tab active" data-tab="overview">Executive Overview</div>
+      <div class="an-tab" data-tab="ask">Ask Analytics</div>
+      <div class="an-tab" data-tab="sources">Data Sources</div>
+      <div class="an-tab" data-tab="history">History</div>
+    </div>
+
+    <!-- ================= OVERVIEW ================= -->
+    <section id="tab-overview">
+      <div class="an-range">
+        <div><label for="an-from">From</label><input id="an-from" type="date"></div>
+        <div><label for="an-to">To</label><input id="an-to" type="date"></div>
+        <div><label for="an-preset">Preset</label>
+          <select id="an-preset">
+            <option value="30">Last 30 days</option>
+            <option value="90" selected>Last 90 days</option>
+            <option value="180">Last 6 months</option>
+            <option value="365">Last 12 months</option>
+          </select></div>
+        <div><label for="an-grain">Grain</label>
+          <select id="an-grain"><option value="day">Day</option><option value="week" selected>Week</option><option value="month">Month</option></select></div>
+        <button class="crm-btn" id="an-apply" type="button">Apply</button>
+        <button class="crm-btn ghost" id="an-csv" type="button">Export CSV</button>
+      </div>
+      <p class="crm-mono" id="an-scope" style="margin-bottom:14px;"></p>
+
+      <div class="crm-kpis" id="an-kpis"><div class="an-skel" style="height:80px;"></div></div>
+
+      <div class="an-charts">
+        <div class="an-card"><h3>Funnel Over Time</h3>
+          <div class="an-note" id="an-ts-note">Leads, quotations and confirmed orders from live CRM records.</div>
+          <div class="an-chart"><canvas id="chart-ts" role="img" aria-label="Leads, quotations and orders over time"></canvas></div></div>
+        <div class="an-card"><h3>Leads by Service</h3>
+          <div class="an-note" id="an-dim-note">&nbsp;</div>
+          <div class="an-chart"><canvas id="chart-dim" role="img" aria-label="Leads grouped by service line"></canvas></div></div>
+      </div>
+
+      <div class="an-card">
+        <h3>Data Notes</h3>
+        <div id="an-notes" class="an-note" style="margin:0;"></div>
+      </div>
+    </section>
+
+    <!-- ================= ASK ================= -->
+    <section id="tab-ask" style="display:none;">
+      <div class="an-card an-ask">
+        <h3>Ask Analytics</h3>
+        <div class="an-note">Answers come only from connected data. Anything unavailable is named rather than estimated. Every answer records its period, sources and confidence, and is written to the audit history.</div>
+        <label for="an-prompt" class="crm-mono" style="display:block; margin-bottom:6px;">YOUR QUESTION</label>
+        <textarea id="an-prompt" placeholder="e.g. Compare enquiries and confirmed orders for the last 90 days by service"></textarea>
+        <div class="an-chips" id="an-chips">
+          <span class="an-chip">Compare this month with the previous month</span>
+          <span class="an-chip">Which service generated the highest-value pipeline?</span>
+          <span class="an-chip">Show the conversion rate from enquiry to confirmed client</span>
+          <span class="an-chip">Show leads by service for the last 6 months</span>
+          <span class="an-chip">Prepare an executive report for management</span>
+          <span class="an-chip">Calculate cost per qualified lead for Meta and Google Ads</span>
+        </div>
+        <div style="margin-top:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="crm-btn" id="an-send" type="button">Ask</button>
+          <span class="crm-mono" id="an-ask-status"></span>
+        </div>
+        <div id="an-answer-wrap"></div>
+      </div>
+    </section>
+
+    <!-- ================= SOURCES ================= -->
+    <section id="tab-sources" style="display:none;">
+      <div class="an-card">
+        <h3>Connections</h3>
+        <div class="an-note">Honest status only — nothing is marked connected until it genuinely is, and no source is simulated.</div>
+        <div id="an-sources"><div class="an-skel" style="height:60px;"></div></div>
+      </div>
+
+      <div class="an-card" id="an-client-toggle-card" style="display:none;">
+        <h3>Client Portal Analytics</h3>
+        <div class="an-note">When enabled, portal clients see analytics for <strong>their own organisation only</strong> — enforced by RLS and tenant scoping, not by the interface. Disabled by default.</div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <select id="an-client-enabled" style="background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 10px; font-size:13px;">
+            <option value="false">Disabled</option><option value="true">Enabled</option>
+          </select>
+          <button class="crm-btn small" id="an-save-client" type="button">Save</button>
+          <span class="crm-mono" id="an-client-status"></span>
+        </div>
+      </div>
+
+      <div class="an-card">
+        <h3>Governed Metrics</h3>
+        <div class="an-note">Formulas are fixed in the database. The AI must use these definitions — it cannot invent a calculation.</div>
+        <table class="crm-table">
+          <thead><tr><th>Metric</th><th>Category</th><th>Formula</th><th>Status</th></tr></thead>
+          <tbody id="an-catalog"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= HISTORY ================= -->
+    <section id="tab-history" style="display:none;">
+      <div class="an-card">
+        <h3>Prompt &amp; Report Audit History</h3>
+        <div class="an-note">Every question, with its query plan, sources, period and confidence.</div>
+        <table class="crm-table">
+          <thead><tr><th>When</th><th>Prompt</th><th>Period</th><th>Sources</th><th>Confidence</th></tr></thead>
+          <tbody id="an-history"></tbody>
+        </table>
+        <p class="crm-empty" id="an-history-empty" style="display:none;">No analytics prompts yet.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function val(id){ var el=document.getElementById(id); return el && el.value !== '' ? el.value : null; }
+  function setval(id,v){ var el=document.getElementById(id); if(el)el.value=v==null?'':v; }
+  function num(n){ return n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  function iso(d){ return d.toISOString().slice(0,10); }
+
+  var perms=[], charts={}, overview=null, catalog=[], canFin=false, canOwn=false;
+  var GOLD='#C6A55A', GOLDL='#E4C98A', GREEN='#7fc8a9', MUTED='#9C9690';
+  var PAL=[GOLD,'#0F6B5C',GOLDL,'#B86A32',GREEN,'#8a93a6','#7a9cc9','#a68ac9','#c9b57a','#6bbcb0','#b0776b','#9C9690'];
+  var gridOpts={grid:{color:'rgba(198,165,90,0.10)'},ticks:{color:MUTED,font:{family:'IBM Plex Mono',size:9}}};
+  var legendOpts={labels:{color:MUTED,font:{family:'IBM Plex Mono',size:10}}};
+
+  /* ---------- AUTH ---------- */
+  var loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  async function checkSession(){
+    var s=await sb.auth.getSession();
+    if(s.data.session){ await boot(); }
+    else { loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none'; }
+  }
+  document.getElementById('crm-login-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; st.textContent='';
+    var r=await sb.auth.signInWithPassword({email:val('crm-email'), password:document.getElementById('crm-password').value});
+    btn.disabled=false;
+    if(r.error){ st.textContent = (r.error.name === 'ExplicitSubmitRequired') ? r.error.message : 'Incorrect email or password.'; }
+    else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async function(){ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    var r;
+    try { r = await sb.rpc('analytics_my_permissions'); } catch(e) { r = {}; }
+    perms = Array.isArray(r.data) ? r.data : [];
+    if (perms.indexOf('analytics.view') < 0) {
+      document.getElementById('crm-login-status').textContent =
+        'Your role does not include analytics.view. Ask the Owner to grant analytics access.';
+      await sb.auth.signOut(); return;
+    }
+    canFin = perms.indexOf('analytics.view_financial_metrics') >= 0;
+    canOwn = perms.indexOf('analytics.admin') >= 0;
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+
+    if (perms.indexOf('analytics.query') < 0) {
+      var askTab = document.querySelector('.an-tab[data-tab="ask"]');
+      if (askTab) askTab.style.display = 'none';
+    }
+    if (canOwn) document.getElementById('an-client-toggle-card').style.display = 'block';
+
+    var to=new Date(), from=new Date(); from.setDate(from.getDate()-89);
+    setval('an-to', iso(to)); setval('an-from', iso(from));
+
+    await Promise.all([loadOverview(), loadCatalog(), loadSources(), loadHistory()]);
+  }
+
+  /* ---------- TABS ---------- */
+  document.querySelectorAll('.an-tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.an-tab').forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active');
+      ['overview','ask','sources','history'].forEach(function(k){
+        document.getElementById('tab-'+k).style.display = (t.dataset.tab===k)?'block':'none';
+      });
+    });
+  });
+
+  document.getElementById('an-preset').addEventListener('change', function(){
+    var d=Number(this.value), to=new Date(), from=new Date();
+    from.setDate(from.getDate()-(d-1));
+    setval('an-to', iso(to)); setval('an-from', iso(from));
+  });
+  document.getElementById('an-apply').addEventListener('click', loadOverview);
+  document.getElementById('an-grain').addEventListener('change', loadOverview);
+
+  function mkChart(id,cfg){
+    if(charts[id]) charts[id].destroy();
+    var el=document.getElementById(id);
+    if(!el || typeof Chart==='undefined') return;
+    charts[id]=new Chart(el,cfg);
+  }
+
+  /* ---------- OVERVIEW ---------- */
+  async function loadOverview(){
+    var from=val('an-from'), to=val('an-to'), grain=val('an-grain')||'week';
+    if(!from||!to) return;
+    document.getElementById('an-kpis').innerHTML='<div class="an-skel" style="height:80px;"></div>';
+
+    var r = await sb.rpc('analytics_overview', { p_from: from, p_to: to });
+    if (r.error) {
+      document.getElementById('an-kpis').innerHTML =
+        '<div class="crm-empty">Could not load: ' + esc(r.error.message) + '</div>';
+      return;
+    }
+    overview = r.data || {};
+    var m = overview.metrics || {};
+
+    document.getElementById('an-scope').textContent =
+      'Period ' + from + ' → ' + to + '  ·  compared with ' +
+      (overview.compare_period ? overview.compare_period.from + ' → ' + overview.compare_period.to : '—') +
+      '  ·  scope: ' + (overview.scope === 'client_scoped' ? 'your organisation only' : 'all organisations') +
+      '  ·  source: CRM (live)';
+
+    function delta(v, p){
+      if (v == null || p == null || Number(p) === 0) return '<div class="d flat">no comparison</div>';
+      var pct = Math.round(((Number(v) - Number(p)) / Number(p)) * 100);
+      var cls = pct > 0 ? 'up' : (pct < 0 ? 'dn' : 'flat');
+      var mark = pct > 0 ? '▲ +' : (pct < 0 ? '▼ ' : '');
+      return '<div class="d ' + cls + '">' + mark + pct + '% vs previous</div>';
+    }
+    function card(label, key, isCur){
+      var e = m[key] || {};
+      if (e.withheld) {
+        return '<div class="crm-kpi"><div class="n" style="font-size:14px;">Withheld</div><div class="l">' +
+          esc(label) + '</div><div class="d flat">' + esc(e.withheld) + '</div></div>';
+      }
+      var v = e.value;
+      var shown = v == null ? '—' : (isCur ? 'PKR ' + num(v) : num(v));
+      return '<div class="crm-kpi"><div class="n" style="font-size:' + (String(shown).length > 12 ? '15px' : '23px') + ';">' +
+        esc(shown) + '</div><div class="l">' + esc(label) + '</div>' + delta(v, e.previous) + '</div>';
+    }
+    function rate(label, key){
+      var e = m[key] || {};
+      return '<div class="crm-kpi"><div class="n">' + (e.value == null ? '—' : esc(e.value) + '%') +
+        '</div><div class="l">' + esc(label) + '</div><div class="d flat">governed formula</div></div>';
+    }
+
+    document.getElementById('an-kpis').innerHTML =
+      card('Leads (enquiries)','leads',false) +
+      card('Qualified Leads','qualified_leads',false) +
+      card('Quotations','quotations',false) +
+      card('Quotation Value','quotations_value',true) +
+      card('Confirmed Orders','orders',false) +
+      card('Revenue','revenue',true) +
+      card('Open Pipeline','pipeline_value',true) +
+      card('Weighted Pipeline','weighted_pipeline',true) +
+      rate('Enquiry → Opportunity','enquiry_to_opportunity_rate') +
+      rate('Quote → Win','quote_to_win_rate') +
+      rate('Lead → Client','lead_to_client_rate') +
+      card('Avg Order Value','avg_order_value',true);
+
+    var notes = overview.notes || [];
+    document.getElementById('an-notes').innerHTML = notes.length
+      ? notes.map(function(n){ return '• ' + esc(n); }).join('<br>')
+      : '• All figures computed from live CRM records.';
+
+    /* funnel timeseries */
+    var series = await Promise.all([
+      sb.rpc('analytics_timeseries', { p_metric:'leads',      p_from:from, p_to:to, p_grain:grain }),
+      sb.rpc('analytics_timeseries', { p_metric:'quotations', p_from:from, p_to:to, p_grain:grain }),
+      sb.rpc('analytics_timeseries', { p_metric:'orders',     p_from:from, p_to:to, p_grain:grain })
+    ]);
+    var buckets = {};
+    series.forEach(function(s){ (s.data||[]).forEach(function(row){ buckets[row.bucket]=true; }); });
+    var labels = Object.keys(buckets).sort();
+    function pick(s){
+      var map={}; (s.data||[]).forEach(function(r){ map[r.bucket]=Number(r.value); });
+      return labels.map(function(l){ return map[l]||0; });
+    }
+    mkChart('chart-ts',{ type:'line', data:{ labels:labels, datasets:[
+      { label:'Leads', data:pick(series[0]), borderColor:GOLD, backgroundColor:GOLD, tension:.3 },
+      { label:'Quotations', data:pick(series[1]), borderColor:GOLDL, backgroundColor:GOLDL, borderDash:[5,4], tension:.3 },
+      { label:'Orders', data:pick(series[2]), borderColor:GREEN, backgroundColor:GREEN, tension:.3 }
+    ]}, options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:legendOpts, tooltip:{ callbacks:{ title:function(i){ return 'Period starting ' + i[0].label; } } } },
+      scales:{ x:gridOpts, y:Object.assign({beginAtZero:true}, gridOpts) } } });
+    document.getElementById('an-ts-note').textContent = labels.length
+      ? 'Leads, quotations and confirmed orders from live CRM records.'
+      : 'No CRM records in this period — nothing is plotted, and no placeholder data is shown.';
+
+    /* leads by service */
+    var dim = await sb.rpc('analytics_by_dimension',
+      { p_metric:'leads', p_dimension:'service', p_from:from, p_to:to, p_limit:10 });
+    var rows = dim.data || [];
+    document.getElementById('an-dim-note').textContent = dim.error
+      ? dim.error.message
+      : (rows.length ? 'Enquiries grouped by the service line requested.' : 'No enquiries in this period.');
+    mkChart('chart-dim',{ type:'bar',
+      data:{ labels: rows.map(function(r){ return r.label; }),
+             datasets:[{ label:'Leads', data: rows.map(function(r){ return Number(r.value); }),
+                         backgroundColor: rows.map(function(_,i){ return PAL[i % PAL.length]; }) }] },
+      options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{display:false} },
+        scales:{ x:Object.assign({beginAtZero:true}, gridOpts), y:gridOpts } } });
+  }
+
+  /* ---------- CSV EXPORT ---------- */
+  document.getElementById('an-csv').addEventListener('click', function(){
+    if (perms.indexOf('analytics.export') < 0 && !canOwn) { alert('Your role does not include analytics.export.'); return; }
+    if (!overview) return;
+    var m = overview.metrics || {}, rows = [];
+    Object.keys(m).forEach(function(k){
+      rows.push([k, m[k].value == null ? (m[k].withheld || '') : m[k].value, m[k].previous == null ? '' : m[k].previous]);
+    });
+    var head = 'JABRAN & CO. — Executive Analytics (Confidential — internal use only)\r\n' +
+      'Generated,' + new Date().toISOString() + '\r\n' +
+      'Period,' + val('an-from') + ' to ' + val('an-to') + '\r\n' +
+      'Data sources,CRM (live)\r\n' +
+      'Filters,scope: ' + ((overview.scope === 'client_scoped') ? 'own organisation' : 'all organisations') + '\r\n\r\n';
+    var body = 'Metric,Value,Previous period\r\n' + rows.map(function(r){
+      return r.map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
+    }).join('\r\n');
+    var blob = new Blob(['\ufeff' + head + body], { type:'text/csv;charset=utf-8;' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'JABRAN-CO-Analytics-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click(); URL.revokeObjectURL(a.href);
+  });
+
+  /* ---------- ASK ---------- */
+  document.querySelectorAll('.an-chip').forEach(function(c){
+    c.addEventListener('click', function(){ setval('an-prompt', c.textContent); document.getElementById('an-prompt').focus(); });
+  });
+  document.getElementById('an-send').addEventListener('click', async function(){
+    var p = val('an-prompt');
+    var st = document.getElementById('an-ask-status'), btn = this;
+    if (!p) { st.textContent = 'Type a question first.'; return; }
+    btn.disabled = true; st.textContent = 'Planning the query, then reading only permitted data…';
+    document.getElementById('an-answer-wrap').innerHTML = '<div class="an-skel" style="height:120px; margin-top:18px;"></div>';
+    var r;
+    try {
+      r = await sb.functions.invoke('analytics-agent',
+        { body: { prompt: p, default_from: val('an-from'), default_to: val('an-to') } });
+    } catch (e) { r = { error: { message: String(e) } }; }
+    btn.disabled = false;
+    if (r.error) {
+      var msg = r.error.message;
+      try { if (r.error.context && r.error.context.json) { var j = await r.error.context.json(); if (j && j.error) msg = j.error; } } catch (e2) {}
+      st.textContent = '';
+      document.getElementById('an-answer-wrap').innerHTML =
+        '<div class="an-answer" style="border-color:#e57368;">' + esc(msg) + '</div>';
+      return;
+    }
+    var d = r.data || {};
+    if (d.error) {
+      st.textContent = '';
+      document.getElementById('an-answer-wrap').innerHTML =
+        '<div class="an-answer" style="border-color:#e57368;">' + esc(d.error) + '</div>';
+      return;
+    }
+    st.textContent = 'Answered in ' + (d.ms || 0) + ' ms';
+    var conf = d.confidence === 'high' ? 'ok' : (d.confidence === 'low' ? 'bad' : 'warn');
+    var uns = (d.plan && (d.plan.unsupported || []).concat(d.plan.rejected || [])) || [];
+    document.getElementById('an-answer-wrap').innerHTML =
+      '<div class="an-answer">' + esc(d.answer) +
+        '<div class="an-meta">' +
+          '<span class="crm-badge">Period: ' + esc(d.period.from) + ' → ' + esc(d.period.to) + '</span>' +
+          '<span class="crm-badge">Sources: ' + esc((d.sources || []).join(', ')) + '</span>' +
+          '<span class="crm-badge ' + conf + '">Confidence: ' + esc(d.confidence) + '</span>' +
+          '<span class="crm-badge">CRM data to: ' + esc(String(d.freshness || 'unknown').slice(0,10)) + '</span>' +
+          (uns.length ? '<span class="crm-badge warn">Unavailable: ' + esc(uns.join(', ')) + '</span>' : '') +
+        '</div>' +
+      '</div>';
+    loadHistory();
+  });
+
+  /* ---------- SOURCES ---------- */
+  var STATUS = {
+    connected:['ok','Connected'], not_connected:['','Not connected'],
+    credentials_required:['warn','Credentials required'], oauth_setup_required:['warn','OAuth setup required'],
+    permission_required:['warn','Permission required'], verification_pending:['warn','Verification pending'],
+    connection_pending:['warn','Connection pending'], syncing:['warn','Syncing'],
+    sync_failed:['bad','Sync failed'], token_expired:['bad','Token expired'], access_revoked:['bad','Access revoked']
+  };
+  async function loadSources(){
+    var r = await sb.rpc('analytics_data_freshness');
+    var box = document.getElementById('an-sources');
+    if (r.error) { box.innerHTML = '<div class="crm-empty">' + esc(r.error.message) + '</div>'; return; }
+    box.innerHTML = (r.data || []).map(function(s){
+      var meta = STATUS[s.status] || ['', s.status];
+      return '<div class="an-src">' +
+        '<div class="top"><div class="nm">' + esc(s.display_name) + '</div>' +
+        '<span class="crm-badge ' + meta[0] + '">' + esc(meta[1]) + '</span></div>' +
+        '<div class="note">' +
+          (s.last_data_at ? 'Last data: ' + esc(String(s.last_data_at).replace('T',' ').slice(0,16)) + ' · ' : '') +
+          esc(s.note || '') +
+        '</div></div>';
+    }).join('');
+
+    if (canOwn) {
+      try {
+        var st = await sb.from('crm_settings').select('value').eq('key','analytics_client_portal_enabled').maybeSingle();
+        if (st.data) setval('an-client-enabled', String(st.data.value) === 'true' ? 'true' : 'false');
+      } catch (e) {}
+    }
+  }
+  document.getElementById('an-save-client').addEventListener('click', async function(){
+    var st = document.getElementById('an-client-status'); st.textContent = 'Saving…';
+    var r = await sb.from('crm_settings').upsert(
+      { key:'analytics_client_portal_enabled', value: (val('an-client-enabled') === 'true') },
+      { onConflict:'key' });
+    st.textContent = r.error ? ('Error: ' + r.error.message) : 'Saved.';
+  });
+
+  async function loadCatalog(){
+    var r = await sb.rpc('analytics_metric_catalog');
+    catalog = r.data || [];
+    document.getElementById('an-catalog').innerHTML = catalog.map(function(m){
+      return '<tr><td>' + esc(m.label) + '</td><td class="crm-mono">' + esc(m.category) + '</td>' +
+        '<td class="crm-mono">' + esc(m.formula) + '</td><td>' +
+        (m.available
+          ? '<span class="crm-badge ok">Available</span>'
+          : '<span class="crm-badge warn">Unavailable</span><div class="crm-mono" style="margin-top:4px;">' +
+            esc(m.unavailable_reason || '') + '</div>') +
+        '</td></tr>';
+    }).join('');
+  }
+
+  /* ---------- HISTORY ---------- */
+  async function loadHistory(){
+    var r = await sb.from('analytics_prompt_history').select('*').order('created_at',{ascending:false}).limit(25);
+    var rows = r.data || [];
+    document.getElementById('an-history-empty').style.display = rows.length ? 'none' : 'block';
+    document.getElementById('an-history').innerHTML = rows.map(function(h){
+      var conf = h.confidence === 'high' ? 'ok' : (h.confidence === 'low' ? 'bad' : 'warn');
+      return '<tr><td class="crm-mono">' + esc(String(h.created_at).replace('T',' ').slice(0,16)) + '</td>' +
+        '<td>' + esc(h.prompt) + '</td>' +
+        '<td class="crm-mono">' + esc(h.period_from || '—') + ' → ' + esc(h.period_to || '—') + '</td>' +
+        '<td class="crm-mono">' + esc((h.sources || []).join(', ')) + '</td>' +
+        '<td><span class="crm-badge ' + conf + '">' + esc(h.confidence || '—') + '</span></td></tr>';
+    }).join('');
+  }
+
+  checkSession();
+});
+</script>
+</body>
+</html>

@@ -116,6 +116,13 @@
           .then(function (r2) {
             if (r2 && r2.data === true) place(ADMIN_LINKS, 'crm-business-rules.html');
           }, function () {});
+        /* AI Analytics: visible to anyone the DATABASE grants analytics.view */
+        sb.rpc('analytics_can', { p_permission: 'analytics.view' })
+          .then(function (r3) {
+            if (r3 && r3.data === true) {
+              place([{ href: 'crm-analytics.html', label: 'AI Analytics' }], 'crm-ai-accountant.html');
+            }
+          }, function () {});
       }, function () {});
     }
 
