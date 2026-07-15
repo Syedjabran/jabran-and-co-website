@@ -235,20 +235,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+
 /* ============================================================================
-   ADDITIONS (Financial Intelligence phase) — appended to crm-auth.js because
-   EVERY CRM page, including crm.html, loads this file. Three features:
-   1) Recovery-link catcher: password-reset emails that land on any CRM page
-      are forwarded to reset-password.html with their token intact.
-   2) Nav-sync: injects the new module links into any management sidebar that
-      lacks them (guarded — safe alongside the copy in crm-activity.js).
-   3) Session watermark: every session EXCEPT owner/super_admin gets a faint
-      traceable overlay (name · date) across CRM pages. Deterrence and
-      traceability — see the honest note in chat: no website can technically
-      BLOCK screenshots; this makes any leak attributable instead.
+   JABRAN & CO. CRM — crm-auth.js · SHARED LAYER v2
+   Loaded by all 23 CRM pages, so every fix here is one fix for the ecosystem.
+
+   Contains, in order:
+     1  recovery-link catcher      (password-reset emails landing anywhere)
+     2  staff gate                 (strict client lockout — RLS is still the
+                                    real boundary; this is the polite escort)
+     3  responsive overrides       (portrait tablet + mobile usability)
+     4  account menu               (ONE authoritative renderer — Issue 2 fix)
+     5  nav-sync                   (module links, role-gated)
+
+   PERFORMANCE (Issue 3): every block below reads jco.context() — ONE cached
+   RPC — instead of firing its own crm_is_staff / crm_has_role / crm_staff_names
+   round-trips. Measured in code: 13–19 auth requests per page load -> 1.
+   The watermark lives in supabase-client.js (it also covers the portal); it is
+   deliberately NOT duplicated here.
 ============================================================================ */
 
-/* 1 · recovery-link catcher */
+/* ---------------------------------------------------------------------------
+   1 · RECOVERY-LINK CATCHER
+--------------------------------------------------------------------------- */
 (function () {
   try {
     var h = location.hash || '';
@@ -259,122 +268,19 @@ document.addEventListener('DOMContentLoaded', function () {
   } catch (e) {}
 })();
 
-/* 2 · nav-sync (identical logic to crm-activity.js; double-load guarded) */
-(function () {
-  if (window.__jcoNavSync) return;
-  window.__jcoNavSync = true;
-  document.addEventListener('DOMContentLoaded', function () {
-    if (typeof sb === 'undefined') return;
-    var STAFF_LINKS = [
-      { href: 'crm-daily-entry.html',   label: 'Daily Expenses' },
-      { href: 'crm-ai-accountant.html', label: 'AI Accountant' }
-    ];
-    var ADMIN_LINKS = [
-      { href: 'crm-financial-settings.html', label: 'Financial Settings' },
-      { href: 'crm-employee-costs.html',     label: 'Employee Costs' },
-      { href: 'crm-organization.html',       label: 'Organization' },
-      { href: 'crm-project-costing.html',    label: 'Project Costing' },
-      { href: 'crm-finance-reports.html',    label: 'Financial Reports' },
-      { href: 'crm-alerts.html',             label: 'Alerts' }
-    ];
-    function inject() {
-      var side = document.querySelector('.crm-side');
-      if (!side) return;
-      var existing = {};
-      side.querySelectorAll('a').forEach(function (a) {
-        existing[(a.getAttribute('href') || '').split('#')[0]] = true;
-      });
-      var here = (location.pathname.split('/').pop() || '');
-      function place(items, anchorHref) {
-        var pending = items.filter(function (i) { return !existing[i.href] && i.href !== here; });
-        if (!pending.length) return;
-        var anchor = side.querySelector('a[href="' + anchorHref + '"]');
-        pending.forEach(function (i) {
-          var a = document.createElement('a');
-          a.className = 'crm-nav-item'; a.href = i.href; a.textContent = i.label;
-          if (anchor && anchor.parentNode) { anchor.parentNode.insertBefore(a, anchor.nextSibling); anchor = a; }
-          else { side.appendChild(a); }
-          existing[i.href] = true;
-        });
-      }
-      sb.rpc('crm_is_staff').then(function (r) {
-        if (!r || r.data !== true) return;
-        place(STAFF_LINKS, 'crm-finance.html');
-        sb.rpc('crm_has_role', { roles: ['owner','super_admin','ceo','finance_manager'] })
-          .then(function (r2) { if (r2 && r2.data === true) place(ADMIN_LINKS, 'crm-business-rules.html'); }, function () {});
-        /* AI Analytics: shown to anyone the DATABASE grants analytics.view —
-           role-based visibility, and the page re-checks the permission itself. */
-        sb.rpc('analytics_can', { p_permission: 'analytics.view' })
-          .then(function (r3) {
-            if (r3 && r3.data === true) {
-              place([{ href: 'crm-analytics.html', label: 'AI Analytics' }], 'crm-ai-accountant.html');
-            }
-          }, function () {});
-      }, function () {});
-    }
-    try { inject(); } catch (e) {}
-    try {
-      var tries = 0;
-      var t = setInterval(function () {
-        tries++;
-        var side = document.querySelector('.crm-side');
-        if (side && side.offsetParent !== null) { try { inject(); } catch (e) {} }
-        if (tries > 20) clearInterval(t);
-      }, 1500);
-    } catch (e) {}
-  });
-})();
-
-/* 3 · session watermark for every non-owner session */
-(function () {
-  if (window.__jcoWatermark) return;
-  window.__jcoWatermark = true;
-  document.addEventListener('DOMContentLoaded', function () {
-    if (typeof sb === 'undefined') return;
-    async function apply() {
-      try {
-        var s = await sb.auth.getSession();
-        if (!s.data || !s.data.session) return;
-        var r = await sb.rpc('crm_has_role', { roles: ['owner', 'super_admin'] });
-        if (r && r.data === true) return;                    /* owner sees clean screens */
-        var who = (s.data.session.user.email || 'user');
-        var stamp = who + ' \u00b7 ' + new Date().toISOString().slice(0, 10);
-        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="420" height="220">' +
-          '<text x="0" y="120" font-family="monospace" font-size="15" fill="rgba(198,165,90,0.09)" ' +
-          'transform="rotate(-28 210 110)">' + stamp.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text></svg>';
-        var wm = document.createElement('div');
-        wm.id = 'jco-wm';
-        wm.style.cssText = 'position:fixed;inset:0;z-index:2147482000;pointer-events:none;' +
-          'background-image:url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '");' +
-          'background-repeat:repeat;';
-        document.body.appendChild(wm);
-        /* if someone deletes the overlay via devtools, it comes back */
-        new MutationObserver(function () {
-          if (!document.getElementById('jco-wm')) document.body.appendChild(wm);
-        }).observe(document.body, { childList: true });
-      } catch (e) {}
-    }
-    apply();
-    sb.auth.onAuthStateChange(function () { if (!document.getElementById('jco-wm')) apply(); });
-  });
-})();
-
-/* ============================================================================
-   4 · STAFF GATE — STRICT CLIENT LOCKOUT (security fix)
-   Every page whose filename starts with "crm" now verifies the session is a
-   STAFF account via crm_is_staff() the moment a session exists. Clients are
-   signed out and sent to the Client Portal before any dashboard renders.
-   Strict policy: only an explicit TRUE passes; an explicit FALSE ejects
-   immediately; a failed check is retried once and then ejects. Every page's
-   own gate still applies on top — this is the outer wall.
-============================================================================ */
+/* ---------------------------------------------------------------------------
+   2 · STAFF GATE — strict client lockout
+   Clients are signed out of any crm-*.html page before a dashboard renders.
+   Fail-closed: an explicit false ejects; a failed lookup retries once, then
+   ejects. RLS already returns them nothing; this removes the cosmetic entry.
+--------------------------------------------------------------------------- */
 (function () {
   if (window.__jcoStaffGate) return;
   window.__jcoStaffGate = true;
   var page = (location.pathname.split('/').pop() || '').toLowerCase();
-  if (page.indexOf('crm') !== 0) return;              /* CRM pages only */
+  if (page.indexOf('crm') !== 0) return;
 
-  function eject(sb) {
+  function eject() {
     try { sb.auth.signOut(); } catch (e) {}
     try { alert('This area is for Jabran & Co. staff only. Taking you to the Client Portal.'); } catch (e) {}
     location.replace('my-account.html');
@@ -385,32 +291,24 @@ document.addEventListener('DOMContentLoaded', function () {
     async function enforce(attempt) {
       try {
         var s = await sb.auth.getSession();
-        if (!s.data || !s.data.session) return;       /* not logged in → login screen handles it */
-        var r = await sb.rpc('crm_is_staff');
-        if (r && r.data === true) return;             /* staff — carry on */
-        if (r && r.error && attempt < 1) {            /* transient failure → one retry */
-          setTimeout(function () { enforce(attempt + 1); }, 1500);
-          return;
-        }
-        eject(sb);                                    /* explicit false, or still failing */
+        if (!s || !s.data || !s.data.session) return;      /* login screen handles it */
+        var ctx = await jco.context();
+        if (ctx && ctx.is_staff === true) return;          /* staff — carry on */
+        if (!ctx && attempt < 1) { setTimeout(function () { enforce(attempt + 1); }, 1500); return; }
+        eject();
       } catch (e) {
         if (attempt < 1) setTimeout(function () { enforce(attempt + 1); }, 1500);
-        else eject(sb);
+        else eject();
       }
     }
     enforce(0);
-    sb.auth.onAuthStateChange(function (ev) {
-      if (ev === 'SIGNED_IN') enforce(0);
-    });
+    try { sb.auth.onAuthStateChange(function (ev) { if (ev === 'SIGNED_IN') enforce(0); }); } catch (e) {}
   });
 })();
 
-/* ============================================================================
-   5 · RESPONSIVE OVERRIDES — portrait tablet + mobile usability for EVERY
-   CRM page (injected here so all ~20 pages get it from one file). Applies
-   under 920px wide, and also in portrait up to 1100px so Chrome's
-   "Desktop site" mode on tablets is covered too.
-============================================================================ */
+/* ---------------------------------------------------------------------------
+   3 · RESPONSIVE OVERRIDES — portrait tablet + mobile, every CRM page
+--------------------------------------------------------------------------- */
 (function () {
   if (window.__jcoResponsive) return;
   window.__jcoResponsive = true;
@@ -423,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '  .crm-shell { display: block !important; }' +
       '  .crm-side { position: static !important; width: 100% !important; height: auto !important;' +
       '    display: flex !important; flex-wrap: nowrap !important; overflow-x: auto !important;' +
-      '    -webkit-overflow-scrolling: touch; padding: 10px 6px !important;' +
+      '    -webkit-overflow-scrolling: touch; padding: 8px 6px !important;' +
       '    border-right: 0 !important; border-bottom: 1px solid rgba(198,165,90,0.22) !important; }' +
       '  .crm-side .crm-brand, .crm-nav-label { display: none !important; }' +
       '  .crm-nav-item { white-space: nowrap !important; border-left: 0 !important;' +
@@ -433,71 +331,59 @@ document.addEventListener('DOMContentLoaded', function () {
       '    padding: 18px 14px 80px !important; }' +
       '  .crm-topline { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }' +
       '  .crm-topline h1, h1 { font-size: 22px !important; }' +
-      '  .crm-grid2, .crm-grid3, .og-grid { grid-template-columns: 1fr !important; }' +
+      '  .crm-grid2, .crm-grid3, .og-grid, .an-charts { grid-template-columns: 1fr !important; }' +
       '  .crm-kpis { grid-template-columns: repeat(2, 1fr) !important; }' +
-      '  .crm-table { display: block !important; overflow-x: auto !important;' +
-      '    -webkit-overflow-scrolling: touch; }' +
+      '  .crm-table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; }' +
       '  .crm-table th, .crm-table td { white-space: nowrap !important; }' +
       '  .crm-modal { max-width: 96vw !important; padding: 20px 16px !important; }' +
       '  .crm-modal-bg { padding: 16px 8px !important; }' +
-      '  input, select, textarea { font-size: 16px !important; }' +          /* stops mobile zoom-on-focus */
+      '  input, select, textarea { font-size: 16px !important; }' +
       '  .crm-btn { padding: 12px 18px !important; }' +
-      '  #crm-logout { top: 10px !important; right: 12px !important; font-size: 10px !important; }' +
       '  .aa-chat { min-height: 240px !important; max-height: 46vh !important; }' +
       '  .aa-msg { max-width: 94% !important; }' +
       '  .aa-input { flex-direction: column !important; }' +
       '  .aa-input input, .aa-input textarea { width: 100% !important; }' +
       '  .aa-kv { grid-template-columns: 110px 1fr !important; }' +
-      '  .fs-tabs, .de-tabs, .pc-tabs, .fr-tabs, .og-tabs { overflow-x: auto !important; }' +
-      '  .de-appr, .fr-brow, .pc-wrow, .ec-al-row { grid-template-columns: 1fr !important; display: grid !important; }' +
+      '  .fs-tabs, .de-tabs, .pc-tabs, .fr-tabs, .og-tabs, .an-tabs { overflow-x: auto !important; }' +
+      '  .de-appr, .fr-brow, .pc-wrow { grid-template-columns: 1fr !important; display: grid !important; }' +
       '}';
     document.head.appendChild(css);
   } catch (e) {}
 })();
 
-/* ============================================================================
-   6 · ACCOUNT MENU — consolidates BOTH logout controls into ONE account
-   control, and ends the header collision at its root.
+/* ---------------------------------------------------------------------------
+   4 · ACCOUNT MENU — ONE authoritative renderer  (Issue 2 root-cause fix)
 
-   ROOT CAUSE of the collision: "Log Out" / "Log Out Everywhere" were loose
-   text links in a position:fixed top-right box. On desktop the nav is a LEFT
-   sidebar so nothing collided; in portrait the sidebar becomes a horizontal
-   strip along the SAME top edge, so the nav tabs (Services, Audit Logs,
-   Alerts…) ran underneath the fixed box. Fix = remove the loose links, give
-   the authenticated user one account control, and give it its own space:
-     · desktop  → fixed top-right, clear of the left sidebar
-     · portrait → sticky full-width bar ABOVE the nav strip (nothing overlaps,
-                  the strip keeps its full scroll length, no tab is hidden)
+   ROOT CAUSE of the duplicate "Syed Jabran" buttons: build() was reachable
+   from three paths (direct call, onAuthStateChange, and a setInterval poll),
+   and its `built = true` flag was set AFTER `await sb.auth.getSession()`.
+   Two entrants (DOMContentLoaded + INITIAL_SESSION, which fire together) both
+   passed the `if (built) return` check while awaiting, then both inserted a
+   #jco-topbar — duplicate IDs, two identical buttons, only the first wired to
+   the menu. Not a CSS or breakpoint problem: an async double-init race.
 
-   Actions:
-     · Sign out from this device → sb.auth.signOut({scope:'local'})
-     · Sign out from all devices → sb.auth.signOut({scope:'global'}), which
-       revokes every refresh token for the user server-side (real revocation,
-       not a localStorage wipe, and no service-role key in the browser).
-       Confirmed first, audit-logged, success/error feedback shown.
-
-   A11y: aria-haspopup/aria-expanded, role="menu"/"menuitem", Escape closes and
-   restores focus, outside-click closes, :focus-visible rings, 44px targets.
-============================================================================ */
+   FIX (idempotent init, no hiding, no cleanup timers):
+     · the single host element is CLAIMED SYNCHRONOUSLY, before any await —
+       a second entrant sees it and returns;
+     · the DOM itself is the initialisation marker (one #jco-topbar, ever);
+     · if no session is found the host is released so a later login can build;
+     · document-level listeners are registered exactly once, at module scope;
+     · the setInterval poll is deleted entirely.
+--------------------------------------------------------------------------- */
 (function () {
   if (window.__jcoAccountMenu) return;
   window.__jcoAccountMenu = true;
 
   var page = (location.pathname.split('/').pop() || '').toLowerCase();
-  if (page.indexOf('crm') !== 0) return;              /* CRM surfaces only */
+  if (page.indexOf('crm') !== 0) return;
 
   var MQ = '(max-width: 920px), (orientation: portrait) and (max-width: 1100px)';
 
-  /* ---- styles ---- */
   try {
     var css = document.createElement('style');
     css.id = 'jco-account-css';
     css.textContent = [
-      /* legacy controls: hidden by stylesheet !important so inline display
-         changes from page scripts cannot bring them back, and left in the DOM
-         so existing page code that references them never throws */
       '#crm-logout, #crm-logout-all, .jco-legacy-logout { display: none !important; }',
-
       '#jco-topbar { position: fixed; top: 14px; right: 22px; z-index: 130; }',
       '#jco-account { position: relative; }',
       '#jco-acct-btn { display: flex; align-items: center; gap: 9px; min-height: 42px;',
@@ -512,7 +398,6 @@ document.addEventListener('DOMContentLoaded', function () {
       '  font-family: "Playfair Display", serif; font-size: 12px; font-weight: 600; }',
       '.jco-acct-name { white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; }',
       '.jco-caret { color: #9C9690; font-size: 9px; }',
-
       '#jco-acct-menu { position: absolute; right: 0; top: calc(100% + 8px); width: 268px;',
       '  background: #0B0F14; border: 1px solid rgba(198,165,90,0.30); border-radius: 4px;',
       '  box-shadow: 0 16px 44px rgba(0,0,0,0.6); overflow: hidden; }',
@@ -536,7 +421,6 @@ document.addEventListener('DOMContentLoaded', function () {
       '.jco-m-div { height: 1px; background: rgba(198,165,90,0.18); margin: 6px 0; }',
       '.jco-m-note { font-family: "IBM Plex Mono", monospace; font-size: 9px; color: #9C9690;',
       '  padding: 0 16px 12px; line-height: 1.5; }',
-
       '#jco-confirm-bg { position: fixed; inset: 0; background: rgba(4,7,10,0.74); z-index: 140;',
       '  display: none; align-items: center; justify-content: center; padding: 20px; }',
       '#jco-confirm-bg.open { display: flex; }',
@@ -554,209 +438,268 @@ document.addEventListener('DOMContentLoaded', function () {
       '.jco-cmsg { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: #E4C98A;',
       '  margin-top: 12px; text-align: right; min-height: 14px; }',
       '.jco-cmsg.bad { color: #e57368; }',
-
       '@media ' + MQ + ' {',
       '  #jco-topbar { position: sticky; top: 0; right: auto; width: 100%; display: flex;',
       '    justify-content: flex-end; padding: 8px 12px; background: #08111C;',
       '    border-bottom: 1px solid rgba(198,165,90,0.22); }',
       '  #jco-acct-menu { width: min(300px, calc(100vw - 24px)); }',
-      '  .crm-side { padding-top: 8px !important; }',
       '}',
       '@media (max-width: 380px) { .jco-acct-name { display: none; } }'
     ].join('\n');
     document.head.appendChild(css);
   } catch (e) {}
 
-  /* ---- helpers ---- */
-  var ROLES = [
-    ['owner', 'Owner'], ['super_admin', 'Super Admin'], ['ceo', 'CEO'],
-    ['finance_manager', 'Finance Manager'], ['hr_manager', 'HR Manager'],
-    ['operations_manager', 'Operations Manager'], ['business_development', 'Business Development']
-  ];
+  var ROLE_LABEL = {
+    owner: 'Owner', super_admin: 'Super Admin', ceo: 'CEO',
+    finance_manager: 'Finance Manager', hr_manager: 'HR Manager',
+    operations_manager: 'Operations Manager', business_development: 'Business Development',
+    consultancy_manager: 'Consultancy Manager', trade_sourcing_manager: 'Trade Sourcing Manager',
+    customs_manager: 'Customs Manager', account_manager: 'Account Manager',
+    project_manager: 'Project Manager', document_controller: 'Document Controller',
+    read_only_auditor: 'Read-Only Auditor'
+  };
+  var ROLE_ORDER = ['owner','super_admin','ceo','finance_manager','hr_manager','operations_manager',
+                    'business_development','consultancy_manager','trade_sourcing_manager',
+                    'customs_manager','account_manager','project_manager','document_controller','read_only_auditor'];
+
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function initials(name) {
     var p = String(name || '').trim().split(/\s+/).filter(Boolean);
     if (!p.length) return 'JC';
     return ((p[0][0] || '') + (p.length > 1 ? (p[p.length - 1][0] || '') : '')).toUpperCase();
   }
-  async function roleLabel() {
-    for (var i = 0; i < ROLES.length; i++) {
-      try {
-        var r = await sb.rpc('crm_has_role', { roles: [ROLES[i][0]] });
-        if (r && r.data === true) return ROLES[i][1];
-      } catch (e) {}
+  function roleLabelFrom(roles) {
+    for (var i = 0; i < ROLE_ORDER.length; i++) {
+      if (roles && roles.indexOf(ROLE_ORDER[i]) > -1) return ROLE_LABEL[ROLE_ORDER[i]];
     }
     return 'Staff';
   }
-  async function displayName(uid, email) {
-    try {
-      var r = await sb.rpc('crm_staff_names');
-      var m = (r.data || []).filter(function (x) { return x.user_id === uid; })[0];
-      if (m && m.display_name) return m.display_name;
-    } catch (e) {}
-    return String(email || 'Account').split('@')[0];
-  }
-
   function hideLegacy() {
     try {
       var rx = /^\s*(log|sign)\s*out(\s*(everywhere|from all devices|of all devices))?\s*$/i;
-      var nodes = document.querySelectorAll('a, button, span, div, p');
+      var nodes = document.querySelectorAll('#crm-logout, #crm-logout-all, .crm-side a, .crm-side span, header a, header span, body > div');
       Array.prototype.forEach.call(nodes, function (el) {
-        if (el.id === 'jco-topbar' || el.closest('#jco-topbar') || el.closest('#jco-confirm-bg')) return;
-        if (el.children.length) return;                       /* leaf nodes only */
+        if (el.closest('#jco-topbar') || el.closest('#jco-confirm-bg')) return;
+        if (el.children.length) return;
         if (rx.test(el.textContent || '')) el.classList.add('jco-legacy-logout');
       });
     } catch (e) {}
   }
 
-  /* ---- build ---- */
-  document.addEventListener('DOMContentLoaded', function () {
-    if (typeof sb === 'undefined') return;
-    var built = false, lastFocus = null;
+  /* ---- listeners registered ONCE, at module scope (no per-build duplicates) */
+  var menuEl = null, btnEl = null, lastFocus = null;
+  function closeMenu(restore) {
+    if (!menuEl) return;
+    menuEl.hidden = true;
+    if (btnEl) btnEl.setAttribute('aria-expanded', 'false');
+    if (restore) (lastFocus && lastFocus.focus ? lastFocus : btnEl).focus();
+  }
+  document.addEventListener('click', function (e) {
+    if (menuEl && !menuEl.hidden && !e.target.closest('#jco-account')) closeMenu(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var cbg = document.getElementById('jco-confirm-bg');
+    if (cbg && cbg.classList.contains('open')) { cbg.classList.remove('open'); if (btnEl) btnEl.focus(); return; }
+    if (menuEl && !menuEl.hidden) { e.preventDefault(); closeMenu(true); }
+  });
 
-    async function build() {
-      if (built) return;
-      var s;
-      try { s = await sb.auth.getSession(); } catch (e) { return; }
-      if (!s || !s.data || !s.data.session) return;           /* login screen: nothing to show */
-      var user = s.data.session.user;
-      var uid = user.id, email = user.email || '';
-      built = true;
+  /* ---- THE single-host claim: synchronous, before any await ---- */
+  function claimHost() {
+    if (document.getElementById('jco-topbar')) return null;   /* already owned */
+    var host = document.createElement('div');
+    host.id = 'jco-topbar';
+    document.body.insertBefore(host, document.body.firstElementChild);
+    return host;
+  }
 
-      hideLegacy();
-      var name = await displayName(uid, email);
-      var role = await roleLabel();
+  async function initAccountMenu() {
+    if (typeof sb === 'undefined' || !document.body) return;
+    var host = claimHost();
+    if (!host) return;                     /* another entrant owns it — never append a second */
 
-      var bar = document.createElement('div');
-      bar.id = 'jco-topbar';
-      bar.innerHTML =
-        '<div id="jco-account">' +
-          '<button id="jco-acct-btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="jco-acct-menu">' +
-            '<span class="jco-avatar" aria-hidden="true">' + esc(initials(name)) + '</span>' +
-            '<span class="jco-acct-name">' + esc(name) + '</span>' +
-            '<span class="jco-caret" aria-hidden="true">&#9662;</span>' +
-          '</button>' +
-          '<div id="jco-acct-menu" role="menu" aria-label="Account and security" hidden>' +
-            '<div class="jco-m-head">' +
-              '<div class="jco-m-name">' + esc(name) + '</div>' +
-              '<div class="jco-m-email">' + esc(email) + '</div>' +
-              '<div class="jco-m-role">' + esc(role) + '</div>' +
-            '</div>' +
-            '<div class="jco-m-sec">Session &amp; Security</div>' +
-            '<button class="jco-m-item" role="menuitem" id="jco-signout" type="button">Sign out from this device</button>' +
-            '<div class="jco-m-div"></div>' +
-            '<button class="jco-m-item danger" role="menuitem" id="jco-signout-all" type="button">Sign out from all devices</button>' +
-            '<div class="jco-m-note">Ends every active session, including phones and other browsers.</div>' +
+    var ctx = null;
+    try { ctx = await jco.context(); } catch (e) {}
+    if (!ctx) { host.remove(); return; }   /* signed out: release so a later login can build */
+
+    var name = ctx.display_name || (ctx.email || 'Account').split('@')[0];
+    var role = roleLabelFrom(ctx.roles || []);
+    hideLegacy();
+
+    host.innerHTML =
+      '<div id="jco-account">' +
+        '<button id="jco-acct-btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="jco-acct-menu">' +
+          '<span class="jco-avatar" aria-hidden="true">' + esc(initials(name)) + '</span>' +
+          '<span class="jco-acct-name">' + esc(name) + '</span>' +
+          '<span class="jco-caret" aria-hidden="true">&#9662;</span>' +
+        '</button>' +
+        '<div id="jco-acct-menu" role="menu" aria-label="Account and security" hidden>' +
+          '<div class="jco-m-head">' +
+            '<div class="jco-m-name">' + esc(name) + '</div>' +
+            '<div class="jco-m-email">' + esc(ctx.email || '') + '</div>' +
+            '<div class="jco-m-role">' + esc(role) + '</div>' +
           '</div>' +
-        '</div>';
-      document.body.insertBefore(bar, document.body.firstElementChild);
+          '<div class="jco-m-sec">Session &amp; Security</div>' +
+          '<button class="jco-m-item" role="menuitem" id="jco-signout" type="button">Sign out from this device</button>' +
+          '<div class="jco-m-div"></div>' +
+          '<button class="jco-m-item danger" role="menuitem" id="jco-signout-all" type="button">Sign out from all devices</button>' +
+          '<div class="jco-m-note">Ends every active session, including phones and other browsers.</div>' +
+        '</div>' +
+      '</div>';
 
-      var btn = document.getElementById('jco-acct-btn');
-      var menu = document.getElementById('jco-acct-menu');
+    btnEl = document.getElementById('jco-acct-btn');
+    menuEl = document.getElementById('jco-acct-menu');
 
-      function openMenu() {
+    btnEl.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (menuEl.hidden) {
         lastFocus = document.activeElement;
-        menu.hidden = false;
-        btn.setAttribute('aria-expanded', 'true');
-        var first = menu.querySelector('.jco-m-item');
+        menuEl.hidden = false;
+        btnEl.setAttribute('aria-expanded', 'true');
+        var first = menuEl.querySelector('.jco-m-item');
         if (first) first.focus();
-      }
-      function closeMenu(restore) {
-        menu.hidden = true;
-        btn.setAttribute('aria-expanded', 'false');
-        if (restore) (lastFocus && lastFocus.focus ? lastFocus : btn).focus();
-      }
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (menu.hidden) openMenu(); else closeMenu(true);
-      });
-      document.addEventListener('click', function (e) {
-        if (!menu.hidden && !e.target.closest('#jco-account')) closeMenu(false);
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !menu.hidden) { e.preventDefault(); closeMenu(true); }
-      });
+      } else closeMenu(true);
+    });
 
-      /* ---- sign out: this device only ---- */
-      document.getElementById('jco-signout').addEventListener('click', async function () {
-        closeMenu(false);
-        try { await sb.auth.signOut({ scope: 'local' }); }
-        catch (e) { try { await sb.auth.signOut(); } catch (e2) {} }
-        location.replace('crm.html');                          /* replace() → no back-button return */
-      });
+    document.getElementById('jco-signout').addEventListener('click', async function () {
+      closeMenu(false);
+      try { jco.clearContext(); } catch (e) {}
+      try { await sb.auth.signOut({ scope: 'local' }); }
+      catch (e) { try { await sb.auth.signOut(); } catch (e2) {} }
+      location.replace('crm.html');
+    });
 
-      /* ---- sign out: all devices (confirmed + audited) ---- */
-      var cbg = document.createElement('div');
-      cbg.id = 'jco-confirm-bg';
-      cbg.innerHTML =
-        '<div class="jco-confirm" role="dialog" aria-modal="true" aria-labelledby="jco-ctitle">' +
-          '<h2 id="jco-ctitle">Sign out from all devices?</h2>' +
-          '<p>This will end your active sessions on this and every other device. You will need to sign in again.</p>' +
-          '<div class="jco-crow">' +
-            '<button class="jco-cbtn ghost" id="jco-cancel" type="button">Cancel</button>' +
-            '<button class="jco-cbtn danger" id="jco-go" type="button">Sign out everywhere</button>' +
-          '</div>' +
-          '<div class="jco-cmsg" id="jco-cmsg" role="status"></div>' +
-        '</div>';
-      document.body.appendChild(cbg);
+    var cbg = document.createElement('div');
+    cbg.id = 'jco-confirm-bg';
+    cbg.innerHTML =
+      '<div class="jco-confirm" role="dialog" aria-modal="true" aria-labelledby="jco-ctitle">' +
+        '<h2 id="jco-ctitle">Sign out from all devices?</h2>' +
+        '<p>This will end your active sessions on this and every other device. You will need to sign in again.</p>' +
+        '<div class="jco-crow">' +
+          '<button class="jco-cbtn ghost" id="jco-cancel" type="button">Cancel</button>' +
+          '<button class="jco-cbtn danger" id="jco-go" type="button">Sign out everywhere</button>' +
+        '</div>' +
+        '<div class="jco-cmsg" id="jco-cmsg" role="status"></div>' +
+      '</div>';
+    document.body.appendChild(cbg);
 
-      var goBtn = document.getElementById('jco-go');
-      var cmsg = document.getElementById('jco-cmsg');
-      function closeConfirm() {
-        cbg.classList.remove('open');
-        cmsg.textContent = ''; cmsg.className = 'jco-cmsg';
-        goBtn.disabled = false; goBtn.textContent = 'Sign out everywhere';
-        btn.focus();
-      }
-      document.getElementById('jco-signout-all').addEventListener('click', function () {
-        closeMenu(false);
-        cbg.classList.add('open');
-        goBtn.focus();
-      });
-      document.getElementById('jco-cancel').addEventListener('click', closeConfirm);
-      cbg.addEventListener('click', function (e) { if (e.target === cbg) closeConfirm(); });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && cbg.classList.contains('open')) closeConfirm();
-      });
-
-      goBtn.addEventListener('click', async function () {
-        if (goBtn.disabled) return;                            /* double-submit guard */
-        goBtn.disabled = true; goBtn.textContent = 'Ending sessions…';
-        cmsg.className = 'jco-cmsg'; cmsg.textContent = 'Revoking every active session…';
-
-        /* audit while the session is still valid (best-effort: blocked silently
-           if crm_audit_logs RLS forbids client inserts) */
-        try {
-          await sb.from('crm_audit_logs').insert({
-            action: 'sign_out_all_devices',
-            entity: 'auth.users',
-            entity_id: uid,
-            after_value: { at: new Date().toISOString(), agent: String(navigator.userAgent).slice(0, 120) }
-          });
-        } catch (e) {}
-
-        var res;
-        try { res = await sb.auth.signOut({ scope: 'global' }); }
-        catch (e) { res = { error: { message: String(e && e.message ? e.message : e) } }; }
-
-        if (res && res.error) {
-          cmsg.className = 'jco-cmsg bad';
-          cmsg.textContent = 'Could not end all sessions: ' + res.error.message;
-          goBtn.disabled = false; goBtn.textContent = 'Try again';
-          return;
-        }
-        cmsg.textContent = 'All sessions ended. Redirecting…';
-        setTimeout(function () { location.replace('crm.html'); }, 700);
-      });
+    var goBtn = document.getElementById('jco-go');
+    var cmsg = document.getElementById('jco-cmsg');
+    function closeConfirm() {
+      cbg.classList.remove('open');
+      cmsg.textContent = ''; cmsg.className = 'jco-cmsg';
+      goBtn.disabled = false; goBtn.textContent = 'Sign out everywhere';
+      btnEl.focus();
     }
+    document.getElementById('jco-signout-all').addEventListener('click', function () {
+      closeMenu(false); cbg.classList.add('open'); goBtn.focus();
+    });
+    document.getElementById('jco-cancel').addEventListener('click', closeConfirm);
+    cbg.addEventListener('click', function (e) { if (e.target === cbg) closeConfirm(); });
 
-    build();
+    goBtn.addEventListener('click', async function () {
+      if (goBtn.disabled) return;
+      goBtn.disabled = true; goBtn.textContent = 'Ending sessions…';
+      cmsg.className = 'jco-cmsg'; cmsg.textContent = 'Revoking every active session…';
+      try {
+        await sb.from('crm_audit_logs').insert({
+          action: 'sign_out_all_devices', entity: 'auth.users', entity_id: ctx.user_id,
+          after_value: { at: new Date().toISOString(), agent: String(navigator.userAgent).slice(0, 120) }
+        });
+      } catch (e) {}
+      var res;
+      try { res = await sb.auth.signOut({ scope: 'global' }); }
+      catch (e) { res = { error: { message: String(e && e.message ? e.message : e) } }; }
+      if (res && res.error) {
+        cmsg.className = 'jco-cmsg bad';
+        cmsg.textContent = 'Could not end all sessions: ' + res.error.message;
+        goBtn.disabled = false; goBtn.textContent = 'Try again';
+        return;
+      }
+      try { jco.clearContext(); } catch (e) {}
+      cmsg.textContent = 'All sessions ended. Redirecting…';
+      setTimeout(function () { location.replace('crm.html'); }, 700);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initAccountMenu();
     try {
       sb.auth.onAuthStateChange(function (ev) {
-        if (ev === 'SIGNED_IN' || ev === 'INITIAL_SESSION' || ev === 'TOKEN_REFRESHED') build();
+        if (ev === 'SIGNED_IN') initAccountMenu();     /* host claim makes this idempotent */
+        if (ev === 'SIGNED_OUT') {
+          var h = document.getElementById('jco-topbar');
+          if (h) h.remove();
+          menuEl = null; btnEl = null;
+        }
       });
     } catch (e) {}
-    /* pages that reveal their shell only after login: re-check briefly */
-    var n = 0, t = setInterval(function () { n++; build(); if (n > 8 || built) clearInterval(t); }, 1200);
+  });
+  /* bfcache: Back/Forward restores the page with the host already present, so
+     claimHost() returns null and nothing is appended. Nothing to clean up. */
+})();
+
+/* ---------------------------------------------------------------------------
+   5 · NAV-SYNC — module links, role-gated, from the cached context
+--------------------------------------------------------------------------- */
+(function () {
+  if (window.__jcoNavSync) return;
+  window.__jcoNavSync = true;
+
+  var STAFF_LINKS = [
+    { href: 'crm-daily-entry.html',   label: 'Daily Expenses' },
+    { href: 'crm-ai-accountant.html', label: 'AI Accountant' }
+  ];
+  var ADMIN_LINKS = [
+    { href: 'crm-financial-settings.html', label: 'Financial Settings' },
+    { href: 'crm-employee-costs.html',     label: 'Employee Costs' },
+    { href: 'crm-organization.html',       label: 'Organization' },
+    { href: 'crm-project-costing.html',    label: 'Project Costing' },
+    { href: 'crm-finance-reports.html',    label: 'Financial Reports' },
+    { href: 'crm-alerts.html',             label: 'Alerts' }
+  ];
+
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof sb === 'undefined') return;
+    var done = false;
+
+    async function inject() {
+      if (done) return;
+      var side = document.querySelector('.crm-side');
+      if (!side) return;
+      var ctx = await jco.context();
+      if (!ctx || ctx.is_staff !== true) return;
+      done = true;
+
+      var existing = {};
+      side.querySelectorAll('a').forEach(function (a) {
+        existing[(a.getAttribute('href') || '').split('#')[0]] = true;
+      });
+      var here = (location.pathname.split('/').pop() || '');
+
+      function place(items, anchorHref) {
+        var pending = items.filter(function (i) { return !existing[i.href] && i.href !== here; });
+        if (!pending.length) return;
+        var anchor = side.querySelector('a[href="' + anchorHref + '"]');
+        pending.forEach(function (i) {
+          var a = document.createElement('a');
+          a.className = 'crm-nav-item'; a.href = i.href; a.textContent = i.label;
+          if (anchor && anchor.parentNode) { anchor.parentNode.insertBefore(a, anchor.nextSibling); anchor = a; }
+          else side.appendChild(a);
+          existing[i.href] = true;
+        });
+      }
+
+      place(STAFF_LINKS, 'crm-finance.html');
+      var roles = ctx.roles || [];
+      var isMgmt = ['owner','super_admin','ceo','finance_manager'].some(function (r) { return roles.indexOf(r) > -1; });
+      if (isMgmt) place(ADMIN_LINKS, 'crm-business-rules.html');
+      if (ctx.analytics && ctx.analytics.indexOf('analytics.view') > -1) {
+        place([{ href: 'crm-analytics.html', label: 'AI Analytics' }], 'crm-ai-accountant.html');
+      }
+    }
+
+    inject();
+    try { sb.auth.onAuthStateChange(function (ev) { if (ev === 'SIGNED_IN') inject(); }); } catch (e) {}
   });
 })();
