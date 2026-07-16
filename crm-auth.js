@@ -703,3 +703,20 @@ document.addEventListener('DOMContentLoaded', function () {
     try { sb.auth.onAuthStateChange(function (ev) { if (ev === 'SIGNED_IN') inject(); }); } catch (e) {}
   });
 })();
+
+
+/* ---------------------------------------------------------------------------
+   7 · SEARCHABLE SELECTS — loaded here because every CRM page includes this
+   file. crm-select.js enhances any <select> with more than 10 real options and
+   leaves smaller ones completely alone. The native <select> remains the source
+   of truth, so existing .value reads and change listeners are unaffected.
+--------------------------------------------------------------------------- */
+(function () {
+  try {
+    if (window.__jcoSelect) return;
+    var s = document.createElement('script');
+    s.src = 'crm-select.js?v=1';
+    s.defer = true;
+    document.head.appendChild(s);
+  } catch (e) {}
+})();
