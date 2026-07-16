@@ -691,6 +691,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       place(STAFF_LINKS, 'crm-finance.html');
+      /* sits directly beneath Quotations & Costing, where it belongs */
+      place([{ href: 'crm-outsourced-offers.html', label: 'Outsourced Service Offers' }],
+            'crm-quotations.html');
       var roles = ctx.roles || [];
       var isMgmt = ['owner','super_admin','ceo','finance_manager'].some(function (r) { return roles.indexOf(r) > -1; });
       if (isMgmt) place(ADMIN_LINKS, 'crm-business-rules.html');

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outsourced Service Offers | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1180px;}
+  .crm-topline{margin-bottom:20px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .os-tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:20px; overflow-x:auto;}
+  .os-tab{padding:11px 20px; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .os-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .os-bar{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:18px;}
+  .os-bar label{display:block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:4px;}
+  .os-bar input, .os-bar select{background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 10px; font-size:13px; border-radius:2px; min-width:150px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:12px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  .crm-table td{padding:9px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted); border-radius:2px; white-space:nowrap;}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  .crm-badge.gold{color:var(--gold); border-color:var(--gold);}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 20px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px; min-height:42px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.danger{background:transparent; color:#e57368; border:1px solid rgba(229,115,104,0.4);}
+  .crm-btn.sm{padding:5px 10px; font-size:10px; min-height:30px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-btn:focus-visible{outline:2px solid var(--gold-light); outline-offset:2px;}
+  .crm-empty{font-size:13px; color:var(--muted); padding:22px 0;}
+  .os-modal-bg{position:fixed; inset:0; background:rgba(4,7,10,0.72); z-index:200; display:none; align-items:flex-start; justify-content:center; padding:40px 16px; overflow-y:auto;}
+  .os-modal-bg.open{display:flex;}
+  .os-modal{width:100%; max-width:900px; background:var(--bg-alt); border:1px solid var(--line); border-radius:4px; padding:26px;}
+  .os-modal h2{font-size:20px; margin-bottom:4px;}
+  .os-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:0 16px;}
+  .os-grid label, .os-full label{display:block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:10px 0 4px;}
+  .os-grid input, .os-grid select, .os-full input, .os-full textarea, .os-full select{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 10px; font-size:13px; border-radius:2px;}
+  .os-full textarea{min-height:64px; resize:vertical; font-family:inherit;}
+  .os-fieldset{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:22px 0 4px; padding-top:14px; border-top:1px solid var(--line);}
+  .os-calc{margin:12px 0; padding:10px 12px; border-left:2px solid var(--gold); background:rgba(198,165,90,0.06); font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--gold-light);}
+  .os-note{font-size:11px; color:var(--muted); line-height:1.7; margin-top:6px;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+    .os-modal{padding:18px;}
+    .os-modal-bg{padding:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px;">Outsourced Service Offers</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <input id="crm-password" type="password" autocomplete="current-password" required>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="width:110px; height:auto;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <span class="crm-nav-item active">Outsourced Service Offers</span>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-daily-entry.html">Daily Expenses</a>
+    <a class="crm-nav-item" href="crm-ai-accountant.html">AI Accountant</a>
+    <a class="crm-nav-item" href="crm-analytics.html">AI Analytics</a>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">External capacity we buy in</div>
+      <h1>Outsourced Service Offers</h1>
+      <p class="crm-mono" style="margin-top:8px;">A provider's rate is recorded once, quoted from many times. Linking an offer to a cost line freezes its terms on that line — later price changes never move a historical costing.</p>
+    </div>
+
+    <div class="os-tabs">
+      <div class="os-tab active" data-tab="providers">Providers</div>
+      <div class="os-tab" data-tab="offers">Offers</div>
+      <div class="os-tab" data-tab="compare">Compare</div>
+    </div>
+
+    <!-- ================= PROVIDERS ================= -->
+    <section id="tab-providers">
+      <div class="os-bar">
+        <div><label for="f-branch">Branch</label><select id="f-branch"><option value="">All branches</option></select></div>
+        <div><label for="f-cat">Category</label><select id="f-cat"><option value="">All categories</option></select></div>
+        <div><label for="f-q">Search</label><input id="f-q" type="search" placeholder="Name, contact, city…"></div>
+        <div><label for="f-status">Status</label>
+          <select id="f-status"><option value="active">Active</option><option value="">All</option>
+            <option value="inactive">Inactive</option><option value="archived">Archived</option></select></div>
+        <button class="crm-btn" id="btn-new-provider" type="button">+ New Provider</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>Provider</th><th>Category</th><th>Location</th><th>Contact</th><th>Rating</th><th>Flags</th><th>Offers</th><th></th></tr></thead>
+        <tbody id="prov-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="prov-empty" style="display:none;">No providers yet. Add the first one.</p>
+    </section>
+
+    <!-- ================= OFFERS ================= -->
+    <section id="tab-offers" style="display:none;">
+      <div class="os-bar">
+        <div><label for="of-branch">Branch</label><select id="of-branch"><option value="">All branches</option></select></div>
+        <div><label for="of-status">Status</label>
+          <select id="of-status"><option value="">All</option><option value="received">Received</option>
+            <option value="under_review">Under review</option><option value="approved">Approved</option>
+            <option value="rejected">Rejected</option><option value="expired">Expired</option></select></div>
+        <div><label for="of-q">Search</label><input id="of-q" type="search" placeholder="Offer, provider, title…"></div>
+        <button class="crm-btn" id="btn-new-offer" type="button">+ New Offer</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>Offer</th><th>Provider</th><th>Category</th><th>Basis</th><th>Rate</th><th>Final</th><th>Valid to</th><th>Status</th><th></th></tr></thead>
+        <tbody id="offer-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="offer-empty" style="display:none;">No offers recorded yet.</p>
+    </section>
+
+    <!-- ================= COMPARE ================= -->
+    <section id="tab-compare" style="display:none;">
+      <div class="os-bar">
+        <div><label for="c-cat">Category to compare</label><select id="c-cat"><option value="">Select a category…</option></select></div>
+      </div>
+      <div id="cmp-box"><p class="crm-empty">Pick a category to see every provider's offer side by side, ranked by price.</p></div>
+    </section>
+  </main>
+</div>
+
+<!-- ---------------- PROVIDER MODAL ---------------- -->
+<div class="os-modal-bg" id="modal-provider">
+  <div class="os-modal">
+    <h2 id="pm-title">New Provider</h2>
+    <p class="crm-mono" id="pm-num"></p>
+    <form id="pm-form">
+      <input type="hidden" id="pm-id">
+      <div class="os-fieldset">Identity</div>
+      <div class="os-grid">
+        <div><label>Legal / business name *</label><input id="pm-legal_name" required></div>
+        <div><label>Trading name</label><input id="pm-trading_name"></div>
+        <div><label>Contact person</label><input id="pm-contact_person"></div>
+        <div><label>Provider type</label><select id="pm-provider_type">
+          <option value="company">Company</option><option value="individual">Individual</option>
+          <option value="freelancer">Freelancer</option><option value="agency">Agency</option></select></div>
+      </div>
+      <div class="os-fieldset">What they do</div>
+      <div class="os-grid">
+        <div><label>Branch</label><select id="pm-branch_code"><option value="">—</option></select></div>
+        <div><label>Category</label><select id="pm-category_code"><option value="">—</option></select></div>
+        <div><label>Years experience</label><input id="pm-years_experience" type="number" min="0" max="100"></div>
+        <div><label>Lead time (days)</label><input id="pm-lead_time_days" type="number" min="0"></div>
+      </div>
+      <div class="os-full"><label>Certifications</label><input id="pm-certifications" placeholder="ISO 9001, SEDEX member, PEC registered…"></div>
+      <div class="os-full"><label>Geographic coverage</label><input id="pm-coverage" placeholder="Punjab · Karachi port · GCC…"></div>
+      <div class="os-fieldset">Contact</div>
+      <div class="os-grid">
+        <div><label>Country</label><input id="pm-country" value="Pakistan"></div>
+        <div><label>City</label><input id="pm-city"></div>
+        <div><label>Phone</label><input id="pm-phone" type="tel"></div>
+        <div><label>WhatsApp</label><input id="pm-whatsapp" type="tel"></div>
+        <div><label>Email</label><input id="pm-email" type="email"></div>
+        <div><label>Website</label><input id="pm-website" type="url"></div>
+        <div><label>Tax / NTN number</label><input id="pm-tax_number"></div>
+        <div><label>Currency</label><input id="pm-currency" value="PKR"></div>
+      </div>
+      <div class="os-full"><label>Address</label><input id="pm-address"></div>
+      <div class="os-fieldset">Assessment</div>
+      <div class="os-grid">
+        <div><label>Rating (0–5)</label><input id="pm-rating" type="number" step="0.1" min="0" max="5"></div>
+        <div><label>Risk class</label><select id="pm-risk_class">
+          <option value="unrated">Unrated</option><option value="low">Low</option>
+          <option value="medium">Medium</option><option value="high">High</option></select></div>
+        <div><label>Preferred provider</label><select id="pm-is_preferred">
+          <option value="false">No</option><option value="true">Yes</option></select></div>
+        <div><label>Status</label><select id="pm-status">
+          <option value="active">Active</option><option value="inactive">Inactive</option>
+          <option value="archived">Archived</option></select></div>
+        <div><label>Blacklisted</label><select id="pm-is_blacklisted">
+          <option value="false">No</option><option value="true">Yes</option></select></div>
+      </div>
+      <div class="os-full" id="pm-bl-wrap" style="display:none;"><label>Blacklist reason</label><input id="pm-blacklist_reason"></div>
+      <div class="os-full"><label>Notes</label><textarea id="pm-notes"></textarea></div>
+
+      <div class="os-fieldset" id="pm-bank-head" style="display:none;">Bank details — Finance only</div>
+      <div id="pm-bank-wrap" style="display:none;">
+        <p class="os-note">Visible only to Owner, Super Admin and Finance Manager. Enforced by the database, not by hiding this box.</p>
+        <div class="os-grid">
+          <div><label>Bank name</label><input id="pb-bank_name"></div>
+          <div><label>Account title</label><input id="pb-account_title"></div>
+          <div><label>Account number</label><input id="pb-account_number"></div>
+          <div><label>IBAN</label><input id="pb-iban"></div>
+          <div><label>SWIFT</label><input id="pb-swift"></div>
+          <div><label>Payment terms</label><input id="pb-payment_terms"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button class="crm-btn" type="submit" id="pm-save">Save Provider</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-provider">Cancel</button>
+        <span class="crm-mono" id="pm-status-msg"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ---------------- OFFER MODAL ---------------- -->
+<div class="os-modal-bg" id="modal-offer">
+  <div class="os-modal">
+    <h2 id="om-title">New Offer</h2>
+    <p class="crm-mono" id="om-num"></p>
+    <form id="om-form">
+      <input type="hidden" id="om-id">
+      <div class="os-fieldset">What was offered</div>
+      <div class="os-grid">
+        <div><label>Provider *</label><select id="om-provider_id" required><option value="">—</option></select></div>
+        <div><label>Branch</label><select id="om-branch_code"><option value="">—</option></select></div>
+        <div><label>Category</label><select id="om-category_code"><option value="">—</option></select></div>
+        <div><label>Currency</label><input id="om-currency" value="PKR"></div>
+      </div>
+      <div class="os-full"><label>Title *</label><input id="om-title_f" required placeholder="e.g. Pre-shipment inspection — Karachi port"></div>
+      <div class="os-full"><label>Scope of work</label><textarea id="om-scope_of_work"></textarea></div>
+
+      <div class="os-fieldset">Commercials</div>
+      <div class="os-grid">
+        <div><label>Billing basis *</label><select id="om-billing_basis" required><option value="">—</option></select></div>
+        <div id="om-rate-wrap"><label id="om-rate-label">Rate</label><input id="om-rate" type="number" step="0.0001" min="0"></div>
+        <div id="om-qty-wrap"><label id="om-qty-label">Estimated quantity</label><input id="om-estimated_qty" type="number" step="0.01" min="0"></div>
+        <div id="om-res-wrap"><label>Resources / people</label><input id="om-resources" type="number" min="1" value="1"></div>
+        <div><label>Minimum billable</label><input id="om-min_billable_qty" type="number" step="0.01" min="0"></div>
+        <div><label>Tax %</label><input id="om-tax_pct" type="number" step="0.01" min="0" max="100" value="0"></div>
+        <div><label>Discount</label><input id="om-discount_amount" type="number" step="0.01" min="0" value="0"></div>
+      </div>
+      <div class="os-fieldset">Add-ons the provider charges</div>
+      <div class="os-grid">
+        <div><label>Travel</label><input id="om-travel_cost" type="number" step="0.01" min="0" value="0"></div>
+        <div><label>Accommodation</label><input id="om-accommodation_cost" type="number" step="0.01" min="0" value="0"></div>
+        <div><label>Mobilisation</label><input id="om-mobilisation_cost" type="number" step="0.01" min="0" value="0"></div>
+        <div><label>Equipment</label><input id="om-equipment_cost" type="number" step="0.01" min="0" value="0"></div>
+        <div><label>Reimbursables</label><input id="om-reimbursables" type="number" step="0.01" min="0" value="0"></div>
+      </div>
+      <div class="os-calc" id="om-calc">Enter a rate to see the offered total.</div>
+
+      <div class="os-fieldset">Terms</div>
+      <div class="os-grid">
+        <div><label>Valid until</label><input id="om-valid_until" type="date"></div>
+        <div><label>Expected start</label><input id="om-expected_start" type="date"></div>
+        <div><label>Completion (days)</label><input id="om-completion_days" type="number" min="0"></div>
+        <div><label>Status</label><select id="om-status">
+          <option value="received">Received</option><option value="under_review">Under review</option>
+          <option value="approved">Approved</option><option value="rejected">Rejected</option>
+          <option value="archived">Archived</option></select></div>
+        <div><label>Preferred offer</label><select id="om-is_preferred">
+          <option value="false">No</option><option value="true">Yes</option></select></div>
+      </div>
+      <div class="os-full"><label>Payment terms</label><input id="om-payment_terms" placeholder="50% advance, 50% on report"></div>
+      <div class="os-full"><label>Cancellation terms</label><input id="om-cancellation_terms"></div>
+      <div class="os-full"><label>Deliverables</label><textarea id="om-deliverables"></textarea></div>
+      <div class="os-full"><label>Service level</label><input id="om-sla"></div>
+      <div class="os-full"><label>Internal evaluation</label><textarea id="om-evaluation_note"></textarea></div>
+      <div class="os-full" id="om-rej-wrap" style="display:none;"><label>Rejection reason</label><input id="om-rejection_reason"></div>
+
+      <div style="margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button class="crm-btn" type="submit" id="om-save">Save Offer</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-offer">Cancel</button>
+        <span class="crm-mono" id="om-status-msg"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function val(id){ var e=document.getElementById(id); return e && e.value!=='' ? e.value : null; }
+  function numval(id){ var v=val(id); return v==null?null:Number(v); }
+  function setval(id,v){ var e=document.getElementById(id); if(e) e.value = v==null?'':v; }
+  function money(n,c){ return (c||'PKR')+' '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  var BRANCHES=[], CATS=[], BASES=[], PROVIDERS=[], canEdit=false, canApprove=false, canBank=false;
+
+  /* ---------- auth ---------- */
+  var loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  async function checkSession(){ var s=await sb.auth.getSession(); if(s.data.session){ await boot(); } else { loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none'; } }
+  document.getElementById('crm-login-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; st.textContent='';
+    var r=await sb.auth.signInWithPassword({email:val('crm-email'), password:document.getElementById('crm-password').value});
+    btn.disabled=false;
+    if(r.error){ st.textContent = (r.error.name==='ExplicitSubmitRequired') ? r.error.message : 'Incorrect email or password.'; }
+    else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async function(){ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    var staff = await sb.rpc('crm_is_staff');
+    if (!staff || staff.data !== true) {
+      document.getElementById('crm-login-status').textContent='Staff access only.';
+      await sb.auth.signOut(); return;
+    }
+    try {
+      var e1 = await sb.rpc('crm_has_role', {roles:['owner','super_admin','ceo','operations_manager','project_manager','trade_sourcing_manager','customs_manager']});
+      canEdit = e1.data === true;
+      var e2 = await sb.rpc('crm_has_role', {roles:['owner','super_admin','ceo','finance_manager']});
+      canApprove = e2.data === true;
+      var e3 = await sb.rpc('crm_has_role', {roles:['owner','super_admin','finance_manager']});
+      canBank = e3.data === true;
+    } catch(e) {}
+
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    if (!canEdit) ['btn-new-provider','btn-new-offer'].forEach(function(i){ var b=document.getElementById(i); if(b) b.disabled=true; });
+    if (canBank) { document.getElementById('pm-bank-head').style.display='block'; document.getElementById('pm-bank-wrap').style.display='block'; }
+
+    await Promise.all([loadBranches(), loadCats(), loadBases()]);
+    await Promise.all([loadProviders(), loadOffers()]);
+  }
+
+  /* ---------- tabs ---------- */
+  document.querySelectorAll('.os-tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.os-tab').forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active');
+      ['providers','offers','compare'].forEach(function(k){
+        document.getElementById('tab-'+k).style.display = (t.dataset.tab===k)?'block':'none';
+      });
+    });
+  });
+  document.querySelectorAll('[data-close]').forEach(function(b){
+    b.addEventListener('click', function(){ document.getElementById(b.dataset.close).classList.remove('open'); });
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') document.querySelectorAll('.os-modal-bg.open').forEach(function(m){ m.classList.remove('open'); });
+  });
+
+  /* ---------- lookups ---------- */
+  async function loadBranches(){
+    var r = await sb.from('crm_service_branches').select('*').eq('is_active',true).order('sort_order');
+    BRANCHES = r.data || [];
+    var html = BRANCHES.map(function(b){ return '<option value="'+b.code+'">'+esc(b.letter+' · '+b.name)+'</option>'; }).join('');
+    ['f-branch','of-branch'].forEach(function(id){ document.getElementById(id).innerHTML = '<option value="">All branches</option>'+html; });
+    ['pm-branch_code','om-branch_code'].forEach(function(id){ document.getElementById(id).innerHTML = '<option value="">—</option>'+html; });
+  }
+  async function loadCats(){
+    var r = await sb.rpc('crm_outsourced_category_options', {p_branch:null});
+    CATS = r.data || [];
+    catOptions('f-cat', null, 'All categories');
+    catOptions('c-cat', null, 'Select a category…');
+    catOptions('pm-category_code', null, '—');
+    catOptions('om-category_code', null, '—');
+  }
+  function catOptions(id, branch, placeholder){
+    var sel = document.getElementById(id); if(!sel) return;
+    var list = CATS.filter(function(c){ return !branch || c.branch_code === branch; });
+    var html = '<option value="">'+esc(placeholder)+'</option>';
+    var last=null;
+    list.forEach(function(c){
+      if (c.branch_name !== last) {
+        if (last!==null) html += '</optgroup>';
+        html += '<optgroup label="'+esc(c.letter+' · '+c.branch_name)+'">'; last = c.branch_name;
+      }
+      html += '<option value="'+c.code+'">'+esc(c.name)+'</option>';
+    });
+    if (last!==null) html += '</optgroup>';
+    sel.innerHTML = html;
+  }
+  async function loadBases(){
+    var r = await sb.from('crm_billing_bases').select('*').eq('is_active',true).order('sort_order');
+    BASES = r.data || [];
+    document.getElementById('om-billing_basis').innerHTML = '<option value="">—</option>' +
+      BASES.map(function(b){ return '<option value="'+b.code+'">'+esc(b.name)+'</option>'; }).join('');
+  }
+  document.getElementById('f-branch').addEventListener('change', function(){ catOptions('f-cat', this.value||null, 'All categories'); loadProviders(); });
+  document.getElementById('pm-branch_code').addEventListener('change', function(){ catOptions('pm-category_code', this.value||null, '—'); });
+  document.getElementById('om-branch_code').addEventListener('change', function(){ catOptions('om-category_code', this.value||null, '—'); });
+  ['f-cat','f-status'].forEach(function(id){ document.getElementById(id).addEventListener('change', loadProviders); });
+  ['of-branch','of-status'].forEach(function(id){ document.getElementById(id).addEventListener('change', loadOffers); });
+
+  var t1=null; document.getElementById('f-q').addEventListener('input', function(){ clearTimeout(t1); t1=setTimeout(loadProviders, 250); });
+  var t2=null; document.getElementById('of-q').addEventListener('input', function(){ clearTimeout(t2); t2=setTimeout(loadOffers, 250); });
+
+  /* ---------- providers ---------- */
+  async function loadProviders(){
+    var q = sb.from('crm_service_providers').select('*, crm_service_offers(count)').is('deleted_at',null);
+    if (val('f-branch')) q = q.eq('branch_code', val('f-branch'));
+    if (val('f-cat'))    q = q.eq('category_code', val('f-cat'));
+    if (val('f-status')) q = q.eq('status', val('f-status'));
+    var term = val('f-q');
+    if (term) q = q.or('legal_name.ilike.%'+term+'%,trading_name.ilike.%'+term+'%,contact_person.ilike.%'+term+'%,city.ilike.%'+term+'%');
+    var r = await q.order('legal_name').limit(200);
+    PROVIDERS = r.data || [];
+    document.getElementById('prov-empty').style.display = PROVIDERS.length ? 'none' : 'block';
+    document.getElementById('prov-rows').innerHTML = PROVIDERS.map(function(p){
+      var cat = CATS.filter(function(c){ return c.code === p.category_code; })[0];
+      var flags = (p.is_preferred ? '<span class="crm-badge gold">preferred</span> ' : '') +
+                  (p.is_blacklisted ? '<span class="crm-badge bad">blacklisted</span> ' : '') +
+                  (p.risk_class && p.risk_class!=='unrated' ? '<span class="crm-badge '+(p.risk_class==='high'?'bad':p.risk_class==='medium'?'warn':'ok')+'">'+esc(p.risk_class)+' risk</span>' : '');
+      var n = (p.crm_service_offers && p.crm_service_offers[0]) ? p.crm_service_offers[0].count : 0;
+      return '<tr><td><strong>'+esc(p.legal_name)+'</strong>'+(p.trading_name?'<br><span class="crm-mono">'+esc(p.trading_name)+'</span>':'')+
+        '<br><span class="crm-mono">'+esc(p.provider_number||'')+'</span></td>'+
+        '<td>'+esc(cat?cat.name:'—')+'</td>'+
+        '<td class="crm-mono">'+esc([p.city,p.country].filter(Boolean).join(', ')||'—')+'</td>'+
+        '<td class="crm-mono">'+esc(p.contact_person||'—')+(p.phone?'<br>'+esc(p.phone):'')+'</td>'+
+        '<td class="crm-mono">'+(p.rating!=null?esc(p.rating)+' / 5':'—')+'</td>'+
+        '<td>'+(flags||'<span class="crm-mono">—</span>')+'</td>'+
+        '<td class="crm-mono">'+n+'</td>'+
+        '<td><button class="crm-btn ghost sm" data-editp="'+p.id+'">Open</button></td></tr>';
+    }).join('');
+    document.querySelectorAll('[data-editp]').forEach(function(b){
+      b.addEventListener('click', function(){ openProvider(b.dataset.editp); });
+    });
+    var sel = document.getElementById('om-provider_id');
+    sel.innerHTML = '<option value="">—</option>' + PROVIDERS.map(function(p){
+      return '<option value="'+p.id+'">'+esc(p.legal_name)+'</option>'; }).join('');
+  }
+
+  document.getElementById('btn-new-provider').addEventListener('click', function(){ openProvider(null); });
+  async function openProvider(id){
+    document.getElementById('pm-form').reset();
+    setval('pm-id', id||'');
+    document.getElementById('pm-status-msg').textContent='';
+    document.getElementById('pm-title').textContent = id ? 'Provider' : 'New Provider';
+    document.getElementById('pm-num').textContent = '';
+    document.getElementById('pm-bl-wrap').style.display='none';
+    if (id) {
+      var p = PROVIDERS.filter(function(x){ return x.id===id; })[0];
+      if (p) {
+        document.getElementById('pm-num').textContent = p.provider_number || '';
+        ['legal_name','trading_name','contact_person','provider_type','branch_code','category_code',
+         'years_experience','lead_time_days','certifications','coverage','country','city','phone',
+         'whatsapp','email','website','tax_number','currency','address','rating','risk_class',
+         'status','notes','blacklist_reason'].forEach(function(f){ setval('pm-'+f, p[f]); });
+        setval('pm-is_preferred', String(!!p.is_preferred));
+        setval('pm-is_blacklisted', String(!!p.is_blacklisted));
+        catOptions('pm-category_code', p.branch_code||null, '—'); setval('pm-category_code', p.category_code);
+        document.getElementById('pm-bl-wrap').style.display = p.is_blacklisted ? 'block' : 'none';
+        if (canBank) {
+          var b = await sb.from('crm_service_provider_bank').select('*').eq('provider_id',id).maybeSingle();
+          if (b.data) ['bank_name','account_title','account_number','iban','swift','payment_terms']
+            .forEach(function(f){ setval('pb-'+f, b.data[f]); });
+        }
+      }
+    }
+    document.getElementById('pm-save').disabled = !canEdit;
+    document.getElementById('modal-provider').classList.add('open');
+    if (window.jcoSelect) window.jcoSelect.scan(document.getElementById('modal-provider'));
+  }
+  document.getElementById('pm-is_blacklisted').addEventListener('change', function(){
+    document.getElementById('pm-bl-wrap').style.display = this.value==='true' ? 'block' : 'none';
+  });
+
+  document.getElementById('pm-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st = document.getElementById('pm-status-msg'); st.textContent='Saving…';
+    var payload = {
+      legal_name:val('pm-legal_name'), trading_name:val('pm-trading_name'),
+      contact_person:val('pm-contact_person'), provider_type:val('pm-provider_type')||'company',
+      branch_code:val('pm-branch_code'), category_code:val('pm-category_code'),
+      years_experience:numval('pm-years_experience'), lead_time_days:numval('pm-lead_time_days'),
+      certifications:val('pm-certifications'), coverage:val('pm-coverage'),
+      country:val('pm-country'), city:val('pm-city'), phone:val('pm-phone'),
+      whatsapp:val('pm-whatsapp'), email:val('pm-email'), website:val('pm-website'),
+      tax_number:val('pm-tax_number'), currency:val('pm-currency')||'PKR', address:val('pm-address'),
+      rating:numval('pm-rating'), risk_class:val('pm-risk_class')||'unrated',
+      is_preferred:val('pm-is_preferred')==='true', is_blacklisted:val('pm-is_blacklisted')==='true',
+      blacklist_reason:val('pm-blacklist_reason'), status:val('pm-status')||'active',
+      notes:val('pm-notes'), updated_by:(await sb.auth.getUser()).data.user.id
+    };
+    var id = val('pm-id'), res;
+    if (id) res = await sb.from('crm_service_providers').update(payload).eq('id', id).select('id').single();
+    else    res = await sb.from('crm_service_providers').insert(payload).select('id').single();
+    if (res.error) { st.textContent = 'Error: '+res.error.message; return; }
+    var pid = res.data.id;
+    if (canBank && (val('pb-bank_name') || val('pb-account_number') || val('pb-iban'))) {
+      var bres = await sb.from('crm_service_provider_bank').upsert({
+        provider_id:pid, bank_name:val('pb-bank_name'), account_title:val('pb-account_title'),
+        account_number:val('pb-account_number'), iban:val('pb-iban'), swift:val('pb-swift'),
+        payment_terms:val('pb-payment_terms')
+      }, {onConflict:'provider_id'});
+      if (bres.error) { st.textContent = 'Provider saved, bank details failed: '+bres.error.message; }
+    }
+    st.textContent = 'Saved.';
+    await loadProviders();
+    setTimeout(function(){ document.getElementById('modal-provider').classList.remove('open'); }, 500);
+  });
+
+  /* ---------- offers ---------- */
+  async function loadOffers(){
+    var q = sb.from('crm_service_offers').select('*, crm_service_providers(legal_name)').is('deleted_at',null);
+    if (val('of-branch')) q = q.eq('branch_code', val('of-branch'));
+    if (val('of-status')) q = q.eq('status', val('of-status'));
+    var term = val('of-q');
+    if (term) q = q.or('title.ilike.%'+term+'%,offer_number.ilike.%'+term+'%');
+    var r = await q.order('created_at',{ascending:false}).limit(200);
+    var rows = r.data || [];
+    document.getElementById('offer-empty').style.display = rows.length ? 'none' : 'block';
+    document.getElementById('offer-rows').innerHTML = rows.map(function(o){
+      var cat = CATS.filter(function(c){ return c.code === o.category_code; })[0];
+      var basis = BASES.filter(function(b){ return b.code === o.billing_basis; })[0];
+      var cls = o.status==='approved'?'ok':(o.status==='rejected'?'bad':(o.status==='expired'?'bad':'warn'));
+      var expired = o.valid_until && o.valid_until < new Date().toISOString().slice(0,10);
+      return '<tr><td class="crm-mono">'+esc(o.offer_number||'—')+'<br><strong style="font-family:Inter;">'+esc(o.title)+'</strong></td>'+
+        '<td>'+esc(o.crm_service_providers?o.crm_service_providers.legal_name:'—')+'</td>'+
+        '<td>'+esc(cat?cat.name:'—')+'</td>'+
+        '<td class="crm-mono">'+esc(basis?basis.name:o.billing_basis||'—')+'</td>'+
+        '<td class="crm-mono">'+(o.rate!=null?money(o.rate,o.currency):'—')+'</td>'+
+        '<td class="crm-mono">'+money(o.final_amount,o.currency)+'</td>'+
+        '<td class="crm-mono">'+esc(o.valid_until||'—')+(expired?' <span class="crm-badge bad">expired</span>':'')+'</td>'+
+        '<td><span class="crm-badge '+cls+'">'+esc(o.status)+'</span>'+(o.is_preferred?' <span class="crm-badge gold">preferred</span>':'')+'</td>'+
+        '<td><button class="crm-btn ghost sm" data-edito="'+o.id+'">Open</button></td></tr>';
+    }).join('');
+    window.__offers = rows;
+    document.querySelectorAll('[data-edito]').forEach(function(b){
+      b.addEventListener('click', function(){ openOffer(b.dataset.edito); });
+    });
+  }
+
+  function omApplyBasis(){
+    var b = BASES.filter(function(x){ return x.code === val('om-billing_basis'); })[0];
+    var show = !!(b && b.needs_qty);
+    document.getElementById('om-rate-wrap').style.display = show ? '' : 'none';
+    document.getElementById('om-qty-wrap').style.display  = show ? '' : 'none';
+    document.getElementById('om-res-wrap').style.display  = (show && b.allows_resources) ? '' : 'none';
+    if (b) {
+      document.getElementById('om-rate-label').textContent = b.rate_label || 'Rate';
+      document.getElementById('om-qty-label').textContent  = b.qty_label || 'Quantity';
+    }
+    if (!show) { document.getElementById('om-rate-wrap').style.display=''; document.getElementById('om-rate-label').textContent='Fixed amount'; }
+    omCalc();
+  }
+  function omCalc(){
+    var rate=numval('om-rate')||0, qty=numval('om-estimated_qty')||0, res=Math.max(1,numval('om-resources')||1);
+    var add=(numval('om-travel_cost')||0)+(numval('om-accommodation_cost')||0)+(numval('om-mobilisation_cost')||0)+
+            (numval('om-equipment_cost')||0)+(numval('om-reimbursables')||0);
+    var disc=numval('om-discount_amount')||0, tax=numval('om-tax_pct')||0;
+    var b = BASES.filter(function(x){ return x.code === val('om-billing_basis'); })[0];
+    var base = (b && !b.needs_qty) ? rate : rate*qty*res;
+    var gross = base + add;
+    var final = Math.round((gross - disc) * (1 + tax/100) * 100)/100;
+    var cur = val('om-currency')||'PKR';
+    document.getElementById('om-calc').textContent =
+      (b && b.needs_qty ? money(rate,cur)+' × '+qty+' '+((b.qty_label||'units').toLowerCase())+(res>1?' × '+res+' resources':'') : money(rate,cur))
+      + (add?'  + add-ons '+money(add,cur):'')
+      + (disc?'  − discount '+money(disc,cur):'')
+      + (tax?'  + tax '+tax+'%':'')
+      + '   =   ' + money(final,cur) + '   (recomputed and stored by the database on save)';
+  }
+  ['om-billing_basis'].forEach(function(i){ document.getElementById(i).addEventListener('change', omApplyBasis); });
+  ['om-rate','om-estimated_qty','om-resources','om-travel_cost','om-accommodation_cost',
+   'om-mobilisation_cost','om-equipment_cost','om-reimbursables','om-discount_amount','om-tax_pct','om-currency']
+    .forEach(function(i){ document.getElementById(i).addEventListener('input', omCalc); });
+  document.getElementById('om-status').addEventListener('change', function(){
+    document.getElementById('om-rej-wrap').style.display = this.value==='rejected' ? 'block' : 'none';
+  });
+
+  document.getElementById('btn-new-offer').addEventListener('click', function(){ openOffer(null); });
+  function openOffer(id){
+    document.getElementById('om-form').reset();
+    setval('om-id', id||''); document.getElementById('om-status-msg').textContent='';
+    document.getElementById('om-title').textContent = id ? 'Offer' : 'New Offer';
+    document.getElementById('om-num').textContent='';
+    document.getElementById('om-rej-wrap').style.display='none';
+    if (id) {
+      var o = (window.__offers||[]).filter(function(x){ return x.id===id; })[0];
+      if (o) {
+        document.getElementById('om-num').textContent = o.offer_number||'';
+        setval('om-provider_id',o.provider_id); setval('om-branch_code',o.branch_code);
+        catOptions('om-category_code', o.branch_code||null, '—'); setval('om-category_code',o.category_code);
+        setval('om-title_f',o.title);
+        ['scope_of_work','billing_basis','rate','estimated_qty','resources','min_billable_qty',
+         'currency','tax_pct','discount_amount','travel_cost','accommodation_cost','mobilisation_cost',
+         'equipment_cost','reimbursables','valid_until','expected_start','completion_days','status',
+         'payment_terms','cancellation_terms','deliverables','sla','evaluation_note','rejection_reason']
+          .forEach(function(f){ setval('om-'+f, o[f]); });
+        setval('om-is_preferred', String(!!o.is_preferred));
+        document.getElementById('om-rej-wrap').style.display = o.status==='rejected'?'block':'none';
+      }
+    }
+    var approveOpt = document.querySelector('#om-status option[value="approved"]');
+    if (approveOpt) approveOpt.disabled = !canApprove;
+    document.getElementById('om-save').disabled = !canEdit;
+    omApplyBasis();
+    document.getElementById('modal-offer').classList.add('open');
+    if (window.jcoSelect) window.jcoSelect.scan(document.getElementById('modal-offer'));
+  }
+
+  document.getElementById('om-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st = document.getElementById('om-status-msg'); st.textContent='Saving…';
+    /* Send inputs only. gross_amount and final_amount are generated columns —
+       Postgres derives them and refuses any client-supplied value. */
+    var payload = {
+      provider_id:val('om-provider_id'), branch_code:val('om-branch_code'),
+      category_code:val('om-category_code'), title:val('om-title_f'),
+      scope_of_work:val('om-scope_of_work'), billing_basis:val('om-billing_basis'),
+      rate:numval('om-rate'), estimated_qty:numval('om-estimated_qty'),
+      resources:numval('om-resources')||1, min_billable_qty:numval('om-min_billable_qty'),
+      currency:val('om-currency')||'PKR', tax_pct:numval('om-tax_pct')||0,
+      discount_amount:numval('om-discount_amount')||0,
+      travel_cost:numval('om-travel_cost')||0, accommodation_cost:numval('om-accommodation_cost')||0,
+      mobilisation_cost:numval('om-mobilisation_cost')||0, equipment_cost:numval('om-equipment_cost')||0,
+      reimbursables:numval('om-reimbursables')||0,
+      valid_until:val('om-valid_until'), expected_start:val('om-expected_start'),
+      completion_days:numval('om-completion_days'), status:val('om-status')||'received',
+      is_preferred:val('om-is_preferred')==='true',
+      payment_terms:val('om-payment_terms'), cancellation_terms:val('om-cancellation_terms'),
+      deliverables:val('om-deliverables'), sla:val('om-sla'),
+      evaluation_note:val('om-evaluation_note'), rejection_reason:val('om-rejection_reason')
+    };
+    var id = val('om-id'), res;
+    if (id) res = await sb.from('crm_service_offers').update(payload).eq('id',id);
+    else    res = await sb.from('crm_service_offers').insert(payload);
+    if (res.error) { st.textContent = 'Error: '+res.error.message; return; }
+    st.textContent='Saved.';
+    await loadOffers();
+    setTimeout(function(){ document.getElementById('modal-offer').classList.remove('open'); }, 500);
+  });
+
+  /* ---------- compare ---------- */
+  document.getElementById('c-cat').addEventListener('change', async function(){
+    var box = document.getElementById('cmp-box');
+    if (!this.value) { box.innerHTML = '<p class="crm-empty">Pick a category to see each provider offer side by side, ranked by price.</p>'; return; }
+    box.innerHTML = '<p class="crm-empty">Loading…</p>';
+    var r = await sb.from('crm_service_offer_comparison').select('*').eq('category_code', this.value).order('price_rank');
+    var rows = r.data || [];
+    if (r.error) { box.innerHTML = '<p class="crm-empty">'+esc(r.error.message)+'</p>'; return; }
+    if (!rows.length) { box.innerHTML = '<p class="crm-empty">No offers recorded in this category yet.</p>'; return; }
+    box.innerHTML = '<table class="crm-table"><thead><tr><th>Rank</th><th>Provider</th><th>Offer</th>'+
+      '<th>Basis</th><th>Rate</th><th>Final</th><th>Lead time</th><th>Rating</th><th>Risk</th><th>Status</th></tr></thead><tbody>'+
+      rows.map(function(o){
+        return '<tr><td class="crm-mono">'+(o.price_rank===1?'<span class="crm-badge ok">lowest</span>':'#'+o.price_rank)+'</td>'+
+          '<td>'+esc(o.provider)+(o.preferred_provider?' <span class="crm-badge gold">preferred</span>':'')+
+          '<br><span class="crm-mono">'+esc([o.city,o.country].filter(Boolean).join(', '))+'</span></td>'+
+          '<td class="crm-mono">'+esc(o.offer_number||'')+'<br>'+esc(o.title)+'</td>'+
+          '<td class="crm-mono">'+esc(o.billing_basis||'—')+'</td>'+
+          '<td class="crm-mono">'+(o.rate!=null?money(o.rate,o.currency):'—')+'</td>'+
+          '<td class="crm-mono"><strong>'+money(o.final_amount,o.currency)+'</strong></td>'+
+          '<td class="crm-mono">'+(o.lead_time_days!=null?o.lead_time_days+' d':'—')+'</td>'+
+          '<td class="crm-mono">'+(o.rating!=null?o.rating+'/5':'—')+'</td>'+
+          '<td class="crm-mono">'+esc(o.risk_class||'—')+'</td>'+
+          '<td><span class="crm-badge '+(o.status==='approved'?'ok':'warn')+'">'+esc(o.status)+'</span></td></tr>';
+      }).join('') + '</tbody></table>' +
+      '<p class="os-note">Ranked by final amount. Cheapest is not automatically best — weigh lead time, rating and risk before choosing.</p>';
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
