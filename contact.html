@@ -171,18 +171,32 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
       <form id="contact-form">
         <div>
           <label for="name">Name</label>
-          <input id="name" name="name" type="text" required>
+          <input id="name" name="name" type="text" autocomplete="name" required>
         </div>
         <div>
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" required>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div>
+          <label for="phone">Phone / WhatsApp</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+92 300 0000000">
+        </div>
+        <div>
+          <label for="company">Company</label>
+          <input id="company" name="company" type="text" autocomplete="organization">
+        </div>
+        <div>
+          <label for="service">Service of interest</label>
+          <select id="service" name="service">
+            <option value="">Select a service…</option>
+          </select>
         </div>
         <div>
           <label for="message">Message</label>
           <textarea id="message" name="message" required></textarea>
         </div>
-        <button class="btn btn-primary" type="submit" style="align-self:flex-start; margin-top:8px; border:none; cursor:pointer;">Send Message</button>
-        <p id="contact-status" style="font-size:13px; color:var(--muted); margin-top:6px;"></p>
+        <button class="btn btn-primary" type="submit" id="contact-submit" style="align-self:flex-start; margin-top:8px; border:none; cursor:pointer;">Send Message</button>
+        <p id="contact-status" style="font-size:13px; color:var(--muted); margin-top:6px;" role="status"></p>
       </form>
     </div>
   </div>
@@ -209,22 +223,70 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
     document.getElementById('message').value = `Enquiry regarding: ${REF_LABELS[ref]}\n\n`;
   }
 
+  /* ---------------------------------------------------------------------
+     Enquiries now go to the CRM (crm_enquiries), not the legacy
+     contact_submissions table that only the old admin page ever read.
+     That is why website enquiries never appeared in the CRM, never fired
+     the notify-enquiry email, and never carried attribution.
+     utm-capture.js silently attaches utm/referrer/landing data to this
+     insert, so the lead arrives knowing which channel produced it.
+  --------------------------------------------------------------------- */
+
+  /* populate the service list from the CRM's own service table */
+  (async function loadServices() {
+    try {
+      const sel = document.getElementById('service');
+      const { data } = await sb.from('crm_services')
+        .select('id,name').eq('is_active', true).order('sort_order');
+      (data || []).forEach(function (s) {
+        const o = document.createElement('option');
+        o.value = s.id; o.textContent = s.name;
+        sel.appendChild(o);
+      });
+      /* if the visitor arrived from a service page (?ref=...), preselect it */
+      if (ref && REF_LABELS[ref]) {
+        const want = REF_LABELS[ref].toLowerCase();
+        Array.prototype.forEach.call(sel.options, function (o) {
+          if (o.textContent.toLowerCase().indexOf(want.split(' ')[0]) === 0) sel.value = o.value;
+        });
+      }
+    } catch (e) { /* the form still works without the list */ }
+  })();
+
   cform.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = document.getElementById('contact-submit');
+    if (btn.disabled) return;                      /* no double submits */
+    btn.disabled = true;
+    cstatus.style.color = 'var(--muted)';
     cstatus.textContent = 'Sending…';
-    const { error } = await sb.from('contact_submissions').insert({
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      message: document.getElementById('message').value
-    });
+
+    const v = id => (document.getElementById(id).value || '').trim() || null;
+    const payload = {
+      source: 'website',
+      status: 'new',
+      enquiry_type: 'general',
+      title: 'Website enquiry — ' + (v('company') || v('name')),
+      submitter_name: v('name'),
+      submitter_email: v('email'),
+      submitter_phone: v('phone'),
+      submitter_company: v('company'),
+      service_id: v('service'),
+      requirement_detail: v('message')
+    };
+
+    const { error } = await sb.from('crm_enquiries').insert(payload);
+    btn.disabled = false;
+
     if (error) {
       cstatus.textContent = 'Something went wrong — please try WhatsApp or email instead.';
       cstatus.style.color = '#c0392b';
-    } else {
-      cstatus.textContent = "Message sent. We'll get back to you soon.";
-      cstatus.style.color = 'var(--gold-light)';
-      cform.reset();
+      console.error('[J&Co enquiry]', error.message, error);
+      return;
     }
+    cstatus.textContent = "Thank you — your enquiry has been received. Our team will respond shortly.";
+    cstatus.style.color = 'var(--gold-light)';
+    cform.reset();
   });
 </script>
 
@@ -259,3 +321,6 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
 <script src="animations.js"></script>
 </body>
 </html>
+
+
+
