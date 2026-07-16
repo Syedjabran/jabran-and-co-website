@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharma Master Data | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 32px 80px; min-width:0; max-width:1240px;}
+  .crm-topline{margin-bottom:18px;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .pm-tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:18px; overflow-x:auto;}
+  .pm-tab{padding:11px 16px; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .pm-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .pm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-bottom:20px;}
+  .pm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:12px 14px;}
+  .pm-kpi .n{font-family:'Playfair Display',serif; font-size:22px; color:var(--gold-light); line-height:1.1;}
+  .pm-kpi .l{font-family:'IBM Plex Mono',monospace; font-size:8px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-top:4px;}
+  .pm-bar{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:16px;}
+  .pm-bar label{display:block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:4px;}
+  .pm-bar input, .pm-bar select{background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 10px; font-size:13px; border-radius:2px; min-width:150px;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:12px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  .crm-table td{padding:9px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .crm-table tr:hover td{background:rgba(198,165,90,0.04);}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line); color:var(--muted); border-radius:2px; white-space:nowrap;}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  .crm-badge.gold{color:var(--gold); border-color:var(--gold);}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 18px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px; min-height:42px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.sm{padding:5px 10px; font-size:10px; min-height:30px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-btn:focus-visible{outline:2px solid var(--gold-light); outline-offset:2px;}
+  .crm-empty{font-size:13px; color:var(--muted); padding:24px 0;}
+  .pm-modal-bg{position:fixed; inset:0; background:rgba(4,7,10,0.72); z-index:200; display:none; align-items:flex-start; justify-content:center; padding:34px 14px; overflow-y:auto;}
+  .pm-modal-bg.open{display:flex;}
+  .pm-modal{width:100%; max-width:920px; background:var(--bg-alt); border:1px solid var(--line); border-radius:4px; padding:24px;}
+  .pm-modal h2{font-size:20px; margin-bottom:2px;}
+  .pm-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:0 16px;}
+  .pm-f label{display:block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:10px 0 4px;}
+  .pm-f input, .pm-f select, .pm-f textarea{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 10px; font-size:13px; border-radius:2px;}
+  .pm-f textarea{min-height:60px; resize:vertical; font-family:inherit;}
+  .pm-f.full{grid-column:1 / -1;}
+  .pm-set{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin:20px 0 2px; padding-top:12px; border-top:1px solid var(--line); grid-column:1 / -1;}
+  .pm-note{font-size:11px; color:var(--muted); line-height:1.7; margin-top:6px; grid-column:1 / -1;}
+  .pm-warn{border-left:2px solid #e57368; background:rgba(229,115,104,0.07); padding:10px 12px; margin:10px 0; font-size:11px; color:#e57368; grid-column:1 / -1; line-height:1.6;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:26px 16px 70px;}
+    .crm-table{display:block; overflow-x:auto;}
+    .pm-modal{padding:16px;}
+    .pm-modal-bg{padding:8px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px;">Pharma &amp; Nutraceutical — Master Data</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <input id="crm-password" type="password" autocomplete="current-password" required>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="width:110px; height:auto;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-outsourced-offers.html">Outsourced Service Offers</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-analytics.html">AI Analytics</a>
+    <div class="crm-nav-label">Pharma Network</div>
+    <span class="crm-nav-item active">Master Data</span>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div class="eyebrow">Companies · Plants · Products · Prescribers · Channel</div>
+      <h1>Pharma Master Data</h1>
+    </div>
+
+    <div class="pm-kpis" id="pm-kpis"></div>
+
+    <div class="pm-tabs" id="pm-tabs">
+      <div class="pm-tab active" data-e="companies">Companies</div>
+      <div class="pm-tab" data-e="plants">Plants</div>
+      <div class="pm-tab" data-e="products">Products</div>
+      <div class="pm-tab" data-e="doctors">Doctors</div>
+      <div class="pm-tab" data-e="hospitals">Hospitals</div>
+      <div class="pm-tab" data-e="pharmacies">Pharmacies</div>
+      <div class="pm-tab" data-e="distributors">Distributors</div>
+      <div class="pm-tab" data-e="territories">Territories</div>
+    </div>
+
+    <div class="pm-bar">
+      <div><label for="pm-q">Search</label><input id="pm-q" type="search" placeholder="Type to filter…"></div>
+      <div id="pm-filter-wrap"></div>
+      <button class="crm-btn" id="pm-new" type="button">+ New</button>
+    </div>
+
+    <div id="pm-list"></div>
+    <p class="crm-mono" id="pm-count" style="margin-top:12px;"></p>
+  </main>
+</div>
+
+<div class="pm-modal-bg" id="pm-modal">
+  <div class="pm-modal">
+    <h2 id="pm-m-title">Record</h2>
+    <p class="crm-mono" id="pm-m-code"></p>
+    <form id="pm-form"><div class="pm-grid" id="pm-fields"></div>
+      <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button class="crm-btn" type="submit" id="pm-save">Save</button>
+        <button class="crm-btn ghost" type="button" id="pm-cancel">Cancel</button>
+        <span class="crm-mono" id="pm-msg"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function val(id){ var e=document.getElementById(id); return e && e.value!=='' ? e.value : null; }
+  function setval(id,v){ var e=document.getElementById(id); if(e) e.value = v==null?'':v; }
+  function num(v){ return v==null||v===''?null:Number(v); }
+
+  var LOOK = { orgs:[], plants:[], territories:[], categories:[], forms:[], products:[], distributors:[] };
+  var canEdit=false, current='companies', rows=[];
+
+  /* -------------------------------------------------------------------
+     One engine, eight entities. Each config declares its table, its
+     columns and its form; the list, modal, search and save are shared.
+     Writing eight near-identical pages would guarantee eight different
+     bugs — this way a fix lands everywhere at once.
+  ------------------------------------------------------------------- */
+  var E = {
+    companies: {
+      title:'Companies & Principals', table:'pharma_companies', key:'org_id',
+      note:'A pharma company is an EXTENSION of an existing CRM organisation, never a second client record. Create the organisation in the CRM first, then add its pharma facts here.',
+      cols:[
+        {k:'org_name', h:'Organisation'},
+        {k:'company_code', h:'Code', mono:true},
+        {k:'roles', h:'Roles', render:function(r){
+          var t=[]; if(r.is_principal)t.push('principal'); if(r.is_manufacturer)t.push('manufacturer');
+          if(r.is_importer)t.push('importer'); if(r.is_distributor)t.push('distributor');
+          if(r.is_marketing_co)t.push('marketing'); if(r.is_toll_client)t.push('toll client');
+          if(r.is_exporter)t.push('exporter');
+          return t.length ? t.map(function(x){return '<span class="crm-badge">'+x+'</span>';}).join(' ') : '<span class="crm-mono">—</span>';
+        }},
+        {k:'drug_licence_no', h:'Drug licence', mono:true},
+        {k:'business_status', h:'Status', badge:function(v){ return v==='active'||v==='partner'?'ok':(v==='blacklisted'?'bad':'warn'); }},
+        {k:'risk_category', h:'Risk', badge:function(v){ return v==='high'?'bad':(v==='medium'?'warn':(v==='low'?'ok':'')); }}
+      ],
+      fields:[
+        {set:'Link to the CRM organisation'},
+        {k:'org_id', l:'Organisation *', t:'select', src:'orgs', req:true},
+        {k:'company_code', l:'Company code'},
+        {set:'What they are to us'},
+        {k:'is_principal', l:'Principal', t:'bool'},
+        {k:'is_manufacturer', l:'Manufacturer', t:'bool'},
+        {k:'is_importer', l:'Importer', t:'bool'},
+        {k:'is_distributor', l:'Distributor', t:'bool'},
+        {k:'is_marketing_co', l:'Marketing company', t:'bool'},
+        {k:'is_toll_client', l:'Toll-manufacturing client', t:'bool'},
+        {k:'is_exporter', l:'Exporter', t:'bool'},
+        {set:'Licensing'},
+        {k:'drug_licence_no', l:'Drug manufacturing licence'},
+        {k:'establishment_licence', l:'Establishment licence'},
+        {k:'regulatory_authority', l:'Regulatory authority'},
+        {set:'Relationship'},
+        {k:'business_status', l:'Business status', t:'select', opts:['prospect','lead','qualified','active','partner','dormant','blacklisted','former']},
+        {k:'risk_category', l:'Risk category', t:'select', opts:['unrated','low','medium','high']},
+        {k:'relationship_started', l:'Relationship started', t:'date'},
+        {k:'account_health', l:'Account health (0–100)', t:'number'},
+        {k:'credit_terms', l:'Credit terms'},
+        {k:'commercial_terms', l:'Commercial terms'},
+        {k:'next_action', l:'Next action', full:true},
+        {k:'notes', l:'Notes', t:'textarea', full:true}
+      ]
+    },
+
+    plants: {
+      title:'Manufacturing Plants', table:'pharma_plants', key:'id', soft:true,
+      cols:[
+        {k:'name', h:'Plant'}, {k:'plant_code', h:'Code', mono:true},
+        {k:'city', h:'Location', mono:true},
+        {k:'gmp_status', h:'GMP', badge:function(v){ return v && v!=='none' ? 'ok':'warn'; }},
+        {k:'utilised_capacity_pct', h:'Utilised', render:function(r){ return r.utilised_capacity_pct!=null ? r.utilised_capacity_pct+'%' : '—'; }},
+        {k:'quality_rating', h:'Quality', render:function(r){ return r.quality_rating!=null ? r.quality_rating+'/5' : '—'; }},
+        {k:'risk_rating', h:'Risk', badge:function(v){ return v==='high'?'bad':(v==='medium'?'warn':(v==='low'?'ok':'')); }},
+        {k:'status', h:'Status', badge:function(v){ return v==='active'?'ok':''; }}
+      ],
+      fields:[
+        {set:'Identity'},
+        {k:'name', l:'Plant name *', req:true}, {k:'plant_code', l:'Plant code'},
+        {k:'org_id', l:'Parent company', t:'select', src:'orgs'},
+        {set:'Location'},
+        {k:'country', l:'Country'}, {k:'city', l:'City'},
+        {k:'address', l:'Address', full:true},
+        {set:'Certification'},
+        {k:'gmp_status', l:'GMP status', t:'select', opts:['none','local_gmp','who_gmp','eu_gmp','us_fda','pics']},
+        {k:'gmp_expiry', l:'GMP expiry', t:'date'},
+        {k:'halal_certified', l:'Halal certified', t:'bool'},
+        {k:'iso_certs', l:'ISO certifications', full:true},
+        {set:'Capacity'},
+        {k:'installed_capacity', l:'Installed capacity'},
+        {k:'utilised_capacity_pct', l:'Utilised %', t:'number'},
+        {k:'production_lines', l:'Production lines', t:'number'},
+        {k:'min_batch_size', l:'Min batch size', t:'number'},
+        {k:'max_batch_size', l:'Max batch size', t:'number'},
+        {k:'lead_time_days', l:'Lead time (days)', t:'number'},
+        {k:'cold_chain', l:'Cold chain', t:'bool'},
+        {k:'warehouse_capacity', l:'Warehouse capacity'},
+        {k:'export_markets', l:'Export markets', full:true},
+        {set:'Assessment'},
+        {k:'last_audit_date', l:'Last audit', t:'date'},
+        {k:'next_audit_date', l:'Next audit', t:'date'},
+        {k:'audit_status', l:'Audit status', t:'select', opts:['not_audited','scheduled','passed','conditional','failed']},
+        {k:'quality_rating', l:'Quality rating (0–5)', t:'number', step:'0.1'},
+        {k:'commercial_rating', l:'Commercial rating (0–5)', t:'number', step:'0.1'},
+        {k:'risk_rating', l:'Risk rating', t:'select', opts:['unrated','low','medium','high']},
+        {k:'status', l:'Status', t:'select', opts:['active','inactive','archived']},
+        {k:'notes', l:'Notes', t:'textarea', full:true}
+      ]
+    },
+
+    products: {
+      title:'Products & Medicines', table:'pharma_products', key:'id', soft:true,
+      cols:[
+        {k:'brand_name', h:'Brand', render:function(r){
+          return '<strong>'+esc(r.brand_name)+'</strong>'+(r.generic_name?'<br><span class="crm-mono">'+esc(r.generic_name)+'</span>':'');
+        }},
+        {k:'strength', h:'Strength / form', render:function(r){
+          return esc([r.strength, r.dosage_form, r.pack_size].filter(Boolean).join(' · ')) || '—';
+        }},
+        {k:'therapeutic_category', h:'Category', mono:true},
+        {k:'product_class', h:'Class', badge:function(){ return ''; }},
+        {k:'rx_status', h:'Rx', badge:function(v){ return v==='controlled'?'bad':(v==='rx'?'warn':'ok'); }},
+        {k:'status', h:'Status', badge:function(v){ return v==='active'||v==='registered'?'ok':(v==='discontinued'?'bad':'warn'); }}
+      ],
+      fields:[
+        {set:'Identity'},
+        {k:'brand_name', l:'Brand name *', req:true},
+        {k:'generic_name', l:'Generic name'},
+        {k:'molecule', l:'Molecule / active ingredient'},
+        {k:'strength', l:'Strength'},
+        {k:'dosage_form', l:'Dosage form', t:'select', src:'forms'},
+        {k:'pack_size', l:'Pack size'},
+        {k:'uom', l:'Unit of measure'},
+        {k:'composition', l:'Composition', t:'textarea', full:true},
+        {set:'Classification'},
+        {k:'therapeutic_category', l:'Therapeutic category', t:'select', src:'categories'},
+        {k:'product_class', l:'Product class', t:'select', opts:['pharmaceutical','nutraceutical','herbal','cosmetic','device','veterinary']},
+        {k:'rx_status', l:'Prescription status', t:'select', opts:['rx','otc','controlled','device','supplement']},
+        {k:'indication', l:'Indication'},
+        {k:'target_specialty', l:'Target specialty'},
+        {set:'Origin & ownership'},
+        {k:'is_imported', l:'Imported', t:'bool'},
+        {k:'country_of_origin', l:'Country of origin'},
+        {k:'brand_owner_org', l:'Brand owner', t:'select', src:'orgs'},
+        {k:'principal_org', l:'Principal', t:'select', src:'orgs'},
+        {k:'manufacturer_plant', l:'Manufacturer plant', t:'select', src:'plants'},
+        {k:'toll_manufacturer', l:'Toll manufacturer', t:'select', src:'plants'},
+        {k:'marketing_org', l:'Marketing company', t:'select', src:'orgs'},
+        {set:'Status & lifecycle'},
+        {k:'status', l:'Status', t:'select', opts:['development','under_registration','registered','active','on_hold','discontinued']},
+        {k:'lifecycle_stage', l:'Lifecycle stage', t:'select', opts:['','launch','growth','maturity','decline','withdrawn']},
+        {k:'launch_date', l:'Launch date', t:'date'},
+        {set:'Marketing'},
+        {k:'usp', l:'Unique selling proposition', full:true},
+        {k:'positioning', l:'Positioning', full:true},
+        {k:'competitors', l:'Competitors', full:true},
+        {k:'approved_claims', l:'Approved promotional claims', t:'textarea', full:true,
+         hint:'Promotional material and detailing must stay inside these claims. Anything outside them is off-label promotion.'},
+        {k:'promotion_restrictions', l:'Promotion restrictions', t:'textarea', full:true},
+        {k:'sampling_rules', l:'Sampling rules', full:true},
+        {k:'monthly_target', l:'Monthly target', t:'number'},
+        {k:'annual_target', l:'Annual target', t:'number'},
+        {set:'Inventory identity'},
+        {k:'sku', l:'SKU'}, {k:'barcode', l:'Barcode'},
+        {k:'shelf_life_months', l:'Shelf life (months)', t:'number'},
+        {k:'storage_conditions', l:'Storage conditions'},
+        {k:'cold_chain', l:'Cold chain', t:'bool'},
+        {k:'safety_stock', l:'Safety stock', t:'number'},
+        {k:'reorder_point', l:'Reorder point', t:'number'},
+        {k:'notes', l:'Notes', t:'textarea', full:true}
+      ]
+    },
+
+    doctors: {
+      title:'Doctors & Prescribers', table:'pharma_doctors', key:'id', soft:true,
+      cols:[
+        {k:'full_name', h:'Doctor', render:function(r){
+          return '<strong>'+esc([r.title, r.full_name].filter(Boolean).join(' '))+'</strong>' +
+                 (r.qualification?'<br><span class="crm-mono">'+esc(r.qualification)+'</span>':'');
+        }},
+        {k:'specialty', h:'Specialty'},
+        {k:'city', h:'City', mono:true},
+        {k:'category', h:'Category', badge:function(v){ return v==='kol'||v==='A_plus'||v==='A'?'gold':(v==='restricted'?'bad':''); }},
+        {k:'consent_status', h:'Consent', badge:function(v){ return v==='obtained'?'ok':(v==='refused'||v==='withdrawn'?'bad':'warn'); }},
+        {k:'do_not_contact', h:'Contact', render:function(r){
+          return r.do_not_contact ? '<span class="crm-badge bad">do not contact</span>' : '<span class="crm-badge ok">contactable</span>';
+        }},
+        {k:'last_visit', h:'Last visit', mono:true}
+      ],
+      fields:[
+        {set:'Identity'},
+        {k:'full_name', l:'Full name *', req:true},
+        {k:'title', l:'Title'},
+        {k:'qualification', l:'Qualification'},
+        {k:'pmdc_number', l:'PMDC / registration number'},
+        {k:'reg_authority', l:'Registration authority'},
+        {k:'specialty', l:'Specialty'},
+        {k:'subspecialty', l:'Subspecialty'},
+        {k:'designation', l:'Designation', t:'select', opts:['','consultant','professor','associate_professor','assistant_professor','senior_registrar','medical_officer','gp','surgeon','dentist','nutritionist','pharmacist','veterinarian','other']},
+        {k:'years_experience', l:'Years experience', t:'number'},
+        {set:'Where to find them'},
+        {k:'city', l:'City'},
+        {k:'territory_id', l:'Territory', t:'select', src:'territories'},
+        {k:'address', l:'Address', full:true},
+        {k:'clinic_timings', l:'Clinic timings'},
+        {k:'phone', l:'Phone'}, {k:'whatsapp', l:'WhatsApp'}, {k:'email', l:'Email'},
+        {k:'preferred_contact', l:'Preferred contact', t:'select', opts:['','phone','whatsapp','email','in_person','none']},
+        {k:'assistant_contact', l:'Assistant / secretary'},
+        {k:'appointment_required', l:'Appointment required', t:'bool'},
+        {k:'visit_restrictions', l:'Visit restrictions', full:true},
+        {set:'Commercial classification'},
+        {k:'category', l:'Category', t:'select', opts:['unclassified','A_plus','A','B','C','kol','new','potential','inactive','restricted']},
+        {k:'prescribing_potential', l:'Prescribing potential', t:'select', opts:['','high','medium','low','unknown']},
+        {k:'influence_level', l:'Influence level', t:'select', opts:['','national','regional','local','unknown']},
+        {k:'relationship_status', l:'Relationship', t:'select', opts:['new','engaged','loyal','lapsed','lost']},
+        {k:'engagement_score', l:'Engagement score (0–100)', t:'number'},
+        {set:'Consent & compliance — enforced by the database'},
+        {warn:'Consent is not a formality here. Setting consent to "withdrawn" automatically forces do-not-contact and reclassifies this doctor as restricted. A do-not-contact doctor cannot be visited, targeted by an offer, issued samples, or have engagement spend recorded — the database refuses each one.'},
+        {k:'consent_status', l:'Consent status', t:'select', opts:['not_obtained','obtained','refused','withdrawn']},
+        {k:'consent_date', l:'Consent date', t:'date'},
+        {k:'do_not_contact', l:'Do not contact', t:'bool'},
+        {k:'annual_spend_cap', l:'Annual engagement cap (PKR)', t:'number',
+         hint:'Leave blank for no cap. If set, engagement spend beyond it is refused, not warned about.'},
+        {k:'consent_notes', l:'Consent notes', t:'textarea', full:true},
+        {set:'Ownership'},
+        {k:'status', l:'Status', t:'select', opts:['active','inactive','archived']},
+        {k:'next_visit', l:'Next visit', t:'date'},
+        {k:'notes', l:'Notes', t:'textarea', full:true}
+      ]
+    },
+
+    hospitals: {
+      title:'Hospitals & Institutions', table:'pharma_hospitals', key:'id', soft:true,
+      cols:[
+        {k:'legal_name', h:'Institution'},
+        {k:'institution_type', h:'Type', mono:true},
+        {k:'city', h:'City', mono:true},
+        {k:'beds', h:'Beds', mono:true},
+        {k:'has_formulary', h:'Formulary', render:function(r){ return r.has_formulary?'<span class="crm-badge ok">yes</span>':'<span class="crm-badge">no</span>'; }},
+        {k:'relationship_status', h:'Relationship', badge:function(v){ return v==='active'||v==='listed'?'ok':(v==='blacklisted'?'bad':'warn'); }}
+      ],
+      fields:[
+        {set:'Identity'},
+        {k:'legal_name', l:'Legal name *', req:true},
+        {k:'org_id', l:'Linked CRM organisation', t:'select', src:'orgs'},
+        {k:'institution_type', l:'Institution type', t:'select', opts:['public_hospital','private_hospital','teaching_hospital','clinic','diagnostic_centre','laboratory','medical_college','university','govt_health_dept','armed_forces','ngo','charitable','pharmacy_chain','corporate_healthcare']},
+        {k:'ownership_type', l:'Ownership', t:'select', opts:['','government','private','trust','ngo','armed_forces','corporate']},
+        {k:'parent_group', l:'Parent group'},
+        {k:'beds', l:'Beds', t:'number'},
+        {set:'Clinical'},
+        {k:'departments', l:'Departments', full:true},
+        {k:'specialties', l:'Specialties', full:true},
+        {k:'has_pharmacy', l:'Has pharmacy', t:'bool'},
+        {k:'has_formulary', l:'Has formulary committee', t:'bool'},
+        {k:'procurement_process', l:'Procurement process', t:'textarea', full:true},
+        {set:'Location & contact'},
+        {k:'city', l:'City'},
+        {k:'territory_id', l:'Territory', t:'select', src:'territories'},
+        {k:'address', l:'Address', full:true},
+        {k:'phone', l:'Phone'}, {k:'email', l:'Email'}, {k:'website', l:'Website'},
+        {set:'Commercial'},
+        {k:'credit_terms', l:'Credit terms'},
+        {k:'credit_limit', l:'Credit limit', t:'number'},
+        {k:'tax_number', l:'Tax number'},
+        {k:'relationship_status', l:'Relationship', t:'select', opts:['prospect','engaged','listed','active','dormant','blacklisted']},
+        {k:'status', l:'Status', t:'select', opts:['active','inactive','archived']},
+        {k:'next_action', l:'Next action', full:true},
+        {k:'notes', l:'Notes', t:'textarea', full:true}
+      ]
+    },
+
+    pharmacies: {
+      title:'Pharmacies & Retailers', table:'pharma_pharmacies', key:'id', soft:true,
+      cols:[
+        {k:'name', h:'Pharmacy', render:function(r){
+          return '<strong>'+esc(r.name)+'</strong>'+(r.chain_name?'<br><span class="crm-mono">'+esc(r.chain_name)+'</span>':'');
+        }},
+        {k:'pharmacy_type', h:'Type', mono:true},
+        {k:'city', h:'City', mono:true},
+        {k:'store_category', h:'Grade', badge:function(v){ return v==='A'?'gold':''; }},
+        {k:'drug_licence_no', h:'Licence', render:function(r){
+          if(!r.drug_licence_no) return '<span class="crm-badge warn">none</span>';
+          var exp = r.licence_expiry && r.licence_expiry < new Date().toISOString().slice(0,10);
+          return '<span class="crm-mono">'+esc(r.drug_licence_no)+'</span>' + (exp?' <span class="crm-badge bad">expired</span>':'');
+        }},
+        {k:'status', h:'Status', badge:function(v){ return v==='active'?'ok':''; }}
+      ],
+      fields:[
+        {set:'Identity'},
+        {k:'name', l:'Pharmacy name *', req:true},
+        {k:'chain_name', l:'Chain name'},
+        {k:'pharmacy_type', l:'Type', t:'select', opts:['independent','chain','hospital','clinic','wholesale','online','supermarket','distributor_outlet','government','institutional']},
+        {k:'owner_name', l:'Owner'},
+        {k:'pharmacist_in_charge', l:'Pharmacist in charge'},
+        {set:'Licensing'},
+        {k:'drug_licence_no', l:'Drug sale licence'},
+        {k:'licence_expiry', l:'Licence expiry', t:'date'},
+        {k:'tax_number', l:'Tax number'},
+        {set:'Location & contact'},
+        {k:'city', l:'City'},
+        {k:'territory_id', l:'Territory', t:'select', src:'territories'},
+        {k:'address', l:'Address', full:true},
+        {k:'phone', l:'Phone'}, {k:'whatsapp', l:'WhatsApp'}, {k:'email', l:'Email'},
+        {set:'Commercial'},
+        {k:'store_category', l:'Store grade', t:'select', opts:['','A','B','C','D']},
+        {k:'monthly_potential', l:'Monthly purchase potential', t:'number'},
+        {k:'credit_terms', l:'Credit terms'},
+        {k:'credit_limit', l:'Credit limit', t:'number'},
+        {k:'preferred_distributor', l:'Preferred distributor', t:'select', src:'distributors'},
+        {k:'relationship_rating', l:'Relationship (1–5)', t:'number'},
+        {k:'status', l:'Status', t:'select', opts:['active','inactive','archived']},
+        {k:'next_visit', l:'Next visit', t:'date'},
+        {k:'notes', l:'Notes', t:'textarea', full:true}
+      ]
+    },
+
+    distributors: {
+      title:'Distributors & Wholesalers', table:'pharma_distributors', key:'id', soft:true,
+      cols:[
+        {k:'name', h:'Distributor'},
+        {k:'distributor_type', h:'Type', mono:true},
+        {k:'city', h:'City', mono:true},
+        {k:'credit_limit', h:'Credit limit', render:function(r){ return r.credit_limit!=null ? 'PKR '+Number(r.credit_limit).toLocaleString() : '<span class="crm-badge warn">none set</span>'; }},
+        {k:'performance_score', h:'Performance', render:function(r){ return r.performance_score!=null ? r.performance_score+'/100' : '—'; }},
+        {k:'agreement_expiry', h:'Agreement', render:function(r){
+          if(!r.agreement_expiry) return '—';
+          var exp = r.agreement_expiry < new Date().toISOString().slice(0,10);
+          return '<span class="crm-mono">'+esc(r.agreement_expiry)+'</span>'+(exp?' <span class="crm-badge bad">expired</span>':'');
+        }},
+        {k:'status', h:'Status', badge:function(v){ return v==='active'?'ok':(v==='suspended'?'bad':''); }}
+      ],
+      fields:[
+        {set:'Identity'},
+        {k:'name', l:'Name *', req:true},
+        {k:'org_id', l:'Linked CRM organisation', t:'select', src:'orgs'},
+        {k:'distributor_type', l:'Type', t:'select', opts:['national','regional','city','sub_distributor','wholesaler','institutional','pharmacy_chain_supplier','importer_distributor']},
+        {k:'owner_name', l:'Owner'},
+        {set:'Contact'},
+        {k:'city', l:'City'},
+        {k:'address', l:'Address', full:true},
+        {k:'phone', l:'Phone'}, {k:'whatsapp', l:'WhatsApp'}, {k:'email', l:'Email'},
+        {set:'Capability'},
+        {k:'warehouse_locations', l:'Warehouse locations', full:true},
+        {k:'warehouse_capacity', l:'Warehouse capacity'},
+        {k:'cold_chain', l:'Cold chain', t:'bool'},
+        {k:'fleet_details', l:'Fleet'},
+        {k:'sales_force_size', l:'Sales force size', t:'number'},
+        {k:'delivery_frequency', l:'Delivery frequency'},
+        {k:'order_cutoff', l:'Order cut-off'},
+        {k:'avg_lead_time_days', l:'Avg lead time (days)', t:'number'},
+        {set:'Commercial'},
+        {k:'credit_limit', l:'Credit limit', t:'number',
+         hint:'Leave blank for no limit. If set, an order to a distributor over this limit is refused until someone with authority records an override and a reason.'},
+        {k:'credit_terms', l:'Credit terms'},
+        {k:'security_deposit', l:'Security deposit', t:'number'},
+        {k:'bank_guarantee', l:'Bank guarantee', t:'number'},
+        {k:'performance_score', l:'Performance (0–100)', t:'number'},
+        {k:'service_level_score', l:'Service level (0–100)', t:'number'},
+        {k:'agreement_start', l:'Agreement start', t:'date'},
+        {k:'agreement_expiry', l:'Agreement expiry', t:'date'},
+        {k:'status', l:'Status', t:'select', opts:['active','inactive','suspended','archived']},
+        {k:'notes', l:'Notes', t:'textarea', full:true}
+      ]
+    },
+
+    territories: {
+      title:'Territories', readonly:true,
+      note:'Pakistan, its provinces and 15 cities are seeded by migration 036. Extend the hierarchy with an INSERT into pharma_territories — a territory is data, not code.',
+      cols:[{k:'path', h:'Hierarchy'}, {k:'level', h:'Level', mono:true}, {k:'code', h:'Code', mono:true}]
+    }
+  };
+
+  /* ---------- auth ---------- */
+  var loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  async function checkSession(){ var s=await sb.auth.getSession(); if(s.data.session){ await boot(); } else { loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none'; } }
+  document.getElementById('crm-login-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; st.textContent='';
+    var r=await sb.auth.signInWithPassword({email:val('crm-email'), password:document.getElementById('crm-password').value});
+    btn.disabled=false;
+    if(r.error){ st.textContent=(r.error.name==='ExplicitSubmitRequired')?r.error.message:'Incorrect email or password.'; }
+    else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async function(){ await sb.auth.signOut(); checkSession(); });
+
+  async function boot(){
+    var p;
+    try { p = await sb.rpc('pharma_my_permissions'); } catch(e) { p = {}; }
+    var perms = Array.isArray(p.data) ? p.data : [];
+    if (perms.indexOf('pharma.view') < 0 && perms.indexOf('pharma.admin') < 0) {
+      document.getElementById('crm-login-status').textContent =
+        'Your role does not include pharma.view. Ask the Owner for pharma access.';
+      await sb.auth.signOut(); return;
+    }
+    canEdit = perms.indexOf('pharma.manage_master') > -1 || perms.indexOf('pharma.admin') > -1;
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    await loadLookups();
+    await loadKpis();
+    show('companies');
+  }
+
+  async function loadLookups(){
+    var r = await Promise.all([
+      sb.from('crm_organizations').select('id,legal_name').is('deleted_at',null).order('legal_name'),
+      sb.from('pharma_plants').select('id,name').is('deleted_at',null).order('name'),
+      sb.rpc('pharma_territory_options'),
+      sb.from('pharma_therapeutic_categories').select('code,name').eq('is_active',true).order('sort_order'),
+      sb.from('pharma_dosage_forms').select('code,name').order('sort_order'),
+      sb.from('pharma_distributors').select('id,name').is('deleted_at',null).order('name')
+    ]);
+    LOOK.orgs        = (r[0].data||[]).map(function(x){ return {v:x.id, t:x.legal_name}; });
+    LOOK.plants      = (r[1].data||[]).map(function(x){ return {v:x.id, t:x.name}; });
+    LOOK.territories = (r[2].data||[]).map(function(x){ return {v:x.id, t:x.path}; });
+    LOOK.categories  = (r[3].data||[]).map(function(x){ return {v:x.code, t:x.name}; });
+    LOOK.forms       = (r[4].data||[]).map(function(x){ return {v:x.code, t:x.name}; });
+    LOOK.distributors= (r[5].data||[]).map(function(x){ return {v:x.id, t:x.name}; });
+  }
+
+  async function loadKpis(){
+    var r = await sb.from('pharma_network_counts').select('*').maybeSingle();
+    var d = r.data || {};
+    var K = [
+      ['companies','Companies'], ['plants','Plants'], ['products','Products'],
+      ['registered_products','Registered'], ['doctors','Doctors'],
+      ['consented_doctors','Consented'], ['do_not_contact_doctors','Do not contact'],
+      ['hospitals','Hospitals'], ['pharmacies','Pharmacies'],
+      ['distributors','Distributors'], ['territories','Territories']
+    ];
+    document.getElementById('pm-kpis').innerHTML = K.map(function(k){
+      return '<div class="pm-kpi"><div class="n">'+(d[k[0]]!=null?d[k[0]]:'—')+'</div><div class="l">'+esc(k[1])+'</div></div>';
+    }).join('');
+  }
+
+  /* ---------- tabs ---------- */
+  document.querySelectorAll('.pm-tab').forEach(function(t){
+    t.addEventListener('click', function(){ show(t.dataset.e); });
+  });
+  function show(name){
+    current = name;
+    document.querySelectorAll('.pm-tab').forEach(function(x){ x.classList.toggle('active', x.dataset.e===name); });
+    var cfg = E[name];
+    document.getElementById('pm-new').style.display = (cfg.readonly || !canEdit) ? 'none' : '';
+    setval('pm-q','');
+    load();
+  }
+
+  var tQ=null;
+  document.getElementById('pm-q').addEventListener('input', function(){ clearTimeout(tQ); tQ=setTimeout(load, 220); });
+
+  /* ---------- list ---------- */
+  async function load(){
+    var cfg = E[current];
+    var box = document.getElementById('pm-list');
+    box.innerHTML = '<p class="crm-empty">Loading…</p>';
+
+    if (current === 'territories') {
+      var r0 = await sb.rpc('pharma_territory_options');
+      rows = r0.data || [];
+      var q0 = (val('pm-q')||'').toLowerCase();
+      if (q0) rows = rows.filter(function(x){ return (x.path||'').toLowerCase().indexOf(q0) > -1; });
+      render(cfg, rows); return;
+    }
+
+    var sel = '*';
+    if (current === 'companies') sel = '*, crm_organizations(legal_name)';
+    var q = sb.from(cfg.table).select(sel);
+    if (cfg.soft) q = q.is('deleted_at', null);
+    var r = await q.limit(300);
+    if (r.error) { box.innerHTML = '<p class="crm-empty">'+esc(r.error.message)+'</p>'; return; }
+    rows = r.data || [];
+    if (current === 'companies') {
+      rows = rows.map(function(x){
+        return Object.assign({}, x, { org_name: x.crm_organizations ? x.crm_organizations.legal_name : '(organisation missing)' });
+      });
+    }
+    var q1 = (val('pm-q')||'').toLowerCase();
+    if (q1) {
+      rows = rows.filter(function(x){
+        return Object.keys(x).some(function(k){
+          var v = x[k];
+          return typeof v === 'string' && v.toLowerCase().indexOf(q1) > -1;
+        });
+      });
+    }
+    render(cfg, rows);
+  }
+
+  function render(cfg, data){
+    var box = document.getElementById('pm-list');
+    if (!data.length) {
+      box.innerHTML = '<p class="crm-empty">No records yet.' +
+        (cfg.readonly ? '' : ' Use “+ New” to add the first one.') + '</p>';
+      document.getElementById('pm-count').textContent = '';
+      if (cfg.note) box.innerHTML += '<p class="crm-mono" style="line-height:1.8;">'+esc(cfg.note)+'</p>';
+      return;
+    }
+    var head = cfg.cols.map(function(c){ return '<th>'+esc(c.h)+'</th>'; }).join('') + (cfg.readonly?'':'<th></th>');
+    var body = data.map(function(r){
+      var tds = cfg.cols.map(function(c){
+        if (c.render) return '<td>'+c.render(r)+'</td>';
+        var v = r[c.k];
+        if (c.badge) {
+          if (v == null || v === '') return '<td><span class="crm-mono">—</span></td>';
+          return '<td><span class="crm-badge '+c.badge(v)+'">'+esc(String(v).replace(/_/g,' '))+'</span></td>';
+        }
+        return '<td'+(c.mono?' class="crm-mono"':'')+'>'+(v==null||v===''?'—':esc(String(v).replace(/_/g,' ')))+'</td>';
+      }).join('');
+      var act = cfg.readonly ? '' :
+        '<td><button class="crm-btn ghost sm" data-open="'+esc(r[cfg.key])+'">Open</button></td>';
+      return '<tr>'+tds+act+'</tr>';
+    }).join('');
+    box.innerHTML = '<table class="crm-table"><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody></table>' +
+      (cfg.note ? '<p class="crm-mono" style="margin-top:12px; line-height:1.8;">'+esc(cfg.note)+'</p>' : '');
+    document.getElementById('pm-count').textContent = data.length + ' record' + (data.length===1?'':'s');
+    box.querySelectorAll('[data-open]').forEach(function(b){
+      b.addEventListener('click', function(){ openModal(b.dataset.open); });
+    });
+  }
+
+  /* ---------- modal ---------- */
+  document.getElementById('pm-new').addEventListener('click', function(){ openModal(null); });
+  document.getElementById('pm-cancel').addEventListener('click', function(){
+    document.getElementById('pm-modal').classList.remove('open');
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') document.getElementById('pm-modal').classList.remove('open');
+  });
+
+  function fieldHtml(f){
+    if (f.set)  return '<div class="pm-set">'+esc(f.set)+'</div>';
+    if (f.warn) return '<div class="pm-warn">'+esc(f.warn)+'</div>';
+    var id = 'f-'+f.k;
+    var h = '<div class="pm-f'+(f.full?' full':'')+'"><label for="'+id+'">'+esc(f.l)+'</label>';
+    if (f.t === 'select') {
+      var opts = f.src ? LOOK[f.src].map(function(o){ return '<option value="'+esc(o.v)+'">'+esc(o.t)+'</option>'; })
+                       : (f.opts||[]).map(function(o){ return '<option value="'+esc(o)+'">'+esc(o===''?'—':String(o).replace(/_/g,' '))+'</option>'; });
+      h += '<select id="'+id+'">'+(f.src?'<option value="">—</option>':'')+opts.join('')+'</select>';
+    } else if (f.t === 'bool') {
+      h += '<select id="'+id+'"><option value="false">No</option><option value="true">Yes</option></select>';
+    } else if (f.t === 'textarea') {
+      h += '<textarea id="'+id+'"></textarea>';
+    } else {
+      h += '<input id="'+id+'" type="'+(f.t==='number'?'number':(f.t==='date'?'date':'text'))+'"'
+        + (f.step?' step="'+f.step+'"':'') + (f.req?' required':'') + '>';
+    }
+    if (f.hint) h += '<div class="pm-note" style="grid-column:auto;">'+esc(f.hint)+'</div>';
+    return h + '</div>';
+  }
+
+  function openModal(id){
+    var cfg = E[current];
+    if (cfg.readonly) return;
+    document.getElementById('pm-fields').innerHTML = cfg.fields.map(fieldHtml).join('');
+    document.getElementById('pm-m-title').textContent = (id?'Edit ':'New ') + cfg.title.replace(/s$/,'');
+    document.getElementById('pm-msg').textContent = '';
+    document.getElementById('pm-form').dataset.id = id || '';
+    document.getElementById('pm-save').disabled = !canEdit;
+
+    var rec = id ? rows.filter(function(x){ return String(x[cfg.key]) === String(id); })[0] : null;
+    document.getElementById('pm-m-code').textContent =
+      rec ? (rec.company_code || rec.plant_code || rec.product_code || rec.doctor_code ||
+             rec.hospital_code || rec.pharmacy_code || rec.distributor_code || '') : '';
+    cfg.fields.forEach(function(f){
+      if (!f.k) return;
+      var v = rec ? rec[f.k] : null;
+      if (f.t === 'bool') setval('f-'+f.k, String(!!v));
+      else setval('f-'+f.k, v);
+    });
+    /* the organisation link cannot change after creation: it IS the key */
+    if (current === 'companies') {
+      var o = document.getElementById('f-org_id');
+      if (o) o.disabled = !!id;
+    }
+    document.getElementById('pm-modal').classList.add('open');
+    if (window.jcoSelect) window.jcoSelect.scan(document.getElementById('pm-modal'));
+  }
+
+  document.getElementById('pm-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var cfg = E[current], id = e.target.dataset.id || null;
+    var msg = document.getElementById('pm-msg');
+    msg.style.color = 'var(--muted)'; msg.textContent = 'Saving…';
+
+    var payload = {};
+    cfg.fields.forEach(function(f){
+      if (!f.k) return;
+      if (current === 'companies' && f.k === 'org_id' && id) return;   // key, immutable
+      var v = val('f-'+f.k);
+      if (f.t === 'bool') payload[f.k] = (v === 'true');
+      else if (f.t === 'number') payload[f.k] = num(v);
+      else payload[f.k] = v;
+    });
+
+    var res;
+    if (id) res = await sb.from(cfg.table).update(payload).eq(cfg.key, id);
+    else    res = await sb.from(cfg.table).insert(payload);
+
+    if (res.error) {
+      msg.style.color = '#e57368';
+      /* A database guard firing is the system working. Say so plainly rather
+         than dressing a deliberate refusal up as a technical failure. */
+      msg.textContent = res.error.message;
+      return;
+    }
+    msg.style.color = '#7fc8a9';
+    msg.textContent = 'Saved.';
+    await load(); await loadKpis();
+    setTimeout(function(){ document.getElementById('pm-modal').classList.remove('open'); }, 600);
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>

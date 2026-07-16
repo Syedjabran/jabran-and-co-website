@@ -694,6 +694,14 @@ document.addEventListener('DOMContentLoaded', function () {
       /* sits directly beneath Quotations & Costing, where it belongs */
       place([{ href: 'crm-outsourced-offers.html', label: 'Outsourced Service Offers' }],
             'crm-quotations.html');
+      /* Pharma branch — added only now that a real page exists behind it. */
+      sb.rpc('pharma_can', { p_permission: 'pharma.view' })
+        .then(function (rp) {
+          if (rp && rp.data === true) {
+            place([{ href: 'crm-pharma-master.html', label: 'Pharma Master Data' }],
+                  'crm-outsourced-offers.html');
+          }
+        }, function () {});
       var roles = ctx.roles || [];
       var isMgmt = ['owner','super_admin','ceo','finance_manager'].some(function (r) { return roles.indexOf(r) > -1; });
       if (isMgmt) place(ADMIN_LINKS, 'crm-business-rules.html');
