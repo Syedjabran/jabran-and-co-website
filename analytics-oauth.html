@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connecting Data Source | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root{ --bg:#0B0F14; --bg-alt:#111820; --bg-deep:#08111C; --gold:#C6A55A;
+         --gold-light:#E4C98A; --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22); }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.7;}
+  .ob{max-width:520px; margin:120px auto; padding:0 20px; text-align:center;}
+  .ob .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  .ob h1{font-family:'Playfair Display',serif; font-size:26px; font-weight:600; margin:10px 0 8px;}
+  .ob p{font-size:14px; color:var(--muted); margin:0 0 8px;}
+  .ob .card{border:1px solid var(--line); background:var(--bg-alt); padding:26px 24px; margin-top:26px; text-align:left;}
+  .ob .row{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted); line-height:2;}
+  .ob .ok{color:#7fc8a9;} .ob .bad{color:#e57368;} .ob .warn{color:var(--gold-light);}
+  .btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:12px 22px;
+       font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500;
+       border-radius:2px; text-decoration:none; margin-top:18px;}
+  .btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .spin{width:26px;height:26px;border:2px solid rgba(198,165,90,0.25);border-top-color:var(--gold);
+        border-radius:50%;animation:sp 0.9s linear infinite;margin:18px auto;}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="ob">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:130px; max-width:55%; height:auto; margin-bottom:22px;">
+  <div class="eyebrow">Data Sources</div>
+  <h1 id="ob-title">Completing the connection…</h1>
+  <p id="ob-sub">Verifying the authorisation and storing the credential server-side.</p>
+  <div class="spin" id="ob-spin"></div>
+  <div class="card">
+    <div class="row" id="ob-log"></div>
+    <div id="ob-actions"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+/* ============================================================================
+   OAuth callback landing page.
+   The provider sends the browser here with ?code & ?state. This page NEVER
+   sees a client secret: it forwards the code + state to the analytics-oauth
+   Edge Function, authenticated with the staff member's own Supabase session,
+   and the exchange happens server-side. That is why the callback is a page on
+   our domain rather than the function URL directly — the session must survive
+   the hop so the function can verify WHO is connecting and record connected_by.
+============================================================================ */
+(function () {
+  /* www -> apex, preserving the query string exactly (item 18 of the audit) */
+  if (location.hostname === 'www.jabranandco.com') {
+    location.replace('https://jabranandco.com' + location.pathname + location.search);
+    return;
+  }
+
+  document.addEventListener('DOMContentLoaded', async function () {
+    var logEl = document.getElementById('ob-log');
+    var actEl = document.getElementById('ob-actions');
+    var titleEl = document.getElementById('ob-title');
+    var subEl = document.getElementById('ob-sub');
+    var spin = document.getElementById('ob-spin');
+
+    function line(text, cls) {
+      var d = document.createElement('div');
+      if (cls) d.className = cls;
+      d.textContent = text;
+      logEl.appendChild(d);
+    }
+    function done(ok, title, sub) {
+      spin.style.display = 'none';
+      titleEl.textContent = title;
+      subEl.textContent = sub;
+      actEl.innerHTML = '<a class="btn" href="crm-analytics.html">Back to Data Sources</a>' +
+        (ok ? '' : ' <a class="btn ghost" href="crm-analytics.html">Try again</a>');
+    }
+
+    var q = new URLSearchParams(location.search);
+    var code = q.get('code');
+    var state = q.get('state');
+    var provider = q.get('provider') || sessionStorage.getItem('jco_oauth_provider') || '';
+    var err = q.get('error') || q.get('error_description') || q.get('error_reason');
+
+    if (err) {
+      line('Provider returned an error:', 'bad');
+      line(String(err).slice(0, 200), 'bad');
+      done(false, 'Authorisation cancelled', 'The provider did not grant access. Nothing was stored.');
+      return;
+    }
+    if (!code || !state) {
+      line('No authorisation code in the URL.', 'bad');
+      line('This page is only reached by returning from Google, Meta or LinkedIn.', '');
+      done(false, 'Nothing to complete', 'Start the connection from the Data Sources tab.');
+      return;
+    }
+
+    line('Authorisation code received.', 'ok');
+    line('State token present — will be validated once, server-side.', '');
+
+    var s = await sb.auth.getSession();
+    if (!s.data || !s.data.session) {
+      line('No staff session found in this browser.', 'bad');
+      done(false, 'Sign in required',
+        'Your session expired during authorisation. Sign in, then start the connection again.');
+      return;
+    }
+    line('Staff session verified — forwarding to the server.', 'ok');
+
+    if (!provider) {
+      line('Provider not identified in the return URL.', 'warn');
+      done(false, 'Cannot complete',
+        'Start the connection again from Data Sources so the provider is recorded.');
+      return;
+    }
+
+    var r;
+    try {
+      r = await sb.functions.invoke('analytics-oauth',
+        { body: { action: 'exchange', provider: provider, code: code, state: state } });
+    } catch (e) { r = { error: { message: String(e) } }; }
+
+    if (r.error) {
+      var msg = r.error.message;
+      try { if (r.error.context && r.error.context.json) { var j = await r.error.context.json(); if (j && j.error) msg = j.error; } } catch (e2) {}
+      line('Exchange failed: ' + msg, 'bad');
+      done(false, 'Connection failed', 'No credential was stored. The reason is shown above.');
+      return;
+    }
+    if (r.data && r.data.error) {
+      line('Exchange failed: ' + r.data.error, 'bad');
+      done(false, 'Connection failed', 'No credential was stored.');
+      return;
+    }
+
+    try { sessionStorage.removeItem('jco_oauth_provider'); } catch (e) {}
+    line('Token exchanged and encrypted server-side.', 'ok');
+    line('Scopes granted: ' + ((r.data && r.data.scopes) || []).join(', '), '');
+    line('Stored in the vault — never readable from a browser.', 'ok');
+    /* Clean the code out of the address bar and history. */
+    try { history.replaceState({}, '', 'analytics-oauth.html'); } catch (e) {}
+    done(true, 'Connected', 'The source is live. Its status now reads Connected in Data Sources.');
+  });
+})();
+</script>
+</body>
+</html>
