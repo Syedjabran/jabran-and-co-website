@@ -321,6 +321,8 @@
               <option value="architecture">Architecture / Interiors</option>
             </select></div>
           <div><label>Description</label><input id="csi-description"></div>
+          <div><label>Billing Basis</label>
+            <select id="csi-basis"><option value="">—</option></select></div>
           <div id="csi-rate-wrap" style="display:none;"><label id="csi-rate-label">Rate</label>
             <input id="csi-rate" type="number" step="0.0001" min="0"></div>
           <div id="csi-qty-wrap" style="display:none;"><label id="csi-qty-label">Quantity</label>
@@ -759,10 +761,14 @@ document.addEventListener('DOMContentLoaded', function () {
         html += '<optgroup label="' + esc(l.letter + ' · ' + l.category_name) + '">';
         lastCat = l.category_name;
       }
-      var tag = l.line_kind === 'tax_duty' ? ' [tax/duty]'
-              : l.line_kind === 'penalty'  ? ' [penalty]'
-              : l.line_kind === 'deposit'  ? ' [refundable]'
-              : l.line_kind === 'service_fee' ? ' [fee]' : '';
+      /* Tag only the EXCEPTIONS. A line called "Lead Consultant Fee" obviously
+         is a fee; labelling it [fee] was noise. What a reader needs flagged is
+         the money that is not ours to keep, or not a sale at all. */
+      var tag = l.line_kind === 'tax_duty'     ? ' — tax/duty'
+              : l.line_kind === 'penalty'      ? ' — penalty'
+              : l.line_kind === 'deposit'      ? ' — refundable'
+              : l.line_kind === 'pass_through' ? ' — recharge'
+              : '';
       html += '<option value="' + l.id + '">' + esc(l.name + tag) + '</option>';
     });
     html += '</optgroup>';
@@ -783,6 +789,31 @@ document.addEventListener('DOMContentLoaded', function () {
      database use the identical formula; the database is what counts.
   --------------------------------------------------------------------- */
   var CURRENT_BASIS = null;
+  var BASES = [];
+
+  /* The master's billing basis is a DEFAULT, not a verdict. The same
+     "Lead Consultant Fee" may be hourly on one job and a fixed fee on another,
+     so the basis is selectable per line. Changing it reshapes the row. */
+  async function loadBases(){
+    var r = await sb.from('crm_billing_bases')
+      .select('code,name,qty_label,rate_label,needs_qty,allows_resources,is_percentage')
+      .eq('is_active', true).order('sort_order');
+    BASES = r.data || [];
+    var sel = document.getElementById('csi-basis');
+    sel.innerHTML = '<option value="">—</option>' + BASES.map(function(b){
+      return '<option value="' + b.code + '">' + esc(b.name) + '</option>';
+    }).join('');
+  }
+  loadBases();
+
+  document.getElementById('csi-basis').addEventListener('change', function(){
+    var b = BASES.filter(function(x){ return x.code === this.value; }.bind(this))[0];
+    csiApplyBasis(b ? {
+      billing_basis: b.code, needs_qty: b.needs_qty, qty_label: b.qty_label,
+      rate_label: b.rate_label, allows_resources: b.allows_resources
+    } : null);
+    csiCalc();
+  });
 
   function csiCalc(){
     var b = CURRENT_BASIS;
@@ -829,9 +860,11 @@ document.addEventListener('DOMContentLoaded', function () {
   /* selecting a line applies its governed defaults AND its billing basis */
   document.getElementById('csi-line').addEventListener('change', function(){
     var l = COST_LINES.filter(function(x){ return x.id === this.value; }.bind(this))[0];
-    if (!l) { csiApplyBasis(null); return; }
+    if (!l) { setval('csi-basis',''); csiApplyBasis(null); return; }
     if (!val('csi-description')) setval('csi-description', l.name);
     setval('csi-borne_by', l.default_borne_by);
+    /* seed the basis from the master, then let the user change it */
+    setval('csi-basis', l.billing_basis || '');
     csiApplyBasis(l);
     if (l.default_rate) { setval('csi-rate', l.default_rate); csiCalc(); }
   });
@@ -866,7 +899,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ['csi-description','csi-estimated_amount'].forEach(f=>setval(f,''));
     setval('csi-line','');
     ['csi-rate','csi-quantity'].forEach(f=>setval(f,'')); setval('csi-resources','1');
-    csiApplyBasis(null);
+    setval('csi-basis',''); csiApplyBasis(null);
     renderCSItems(sheetId,val('cs-currency'));
   });
   document.getElementById('cs-form').addEventListener('submit', async e=>{
@@ -987,8 +1020,8 @@ document.addEventListener('DOMContentLoaded', function () {
         html += '<optgroup label="' + esc(l.letter + ' · ' + l.category_name) + '">';
         lastCat = l.category_name;
       }
-      var tag = l.line_kind === 'tax_duty' ? ' [tax/duty]'
-              : l.line_kind === 'pass_through' ? ' [recharge]' : '';
+      var tag = l.line_kind === 'tax_duty'     ? ' — tax/duty'
+              : l.line_kind === 'pass_through' ? ' — recharge' : '';
       html += '<option value="' + l.id + '">' + esc(l.name + tag) + '</option>';
     });
     html += '</optgroup>';
