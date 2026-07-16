@@ -134,3 +134,38 @@
     }
   } catch (e) {}
 })();
+
+
+
+
+/* ============================================================================
+   LOADER (appended) — public-site modules, no page edits required.
+   Every public page already includes animations.js, so adding a file here
+   deploys it site-wide. Neither loads on CRM/portal pages: each module checks
+   the page itself and exits.
+     · chat-widget.js  — the AI Advisory launcher
+     · utm-capture.js  — attribution capture (migration 030)
+============================================================================ */
+(function () {
+  try {
+    var page = (location.pathname.split('/').pop() || '').toLowerCase();
+    if (page.indexOf('crm') === 0 || page === 'my-account.html') return;
+    ['chat-widget.js?v=3', 'utm-capture.js?v=1'].forEach(function (src) {
+      var s = document.createElement('script');
+      s.src = src; s.defer = true;
+      document.head.appendChild(s);
+    });
+  } catch (e) {}
+})();
+
+/* recovery-link catcher: reset emails landing on any public page are
+   forwarded to reset-password.html with their token intact. */
+(function () {
+  try {
+    var h = location.hash || '';
+    if (h.indexOf('type=recovery') > -1 &&
+        (location.pathname.split('/').pop() || '') !== 'reset-password.html') {
+      location.replace('reset-password.html' + h);
+    }
+  } catch (e) {}
+})();
