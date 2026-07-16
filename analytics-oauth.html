@@ -85,7 +85,10 @@
     var q = new URLSearchParams(location.search);
     var code = q.get('code');
     var state = q.get('state');
-    var provider = q.get('provider') || sessionStorage.getItem('jco_oauth_provider') || '';
+    /* The provider is NOT read from the browser: the server derives it from the
+       one-use state row. sessionStorage is per-tab and the provider may return
+       us in a different tab, which previously stalled the flow at
+       "connection_pending". */
     var err = q.get('error') || q.get('error_description') || q.get('error_reason');
 
     if (err) {
@@ -113,17 +116,10 @@
     }
     line('Staff session verified — forwarding to the server.', 'ok');
 
-    if (!provider) {
-      line('Provider not identified in the return URL.', 'warn');
-      done(false, 'Cannot complete',
-        'Start the connection again from Data Sources so the provider is recorded.');
-      return;
-    }
-
     var r;
     try {
       r = await sb.functions.invoke('analytics-oauth',
-        { body: { action: 'exchange', provider: provider, code: code, state: state } });
+        { body: { action: 'exchange', code: code, state: state } });
     } catch (e) { r = { error: { message: String(e) } }; }
 
     if (r.error) {
@@ -139,8 +135,9 @@
       return;
     }
 
-    try { sessionStorage.removeItem('jco_oauth_provider'); } catch (e) {}
+    try { sessionStorage.setItem('jco_oauth_done', '1'); } catch (e) {}
     line('Token exchanged and encrypted server-side.', 'ok');
+    line('Source: ' + ((r.data && r.data.provider) || 'unknown'), '');
     line('Scopes granted: ' + ((r.data && r.data.scopes) || []).join(', '), '');
     line('Stored in the vault — never readable from a browser.', 'ok');
     /* Clean the code out of the address bar and history. */
