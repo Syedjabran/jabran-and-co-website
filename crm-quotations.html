@@ -308,21 +308,17 @@
         <div class="crm-fieldset-label">Cost Lines — Estimated / Revised / Actual</div>
         <div id="cs-items-list"></div>
         <div class="crm-grid2" style="margin-top:10px;">
-          <div><label>Category</label>
-            <select id="csi-category">
-              <option value="supplier_cost">Supplier Cost</option><option value="samples">Samples</option>
-              <option value="tooling">Tooling / Moulds</option><option value="packaging">Packaging / Labels</option>
-              <option value="certification">Certification / Testing</option><option value="inspection">Inspection</option>
-              <option value="export_docs">Export Documents</option><option value="origin_transport">Origin Transport</option>
-              <option value="freight">Freight</option><option value="insurance">Insurance</option>
-              <option value="bank_charges">Bank / FX Charges</option><option value="customs_duty">Customs Duty</option>
-              <option value="sales_tax">Sales Tax</option><option value="withholding_tax">Withholding / Income Tax</option>
-              <option value="clearing">Customs Agent / Port / THC</option><option value="demurrage">Demurrage / Detention</option>
-              <option value="local_transport">Local Transport / Warehousing</option>
-              <option value="damage_allowance">Damage / Shortage Allowance</option>
-              <option value="commission">Sales Commission</option><option value="marketing">Marketing / Lead Cost</option>
-              <option value="project_mgmt">Project Management</option><option value="finance_cost">Finance Cost</option>
-              <option value="admin_allocation">Admin Allocation</option><option value="other">Other</option>
+          <div><label>Cost Line</label>
+            <select id="csi-line" style="min-width:0;">
+              <option value="">Loading cost lines…</option>
+            </select></div>
+          <div><label>Filter by service</label>
+            <select id="csi-service-filter">
+              <option value="">All services</option>
+              <option value="global_trading">Global Trading &amp; Sourcing</option>
+              <option value="customs">Customs Clearance</option>
+              <option value="plant_audit">Plant Audit &amp; Performance</option>
+              <option value="architecture">Architecture / Interiors</option>
             </select></div>
           <div><label>Description</label><input id="csi-description"></div>
           <div><label>Estimated</label><input id="csi-estimated_amount" type="number" step="0.01"></div>
@@ -384,6 +380,9 @@
         <div class="crm-fieldset-label">Line Items</div>
         <div id="qtn-items-list"></div>
         <div class="crm-item-row" style="margin-top:10px;">
+          <select id="qi-line" title="Pick a governed cost line, or leave blank and type freely">
+            <option value="">Free text…</option>
+          </select>
           <input id="qi-description" placeholder="Description">
           <input id="qi-quantity" type="number" step="0.001" min="0" placeholder="Qty">
           <input id="qi-unit" placeholder="Unit">
@@ -678,10 +677,17 @@ document.addEventListener('DOMContentLoaded', function () {
     openModal('modal-cs');
   }
   async function renderCSItems(sheetId,currency){
-    const {data:items}=await sb.from('crm_cost_sheet_items').select('*').eq('cost_sheet_id',sheetId).order('sort_order');
+    const {data:raw}=await sb.from('crm_cost_sheet_items')
+      .select('*, crm_cost_lines(name,line_kind)').eq('cost_sheet_id',sheetId).order('sort_order');
+    const items=(raw||[]).map(function(r){
+      return Object.assign({}, r, {
+        line_name: r.crm_cost_lines ? r.crm_cost_lines.name : null,
+        line_kind: r.crm_cost_lines ? r.crm_cost_lines.line_kind : null
+      });
+    });
     document.getElementById('cs-items-list').innerHTML=(items&&items.length)
       ? items.map(i=>`<div style="display:grid; grid-template-columns:2fr 2fr 1fr 1fr 1fr auto; gap:8px; align-items:center; border-bottom:1px solid rgba(198,165,90,0.1); padding:6px 0; font-size:12px;">
-          <span>${esc(label(i.category))}</span><span class="crm-mono">${esc(i.description||'')}</span>
+          <span>${esc(i.line_name || label(i.category))}${i.line_kind==='tax_duty'?' <span class="crm-badge">tax</span>':(i.line_kind==='penalty'?' <span class="crm-badge">penalty</span>':(i.line_kind==='deposit'?' <span class="crm-badge">refundable</span>':''))}</span><span class="crm-mono">${esc(i.description||'')}</span>
           <span class="crm-mono">E ${money(i.estimated_amount)}</span>
           <input type="number" step="0.01" value="${i.actual_amount==null?'':i.actual_amount}" data-actual="${i.id}" placeholder="Actual" style="padding:5px 8px; font-size:12px;">
           <span class="crm-badge">${esc(label(i.borne_by))}</span>
@@ -708,16 +714,84 @@ document.addEventListener('DOMContentLoaded', function () {
       <div><span>Variance</span><span>${money(data.variance,currency)} (${data.variance_pct==null?'—':data.variance_pct+'%'})</span></div>
       <div class="grand"><span>Est. Landed Cost / Unit</span><span>${data.est_landed_cost_per_unit==null?'—':money(data.est_landed_cost_per_unit,currency)}</span></div>`;
   }
+  /* ---------------------------------------------------------------------
+     GOVERNED COST-LINE PICKER (migration 032)
+     Replaces the old 24-option hardcoded dropdown. Lines come from
+     crm_cost_lines via crm_cost_line_options(), grouped by category and
+     filtered to the services that use them, so a plant-audit sheet is not
+     scrolled past 50 freight lines. Selecting a line also sets its governed
+     default for who bears it — taxes and duties are pass-through, penalties
+     are the company's, and that judgement is no longer left to whoever types.
+     Legacy compatibility: category is still written (the line's category_code),
+     so nothing that reads that column breaks.
+  --------------------------------------------------------------------- */
+  var COST_LINES = [];
+  async function loadCostLines(tag){
+    const sel = document.getElementById('csi-line');
+    sel.innerHTML = '<option value="">Loading…</option>';
+    const { data, error } = await sb.rpc('crm_cost_line_options',
+      { p_service_tag: tag || null });
+    if (error) {
+      sel.innerHTML = '<option value="">Could not load cost lines</option>';
+      console.error('[J&Co cost lines]', error.message);
+      return;
+    }
+    COST_LINES = data || [];
+    if (!COST_LINES.length) {
+      sel.innerHTML = '<option value="">No cost lines — run migration 032</option>';
+      return;
+    }
+    var html = '<option value="">Select a cost line…</option>';
+    var lastCat = null;
+    COST_LINES.forEach(function(l){
+      if (l.category_name !== lastCat) {
+        if (lastCat !== null) html += '</optgroup>';
+        html += '<optgroup label="' + esc(l.letter + ' · ' + l.category_name) + '">';
+        lastCat = l.category_name;
+      }
+      var tag = l.line_kind === 'tax_duty' ? ' [tax/duty]'
+              : l.line_kind === 'penalty'  ? ' [penalty]'
+              : l.line_kind === 'deposit'  ? ' [refundable]'
+              : l.line_kind === 'service_fee' ? ' [fee]' : '';
+      html += '<option value="' + l.id + '">' + esc(l.name + tag) + '</option>';
+    });
+    html += '</optgroup>';
+    sel.innerHTML = html;
+  }
+
+  document.getElementById('csi-service-filter').addEventListener('change', function(){
+    loadCostLines(this.value);
+  });
+
+  /* selecting a line applies its governed defaults */
+  document.getElementById('csi-line').addEventListener('change', function(){
+    var l = COST_LINES.filter(function(x){ return x.id === this.value; }.bind(this))[0];
+    if (!l) return;
+    if (!val('csi-description')) setval('csi-description', l.name);
+    setval('csi-borne_by', l.default_borne_by);
+    if (l.default_rate) setval('csi-estimated_amount', l.default_rate);
+  });
+
+  loadCostLines(null);
+
   document.getElementById('btn-add-cs-item').addEventListener('click', async ()=>{
     const sheetId=val('cs-id'); if(!sheetId){ document.getElementById('cs-form-status').textContent='Save the cost sheet first.'; return; }
     const est=numval('csi-estimated_amount');
     if(est==null){ document.getElementById('cs-form-status').textContent='Estimated amount required.'; return; }
+    const lineId = val('csi-line');
+    if(!lineId){ document.getElementById('cs-form-status').textContent='Select a cost line.'; return; }
+    const line = COST_LINES.filter(function(x){ return x.id === lineId; })[0] || {};
     const {error}=await sb.from('crm_cost_sheet_items').insert({
-      cost_sheet_id:sheetId, category:val('csi-category'), description:val('csi-description'),
-      estimated_amount:est, borne_by:val('csi-borne_by')||'company'
+      cost_sheet_id:sheetId,
+      cost_line_id:lineId,
+      category:line.category_code || 'other',          /* legacy column kept in step */
+      description:val('csi-description') || line.name,
+      estimated_amount:est,
+      borne_by:val('csi-borne_by') || line.default_borne_by || 'company'
     });
     if(error){ document.getElementById('cs-form-status').textContent='Error: '+error.message; return; }
     ['csi-description','csi-estimated_amount'].forEach(f=>setval(f,''));
+    setval('csi-line','');
     renderCSItems(sheetId,val('cs-currency'));
   });
   document.getElementById('cs-form').addEventListener('submit', async e=>{
@@ -811,13 +885,64 @@ document.addEventListener('DOMContentLoaded', function () {
     await renderQtnItems(data);
     document.getElementById('qtn-workflow-status').textContent='Status: '+label(data.status)+' · Approval: '+label(data.approval_status);
   }
+  /* ---------------------------------------------------------------------
+     BILLABLE LINES ON THE CLIENT QUOTATION (migration 032)
+     A quotation lists what the CLIENT pays, so this picker deliberately shows
+     only the kinds you may bill: service fees you earn, pass-throughs you
+     recharge, and taxes/duties you collect on their behalf. Internal costs —
+     your salaries, your travel, your accommodation — are excluded: they belong
+     on the cost sheet, not on a client's quotation. Free text stays available
+     for anything the master does not yet cover.
+  --------------------------------------------------------------------- */
+  var QTN_LINES = [];
+  var BILLABLE = ['service_fee','pass_through','tax_duty'];
+  async function loadQtnLines(){
+    const sel = document.getElementById('qi-line');
+    const { data, error } = await sb.rpc('crm_cost_line_options', { p_service_tag: null });
+    if (error || !data || !data.length) {
+      sel.innerHTML = '<option value="">Free text…</option>';
+      return;
+    }
+    QTN_LINES = data.filter(function(l){ return BILLABLE.indexOf(l.line_kind) > -1; });
+    var html = '<option value="">Free text…</option>';
+    var lastCat = null;
+    QTN_LINES.forEach(function(l){
+      if (l.category_name !== lastCat) {
+        if (lastCat !== null) html += '</optgroup>';
+        html += '<optgroup label="' + esc(l.letter + ' · ' + l.category_name) + '">';
+        lastCat = l.category_name;
+      }
+      var tag = l.line_kind === 'tax_duty' ? ' [tax/duty]'
+              : l.line_kind === 'pass_through' ? ' [recharge]' : '';
+      html += '<option value="' + l.id + '">' + esc(l.name + tag) + '</option>';
+    });
+    html += '</optgroup>';
+    sel.innerHTML = html;
+  }
+  loadQtnLines();
+
+  document.getElementById('qi-line').addEventListener('change', function(){
+    var l = QTN_LINES.filter(function(x){ return x.id === this.value; }.bind(this))[0];
+    if (!l) return;
+    setval('qi-description', l.name);
+    if (!val('qi-quantity')) setval('qi-quantity', 1);
+    setval('qi-unit', l.default_unit === 'lump_sum' ? 'job' : l.default_unit);
+    if (l.default_rate) setval('qi-unit_price', l.default_rate);
+    document.getElementById('qi-unit_price').focus();
+  });
+
   document.getElementById('btn-add-qtn-item').addEventListener('click', async ()=>{
     const id=val('q-id'); if(!id){document.getElementById('qtn-form-status').textContent='Save the quotation first.'; return;}
     const desc=val('qi-description'), qty=numval('qi-quantity'), price=numval('qi-unit_price');
     if(!desc||!qty||price==null){document.getElementById('qtn-form-status').textContent='Description, quantity and unit price required.'; return;}
-    const {error}=await sb.from('crm_quotation_items').insert({quotation_id:id, description:desc, quantity:qty, unit:val('qi-unit'), unit_price:price});
+    const qLine = val('qi-line') || null;
+    const {error}=await sb.from('crm_quotation_items').insert({
+      quotation_id:id, description:desc, quantity:qty,
+      unit:val('qi-unit'), unit_price:price, cost_line_id:qLine
+    });
     if(error){document.getElementById('qtn-form-status').textContent='Error: '+error.message; return;}
     ['qi-description','qi-quantity','qi-unit','qi-unit_price'].forEach(f=>setval(f,''));
+    setval('qi-line','');
     await refreshQtn(id);
   });
   document.getElementById('qtn-form').addEventListener('submit', async e=>{
@@ -857,3 +982,6 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+
+
+
