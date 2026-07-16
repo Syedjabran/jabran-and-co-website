@@ -306,6 +306,14 @@ document.addEventListener('DOMContentLoaded', function () {
     setval('an-to', iso(to)); setval('an-from', iso(from));
 
     await Promise.all([loadOverview(), loadCatalog(), loadSources(), loadHistory()]);
+    /* returning from a successful OAuth round trip? land the user on Data Sources */
+    try {
+      if (sessionStorage.getItem('jco_oauth_done')) {
+        sessionStorage.removeItem('jco_oauth_done');
+        var tab = document.querySelector('.an-tab[data-tab="sources"]');
+        if (tab) tab.click();
+      }
+    } catch (e) {}
   }
 
   /* ---------- TABS ---------- */
@@ -520,16 +528,70 @@ document.addEventListener('DOMContentLoaded', function () {
     var r = await sb.rpc('analytics_data_freshness');
     var box = document.getElementById('an-sources');
     if (r.error) { box.innerHTML = '<div class="crm-empty">' + esc(r.error.message) + '</div>'; return; }
+    var canConnect = (perms.indexOf('analytics.connect_sources') > -1) ||
+                     (perms.indexOf('analytics.manage_connections') > -1) || canOwn;
     box.innerHTML = (r.data || []).map(function(s){
       var meta = STATUS[s.status] || ['', s.status];
+      var buttons = '';
+      if (canConnect && s.source !== 'crm') {
+        buttons = '<div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">' +
+          (s.status === 'connected'
+            ? '<button class="crm-btn ghost small" data-disconnect="' + esc(s.source) + '">Disconnect</button>'
+            : '<button class="crm-btn small" data-connect="' + esc(s.source) + '">Connect</button>') +
+          '<span class="crm-mono" data-st="' + esc(s.source) + '"></span></div>';
+      }
       return '<div class="an-src">' +
         '<div class="top"><div class="nm">' + esc(s.display_name) + '</div>' +
         '<span class="crm-badge ' + meta[0] + '">' + esc(meta[1]) + '</span></div>' +
         '<div class="note">' +
           (s.last_data_at ? 'Last data: ' + esc(String(s.last_data_at).replace('T',' ').slice(0,16)) + ' · ' : '') +
           esc(s.note || '') +
-        '</div></div>';
+        '</div>' + buttons + '</div>';
     }).join('');
+
+    /* ---- Connect: ask the server for an authorize URL, then hand the browser
+       to the provider. The provider returns to analytics-oauth.html, which
+       completes the exchange server-side. No secret ever touches this page. ---- */
+    box.querySelectorAll('[data-connect]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        var p = b.dataset.connect;
+        var st = box.querySelector('[data-st="' + p + '"]');
+        b.disabled = true; st.textContent = 'Requesting authorisation…';
+        var res;
+        try {
+          res = await sb.functions.invoke('analytics-oauth', { body: { action: 'start', provider: p } });
+        } catch (e) { res = { error: { message: String(e) } }; }
+        if (res.error || (res.data && res.data.error)) {
+          var msg = (res.data && res.data.error) || res.error.message;
+          try { if (res.error && res.error.context && res.error.context.json) {
+            var j = await res.error.context.json(); if (j && j.error) msg = j.error; } } catch (e2) {}
+          b.disabled = false; st.textContent = 'Error: ' + msg;
+          return;
+        }
+        try { sessionStorage.setItem('jco_oauth_provider', p); } catch (e) {}
+        st.textContent = 'Redirecting to the provider…';
+        location.href = res.data.authorize_url;
+      });
+    });
+
+    box.querySelectorAll('[data-disconnect]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        var p = b.dataset.disconnect;
+        var st = box.querySelector('[data-st="' + p + '"]');
+        if (!confirm('Disconnect ' + p + '? The stored credential is revoked and deleted.')) return;
+        b.disabled = true; st.textContent = 'Revoking…';
+        var res;
+        try {
+          res = await sb.functions.invoke('analytics-oauth', { body: { action: 'disconnect', provider: p } });
+        } catch (e) { res = { error: { message: String(e) } }; }
+        if (res.error || (res.data && res.data.error)) {
+          b.disabled = false; st.textContent = 'Error: ' + ((res.data && res.data.error) || res.error.message);
+          return;
+        }
+        st.textContent = 'Disconnected.';
+        loadSources(); loadCatalog();
+      });
+    });
 
     if (canOwn) {
       try {
