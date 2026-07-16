@@ -533,10 +533,14 @@ document.addEventListener('DOMContentLoaded', function () {
     box.innerHTML = (r.data || []).map(function(s){
       var meta = STATUS[s.status] || ['', s.status];
       var buttons = '';
+      var SYNCABLE = ['ga4','search_console'];
       if (canConnect && s.source !== 'crm') {
-        buttons = '<div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">' +
+        buttons = '<div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">' +
           (s.status === 'connected'
-            ? '<button class="crm-btn ghost small" data-disconnect="' + esc(s.source) + '">Disconnect</button>'
+            ? '<button class="crm-btn ghost small" data-disconnect="' + esc(s.source) + '">Disconnect</button>' +
+              (SYNCABLE.indexOf(s.source) > -1
+                ? '<button class="crm-btn small" data-sync="' + esc(s.source) + '">Sync now</button>'
+                : '<span class="crm-badge warn">Connector not built yet</span>')
             : '<button class="crm-btn small" data-connect="' + esc(s.source) + '">Connect</button>') +
           '<span class="crm-mono" data-st="' + esc(s.source) + '"></span></div>';
       }
@@ -571,6 +575,29 @@ document.addEventListener('DOMContentLoaded', function () {
         try { sessionStorage.setItem('jco_oauth_provider', p); } catch (e) {}
         st.textContent = 'Redirecting to the provider…';
         location.href = res.data.authorize_url;
+      });
+    });
+
+    box.querySelectorAll('[data-sync]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        var p = b.dataset.sync;
+        var st = box.querySelector('[data-st="' + p + '"]');
+        b.disabled = true; st.textContent = 'Fetching from the provider…';
+        var res;
+        try {
+          res = await sb.functions.invoke('analytics-sync', { body: { action: 'sync', provider: p, days: 90 } });
+        } catch (e) { res = { error: { message: String(e) } }; }
+        b.disabled = false;
+        if (res.error || (res.data && res.data.error)) {
+          var msg = (res.data && res.data.error) || res.error.message;
+          try { if (res.error && res.error.context && res.error.context.json) {
+            var j = await res.error.context.json(); if (j && j.error) msg = j.error; } } catch (e2) {}
+          st.textContent = 'Error: ' + msg;
+          return;
+        }
+        st.textContent = 'Synced ' + (res.data.rows || 0) + ' rows (' +
+          res.data.period.from + ' → ' + res.data.period.to + ').';
+        loadSources(); loadCatalog(); loadOverview();
       });
     });
 
