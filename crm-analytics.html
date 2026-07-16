@@ -306,12 +306,25 @@ document.addEventListener('DOMContentLoaded', function () {
     setval('an-to', iso(to)); setval('an-from', iso(from));
 
     await Promise.all([loadOverview(), loadCatalog(), loadSources(), loadHistory()]);
-    /* returning from a successful OAuth round trip? land the user on Data Sources */
+    /* The callback function 302s back here with ?connected= or ?oauth_error=.
+       Surface the outcome plainly and clean the query out of the address bar. */
     try {
-      if (sessionStorage.getItem('jco_oauth_done')) {
-        sessionStorage.removeItem('jco_oauth_done');
+      var rq = new URLSearchParams(location.search);
+      var okP = rq.get('connected'), errP = rq.get('oauth_error');
+      if (okP || errP) {
         var tab = document.querySelector('.an-tab[data-tab="sources"]');
         if (tab) tab.click();
+        var banner = document.createElement('div');
+        banner.style.cssText = 'border:1px solid ' + (okP ? 'rgba(127,200,169,0.5)' : 'rgba(229,115,104,0.5)') +
+          ';background:' + (okP ? 'rgba(127,200,169,0.08)' : 'rgba(229,115,104,0.08)') +
+          ';color:' + (okP ? '#7fc8a9' : '#e57368') +
+          ';padding:14px 16px;margin-bottom:16px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;';
+        banner.textContent = okP
+          ? ('Connected: ' + okP + '. Tap "Sync now" on that source to pull its data.')
+          : ('Connection failed — ' + errP);
+        var host = document.getElementById('tab-sources');
+        if (host) host.insertBefore(banner, host.firstChild);
+        try { history.replaceState({}, '', 'crm-analytics.html'); } catch (e2) {}
       }
     } catch (e) {}
   }
@@ -572,7 +585,6 @@ document.addEventListener('DOMContentLoaded', function () {
           b.disabled = false; st.textContent = 'Error: ' + msg;
           return;
         }
-        try { sessionStorage.setItem('jco_oauth_provider', p); } catch (e) {}
         st.textContent = 'Redirecting to the provider…';
         location.href = res.data.authorize_url;
       });
