@@ -726,8 +726,123 @@ document.addEventListener('DOMContentLoaded', function () {
   try {
     if (window.__jcoSelect) return;
     var s = document.createElement('script');
-    s.src = 'crm-select.js?v=1';
-    s.defer = true;
+    s.src = 'crm-select.js?v=2';
+    /* NOT defer: it is ignored on dynamically-created scripts, which are async
+       by default. crm-select.js now handles its own readiness instead. */
     document.head.appendChild(s);
   } catch (e) {}
+})();
+
+
+/* ============================================================================
+   8 · MODULE TRANSITION — kill the login flash
+   BUILD 2026-07-17.1
+
+   ROOT CAUSE, proven from the pages themselves:
+     Every CRM module is a separate .html file, so moving between them is a
+     FULL page load. Each page ships <div id="crm-login-box"> with no display
+     rule — it paints immediately — and the page's own script only hides it
+     AFTER `await sb.auth.getSession()` resolves. So an already-authenticated
+     person sees the login screen for the length of that round trip, then it
+     vanishes and the module appears. That is the flash. The session was never
+     lost; it just had not been consulted yet.
+
+   THE STATE MODEL:
+     booting        -> show the brand mark, show NOTHING else
+     authenticated  -> reveal the module the page already built
+     unauthenticated-> reveal the login form
+     Only after the check completes does either surface exist visually.
+
+   WHY THIS FILE:
+     crm-auth.js is loaded by all 23 CRM pages and runs BEFORE each page's own
+     inline script. One fix, everywhere, no page edits — and no second auth
+     system, which the brief forbids.
+============================================================================ */
+(function () {
+  if (window.__jcoBoot) return;
+  window.__jcoBoot = true;
+
+  var page = (location.pathname.split('/').pop() || '').toLowerCase();
+  if (page.indexOf('crm') !== 0 && page !== 'my-account.html') return;
+
+  var root = document.documentElement;
+  root.className += ' jco-booting';
+
+  try {
+    var css = document.createElement('style');
+    css.id = 'jco-boot-css';
+    css.textContent = [
+      /* Nothing decides what to show until the session is known. */
+      '.jco-booting #crm-login-box, .jco-booting .crm-shell,',
+      '.jco-booting #crm-logout { visibility: hidden !important; }',
+      '#jco-boot { position: fixed; inset: 0; z-index: 2147483000; background: #0B0F14;',
+      '  display: flex; flex-direction: column; align-items: center; justify-content: center;',
+      '  gap: 18px; transition: opacity .22s ease; }',
+      '#jco-boot.gone { opacity: 0; pointer-events: none; }',
+      '#jco-boot img { width: 128px; max-width: 42vw; height: auto; opacity: 0;',
+      '  animation: jcoReveal .5s ease forwards; }',
+      /* one gold line, drawn once — the website language, not the website weight */
+      '#jco-boot .rule { width: 128px; max-width: 42vw; height: 1px;',
+      '  background: rgba(198,165,90,0.18); position: relative; overflow: hidden; }',
+      '#jco-boot .rule:after { content: ""; position: absolute; inset: 0;',
+      '  background: linear-gradient(90deg, transparent, #C6A55A, transparent);',
+      '  transform: translateX(-100%); animation: jcoSweep 1.1s ease-in-out infinite; }',
+      '@keyframes jcoReveal { to { opacity: 1; } }',
+      '@keyframes jcoSweep { to { transform: translateX(100%); } }',
+      '@media (prefers-reduced-motion: reduce) {',
+      '  #jco-boot img { animation: none; opacity: 1; }',
+      '  #jco-boot .rule:after { animation: none; transform: none; opacity: .5; }',
+      '}'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(css);
+  } catch (e) {}
+
+  var overlay = null;
+  function paint() {
+    if (overlay || !document.body) return;
+    overlay = document.createElement('div');
+    overlay.id = 'jco-boot';
+    overlay.setAttribute('role', 'status');
+    overlay.setAttribute('aria-label', 'Loading');
+    overlay.innerHTML = '<img src="logo-full.png" alt="JABRAN &amp; CO."><div class="rule"></div>';
+    document.body.appendChild(overlay);
+  }
+
+  var settled = false;
+  function reveal() {
+    if (settled) return;
+    settled = true;
+    root.className = root.className.replace(/\s*jco-booting/g, '');
+    if (overlay) {
+      overlay.className = 'gone';
+      setTimeout(function () { if (overlay && overlay.parentNode) overlay.remove(); }, 240);
+    }
+  }
+
+  async function settle() {
+    var s = null;
+    try { s = await sb.auth.getSession(); } catch (e) {}
+
+    /* No session: the page will show its login form. Reveal at once — a person
+       who must log in should not wait behind a brand animation. */
+    if (!s || !s.data || !s.data.session) { reveal(); return; }
+
+    /* Session exists: hold the brand mark only until the page has actually put
+       its module on screen. No fixed delay, no animation for its own sake —
+       we wait for the real thing and not a millisecond longer. */
+    var t0 = Date.now();
+    (function wait() {
+      var shell = document.querySelector('.crm-shell');
+      var shown = shell && shell.style.display && shell.style.display !== 'none';
+      if (shown || Date.now() - t0 > 5000) { reveal(); return; }
+      requestAnimationFrame(wait);
+    })();
+  }
+
+  function go() { paint(); if (typeof sb === 'undefined') { reveal(); return; } settle(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+  else go();
+
+  /* A tab restored from bfcache has already settled; never strand it. */
+  window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
 })();

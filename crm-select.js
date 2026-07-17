@@ -264,7 +264,13 @@
     } catch (e) {}
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  /* crm-auth.js injects this file with a <script> element. `defer` is IGNORED
+     on dynamically-created scripts — they are async, executing whenever they
+     finish downloading. If that lands AFTER DOMContentLoaded has fired, a
+     DOMContentLoaded listener never runs: no scan, no observer, nothing
+     enhanced, silently, forever. That is why search worked some loads and not
+     others. Start immediately when the document is already parsed. */
+  function boot() {
     scan(document);
     /* fillSelect() replaces innerHTML long after load; watch for that and for
        modals injected on open. Debounced so a 349-option build costs one pass. */
@@ -281,7 +287,10 @@
         pending = setTimeout(function () { scan(document); }, 120);
       }).observe(document.body, { childList: true, subtree: true });
     } catch (e) {}
-  });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 
   window.jcoSelect = { scan: scan, enhance: enhance };
 })();

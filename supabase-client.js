@@ -263,6 +263,25 @@ window.jco = window.jco || {};
                              error: { name: name, status: status || 400, message: message } });
   }
 
+  /* Every CRM login page writes its own text into #crm-login-status right after
+     the await resolves. We cannot edit twenty handlers, but we can clear what
+     they write when the block was for an action the user never took. Watches
+     briefly, wipes only an incorrect/invalid-credentials style message, and
+     leaves any genuine error from a real attempt alone. */
+  function silenceLoginError() {
+    var tries = 0;
+    var iv = setInterval(function () {
+      var el = document.getElementById('crm-login-status') ||
+               document.getElementById('login-status');
+      if (el && /incorrect|invalid|wrong|failed/i.test(el.textContent || '')) {
+        el.textContent = '';
+        clearInterval(iv);
+        return;
+      }
+      if (++tries > 12) clearInterval(iv);      /* ~360 ms, then stop watching */
+    }, 30);
+  }
+
   sb.auth.signInWithPassword = function (credentials) {
     var t = token;
     token = null;                                   /* consumed immediately, always */
@@ -272,13 +291,22 @@ window.jco = window.jco || {};
                     .replace(/https?:\/\/[^/]+\//g, '').trim(); } catch (e) {}
 
     if (!t) {
-      log('BLOCKED', 'no human-action token — sign-in refused on ' + location.pathname + ' ← ' + stack);
-      return refuse('ExplicitSubmitRequired', 'Tap the Log In button to sign in.');
+      /* NO gesture at all = the USER DID NOTHING. A password manager or the
+         browser submitted the form on its own. Blocking is correct — but the
+         page's handler does `if (error) show "Incorrect email or password"`,
+         which turns our refusal into an accusation the user never earned.
+         That is the permanent red line. Nobody typed a wrong password; nobody
+         typed anything. So: block silently and wipe the message the page is
+         about to write. Silence is the honest response to a non-event. */
+      log('BLOCKED', 'no human-action token — silent refusal on ' + location.pathname + ' ← ' + stack);
+      silenceLoginError();
+      return refuse('ExplicitSubmitRequired', '');
     }
     var age = Date.now() - t.at;
     if (age > TOKEN_TTL_MS) {
+      /* A real person DID tap, just too long ago. Tell them plainly. */
       log('BLOCKED', 'token expired (' + age + ' ms old, limit ' + TOKEN_TTL_MS + ') ← ' + stack);
-      return refuse('ExplicitSubmitRequired', 'Tap the Log In button to sign in.');
+      return refuse('ExplicitSubmitRequired', 'That took a moment — tap Log In again.');
     }
     if (inFlight) {
       log('duplicate', 'a sign-in is already in flight — second request suppressed');
