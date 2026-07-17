@@ -871,6 +871,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
   loadCostLines(null);
 
+  /* ---------------------------------------------------------------------
+     SELF-DIAGNOSIS. A 349-option dropdown without search is unusable, so if
+     the enhancer did not load, say so ON THE PAGE rather than degrade
+     silently to the native picker and leave everyone guessing.
+     window.jcoSelect is set by crm-select.js, which crm-auth.js loads.
+  --------------------------------------------------------------------- */
+  setTimeout(function () {
+    if (window.jcoSelect) return;
+    var host = document.getElementById('csi-line');
+    if (!host || !host.parentNode || document.getElementById('csi-nosearch')) return;
+    var w = document.createElement('div');
+    w.id = 'csi-nosearch';
+    w.className = 'crm-mono';
+    w.style.cssText = 'color:#e57368; font-size:10px; margin-top:5px; line-height:1.6;';
+    w.textContent = 'Search unavailable — crm-select.js is not on the server. ' +
+      'Open jabranandco.com/crm-select.js: if it 404s, upload that file to the repo root.';
+    host.parentNode.appendChild(w);
+  }, 2500);
+
   document.getElementById('btn-add-cs-item').addEventListener('click', async ()=>{
     const sheetId=val('cs-id'); if(!sheetId){ document.getElementById('cs-form-status').textContent='Save the cost sheet first.'; return; }
     const est=numval('csi-estimated_amount');
