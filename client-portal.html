@@ -2,13 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Redirecting… — Jabran &amp; Co</title>
-<meta http-equiv="refresh" content="0; url=my-account.html">
-<link rel="canonical" href="https://www.jabranandco.com/my-account.html">
+<title>Client Portal — Jabran &amp; Co</title>
+<link rel="canonical" href="https://jabranandco.com/my-account.html">
 <meta name="robots" content="noindex">
-<style>body{background:#0a0a0b; color:#9C9690; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh;}</style>
+<script>
+/* The client portal lives at my-account.html. This stub only exists because
+   older links, bookmarks and search results still point here.
+
+   WHY A SCRIPT AND NOT <meta http-equiv="refresh">:
+   a meta refresh is honoured only AFTER the document has parsed and painted,
+   so the previous version flashed the words "Redirecting to My Account…" on
+   screen before moving on. That flash was the whole complaint. location.replace
+   inside <head> runs before anything is painted — the visitor never sees this
+   page at all. replace() rather than assign() so Back does not bounce them
+   straight back here. */
+location.replace('my-account.html' + location.search + location.hash);
+</script>
+<meta http-equiv="refresh" content="0; url=my-account.html">
+<style>html,body{background:#0B0F14;margin:0;height:100%;}</style>
 </head>
 <body>
-  <p>The client portal has moved. Redirecting to <a href="my-account.html" style="color:#C6A55A;">My Account</a>…</p>
+<!-- Deliberately empty. If scripting is disabled the meta refresh above still
+     works, and a blank brand-coloured screen is better than a flash of text. -->
+<noscript><p style="color:#9C9690;font-family:sans-serif;padding:24px;">
+  The client portal has moved. <a href="my-account.html" style="color:#C6A55A;">Open My Account</a>.
+</p></noscript>
 </body>
 </html>

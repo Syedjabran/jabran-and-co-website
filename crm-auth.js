@@ -773,8 +773,11 @@ document.addEventListener('DOMContentLoaded', function () {
     css.id = 'jco-boot-css';
     css.textContent = [
       /* Nothing decides what to show until the session is known. */
+      /* CRM surfaces and the client portal's, which are named differently.
+         Gating only the CRM left the portal flashing its login form. */
       '.jco-booting #crm-login-box, .jco-booting .crm-shell,',
-      '.jco-booting #crm-logout { visibility: hidden !important; }',
+      '.jco-booting #crm-logout, .jco-booting #ma-login,',
+      '.jco-booting #ma-app, .jco-booting #ma-logout { visibility: hidden !important; }',
       '#jco-boot { position: fixed; inset: 0; z-index: 2147483000; background: #0B0F14;',
       '  display: flex; flex-direction: column; align-items: center; justify-content: center;',
       '  gap: 18px; transition: opacity .22s ease; }',
@@ -832,8 +835,9 @@ document.addEventListener('DOMContentLoaded', function () {
        we wait for the real thing and not a millisecond longer. */
     var t0 = Date.now();
     (function wait() {
-      var shell = document.querySelector('.crm-shell');
-      var shown = shell && shell.style.display && shell.style.display !== 'none';
+      /* .crm-shell on a CRM module, #ma-app on the client portal. */
+      var host = document.querySelector('.crm-shell') || document.getElementById('ma-app');
+      var shown = host && host.style.display && host.style.display !== 'none';
       if (shown || Date.now() - t0 > 5000) { reveal(); return; }
       requestAnimationFrame(wait);
     })();

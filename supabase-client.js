@@ -271,13 +271,20 @@ window.jco = window.jco || {};
   function silenceLoginError() {
     var tries = 0;
     var iv = setInterval(function () {
-      var el = document.getElementById('crm-login-status') ||
-               document.getElementById('login-status');
-      if (el && /incorrect|invalid|wrong|failed/i.test(el.textContent || '')) {
-        el.textContent = '';
-        clearInterval(iv);
-        return;
-      }
+      /* Each surface names its own status line: crm-login-status on the CRM,
+         ma-login-status on the client portal. Match any of them rather than
+         guessing — missing one means the red line survives on that page,
+         which is exactly what happened to the portal. */
+      var els = document.querySelectorAll(
+        '#crm-login-status, #ma-login-status, #login-status, [id$="login-status"]');
+      var hit = false;
+      Array.prototype.forEach.call(els, function (el) {
+        if (/incorrect|invalid|wrong|failed/i.test(el.textContent || '')) {
+          el.textContent = '';
+          hit = true;
+        }
+      });
+      if (hit) { clearInterval(iv); return; }
       if (++tries > 12) clearInterval(iv);      /* ~360 ms, then stop watching */
     }, 30);
   }
