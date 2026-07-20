@@ -222,7 +222,7 @@
         <button class="crm-btn" id="btn-new-service">+ Add Service</button>
       </div>
       <table class="crm-table">
-        <thead><tr><th>Order</th><th>Service</th><th>Slug</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>Order</th><th>Service</th><th>Fulfilment</th><th>Slug</th><th>Status</th><th></th></tr></thead>
         <tbody id="service-rows"></tbody>
       </table>
     </section>
@@ -447,6 +447,31 @@
         <span class="crm-status-msg" id="enq-form-status"></span>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- SERVICE MILESTONE TEMPLATES MODAL -->
+<div class="crm-modal-bg" id="modal-svc-templates">
+  <div class="crm-modal">
+    <h2 id="svt-title">Milestone Template</h2>
+    <p class="crm-mono" style="color:var(--muted); font-size:12px; margin-bottom:14px;">These milestones are copied into a new Service Project automatically when an order for this service is created. Order is preserved; "Due in (days)" sets each milestone's due date relative to the project start.</p>
+    <input type="hidden" id="svt-service-id">
+    <div id="svt-list"></div>
+    <div class="crm-grid2" style="margin-top:14px; align-items:end;">
+      <div><label>Milestone title</label><input id="svt-title-in"></div>
+      <div><label>Visibility</label>
+        <select id="svt-visibility">
+          <option value="client_visible">Client Visible</option>
+          <option value="internal_only">Internal Only</option>
+          <option value="client_action_required">Client Action Required</option>
+        </select></div>
+      <div><label>Due in (days, optional)</label><input id="svt-offset" type="number" min="0" step="1"></div>
+      <div><button class="crm-btn" type="button" id="btn-svt-add">Add Milestone</button></div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button class="crm-btn ghost" type="button" data-close="modal-svc-templates">Close</button>
+      <span class="crm-status-msg" id="svt-status"></span>
+    </div>
   </div>
 </div>
 
@@ -869,24 +894,103 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---------- SERVICES ---------- */
   async function loadServicesTable(){
     await loadServices();
-    document.getElementById('service-rows').innerHTML=servicesCache.map(s=>`
+    /* fulfilment_type ships in migrations 040/041. Fetch it defensively so a
+       not-yet-applied migration degrades to 'service' rather than breaking. */
+    let ftMap={};
+    try{
+      const { data:ft, error:fe } = await sb.from('crm_services').select('id,fulfilment_type');
+      if(fe) throw fe;
+      (ft||[]).forEach(r=>{ ftMap[r.id]=r.fulfilment_type||'service'; });
+    }catch(e){ ftMap={}; }
+    const FT=['service','trade','logistics','mixed'];
+    const ftLabel={service:'Service · auto-project', trade:'Trade · shipments', logistics:'Customs', mixed:'Mixed'};
+    document.getElementById('service-rows').innerHTML=servicesCache.map(s=>{
+      const cur=ftMap[s.id]||'service';
+      const opts=FT.map(v=>`<option value="${v}" ${v===cur?'selected':''}>${ftLabel[v]}</option>`).join('');
+      return `
       <tr>
         <td class="crm-mono">${s.sort_order}</td>
         <td>${esc(s.name)}</td>
+        <td><select class="crm-svc-ft" data-ft="${s.id}" style="padding:6px 8px; font-size:12px; background:var(--bg); color:var(--cream); border:1px solid var(--line);">${opts}</select></td>
         <td class="crm-mono">${esc(s.slug)}</td>
         <td><span class="${s.is_active?'crm-badge ok':'crm-badge bad'}">${s.is_active?'Active':'Inactive'}</span></td>
-        <td><button class="crm-btn ghost" data-toggle-service="${s.id}" data-active="${s.is_active}">${s.is_active?'Deactivate':'Activate'}</button></td>
-      </tr>`).join('');
+        <td style="white-space:nowrap;">
+          <button class="crm-btn ghost" data-svc-templates="${s.id}">Milestones</button>
+          <button class="crm-btn ghost" data-toggle-service="${s.id}" data-active="${s.is_active}">${s.is_active?'Deactivate':'Activate'}</button>
+        </td>
+      </tr>`;}).join('');
     document.querySelectorAll('[data-toggle-service]').forEach(b=>b.addEventListener('click', async ()=>{
       await sb.from('crm_services').update({is_active: b.dataset.active!=='true'}).eq('id', b.dataset.toggleService);
       loadServicesTable();
     }));
+    document.querySelectorAll('.crm-svc-ft').forEach(sel=>sel.addEventListener('change', async ()=>{
+      const { error } = await sb.from('crm_services').update({fulfilment_type: sel.value}).eq('id', sel.dataset.ft);
+      if(error) alert('Could not update routing: '+error.message+'\n\nHas migration 040 been applied?');
+    }));
+    document.querySelectorAll('[data-svc-templates]').forEach(b=>b.addEventListener('click', ()=>openSvcTemplates(b.dataset.svcTemplates)));
   }
   document.getElementById('btn-new-service').addEventListener('click', async ()=>{
     const name=prompt('Service name:'); if(!name) return;
     const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     const { error } = await sb.from('crm_services').insert({name, slug, sort_order: servicesCache.length+1});
     if(error) alert('Error: '+error.message); else loadServicesTable();
+  });
+
+  /* ---------- SERVICE MILESTONE TEMPLATES ---------- */
+  async function openSvcTemplates(serviceId){
+    const svc=(servicesCache||[]).find(x=>x.id===serviceId);
+    setval('svt-service-id', serviceId);
+    document.getElementById('svt-title').textContent='Milestone Template — '+((svc&&svc.name)||'Service');
+    document.getElementById('svt-status').textContent='';
+    await renderSvtList(serviceId);
+    openModal('modal-svc-templates');
+  }
+  async function renderSvtList(serviceId){
+    const wrap=document.getElementById('svt-list');
+    let rows=[];
+    try{
+      const { data, error } = await sb.from('crm_service_milestone_templates')
+        .select('*').eq('service_id', serviceId).order('sort_order');
+      if(error) throw error;
+      rows=data||[];
+    }catch(e){
+      wrap.innerHTML='<p class="crm-empty" style="padding:6px 0;">Templates need migration 041. Apply it, then reopen.</p>';
+      return;
+    }
+    wrap.innerHTML = rows.length ? rows.map(t=>`
+      <div style="display:grid; grid-template-columns:2fr 1.2fr 0.7fr auto; gap:8px; align-items:center; font-size:12px; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.1);">
+        <span>${esc(t.title)}</span>
+        <span class="crm-badge">${esc(label(t.visibility))}</span>
+        <span class="crm-mono">${t.offset_days==null?'—':('D+'+t.offset_days)}</span>
+        <button class="crm-btn ghost" type="button" data-svt-del="${t.id}" title="Remove">✕</button>
+      </div>`).join('') : '<p class="crm-empty" style="padding:6px 0;">No template milestones yet. Add the stages this service should start with.</p>';
+    wrap.querySelectorAll('[data-svt-del]').forEach(b=>b.addEventListener('click', async ()=>{
+      await sb.from('crm_service_milestone_templates').delete().eq('id', b.dataset.svtDel);
+      renderSvtList(serviceId);
+    }));
+  }
+  document.getElementById('btn-svt-add').addEventListener('click', async ()=>{
+    const serviceId=val('svt-service-id');
+    const title=val('svt-title-in');
+    const st=document.getElementById('svt-status');
+    if(!serviceId||!title){ st.textContent='Enter a milestone title.'; return; }
+    const offset=val('svt-offset');
+    let next=0;
+    try{
+      const { data } = await sb.from('crm_service_milestone_templates')
+        .select('sort_order').eq('service_id', serviceId).order('sort_order',{ascending:false}).limit(1);
+      next=(data&&data.length)?(Number(data[0].sort_order)+1):0;
+    }catch(e){}
+    const { error } = await sb.from('crm_service_milestone_templates').insert({
+      service_id: serviceId, title,
+      visibility: val('svt-visibility')||'client_visible',
+      offset_days: offset===null?null:Number(offset),
+      sort_order: next
+    });
+    if(error){ st.textContent='Error: '+error.message; return; }
+    setval('svt-title-in',''); setval('svt-offset','');
+    st.textContent='Added.';
+    renderSvtList(serviceId);
   });
 
   /* ---------- AUDIT ---------- */
@@ -910,3 +1014,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+
