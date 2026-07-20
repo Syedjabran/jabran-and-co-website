@@ -261,6 +261,10 @@
       </div>
       <div><label>Scope</label><textarea id="pj-scope"></textarea></div>
       <div style="margin-top:12px;"><label>Internal Notes (never client-visible)</label><textarea id="pj-internal_notes"></textarea></div>
+      <div id="pj-visibility-row" style="display:none; gap:12px; align-items:center; margin-top:14px; padding:12px 14px; border:1px solid var(--line); background:var(--bg-alt);">
+        <span class="crm-mono" id="pj-visibility-label" style="flex:1; font-size:12px;"></span>
+        <button class="crm-btn ghost" type="button" id="btn-pj-toggle-visible"></button>
+      </div>
       <div id="pj-milestones-block" style="display:none;">
         <div class="crm-fieldset-label">Milestones</div>
         <div id="pj-milestones-list"></div>
@@ -561,6 +565,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('project-form').reset(); setval('pj-id','');
     document.getElementById('project-modal-title').textContent='New Project';
     document.getElementById('pj-milestones-block').style.display='none';
+    document.getElementById('pj-visibility-row').style.display='none';
     openModal('modal-project');
   });
   async function openProject(id){
@@ -569,6 +574,7 @@ document.addEventListener('DOMContentLoaded', function () {
     PJ_FIELDS.forEach(f=>setval('pj-'+f,p[f])); setval('pj-completion_pct',p.completion_pct);
     document.getElementById('project-modal-title').textContent=(p.project_number||'Project')+' — '+p.title;
     document.getElementById('pj-milestones-block').style.display='block';
+    renderPjVisibility(p);
     await renderMilestones(id);
     openModal('modal-project');
   }
@@ -616,6 +622,34 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-project'); loadProjects();
+  });
+
+  /* ---------- CLIENT VISIBILITY (publish gate, migration 042) ----------
+     Kept OUT of the normal save payload on purpose: a not-yet-applied
+     migration can't break Save Project — only this toggle would report it. */
+  function renderPjVisibility(p){
+    const row=document.getElementById('pj-visibility-row');
+    if(!row) return;
+    if(!p||!p.id){ row.style.display='none'; return; }
+    const vis=p.client_visible!==false;
+    row.style.display='flex';
+    document.getElementById('pj-visibility-label').textContent=
+      vis ? 'Client portal: Published — visible to the client'
+          : 'Client portal: Hidden — draft, not visible to the client';
+    const btn=document.getElementById('btn-pj-toggle-visible');
+    btn.textContent=vis?'Unpublish':'Publish to client';
+    btn.dataset.pid=p.id; btn.dataset.vis=String(vis);
+  }
+  document.getElementById('btn-pj-toggle-visible').addEventListener('click', async function(){
+    const pid=this.dataset.pid; if(!pid) return;
+    const cur=this.dataset.vis==='true';
+    this.disabled=true;
+    const { error }=await sb.from('crm_projects').update({client_visible:!cur}).eq('id',pid);
+    this.disabled=false;
+    if(error){ alert('Could not change visibility: '+error.message+'\n\nHas migration 042 been applied?'); return; }
+    const p=projectsCache.find(x=>x.id===pid); if(p) p.client_visible=!cur;
+    renderPjVisibility(p||{id:pid, client_visible:!cur});
+    loadProjects();
   });
 
   /* ---------- SHIPMENTS + CUSTOMS ---------- */
@@ -699,3 +733,6 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+
+
+
