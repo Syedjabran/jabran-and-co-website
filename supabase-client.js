@@ -412,11 +412,14 @@ window.jco = window.jco || {};
                       page.indexOf('-view.html') > -1;
   if (!protectedPage) return;
 
+  /* Printing is ENABLED for all documents and internal pages. Accountability
+     is preserved by the beforeprint activity log (crm-activity.js): every
+     print is still recorded with user, timestamp and the exact document.
+     The on-screen traceability watermark is hidden on print so executive
+     documents render cleanly to their own print stylesheets. */
   try {
     var pcss = document.createElement('style');
-    pcss.textContent = '@media print{ body > *{display:none !important;} ' +
-      'body:after{content:"Printing is disabled for JABRAN & CO. internal pages."; ' +
-      'display:block; font-family:monospace; padding:40px;} }';
+    pcss.textContent = '@media print{ #jco-wm{display:none !important;} }';
     document.head.appendChild(pcss);
   } catch (e) {}
 
@@ -448,3 +451,6 @@ window.jco = window.jco || {};
     try { sb.auth.onAuthStateChange(function (ev) { if (ev === 'SIGNED_IN') apply(); }); } catch (e) {}
   });
 })();
+
+
+
