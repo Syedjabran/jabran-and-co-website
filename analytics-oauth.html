@@ -41,7 +41,7 @@
     <div class="row" id="ob-log"></div>
     <div id="ob-actions"></div>
   </div>
-  <div class="stamp">BUILD 2026-07-16.4-oauth-callback</div>
+  <div class="stamp">BUILD 2026-07-24.5-no-host-redirect</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -111,10 +111,28 @@
 
   async function run() {
     try {
-      if (location.hostname === 'www.jabranandco.com') {
-        location.replace('https://jabranandco.com' + location.pathname + location.search);
-        return;
-      }
+      /* ------------------------------------------------------------------
+         HOST HANDLING — BUILD 2026-07-24.5
+
+         This block previously redirected www -> apex to force a single
+         origin, because the Supabase session lives in origin-scoped
+         storage and would otherwise be invisible here.
+
+         That redirect has been REMOVED. If anything upstream (a Vercel
+         domain-level redirect, a vercel.json rule, or DNS forwarding)
+         sends apex -> www, the two rules chase each other forever and the
+         page reloads endlessly without ever running the exchange.
+
+         A redirect is not needed. If the session is genuinely missing the
+         code below already reports "Sign in required" with instructions —
+         a clear message beats an infinite loop. The host is logged so the
+         origin is visible when diagnosing a session mismatch.
+
+         DO NOT REINTRODUCE A HOST REDIRECT ON THIS PAGE. Register the
+         OAuth redirect URI on whichever host the CRM is actually used on
+         instead.
+      ------------------------------------------------------------------ */
+      line('Origin: ' + location.origin, '');
 
       var q = new URLSearchParams(location.search);
       var code = q.get('code');
@@ -207,3 +225,5 @@
 </script>
 </body>
 </html>
+
+
