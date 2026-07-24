@@ -2,15 +2,15 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
-      "source": "/((?!analytics-oauth\\.html|reset-password\\.html).*)",
+      "source": "/:path((?!analytics-oauth\\.html)(?!reset-password\\.html).*)",
       "has": [
         {
           "type": "host",
           "value": "jabranandco.com"
         }
       ],
-      "destination": "https://www.jabranandco.com/$1",
-      "permanent": true
+      "destination": "https://www.jabranandco.com/:path",
+      "permanent": false
     }
   ],
   "headers": [
