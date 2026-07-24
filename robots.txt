@@ -1,4 +1,4 @@
-# JABRAN & CO. — robots.txt (canonical, Increment 11)
+# JABRAN & CO. — robots.txt (canonical, Increment 12)
 # Internal, client, and document routes are excluded from crawling.
 # Note: robots.txt is a crawl directive, not a security mechanism —
 # every route below is independently protected by authentication and RLS.
@@ -21,5 +21,28 @@ Disallow: /invoice-view.html
 Disallow: /receipt-view.html
 Disallow: /report-view.html
 Disallow: /certificate-view.html
+
+# Authentication & connector callbacks (no indexable content, and the
+# OAuth callback must never be fetched by a bot mid-exchange)
+Disallow: /analytics-oauth.html
+Disallow: /reset-password.html
+
+# ---------------------------------------------------------------------
+# Internal engineering documents (Increment 12)
+# These are working artefacts — integration snippets, upgrade packs and
+# setup notes. They are not pages, were never linked, and were never in
+# the sitemap, but they were being served publicly with no directive.
+# They are additionally marked noindex at the file level; this block
+# stops the crawl before the fetch.
+# ---------------------------------------------------------------------
+Disallow: /seo-jsonld-snippet.html
+Disallow: /insight-integration-snippet.html
+Disallow: /global-trade-sourcing-snippets.html
+Disallow: /crm-website-capture-snippet.html
+Disallow: /flagship-audit-insert-pack.html
+Disallow: /jabran-method-upgrade.html
+Disallow: /plant-audit-deepdive-upgrade.html
+Disallow: /ppap-revert-previous.html
+Disallow: /ANALYTICS-SETUP-AND-QA.md
 
 Sitemap: https://www.jabranandco.com/sitemap.xml
