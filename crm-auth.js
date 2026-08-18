@@ -691,6 +691,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       place(STAFF_LINKS, 'crm-finance.html');
+      /* Retail placement — stockists per brand/organization, under Orders. */
+      place([{ href: 'crm-stockists.html', label: 'Stockists' }], 'crm-orders.html');
       /* sits directly beneath Quotations & Costing, where it belongs */
       place([{ href: 'crm-outsourced-offers.html', label: 'Outsourced Service Offers' }],
             'crm-quotations.html');
@@ -850,3 +852,6 @@ document.addEventListener('DOMContentLoaded', function () {
   /* A tab restored from bfcache has already settled; never strand it. */
   window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
 })();
+
+
+

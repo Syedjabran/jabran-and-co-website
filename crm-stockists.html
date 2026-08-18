@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stockists · Retail Placement — JABRAN &amp; CO. CRM</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14; --panel:#111720; --panel-2:#0E141C; --line:#1E2836;
+    --gold:#C6A55A; --gold-soft:#D8BE7E; --ink:#EAF0F7; --muted:#8FA0B4;
+    --ok:#3FB57A; --warn:#E0A73C; --bad:#D9605A; --info:#5B8FD1;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 700px at 80% -10%, rgba(198,165,90,.06) 0, transparent 60%), var(--bg);
+    background-color:var(--bg);
+    color:var(--ink); font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  a{color:var(--gold-soft);text-decoration:none}
+  .crm-mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:600;letter-spacing:.2px;margin:0}
+
+  /* ---------- Shell ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 64px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0 22px;border-bottom:1px solid var(--line);margin-bottom:24px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#9c7d3a);display:flex;align-items:center;justify-content:center;color:#0B0F14;font-family:'Playfair Display',serif;font-weight:700;font-size:20px}
+  .brand .name{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;letter-spacing:.4px}
+  .brand .sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+  .eyebrow{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  .pagehead h1{font-size:30px;margin-bottom:4px}
+  .pagehead p{color:var(--muted);margin:0;font-size:14px}
+
+  /* ---------- Buttons ---------- */
+  .btn{font-family:'Inter',sans-serif;font-weight:600;font-size:14px;border-radius:10px;border:1px solid var(--gold);background:linear-gradient(135deg,var(--gold),#a9873f);color:#0B0F14;padding:10px 16px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--gold-soft);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--gold)}
+  .btn.sm{padding:6px 11px;font-size:12.5px;border-radius:8px}
+  .btn.danger{background:transparent;border-color:#5a2a28;color:#e88a85}
+  .btn.danger:hover{border-color:var(--bad)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+
+  /* ---------- Cards / panels ---------- */
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:var(--radius)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+  .stat{padding:16px 18px}
+  .stat .k{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
+  .stat .v{font-family:'Playfair Display',serif;font-size:26px;margin-top:4px;color:var(--gold-soft)}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .toolbar .grow{flex:1 1 220px}
+  input,select,textarea{font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  select option{background:#0E141C}
+  label.fld{display:block;font-size:12px;color:var(--muted);margin:0 0 5px 2px;letter-spacing:.3px}
+
+  /* ---------- Stockist grid ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+  .card{padding:16px 16px 14px;position:relative}
+  .card .num{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--gold);letter-spacing:.5px}
+  .card .store{font-family:'Playfair Display',serif;font-size:19px;margin:3px 0 2px}
+  .card .loc{font-size:13px;color:var(--muted);margin-bottom:2px}
+  .card .org{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .card .org b{color:var(--ink);font-weight:600}
+  .badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .badge{font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;border:1px solid var(--line);letter-spacing:.3px}
+  .b-ok{color:var(--ok);border-color:#22452f;background:rgba(63,181,122,.07)}
+  .b-warn{color:var(--warn);border-color:#4a3c1e;background:rgba(224,167,60,.07)}
+  .b-bad{color:var(--bad);border-color:#4a2624;background:rgba(217,96,90,.07)}
+  .b-info{color:var(--info);border-color:#24374a;background:rgba(91,143,209,.07)}
+  .b-mute{color:var(--muted)}
+  .card .contact{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;margin-top:2px}
+  .card .actions{display:flex;gap:8px;margin-top:12px}
+  .card.inactive{opacity:.55}
+
+  .empty{padding:48px 20px;text-align:center;color:var(--muted)}
+  .empty .big{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:6px}
+
+  /* ---------- Login ---------- */
+  #login{max-width:400px;margin:8vh auto 0;padding:28px 26px}
+  #login h2{font-size:22px;margin-bottom:4px}
+  #login p.sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+  #login .row{margin-bottom:12px}
+  #login .status{font-size:13px;color:var(--bad);min-height:18px;margin-top:8px}
+  .passrow{position:relative}
+  .passrow .toggle{position:absolute;right:10px;top:9px;font-size:12px;color:var(--gold-soft);cursor:pointer;user-select:none}
+
+  /* ---------- Modal ---------- */
+  .modal-bg{position:fixed;inset:0;background:rgba(4,7,11,.72);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:5vh 14px;z-index:50;overflow:auto}
+  .modal-bg.open{display:flex}
+  .modal{max-width:560px;width:100%;padding:22px 22px 20px}
+  .modal h3{font-size:22px;margin-bottom:2px}
+  .modal .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-grid .full{grid-column:1 / -1}
+  .modal .foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+  .mstatus{font-size:13px;min-height:18px;margin-top:8px}
+  .mstatus.err{color:var(--bad)} .mstatus.ok{color:var(--ok)}
+
+  .hide{display:none!important}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0E141C;border:1px solid var(--gold);color:var(--ink);padding:12px 18px;border-radius:10px;font-size:14px;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none}
+  .toast.show{display:block}
+  @media(max-width:720px){ .stats{grid-template-columns:1fr 1fr} .form-grid{grid-template-columns:1fr} .pagehead h1{font-size:24px} }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN GATE ===================== -->
+<div id="login" class="panel">
+  <div class="eyebrow">JABRAN &amp; CO. · CRM</div>
+  <h2>Stockists</h2>
+  <p class="sub">Staff sign-in required.</p>
+  <form id="login-form">
+    <div class="row"><label class="fld">Email</label><input id="li-email" type="email" autocomplete="username" required></div>
+    <div class="row"><label class="fld">Password</label>
+      <div class="passrow"><input id="li-pass" type="password" autocomplete="current-password" required><span class="toggle" id="li-toggle">Show</span></div>
+    </div>
+    <button class="btn" id="li-btn" type="submit" style="width:100%">Log In</button>
+    <div class="status" id="li-status"></div>
+  </form>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app" class="wrap hide">
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">J</div>
+      <div>
+        <div class="name">JABRAN &amp; CO.</div>
+        <div class="sub">Enterprise CRM</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="crm.html" class="btn ghost sm">← CRM Home</a>
+      <button class="btn ghost sm" id="logout">Log out</button>
+    </div>
+  </div>
+
+  <div class="pagehead" style="margin-bottom:20px">
+    <div class="eyebrow">Retail Placement</div>
+    <h1>Stockists</h1>
+    <p>Stores &amp; branches carrying our brands — placement, shelf and reorder status.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat panel"><div class="k">Total Stockists</div><div class="v" id="s-total">—</div></div>
+    <div class="stat panel"><div class="k">Active</div><div class="v" id="s-active">—</div></div>
+    <div class="stat panel"><div class="k">Cities</div><div class="v" id="s-cities">—</div></div>
+    <div class="stat panel"><div class="k">Reorder Due</div><div class="v" id="s-due">—</div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="grow"><input id="q" placeholder="Search store, branch, city, product…"></div>
+    <select id="f-org" style="max-width:230px"><option value="">All brands / orgs</option></select>
+    <select id="f-place" style="max-width:180px">
+      <option value="">All placements</option>
+      <option value="prospect">Prospect</option><option value="pitched">Pitched</option>
+      <option value="listed">Listed</option><option value="active">Active</option>
+      <option value="paused">Paused</option><option value="delisted">Delisted</option>
+    </select>
+    <label style="display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;white-space:nowrap">
+      <input type="checkbox" id="f-inactive" style="width:auto">Show inactive
+    </label>
+    <button class="btn" id="add-btn">+ Add Stockist</button>
+  </div>
+
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty panel hide"><div class="big">No stockists yet</div><div>Add your first store with the button above.</div></div>
+</div>
+
+<!-- ===================== ADD/EDIT MODAL ===================== -->
+<div class="modal-bg" id="modal">
+  <div class="modal panel">
+    <h3 id="m-title">Add Stockist</h3>
+    <p class="sub" id="m-sub">Create a new retail placement point.</p>
+    <form id="m-form">
+      <div class="form-grid">
+        <div class="full"><label class="fld">Brand / Organisation *</label><select id="m-org" required></select></div>
+        <div><label class="fld">Store name *</label><input id="m-store" required></div>
+        <div><label class="fld">Branch / area</label><input id="m-branch" placeholder="e.g. Gulberg"></div>
+        <div><label class="fld">City</label><input id="m-city" placeholder="e.g. Lahore"></div>
+        <div><label class="fld">Product line</label><input id="m-product" placeholder="e.g. Meshak Olive Oil"></div>
+        <div class="full"><label class="fld">Address</label><input id="m-address"></div>
+        <div><label class="fld">Contact name</label><input id="m-cname"></div>
+        <div><label class="fld">Contact phone</label><input id="m-cphone"></div>
+        <div class="full"><label class="fld">Contact email</label><input id="m-cemail" type="email"></div>
+        <div><label class="fld">Placement status</label><select id="m-place">
+          <option value="prospect">Prospect</option><option value="pitched">Pitched</option>
+          <option value="listed">Listed</option><option value="active" selected>Active</option>
+          <option value="paused">Paused</option><option value="delisted">Delisted</option></select></div>
+        <div><label class="fld">Shelf status</label><select id="m-shelf">
+          <option value="not_placed">Not placed</option><option value="on_shelf" selected>On shelf</option>
+          <option value="prime_shelf">Prime shelf</option><option value="back_stock">Back stock</option></select></div>
+        <div><label class="fld">Reorder status</label><select id="m-reorder">
+          <option value="not_due" selected>Not due</option><option value="due_soon">Due soon</option>
+          <option value="due">Due</option><option value="overdue">Overdue</option><option value="ordered">Ordered</option></select></div>
+        <div><label class="fld">Next reorder date</label><input id="m-nextdate" type="date"></div>
+        <div class="full"><label class="fld">Notes</label><textarea id="m-notes" rows="2"></textarea></div>
+      </div>
+      <div class="mstatus" id="m-status"></div>
+      <div class="foot">
+        <button type="button" class="btn ghost" id="m-cancel">Cancel</button>
+        <button type="submit" class="btn" id="m-save">Save Stockist</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  "use strict";
+  // --- Supabase (publishable key — client-safe, RLS-protected) ---
+  var SUPABASE_URL = "https://dvsaqjvcxqlzgpbvexnu.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_h57UGgrQ7oFaRX8NTOKgYA_OGdWILM6";
+  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}):'—'; }
+
+  var loginEl=$('login'), appEl=$('app');
+  var rows=[], orgs=[], editing=null;
+
+  /* ---------------- AUTH ---------------- */
+  $('li-toggle').addEventListener('click',function(){
+    var p=$('li-pass'); var show=p.type==='password'; p.type=show?'text':'password'; this.textContent=show?'Hide':'Show';
+  });
+  async function checkSession(){
+    var r=await sb.auth.getSession();
+    if(r.data && r.data.session){ await boot(); }
+    else { loginEl.classList.remove('hide'); appEl.classList.add('hide'); }
+  }
+  $('login-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var btn=$('li-btn'), st=$('li-status'); st.textContent=''; btn.disabled=true; btn.textContent='Logging in…';
+    var res=await sb.auth.signInWithPassword({ email:$('li-email').value.trim(), password:$('li-pass').value });
+    btn.disabled=false; btn.textContent='Log In';
+    if(res.error){ st.textContent='Incorrect email or password.'; }
+    else { await boot(); }
+  });
+  $('logout').addEventListener('click', async function(){ await sb.auth.signOut(); location.reload(); });
+
+  async function boot(){
+    var s=await sb.rpc('crm_is_staff');
+    if(s.error || s.data!==true){
+      $('li-status').textContent='This page is for staff accounts only.';
+      await sb.auth.signOut(); loginEl.classList.remove('hide'); appEl.classList.add('hide'); return;
+    }
+    loginEl.classList.add('hide'); appEl.classList.remove('hide');
+    await loadOrgs();
+    await loadStockists();
+  }
+
+  /* ---------------- DATA ---------------- */
+  async function loadOrgs(){
+    var r=await sb.from('crm_organizations').select('id,legal_name,org_number').is('deleted_at',null).order('legal_name');
+    orgs=r.data||[];
+    var opts='<option value="">All brands / orgs</option>';
+    var mopts='';
+    orgs.forEach(function(o){
+      opts+='<option value="'+o.id+'">'+esc(o.legal_name)+'</option>';
+      mopts+='<option value="'+o.id+'">'+esc(o.legal_name)+(o.org_number?(' · '+esc(o.org_number)):'')+'</option>';
+    });
+    $('f-org').innerHTML=opts;
+    $('m-org').innerHTML='<option value="" disabled selected>Select organisation…</option>'+mopts;
+  }
+
+  async function loadStockists(){
+    var r=await sb.from('crm_stockists')
+      .select('*, crm_organizations(legal_name,org_number)')
+      .order('stockist_number',{ascending:true});
+    if(r.error){ toast('Load error: '+r.error.message); rows=[]; }
+    else { rows=r.data||[]; }
+    render();
+  }
+
+  /* ---------------- RENDER ---------------- */
+  var PLACE={active:'b-ok',listed:'b-info',pitched:'b-info',prospect:'b-mute',paused:'b-warn',delisted:'b-bad'};
+  var SHELF={prime_shelf:'b-ok',on_shelf:'b-info',back_stock:'b-warn',not_placed:'b-mute'};
+  var REORDER={not_due:'b-mute',due_soon:'b-warn',due:'b-warn',overdue:'b-bad',ordered:'b-info'};
+
+  function render(){
+    var q=($('q').value||'').toLowerCase().trim();
+    var fo=$('f-org').value, fp=$('f-place').value, showInactive=$('f-inactive').checked;
+    var list=rows.filter(function(r){
+      if(!showInactive && r.is_active===false) return false;
+      if(fo && r.organization_id!==fo) return false;
+      if(fp && r.placement_status!==fp) return false;
+      if(q){
+        var hay=[r.stockist_number,r.store_name,r.branch,r.city,r.product_line,(r.crm_organizations&&r.crm_organizations.legal_name)].join(' ').toLowerCase();
+        if(hay.indexOf(q)===-1) return false;
+      }
+      return true;
+    });
+
+    // stats (based on all non-filtered active rows)
+    var active=rows.filter(function(r){return r.is_active!==false;});
+    $('s-total').textContent=rows.length;
+    $('s-active').textContent=active.length;
+    $('s-cities').textContent=new Set(active.map(function(r){return (r.city||'').trim();}).filter(Boolean)).size;
+    $('s-due').textContent=active.filter(function(r){return r.reorder_status==='due'||r.reorder_status==='overdue';}).length;
+
+    var g=$('grid');
+    if(!list.length){ g.innerHTML=''; $('empty').classList.remove('hide'); return; }
+    $('empty').classList.add('hide');
+    g.innerHTML=list.map(function(r){
+      var loc=[r.branch,r.city].filter(Boolean).join(', ')||'—';
+      var org=r.crm_organizations?r.crm_organizations.legal_name:'—';
+      var contact=[r.contact_name,r.contact_phone].filter(Boolean).join(' · ');
+      return '<div class="card panel'+(r.is_active===false?' inactive':'')+'">'+
+        '<div class="num">'+esc(r.stockist_number||'—')+(r.is_active===false?' · INACTIVE':'')+'</div>'+
+        '<div class="store">'+esc(r.store_name||'—')+'</div>'+
+        '<div class="loc">'+esc(loc)+'</div>'+
+        '<div class="org">Brand: <b>'+esc(org)+'</b>'+(r.product_line?(' · '+esc(r.product_line)):'')+'</div>'+
+        '<div class="badges">'+
+          '<span class="badge '+(PLACE[r.placement_status]||'b-mute')+'">'+esc(label(r.placement_status))+'</span>'+
+          '<span class="badge '+(SHELF[r.shelf_status]||'b-mute')+'">'+esc(label(r.shelf_status))+'</span>'+
+          '<span class="badge '+(REORDER[r.reorder_status]||'b-mute')+'">Reorder: '+esc(label(r.reorder_status))+'</span>'+
+        '</div>'+
+        (contact?('<div class="contact">'+esc(contact)+(r.contact_email?(' · '+esc(r.contact_email)):'')+'</div>'):'')+
+        '<div class="actions">'+
+          '<button class="btn ghost sm" data-edit="'+r.id+'">Edit</button>'+
+          '<button class="btn ghost sm" data-toggle="'+r.id+'">'+(r.is_active===false?'Reactivate':'Deactivate')+'</button>'+
+          '<button class="btn danger sm" data-del="'+r.id+'">Delete</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  ['q','f-org','f-place'].forEach(function(id){ $(id).addEventListener('input',render); });
+  $('f-inactive').addEventListener('change',render);
+
+  /* ---------------- GRID ACTIONS ---------------- */
+  $('grid').addEventListener('click', async function(e){
+    var t=e.target;
+    if(t.dataset.edit){ openModal(rows.find(function(r){return r.id===t.dataset.edit;})); }
+    else if(t.dataset.toggle){
+      var r=rows.find(function(x){return x.id===t.dataset.toggle;});
+      var nv=!(r.is_active===false)? false : true;
+      var up=await sb.from('crm_stockists').update({is_active:nv}).eq('id',r.id);
+      if(up.error){ toast('Error: '+up.error.message); } else { toast(nv?'Reactivated':'Deactivated'); await loadStockists(); }
+    }
+    else if(t.dataset.del){
+      var row=rows.find(function(x){return x.id===t.dataset.del;});
+      if(!confirm('Permanently delete '+(row.stockist_number||'')+' — '+(row.store_name||'')+'? This cannot be undone.\n\n(Tip: "Deactivate" keeps the record but hides it.)')) return;
+      var d=await sb.from('crm_stockists').delete().eq('id',row.id);
+      if(d.error){ toast('Error: '+d.error.message); } else { toast('Deleted'); await loadStockists(); }
+    }
+  });
+
+  /* ---------------- MODAL ---------------- */
+  function openModal(row){
+    editing=row||null;
+    $('m-title').textContent=row?'Edit Stockist':'Add Stockist';
+    $('m-sub').textContent=row?('Editing '+(row.stockist_number||'')): 'Create a new retail placement point.';
+    $('m-status').textContent='';
+    var g=function(id,v){ $(id).value=v==null?'':v; };
+    g('m-org', row?row.organization_id:''); if(!row) $('m-org').value='';
+    g('m-store', row?row.store_name:''); g('m-branch', row?row.branch:''); g('m-city', row?row.city:'');
+    g('m-product', row?row.product_line:''); g('m-address', row?row.address:'');
+    g('m-cname', row?row.contact_name:''); g('m-cphone', row?row.contact_phone:''); g('m-cemail', row?row.contact_email:'');
+    $('m-place').value=row?row.placement_status:'active';
+    $('m-shelf').value=row?row.shelf_status:'on_shelf';
+    $('m-reorder').value=row?row.reorder_status:'not_due';
+    g('m-nextdate', row?row.next_reorder_date:''); g('m-notes', row?row.notes:'');
+    $('modal').classList.add('open');
+  }
+  function closeModal(){ $('modal').classList.remove('open'); }
+  $('add-btn').addEventListener('click',function(){ openModal(null); });
+  $('m-cancel').addEventListener('click',closeModal);
+  $('modal').addEventListener('click',function(e){ if(e.target===$('modal')) closeModal(); });
+
+  $('m-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st=$('m-status'); st.className='mstatus'; st.textContent='';
+    if(!$('m-org').value){ st.classList.add('err'); st.textContent='Please choose an organisation.'; return; }
+    var payload={
+      organization_id:$('m-org').value,
+      store_name:$('m-store').value.trim(),
+      branch:$('m-branch').value.trim()||null,
+      city:$('m-city').value.trim()||null,
+      product_line:$('m-product').value.trim()||null,
+      address:$('m-address').value.trim()||null,
+      contact_name:$('m-cname').value.trim()||null,
+      contact_phone:$('m-cphone').value.trim()||null,
+      contact_email:$('m-cemail').value.trim()||null,
+      placement_status:$('m-place').value,
+      shelf_status:$('m-shelf').value,
+      reorder_status:$('m-reorder').value,
+      next_reorder_date:$('m-nextdate').value||null,
+      notes:$('m-notes').value.trim()||null
+    };
+    var btn=$('m-save'); btn.disabled=true; btn.textContent='Saving…';
+    var res;
+    if(editing){ res=await sb.from('crm_stockists').update(payload).eq('id',editing.id); }
+    else { res=await sb.from('crm_stockists').insert(payload); }
+    btn.disabled=false; btn.textContent='Save Stockist';
+    if(res.error){ st.classList.add('err'); st.textContent='Error: '+res.error.message; return; }
+    closeModal(); toast(editing?'Stockist updated':'Stockist added'); await loadStockists();
+  });
+
+  /* ---------------- TOAST ---------------- */
+  var tt;
+  function toast(msg){ var el=$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(tt); tt=setTimeout(function(){ el.classList.remove('show'); },2600); }
+
+  checkSession();
+})();
+</script>
+</body>
+</html>
