@@ -49,6 +49,17 @@
   .qv-terms-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 28px;}
   .qv-terms-grid div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:3px;}
   .qv-terms-grid div span{font-size:13px;}
+  /* Payment Schedule table */
+  table.qv-pay{width:100%; border-collapse:collapse; font-size:13px; margin-top:2px;}
+  .qv-pay td{padding:9px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .qv-pay td.num{text-align:right; font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
+  .qv-pay tr.main>td{font-weight:500;}
+  .qv-pay tr.sub>td{color:var(--muted); font-size:12.5px; padding-top:4px; padding-bottom:4px;}
+  .qv-pay tr.sub>td:first-child{padding-left:26px;}
+  .qv-pay tr.note>td{color:var(--muted); font-size:12px; padding:2px 10px 9px; border-bottom:none;}
+  .qv-pay tr.total>td{border-top:1px solid var(--gold); border-bottom:none; color:var(--gold-light); font-size:14px; font-weight:600; padding-top:12px;}
+  .qv-pay-intro{font-size:12.5px; color:var(--muted); margin-bottom:10px; white-space:pre-line;}
+  .qv-pre{font-family:'IBM Plex Mono',monospace; font-size:12px; white-space:pre-wrap; line-height:1.5; margin:0;}
   /* Acceptance */
   .qv-accept{border-top:1px solid var(--line);}
   .qv-sign-row{display:flex; justify-content:space-between; gap:40px; margin-top:34px; flex-wrap:wrap;}
@@ -191,6 +202,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
   function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
+  /* Payment Schedule: parse the authored monospace text into a proper table.
+     Falls back to a preformatted block if it isn't a recognisable schedule. */
+  function buildPaymentTable(text){
+    if(!text) return null;
+    const raw=String(text).replace(/\r/g,'');
+    const lines=raw.split('\n');
+    const rows=[]; let intro=null, total=null;
+    const amtRe=/^(.*?)[\s.]*\b([A-Z]{2,4})?\s*([\d][\d,]*(?:\.\d+)?)\s*$/;
+    for(const rawline of lines){
+      const line=rawline.replace(/\s+$/,'');
+      if(!line.trim()) continue;
+      const stripped=line.trim();
+      if(/^[-–—_=.\s]+$/.test(stripped)) continue;
+      if(/^payment schedule/i.test(stripped)) continue;
+      const indent=(line.match(/^\s*/)[0].length);
+      const m=stripped.match(amtRe);
+      if(m && m[3]){
+        const lab=m[1].replace(/[.\s]+$/,'').trim();
+        const cur=(m[2]||'').trim(); const amt=m[3].trim();
+        if(/total/i.test(lab)){ total={label:lab,cur,amt}; }
+        else rows.push({label:lab,cur,amt,sub:indent>=5});
+      } else {
+        if(rows.length===0 && !intro && !/^[•\-]/.test(stripped)) intro=stripped;
+        else if(rows.length>0){ (rows[rows.length-1].notes=rows[rows.length-1].notes||[]).push(stripped.replace(/^[•\-]\s*/,'')); }
+      }
+    }
+    if(rows.length<2) return '<pre class="qv-pre">'+esc(raw)+'</pre>';
+    let html=''; if(intro) html+='<p class="qv-pay-intro">'+esc(intro)+'</p>';
+    html+='<table class="qv-pay"><tbody>';
+    for(const r of rows){
+      html+=`<tr class="${r.sub?'sub':'main'}"><td>${esc(r.label)}</td><td class="num">${esc((r.cur?r.cur+' ':'')+r.amt)}</td></tr>`;
+      if(r.notes) for(const nt of r.notes) html+=`<tr class="note"><td colspan="2">${esc(nt)}</td></tr>`;
+    }
+    if(total) html+=`<tr class="total"><td>${esc(total.label)}</td><td class="num">${esc((total.cur?total.cur+' ':'')+total.amt)}</td></tr>`;
+    html+='</tbody></table>'; return html;
+  }
   function money(n,c){ return n==null?'—':(c?c+' ':'')+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
   const qid=new URLSearchParams(location.search).get('id');
 
@@ -241,9 +288,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     sec('Technical Specifications', para(q.technical_specifications));
     sec('Timeline & Milestones', para(q.timeline_milestones));
+    sec('Payment Schedule', buildPaymentTable(q.payment_schedule));
 
     // Commercial Terms grid — only populated cells render
-    const terms=[['Payment Terms',q.payment_terms],['Payment Schedule',q.payment_schedule],
+    const terms=[['Payment Terms',q.payment_terms],
       ['Delivery Terms',q.delivery_terms],['Delivery Timeline',q.delivery_timeline],
       ['Incoterm',q.incoterm],['Warranty',q.warranty],
       ['Validity',q.expiry_date?('Valid until '+q.expiry_date):null]].filter(t=>t[1]);
