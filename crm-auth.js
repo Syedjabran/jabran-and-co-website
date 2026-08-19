@@ -738,27 +738,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /* ============================================================================
    8 · MODULE TRANSITION — kill the login flash
-   BUILD 2026-07-17.1
+   BUILD 2026-08-19.2  (hardened — removes the reverse race)
 
    ROOT CAUSE, proven from the pages themselves:
      Every CRM module is a separate .html file, so moving between them is a
-     FULL page load. Each page ships <div id="crm-login-box"> with no display
+     FULL page load. Each page ships <div id="crm-login-box"> with NO display
      rule — it paints immediately — and the page's own script only hides it
-     AFTER `await sb.auth.getSession()` resolves. So an already-authenticated
-     person sees the login screen for the length of that round trip, then it
-     vanishes and the module appears. That is the flash. The session was never
-     lost; it just had not been consulted yet.
+     AFTER `await sb.auth.getSession()` (and, in most modules, a FURTHER
+     `await` of a network probe inside boot()) resolves. So an already-
+     authenticated person can see the login screen for the length of those
+     round trips.
 
-   THE STATE MODEL:
-     booting        -> show the brand mark, show NOTHING else
-     authenticated  -> reveal the module the page already built
-     unauthenticated-> reveal the login form
-     Only after the check completes does either surface exist visually.
+   WHY 2026-07-17.1 STILL FLASHED (the reverse race):
+     The previous build hid the login box with `visibility: hidden` while
+     `.jco-booting` was set, then removed `.jco-booting` inside reveal().
+     But reveal() fires the instant `.crm-shell` flips to display:flex OR the
+     5 s safety timeout elapses. On a slow tablet link the module's boot()
+     awaits a network probe BEFORE it runs `loginBox.style.display='none'`,
+     so there is a window where `.jco-booting` is already gone (timeout, or a
+     no-session reveal) while the page has not yet hidden the login box — and
+     because the box has no default display rule, it repaints. That is the
+     flash JB still sees.
 
-   WHY THIS FILE:
-     crm-auth.js is loaded by all 23 CRM pages and runs BEFORE each page's own
-     inline script. One fix, everywhere, no page edits — and no second auth
-     system, which the brief forbids.
+   THE HARDENED STATE MODEL:
+     booting         -> brand mark only; login box is display:none (out of
+                        layout entirely, not merely invisible), shell hidden.
+     authenticated   -> hold the brand mark until .crm-shell / #ma-app is
+                        actually on screen, THEN reveal it.
+     unauthenticated -> WE reveal the login box ourselves (add jco-show-login),
+                        so it never depends on the page's own timing.
+     The login box can therefore never paint unless we have positively
+     confirmed there is no session. No page edits, one fix everywhere.
 ============================================================================ */
 (function () {
   if (window.__jcoBoot) return;
@@ -777,9 +787,16 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Nothing decides what to show until the session is known. */
       /* CRM surfaces and the client portal's, which are named differently.
          Gating only the CRM left the portal flashing its login form. */
-      '.jco-booting #crm-login-box, .jco-booting .crm-shell,',
-      '.jco-booting #crm-logout, .jco-booting #ma-login,',
+      /* Login surfaces are pulled OUT OF LAYOUT (display:none), not merely made
+         invisible — so removing .jco-booting can never repaint them. They are
+         only ever shown when WE add .jco-show-login after confirming no
+         session (see settle()/reveal()). */
+      '.jco-booting #crm-login-box, .jco-booting #ma-login { display: none !important; }',
+      '.jco-booting .crm-shell, .jco-booting #crm-logout,',
       '.jco-booting #ma-app, .jco-booting #ma-logout { visibility: hidden !important; }',
+      /* A confirmed no-session state: reveal the login box regardless of when
+         the page's own script gets around to it. Wins over the page default. */
+      'html.jco-show-login #crm-login-box, html.jco-show-login #ma-login { display: block !important; }',
       '#jco-boot { position: fixed; inset: 0; z-index: 2147483000; background: #0B0F14;',
       '  display: flex; flex-direction: column; align-items: center; justify-content: center;',
       '  gap: 18px; transition: opacity .22s ease; }',
@@ -814,9 +831,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   var settled = false;
-  function reveal() {
+  /* showLogin=true means we positively confirmed NO session and want the login
+     box on screen; we add .jco-show-login so it appears no matter when (or
+     whether) the page's own script gets to loginBox.style.display. */
+  function reveal(showLogin) {
     if (settled) return;
     settled = true;
+    if (showLogin) root.className += ' jco-show-login';
     root.className = root.className.replace(/\s*jco-booting/g, '');
     if (overlay) {
       overlay.className = 'gone';
@@ -828,24 +849,45 @@ document.addEventListener('DOMContentLoaded', function () {
     var s = null;
     try { s = await sb.auth.getSession(); } catch (e) {}
 
-    /* No session: the page will show its login form. Reveal at once — a person
-       who must log in should not wait behind a brand animation. */
-    if (!s || !s.data || !s.data.session) { reveal(); return; }
+    /* No session: reveal the login form ourselves and stop — a person who must
+       log in should not wait behind a brand animation. */
+    if (!s || !s.data || !s.data.session) { reveal(true); return; }
 
-    /* Session exists: hold the brand mark only until the page has actually put
-       its module on screen. No fixed delay, no animation for its own sake —
-       we wait for the real thing and not a millisecond longer. */
+    /* Session exists: hold the brand mark until the page has ACTUALLY put its
+       module on screen. We never reveal the login box on this path, so even if
+       boot() is slow behind its network probe, nothing flashes. If boot()
+       fails/rejects the account it calls signOut(), which fires SIGNED_OUT —
+       handled below to fall back to the login form. */
     var t0 = Date.now();
     (function wait() {
       /* .crm-shell on a CRM module, #ma-app on the client portal. */
       var host = document.querySelector('.crm-shell') || document.getElementById('ma-app');
       var shown = host && host.style.display && host.style.display !== 'none';
-      if (shown || Date.now() - t0 > 5000) { reveal(); return; }
+      if (shown) { reveal(false); return; }
+      /* Safety valve: if the module never renders (e.g. access rejected and the
+         page is about to show its login box), reveal WITH the login form so we
+         never strand the user behind the overlay. */
+      if (Date.now() - t0 > 6000) { reveal(true); return; }
       requestAnimationFrame(wait);
     })();
   }
 
-  function go() { paint(); if (typeof sb === 'undefined') { reveal(); return; } settle(); }
+  /* If the session is torn down mid-boot (boot() rejected the account, idle
+     timeout, or an explicit sign-out), make sure the login form becomes
+     visible even though we started on the authenticated path. */
+  try {
+    if (typeof sb !== 'undefined' && sb.auth && sb.auth.onAuthStateChange) {
+      sb.auth.onAuthStateChange(function (ev) {
+        if (ev === 'SIGNED_OUT') {
+          settled = false;                 /* allow one more reveal */
+          reveal(true);
+        }
+      });
+    }
+  } catch (e) {}
+
+  /* No Supabase client at all: nothing can authenticate — show the login form. */
+  function go() { paint(); if (typeof sb === 'undefined') { reveal(true); return; } settle(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
   else go();
 

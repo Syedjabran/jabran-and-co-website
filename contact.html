@@ -242,6 +242,9 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
         const o = document.createElement('option');
         o.value = s.id; o.textContent = s.name;
         sel.appendChild(o);
+        /* Remember the catch-all service so blank submissions are still
+           attributed instead of piling into "Unattributed". */
+        if (/general business enquiry/i.test(s.name)) window.__jcoGeneralServiceId = s.id;
       });
       /* if the visitor arrived from a service page (?ref=...), preselect it */
       if (ref && REF_LABELS[ref]) {
@@ -271,7 +274,11 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
       submitter_email: v('email'),
       submitter_phone: v('phone'),
       submitter_company: v('company'),
-      service_id: v('service'),
+      /* Never let a lead arrive unattributed: if the visitor did not pick a
+         service, fall back to the "General Business Enquiry" service so the
+         CRM's Leads-by-Service analytics always has a real bucket to count.
+         (GENERAL_SERVICE_ID is resolved from crm_services on load below.) */
+      service_id: v('service') || window.__jcoGeneralServiceId || null,
       requirement_detail: v('message')
     };
 

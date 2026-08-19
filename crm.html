@@ -881,6 +881,12 @@ document.addEventListener('DOMContentLoaded', function () {
     payload.estimated_budget=numval('e-estimated_budget');
     payload.budget_currency=val('e-budget_currency')||'PKR';
     payload.quotation_required=val('e-quotation_required')||false;
+    /* Never store an unattributed lead: default a blank service to the
+       catch-all "General Business Enquiry" so Leads-by-Service always counts it. */
+    if(!payload.service_id){
+      const gen=(servicesCache||[]).find(s=>/general business enquiry/i.test(s.name||''));
+      if(gen) payload.service_id=gen.id;
+    }
     const id=val('e-id'); let error;
     if(id){ ({error} = await sb.from('crm_enquiries').update(payload).eq('id',id)); }
     else {

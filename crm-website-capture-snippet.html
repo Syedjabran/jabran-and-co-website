@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       const o = document.createElement('option');
       o.value = s.id; o.textContent = s.name;
       svcSel.appendChild(o);
+      /* catch-all so blank submissions are still attributed, never "Unattributed" */
+      if (/general business enquiry/i.test(s.name)) window.__jcoGeneralServiceId = s.id;
     });
   }
 
@@ -71,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       submitter_email: g('email'),
       submitter_phone: g('phone'),
       submitter_company: g('company'),
-      service_id: g('service') || null,
+      service_id: g('service') || window.__jcoGeneralServiceId || null,
       country: g('country'),
       requirement_detail: g('message')
     };
