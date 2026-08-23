@@ -277,6 +277,11 @@
       var c = await jco.context();
       if (c && c.is_staff){ showApp(); return; }
     }catch(e){}
+    /* If no staff session after short wait, show login. But don't block other modules. */
+    setTimeout(function(){
+      if ($('em-gate').style.display !== 'none') return;
+      /* User is staff, app is showing. All good. */
+    }, 500);
   }
   $('em-refresh-preview').addEventListener('click', refreshPreview);
   ['em-name','em-ref'].forEach(function(id){ $(id).addEventListener('blur', refreshPreview); });
@@ -292,7 +297,20 @@
       if (c && c.is_staff) showApp(); else st.textContent='This account is not a staff member.';
     }catch(err){ st.textContent=String(err&&err.message?err.message:err); }
   });
-  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate); else gate();
+  /* Try to show the app immediately if a session exists; otherwise show login form. */
+  function bootSequence(){
+    var timer = setTimeout(gate, 40); /* small delay to let jco cache settle */
+    /* If session resolves quickly, clear the timer. */
+    jco.context().then(function(c){
+      clearTimeout(timer);
+      if (c && c.is_staff) showApp();
+      else if ($('em-gate')) $('em-gate').style.display='block';
+    }).catch(function(e){
+      clearTimeout(timer);
+      if ($('em-gate')) $('em-gate').style.display='block';
+    });
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', bootSequence); else bootSequence();
 })();
 </script>
 </body>
