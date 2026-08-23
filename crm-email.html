@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compose Client Email | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root{ --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --gold:#C6A55A;
+         --gold-light:#E4C98A; --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22); }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .em-wrap{max-width:1080px; margin:0 auto; padding:96px 20px 70px;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  .em-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  h1{font-family:'Playfair Display',serif; font-weight:600; font-size:26px; margin:6px 0 0;}
+  .em-grid{display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:26px;}
+  @media (max-width:860px){ .em-grid{grid-template-columns:1fr;} }
+  .card{background:var(--bg-alt); border:1px solid var(--line); padding:22px 22px;}
+  label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em;
+        text-transform:uppercase; color:var(--gold); margin:14px 0 5px;}
+  input,textarea,select{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream);
+        padding:11px 12px; border-radius:3px; font-family:'Inter',sans-serif; font-size:14px; box-sizing:border-box;}
+  textarea{min-height:180px; resize:vertical; line-height:1.6;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .btn{background:var(--gold); color:#0a0a0b; border:none; padding:12px 24px; font-size:12px; letter-spacing:0.08em;
+       text-transform:uppercase; cursor:pointer; font-weight:600; border-radius:3px;}
+  .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
+  .btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .btnrow{display:flex; gap:10px; margin-top:20px; align-items:center;}
+  #em-msg{font-size:13px; margin-left:4px;}
+  .ok{color:#7fc8a9;} .bad{color:#e57368;} .warn{color:var(--gold-light);}
+  .previewbox{border:1px solid var(--line); background:#E9E4DA; height:560px; overflow:auto; border-radius:3px;}
+  .previewbox iframe{width:100%; height:100%; border:0; background:#E9E4DA;}
+  table.log{width:100%; border-collapse:collapse; font-size:12px; margin-top:10px;}
+  table.log th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em;
+       text-transform:uppercase; color:var(--gold); border-bottom:1px solid var(--line); padding:8px 8px;}
+  table.log td{padding:8px 8px; border-bottom:1px solid rgba(198,165,90,0.10); color:var(--cream);}
+  .pill{font-family:'IBM Plex Mono',monospace; font-size:10px; padding:2px 8px; border-radius:10px; letter-spacing:.06em;}
+  .pill.sent{background:rgba(127,200,169,0.14); color:#7fc8a9;} .pill.failed{background:rgba(229,115,104,0.14); color:#e57368;}
+  .hint{font-size:11.5px; color:var(--muted); margin-top:6px; line-height:1.6;}
+  /* auth gate */
+  #em-gate{max-width:380px; margin:150px auto; text-align:center; padding:0 20px;}
+  #em-gate input{margin-bottom:12px;}
+</style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="em-gate">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:24px;">
+  <div class="eyebrow" style="margin-bottom:6px;">Jabran &amp; Co CRM</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:22px;">Secure Sign-In</p>
+  <form id="em-login-form">
+    <input id="em-email" type="email" autocomplete="email" placeholder="Email Address" required>
+    <input id="em-password" type="password" autocomplete="current-password" placeholder="Password" required>
+    <button class="btn" id="em-login-btn" type="submit" style="width:100%;">Log In</button>
+    <p id="em-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<!-- MAIN -->
+<div class="em-wrap" id="em-main" style="display:none;">
+  <a href="crm.html" class="em-mono" style="color:var(--muted); text-decoration:none;">‹ Back to CRM</a>
+  <div class="eyebrow" style="margin-top:14px;">Client Correspondence</div>
+  <h1>Compose Client Email</h1>
+  <p class="hint" style="max-width:640px;">Every message is wrapped in the official Jabran &amp; Co letterhead and sent from
+    <strong style="color:var(--gold-light);">ceo@jabranandco.com</strong>. Replies come straight back to that inbox.</p>
+
+  <div class="em-grid">
+    <!-- LEFT: form -->
+    <div class="card">
+      <label for="em-org">Link to client (optional)</label>
+      <select id="em-org"><option value="">— none / type a recipient below —</option></select>
+
+      <div class="row2">
+        <div>
+          <label for="em-to">To (client email)</label>
+          <input id="em-to" type="email" placeholder="client@example.com" required>
+        </div>
+        <div>
+          <label for="em-cc">Cc (optional)</label>
+          <input id="em-cc" type="text" placeholder="cc@example.com">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label for="em-name">Client name (greeting)</label>
+          <input id="em-name" type="text" placeholder="e.g. Mr. Ahsan">
+        </div>
+        <div>
+          <label for="em-ref">Reference (optional)</label>
+          <input id="em-ref" type="text" placeholder="e.g. JCO-OPP-2026-0006">
+        </div>
+      </div>
+
+      <label for="em-subject">Subject</label>
+      <input id="em-subject" type="text" placeholder="Subject line" required>
+
+      <label for="em-message">Message</label>
+      <textarea id="em-message" placeholder="Type your message. Leave a blank line between paragraphs — the greeting, signature, stamp and footer are added automatically."></textarea>
+
+      <div class="btnrow">
+        <button class="btn" id="em-send" type="button">Send Email</button>
+        <button class="btn ghost" id="em-refresh-preview" type="button">Refresh Preview</button>
+        <span id="em-msg"></span>
+      </div>
+      <p class="hint">Tip: the live preview on the right updates when you tap “Refresh Preview”.</p>
+    </div>
+
+    <!-- RIGHT: preview + log -->
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:10px;">Live Preview</div>
+      <div class="previewbox"><iframe id="em-preview" title="Email preview"></iframe></div>
+
+      <div class="eyebrow" style="margin:22px 0 4px;">Recent Sends</div>
+      <table class="log"><thead>
+        <tr><th>When</th><th>To</th><th>Subject</th><th>Status</th></tr>
+      </thead><tbody id="em-log"><tr><td colspan="4" class="em-mono">Loading…</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+(function(){
+  var ASSETS = "https://www.jabranandco.com";
+  var ICONS  = "https://ops.sjabrankamran.com/dl/email-feature/icons";
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+  function setMsg(t,cls){ var m=$('em-msg'); m.textContent=t||''; m.className=cls||''; }
+
+  function messageToHtml(message){
+    var blocks = String(message||'').replace(/\r\n/g,'\n').split(/\n{2,}/);
+    return blocks.map(function(b){
+      return '<p style="margin:0 0 16px 0;">'+esc(b).replace(/\n/g,'<br>')+'</p>'; }).join('');
+  }
+  function icon(name,href,alt,pad){
+    return '<td style="padding:'+(pad||'0 12px 0 0')+';"><a href="'+href+'" target="_blank">'+
+      '<img src="'+ICONS+'/'+name+'.png" width="26" height="26" alt="'+alt+'" style="display:block;border:0;"></a></td>';
+  }
+  function renderEmail(o){
+    var dateStr = new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Karachi'}).format(new Date());
+    var greeting = o.clientName ? '<p style="margin:0 0 16px 0;">Dear '+esc(o.clientName)+',</p>' : '';
+    var refRow = o.ref ? '<td align="right" style="font-size:12px;color:#8C8577;letter-spacing:0.5px;">Ref: '+esc(o.ref)+'</td>' : '<td align="right"></td>';
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8"></head>'+
+    '<body style="margin:0;padding:0;background:#E9E4DA;">'+
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E9E4DA;"><tr><td align="center" style="padding:22px 10px;">'+
+    '<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:640px;max-width:100%;background:#FFFFFF;border:1px solid #E4DCC9;">'+
+    '<tr><td style="height:4px;background:#C6A55A;font-size:0;line-height:0;">&nbsp;</td></tr>'+
+    '<tr><td style="padding:30px 44px 18px 44px;"><table role="presentation" width="100%"><tr>'+
+      '<td align="left" valign="middle" style="width:60%;"><img src="'+ASSETS+'/logo-full.png" width="162" alt="JABRAN & CO." style="display:block;border:0;width:162px;height:auto;"></td>'+
+      '<td align="right" valign="top" style="width:40%;font-family:Georgia,serif;color:#8A7A55;font-size:10px;letter-spacing:2px;line-height:1.7;text-transform:uppercase;">Where Strategy<br>Meets Execution</td>'+
+    '</tr></table></td></tr>'+
+    '<tr><td style="padding:0 44px;"><div style="border-top:1px solid #EAE2D0;font-size:0;line-height:0;">&nbsp;</div></td></tr>'+
+    '<tr><td style="padding:14px 44px 0 44px;font-family:Arial,sans-serif;font-size:12px;color:#8C8577;"><table width="100%"><tr>'+
+      '<td align="left" style="font-size:12px;color:#8C8577;">'+dateStr+'</td>'+refRow+'</tr></table></td></tr>'+
+    '<tr><td style="padding:18px 44px 8px 44px;font-family:Arial,sans-serif;font-size:14.5px;line-height:1.75;color:#2B2B2B;">'+
+      greeting + messageToHtml(o.message)+
+      '<table role="presentation" width="100%" style="margin-top:22px;"><tr>'+
+        '<td valign="bottom" align="left" style="width:62%;">'+
+          '<p style="margin:0 0 6px 0;font-family:Arial,sans-serif;font-size:14px;color:#2B2B2B;">With warm regards,</p>'+
+          '<img src="'+ASSETS+'/signature-dark.png" width="180" alt="Signature" style="display:block;border:0;width:180px;height:auto;margin:2px 0 6px 0;">'+
+          '<p style="margin:0;font-family:Georgia,serif;font-size:15px;color:#0B0F14;font-weight:bold;">Syed Jabran Ali Kamran</p>'+
+          '<p style="margin:2px 0 0 0;font-family:Arial,sans-serif;font-size:12px;color:#8A7A55;letter-spacing:0.5px;">Founder &amp; Chief Executive &middot; M/S Jabran &amp; Co</p>'+
+        '</td>'+
+        '<td valign="bottom" align="right" style="width:38%;"><img src="'+ASSETS+'/estamp-gold.png" width="100" alt="Seal" style="display:block;border:0;width:100px;height:auto;"></td>'+
+      '</tr></table>'+
+    '</td></tr>'+
+    '<tr><td style="padding:0;"><table role="presentation" width="100%" style="background:#0B0F14;"><tr><td style="padding:18px 44px;font-family:Arial,sans-serif;">'+
+      '<p style="margin:0 0 6px 0;color:#E4C98A;font-size:12px;letter-spacing:1px;">M/S JABRAN &amp; CO</p>'+
+      '<p style="margin:0 0 3px 0;color:#B7B0A4;font-size:11.5px;line-height:1.7;">28, Sector M8, Lake City, Lahore, Pakistan</p>'+
+      '<p style="margin:0 0 3px 0;color:#B7B0A4;font-size:11.5px;line-height:1.7;">PK +92 336 4864345 &middot; UK +44 7400 760630</p>'+
+      '<p style="margin:0 0 12px 0;color:#B7B0A4;font-size:11.5px;line-height:1.7;"><a href="mailto:ceo@jabranandco.com" style="color:#C6A55A;text-decoration:none;">ceo@jabranandco.com</a> &middot; <a href="'+ASSETS+'" style="color:#C6A55A;text-decoration:none;">www.jabranandco.com</a></p>'+
+      '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 12px 0;"><tr>'+
+        icon('linkedin','https://www.linkedin.com/company/jabran-co/','LinkedIn')+
+        icon('facebook','https://www.facebook.com/profile.php?id=61591833980876','Facebook')+
+        icon('instagram','https://www.instagram.com/jabranandco/','Instagram')+
+        icon('google','https://share.google/amYjnjZoikyxjfDTK','Google Business')+
+        icon('youtube','https://www.youtube.com/channel/UCpXz-vvwD996n176U8fy1uQ','YouTube')+
+        icon('x','https://x.com/Syed_Jabran','X','0')+
+      '</tr></table>'+
+      '<p style="margin:0;color:#6E6A61;font-size:10px;letter-spacing:0.6px;">FBR REG. NO. J152588 &middot; FIRM REG. NO. 6634</p>'+
+    '</td></tr></table></td></tr>'+
+    '<tr><td style="padding:12px 44px 20px 44px;font-family:Arial,sans-serif;font-size:10px;line-height:1.6;color:#A49E92;">This message and any attachments are confidential and intended solely for the addressee. Sent on behalf of M/S Jabran &amp; Co.</td></tr>'+
+    '</table></td></tr></table></body></html>';
+  }
+
+  function refreshPreview(){
+    var html = renderEmail({
+      clientName: $('em-name').value.trim(),
+      message: $('em-message').value || 'Your message will appear here…',
+      ref: $('em-ref').value.trim()
+    });
+    var f = $('em-preview'); f.srcdoc = html;
+  }
+
+  // ---- data helpers ----
+  function pickName(row){
+    return row.legal_name || row.trading_name || row.organization_name || row.name || row.company_name || ('Organization '+(row.org_number||row.id||'').toString().slice(0,8));
+  }
+  function pickEmail(row){
+    return row.email || row.primary_email || row.contact_email || row.email_address || '';
+  }
+  var ORGS = {};
+  async function loadOrgs(){
+    try{
+      var r = await sb.from('crm_organizations').select('*').limit(500);
+      if (r.error || !r.data) return;
+      var sel = $('em-org');
+      r.data.sort(function(a,b){ return pickName(a).localeCompare(pickName(b)); });
+      r.data.forEach(function(row){
+        ORGS[row.id]=row;
+        var o=document.createElement('option'); o.value=row.id; o.textContent=pickName(row); sel.appendChild(o);
+      });
+    }catch(e){}
+  }
+  $('em-org') && $('em-org').addEventListener('change', function(){
+    var row = ORGS[this.value]; if(!row) return;
+    var em = pickEmail(row); if(em && !$('em-to').value) $('em-to').value = em;
+    if(!$('em-name').value){ var n = row.primary_contact_name || row.contact_name || ''; if(n) $('em-name').value = n; }
+  });
+
+  async function loadLog(){
+    try{
+      var r = await sb.from('crm_email_log').select('to_email,subject,status,sent_at').order('sent_at',{ascending:false}).limit(8);
+      var tb=$('em-log');
+      if (r.error){ tb.innerHTML='<tr><td colspan="4" class="em-mono bad">Log unavailable (run step-1 SQL).</td></tr>'; return; }
+      if (!r.data || !r.data.length){ tb.innerHTML='<tr><td colspan="4" class="em-mono">No emails sent yet.</td></tr>'; return; }
+      tb.innerHTML = r.data.map(function(x){
+        var d=new Date(x.sent_at); var when=d.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+        var pill='<span class="pill '+(x.status==='sent'?'sent':'failed')+'">'+esc(x.status)+'</span>';
+        return '<tr><td class="em-mono">'+esc(when)+'</td><td>'+esc(x.to_email)+'</td><td>'+esc((x.subject||'').slice(0,40))+'</td><td>'+pill+'</td></tr>';
+      }).join('');
+    }catch(e){}
+  }
+
+  async function send(){
+    var to=$('em-to').value.trim(), subject=$('em-subject').value.trim(), message=$('em-message').value;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)){ setMsg('Enter a valid recipient email.','bad'); return; }
+    if(!subject){ setMsg('Subject is required.','bad'); return; }
+    if(!message.trim()){ setMsg('Message is required.','bad'); return; }
+    $('em-send').disabled=true; setMsg('Sending…','warn');
+    try{
+      var r = await sb.functions.invoke('send-client-email', { body:{
+        to:to, cc:$('em-cc').value.trim(), subject:subject, message:message,
+        client_name:$('em-name').value.trim(), ref:$('em-ref').value.trim(),
+        organization_id: $('em-org').value || null
+      }});
+      if (r.error){
+        var msg=r.error.message||'send failed';
+        try{ if(r.error.context&&r.error.context.json){ var j=await r.error.context.json(); if(j&&j.error) msg=j.error; } }catch(e){}
+        setMsg('✗ '+msg,'bad');
+      } else if (r.data && r.data.ok){
+        setMsg('✓ Sent from '+(r.data.sent_as||'ceo@jabranandco.com'),'ok');
+        $('em-subject').value=''; $('em-message').value=''; refreshPreview(); loadLog();
+      } else {
+        setMsg('✗ '+((r.data&&r.data.error)||'send failed'),'bad');
+      }
+    }catch(e){ setMsg('✗ '+String(e&&e.message?e.message:e),'bad'); }
+    $('em-send').disabled=false;
+  }
+
+  // ---- boot ----
+  async function showApp(){
+    $('em-gate').style.display='none'; $('em-main').style.display='block';
+    refreshPreview(); loadOrgs(); loadLog();
+  }
+  async function gate(){
+    try{
+      var c = await jco.context();
+      if (c && c.is_staff){ showApp(); return; }
+    }catch(e){}
+  }
+  $('em-refresh-preview').addEventListener('click', refreshPreview);
+  ['em-name','em-ref'].forEach(function(id){ $(id).addEventListener('blur', refreshPreview); });
+  $('em-send').addEventListener('click', send);
+  $('em-login-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st=$('em-login-status'); st.textContent='';
+    try{
+      var r = await sb.auth.signInWithPassword({ email:$('em-email').value.trim(), password:$('em-password').value });
+      if (r.error){ st.textContent = r.error.message||'Sign-in failed.'; return; }
+      jco.clearContext && jco.clearContext();
+      var c = await jco.context();
+      if (c && c.is_staff) showApp(); else st.textContent='This account is not a staff member.';
+    }catch(err){ st.textContent=String(err&&err.message?err.message:err); }
+  });
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate); else gate();
+})();
+</script>
+</body>
+</html>
