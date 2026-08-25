@@ -38,17 +38,39 @@
   .qv-sec{margin-bottom:34px;}
   .qv-sec h2{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:var(--gold); font-weight:500; border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:14px;}
   .qv-sec .qv-num{color:var(--muted); margin-right:10px;}
-  .qv-sec p{font-size:13.5px; white-space:pre-line;}
+  /* Long-form quotation copy: book-style alignment in both the portal and PDF. */
+  .qv-sec p{
+    font-size:13.5px;
+    white-space:pre-line;
+    text-align:justify;
+    text-align-last:left;
+    hyphens:auto;
+    overflow-wrap:break-word;
+  }
   table.qv-items{width:100%; border-collapse:collapse; font-size:13px;}
   .qv-items th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--gold); font-family:'IBM Plex Mono',monospace; font-weight:500; padding:10px; border-bottom:1px solid var(--line);}
   .qv-items td{padding:11px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .qv-items tbody td:first-child{
+    text-align:justify;
+    text-align-last:left;
+    hyphens:auto;
+    overflow-wrap:break-word;
+  }
   .qv-items .num{text-align:right; font-family:'IBM Plex Mono',monospace;}
   .qv-totals{margin-left:auto; max-width:330px; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:16px;}
   .qv-totals div{display:flex; justify-content:space-between; padding:4px 0;}
   .qv-totals .grand{border-top:1px solid var(--gold); margin-top:6px; padding-top:10px; color:var(--gold-light); font-size:15px;}
   .qv-terms-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 28px;}
   .qv-terms-grid div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:3px;}
-  .qv-terms-grid div span{font-size:13px;}
+  .qv-terms-grid div span{
+    display:block;
+    font-size:13px;
+    white-space:pre-line;
+    text-align:justify;
+    text-align-last:left;
+    hyphens:auto;
+    overflow-wrap:break-word;
+  }
   /* Payment Schedule table */
   table.qv-pay{width:100%; border-collapse:collapse; font-size:13px; margin-top:2px;}
   .qv-pay td{padding:9px 10px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
