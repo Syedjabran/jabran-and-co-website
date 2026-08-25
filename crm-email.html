@@ -26,6 +26,29 @@
         padding:11px 12px; border-radius:3px; font-family:'Inter',sans-serif; font-size:14px; box-sizing:border-box;}
   textarea{min-height:180px; resize:vertical; line-height:1.6;}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .field-head{display:flex; align-items:end; justify-content:space-between; gap:12px; margin-top:14px;}
+  .field-head label{margin:0;}
+  .mini-btn{background:transparent; border:1px solid rgba(198,165,90,0.38); color:var(--gold-light);
+       padding:6px 10px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.08em;
+       text-transform:uppercase; cursor:pointer; border-radius:3px; white-space:nowrap;}
+  .mini-btn:hover,.mini-btn:focus-visible{border-color:var(--gold); outline:none;}
+  .mini-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .em-cc-stack{display:grid; gap:8px; margin-top:6px;}
+  .em-cc-row{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center;}
+  .em-remove{width:38px; min-height:42px; padding:0; background:transparent; border:1px solid rgba(229,115,104,.45);
+       color:#e57368; border-radius:3px; cursor:pointer; font-size:17px; line-height:1;}
+  .em-remove:hover,.em-remove:focus-visible{border-color:#e57368; outline:none;}
+  .em-attach-box{margin-top:6px; border:1px dashed rgba(198,165,90,.38); background:rgba(11,15,20,.5);
+       padding:12px; border-radius:3px;}
+  #em-attachments{padding:8px; font-size:12px; color:var(--muted);}
+  #em-attachments::file-selector-button{background:transparent; border:1px solid var(--line); color:var(--gold-light);
+       padding:7px 10px; margin-right:10px; border-radius:3px; cursor:pointer;}
+  .em-file-list{display:grid; gap:7px; margin-top:10px;}
+  .em-file-empty{font-size:12px; color:var(--muted);}
+  .em-file-row{display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:9px; align-items:center;
+       padding:8px 9px; border:1px solid rgba(198,165,90,.13); background:var(--bg-alt); border-radius:3px;}
+  .em-file-name{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px;}
+  .em-file-size{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); white-space:nowrap;}
   .btn{background:var(--gold); color:#0a0a0b; border:none; padding:12px 24px; font-size:12px; letter-spacing:0.08em;
        text-transform:uppercase; cursor:pointer; font-weight:600; border-radius:3px;}
   .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
@@ -76,16 +99,15 @@
       <label for="em-org">Link to client (optional)</label>
       <select id="em-org"><option value="">— none / type a recipient below —</option></select>
 
-      <div class="row2">
-        <div>
-          <label for="em-to">To (client email)</label>
-          <input id="em-to" type="email" placeholder="client@example.com" required>
-        </div>
-        <div>
-          <label for="em-cc">Cc (optional)</label>
-          <input id="em-cc" type="text" placeholder="cc@example.com">
-        </div>
+      <label for="em-to">To (client email)</label>
+      <input id="em-to" type="email" placeholder="client@example.com" autocomplete="email" required>
+
+      <div class="field-head">
+        <label id="em-cc-label">Cc recipients (optional)</label>
+        <button class="mini-btn" id="em-add-cc" type="button">+ Add Cc</button>
       </div>
+      <div class="em-cc-stack" id="em-cc-list" aria-labelledby="em-cc-label"></div>
+      <p class="hint">Add up to 10 Cc recipients. You can also paste comma- or semicolon-separated addresses.</p>
 
       <div class="row2">
         <div>
@@ -103,6 +125,19 @@
 
       <label for="em-message">Message</label>
       <textarea id="em-message" placeholder="Type your message. Leave a blank line between paragraphs — the greeting, signature, stamp and footer are added automatically."></textarea>
+
+      <div class="field-head">
+        <label for="em-attachments">Attachments (optional)</label>
+        <span class="em-mono">Private CRM storage</span>
+      </div>
+      <div class="em-attach-box">
+        <input id="em-attachments" type="file" multiple
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.webp,.csv,.txt,.zip">
+        <div class="em-file-list" id="em-file-list" aria-live="polite">
+          <span class="em-file-empty">No files selected.</span>
+        </div>
+      </div>
+      <p class="hint">Up to 5 files, 8 MB each and 18 MB total. Files upload to the private <span class="em-mono">crm-private</span> bucket only when you send.</p>
 
       <div class="btnrow">
         <button class="btn" id="em-send" type="button">Send Email</button>
@@ -131,10 +166,138 @@
 (function(){
   var ASSETS = "https://www.jabranandco.com";
   var ICONS  = "https://ops.sjabrankamran.com/dl/email-feature/icons";
+  var EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  var MAX_CC = 10, MAX_FILES = 5, MAX_FILE_BYTES = 8*1024*1024, MAX_TOTAL_BYTES = 18*1024*1024;
+  var ALLOWED_EXTENSIONS = ['pdf','doc','docx','xls','xlsx','ppt','pptx','png','jpg','jpeg','webp','csv','txt','zip'];
+  var MIME_BY_EXTENSION = {
+    pdf:'application/pdf', doc:'application/msword',
+    docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls:'application/vnd.ms-excel', xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt:'application/vnd.ms-powerpoint', pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg', webp:'image/webp',
+    csv:'text/csv', txt:'text/plain', zip:'application/zip'
+  };
+  var SELECTED_FILES = [];
   var $ = function(id){ return document.getElementById(id); };
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
     return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
   function setMsg(t,cls){ var m=$('em-msg'); m.textContent=t||''; m.className=cls||''; }
+
+  function splitEmails(value){
+    return String(value||'').split(/[;,]/).map(function(x){ return x.trim(); }).filter(Boolean);
+  }
+  function syncCcControls(){
+    var rows=[].slice.call($('em-cc-list').querySelectorAll('.em-cc-row'));
+    $('em-add-cc').disabled=rows.length>=MAX_CC;
+    rows.forEach(function(row,i){
+      var input=row.querySelector('input');
+      input.id=i===0?'em-cc':'em-cc-'+(i+1);
+      input.setAttribute('aria-label','Cc email '+(i+1));
+      row.querySelector('button').setAttribute('aria-label','Remove Cc email '+(i+1));
+    });
+  }
+  function addCcRow(value){
+    var list=$('em-cc-list');
+    if(list.querySelectorAll('.em-cc-row').length>=MAX_CC) return;
+    var row=document.createElement('div'); row.className='em-cc-row';
+    var input=document.createElement('input'); input.type='email'; input.className='em-cc';
+    input.placeholder='cc@example.com'; input.autocomplete='email'; input.value=value||'';
+    var remove=document.createElement('button'); remove.type='button'; remove.className='em-remove';
+    remove.textContent='×';
+    remove.addEventListener('click',function(){
+      var rows=list.querySelectorAll('.em-cc-row');
+      if(rows.length===1){ input.value=''; input.focus(); }
+      else row.remove();
+      syncCcControls();
+    });
+    row.appendChild(input); row.appendChild(remove); list.appendChild(row); syncCcControls();
+  }
+  function collectCc(to){
+    var all=[];
+    $('em-cc-list').querySelectorAll('.em-cc').forEach(function(input){ all=all.concat(splitEmails(input.value)); });
+    if(all.length>MAX_CC) return {error:'A maximum of '+MAX_CC+' Cc recipients is allowed.'};
+    var seen={}, emails=[];
+    for(var i=0;i<all.length;i++){
+      if(!EMAIL_RE.test(all[i])) return {error:'Invalid Cc email: '+all[i]};
+      var key=all[i].toLowerCase();
+      if(key===String(to||'').toLowerCase()) return {error:'The main recipient is already listed in Cc.'};
+      if(!seen[key]){ seen[key]=true; emails.push(all[i]); }
+    }
+    return {emails:emails};
+  }
+  function resetCc(){ $('em-cc-list').innerHTML=''; addCcRow(''); }
+
+  function extensionOf(name){ var m=String(name||'').toLowerCase().match(/\.([a-z0-9]+)$/); return m?m[1]:''; }
+  function safeFileName(name){
+    var clean=String(name||'attachment').replace(/[^A-Za-z0-9._()\- ]+/g,'_').replace(/\s+/g,'_');
+    return clean.slice(-120)||'attachment';
+  }
+  function formatBytes(bytes){
+    if(bytes<1024) return bytes+' B';
+    if(bytes<1024*1024) return (bytes/1024).toFixed(1)+' KB';
+    return (bytes/(1024*1024)).toFixed(1)+' MB';
+  }
+  function renderFiles(){
+    var list=$('em-file-list'); list.innerHTML='';
+    if(!SELECTED_FILES.length){
+      var empty=document.createElement('span'); empty.className='em-file-empty'; empty.textContent='No files selected.';
+      list.appendChild(empty); return;
+    }
+    SELECTED_FILES.forEach(function(file,index){
+      var row=document.createElement('div'); row.className='em-file-row';
+      var name=document.createElement('span'); name.className='em-file-name'; name.textContent=file.name; name.title=file.name;
+      var size=document.createElement('span'); size.className='em-file-size'; size.textContent=formatBytes(file.size);
+      var remove=document.createElement('button'); remove.type='button'; remove.className='em-remove'; remove.textContent='×';
+      remove.setAttribute('aria-label','Remove attachment '+file.name);
+      remove.addEventListener('click',function(){ SELECTED_FILES.splice(index,1); renderFiles(); });
+      row.appendChild(name); row.appendChild(size); row.appendChild(remove); list.appendChild(row);
+    });
+  }
+  function addFiles(fileList){
+    var incoming=[].slice.call(fileList||[]), combined=SELECTED_FILES.slice();
+    incoming.forEach(function(file){
+      var duplicate=combined.some(function(x){ return x.name===file.name&&x.size===file.size&&x.lastModified===file.lastModified; });
+      if(!duplicate) combined.push(file);
+    });
+    if(combined.length>MAX_FILES){ setMsg('Select no more than '+MAX_FILES+' attachments.','bad'); return; }
+    var total=0;
+    for(var i=0;i<combined.length;i++){
+      var ext=extensionOf(combined[i].name);
+      if(ALLOWED_EXTENSIONS.indexOf(ext)===-1){ setMsg('File type not allowed: '+combined[i].name,'bad'); return; }
+      if(combined[i].size>MAX_FILE_BYTES){ setMsg(combined[i].name+' exceeds the 8 MB per-file limit.','bad'); return; }
+      total+=combined[i].size;
+    }
+    if(total>MAX_TOTAL_BYTES){ setMsg('Attachments exceed the 18 MB total limit.','bad'); return; }
+    SELECTED_FILES=combined; setMsg('',''); renderFiles();
+  }
+  async function removeUploads(files){
+    var paths=(files||[]).map(function(x){return x.path;}).filter(Boolean);
+    if(!paths.length) return;
+    try{ await sb.storage.from('crm-private').remove(paths); }catch(e){}
+  }
+  async function uploadAttachments(){
+    if(!SELECTED_FILES.length) return [];
+    var s=await sb.auth.getSession();
+    var user=s&&s.data&&s.data.session&&s.data.session.user;
+    if(!user||!user.id) throw new Error('Your staff session expired. Sign in again before uploading.');
+    var batch=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+'_'+Math.random().toString(16).slice(2));
+    var uploaded=[];
+    for(var i=0;i<SELECTED_FILES.length;i++){
+      var file=SELECTED_FILES[i], ext=extensionOf(file.name);
+      setMsg('Uploading attachment '+(i+1)+' of '+SELECTED_FILES.length+'…','warn');
+      var path='attachments/email/'+user.id+'/'+batch+'/'+String(i+1).padStart(2,'0')+'_'+safeFileName(file.name);
+      var up=await sb.storage.from('crm-private').upload(path,file,{
+        contentType:file.type||MIME_BY_EXTENSION[ext]||'application/octet-stream', cacheControl:'3600', upsert:false
+      });
+      if(up.error){ await removeUploads(uploaded); throw new Error('Attachment upload failed: '+up.error.message); }
+      uploaded.push({bucket:'crm-private',path:path,name:file.name,type:file.type||MIME_BY_EXTENSION[ext],size:file.size});
+    }
+    return uploaded;
+  }
+  function setComposerBusy(busy){
+    $('em-send').disabled=busy; $('em-add-cc').disabled=busy; $('em-attachments').disabled=busy;
+    document.querySelectorAll('.em-remove').forEach(function(b){b.disabled=busy;});
+  }
 
   function messageToHtml(message){
     var blocks = String(message||'').replace(/\r\n/g,'\n').split(/\n{2,}/);
@@ -243,28 +406,39 @@
 
   async function send(){
     var to=$('em-to').value.trim(), subject=$('em-subject').value.trim(), message=$('em-message').value;
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)){ setMsg('Enter a valid recipient email.','bad'); return; }
+    if(!EMAIL_RE.test(to)){ setMsg('Enter a valid recipient email.','bad'); return; }
+    var ccResult=collectCc(to);
+    if(ccResult.error){ setMsg(ccResult.error,'bad'); return; }
     if(!subject){ setMsg('Subject is required.','bad'); return; }
     if(!message.trim()){ setMsg('Message is required.','bad'); return; }
-    $('em-send').disabled=true; setMsg('Sending…','warn');
+    var uploaded=[];
+    setComposerBusy(true); setMsg(SELECTED_FILES.length?'Preparing attachments…':'Sending…','warn');
     try{
+      uploaded=await uploadAttachments();
+      setMsg('Sending'+(uploaded.length?' with '+uploaded.length+' attachment'+(uploaded.length===1?'':'s'):'')+'…','warn');
       var r = await sb.functions.invoke('send-client-email', { body:{
-        to:to, cc:$('em-cc').value.trim(), subject:subject, message:message,
+        to:to, cc:ccResult.emails.join(', '), subject:subject, message:message,
         client_name:$('em-name').value.trim(), ref:$('em-ref').value.trim(),
-        organization_id: $('em-org').value || null
+        organization_id: $('em-org').value || null, attachments:uploaded
       }});
       if (r.error){
         var msg=r.error.message||'send failed';
         try{ if(r.error.context&&r.error.context.json){ var j=await r.error.context.json(); if(j&&j.error) msg=j.error; } }catch(e){}
+        await removeUploads(uploaded);
         setMsg('✗ '+msg,'bad');
       } else if (r.data && r.data.ok){
-        setMsg('✓ Sent from '+(r.data.sent_as||'ceo@jabranandco.com'),'ok');
-        $('em-subject').value=''; $('em-message').value=''; refreshPreview(); loadLog();
+        setMsg('✓ Sent'+(uploaded.length?' with '+uploaded.length+' attachment'+(uploaded.length===1?'':'s'):'')+' from '+(r.data.sent_as||'ceo@jabranandco.com'),'ok');
+        $('em-subject').value=''; $('em-message').value=''; $('em-attachments').value='';
+        SELECTED_FILES=[]; renderFiles(); resetCc(); refreshPreview(); loadLog();
       } else {
+        await removeUploads(uploaded);
         setMsg('✗ '+((r.data&&r.data.error)||'send failed'),'bad');
       }
-    }catch(e){ setMsg('✗ '+String(e&&e.message?e.message:e),'bad'); }
-    $('em-send').disabled=false;
+    }catch(e){
+      await removeUploads(uploaded);
+      setMsg('✗ '+String(e&&e.message?e.message:e),'bad');
+    }
+    setComposerBusy(false); syncCcControls();
   }
 
   // ---- boot ----
@@ -283,6 +457,9 @@
       /* User is staff, app is showing. All good. */
     }, 500);
   }
+  $('em-add-cc').addEventListener('click',function(){ addCcRow(''); });
+  $('em-attachments').addEventListener('change',function(){ addFiles(this.files); this.value=''; });
+  resetCc(); renderFiles();
   $('em-refresh-preview').addEventListener('click', refreshPreview);
   ['em-name','em-ref'].forEach(function(id){ $(id).addEventListener('blur', refreshPreview); });
   $('em-send').addEventListener('click', send);
