@@ -30,7 +30,8 @@
        text-transform:uppercase; cursor:pointer; font-weight:600; border-radius:3px;}
   .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--gold-light);}
   .btn:disabled{opacity:0.5; cursor:not-allowed;}
-  .btnrow{display:flex; gap:10px; margin-top:20px; align-items:center;}
+  .btn.tiny{padding:7px 12px; font-size:10.5px; letter-spacing:0.06em;}
+  .btnrow{display:flex; gap:10px; margin-top:20px; align-items:center; flex-wrap:wrap;}
   #em-msg{font-size:13px; margin-left:4px;}
   .ok{color:#7fc8a9;} .bad{color:#e57368;} .warn{color:var(--gold-light);}
   .previewbox{border:1px solid var(--line); background:#E9E4DA; height:560px; overflow:auto; border-radius:3px;}
@@ -42,6 +43,34 @@
   .pill{font-family:'IBM Plex Mono',monospace; font-size:10px; padding:2px 8px; border-radius:10px; letter-spacing:.06em;}
   .pill.sent{background:rgba(127,200,169,0.14); color:#7fc8a9;} .pill.failed{background:rgba(229,115,104,0.14); color:#e57368;}
   .hint{font-size:11.5px; color:var(--muted); margin-top:6px; line-height:1.6;}
+  /* multi-recipient rows */
+  .cc-row{display:flex; gap:8px; align-items:center; margin-bottom:8px;}
+  .cc-row input{flex:1;}
+  .mini-x{flex:0 0 auto; background:transparent; border:1px solid var(--line); color:var(--muted);
+        width:36px; height:38px; border-radius:3px; cursor:pointer; font-size:16px; line-height:1;}
+  .mini-x:hover{color:#e57368; border-color:rgba(229,115,104,0.5);}
+  /* attachments */
+  .att-controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:5px;}
+  .att-list{margin-top:10px; display:flex; flex-direction:column; gap:7px;}
+  .att-chip{display:flex; align-items:center; gap:10px; background:var(--bg); border:1px solid var(--line);
+        border-radius:3px; padding:8px 10px;}
+  .att-chip .nm{flex:1; min-width:0; font-size:12.5px; color:var(--cream); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .att-chip .sz{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); flex:0 0 auto;}
+  .att-chip .src{font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+        padding:1px 6px; border-radius:8px; flex:0 0 auto;}
+  .att-chip .src.dev{background:rgba(198,165,90,0.14); color:var(--gold-light);}
+  .att-chip .src.crm{background:rgba(127,200,169,0.14); color:#7fc8a9;}
+  .att-meter{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted);}
+  .att-meter.over{color:#e57368;}
+  /* CRM document picker modal */
+  #em-picker{position:fixed; inset:0; background:rgba(6,9,12,0.72); display:none; z-index:50; padding:40px 16px; overflow:auto;}
+  #em-picker .pk{max-width:640px; margin:0 auto; background:var(--bg-alt); border:1px solid var(--line); border-radius:4px; padding:22px;}
+  #em-picker .pk-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+  #em-picker input.pk-search{margin-bottom:12px;}
+  .pk-item{display:flex; align-items:center; gap:10px; padding:9px 8px; border-bottom:1px solid rgba(198,165,90,0.10);}
+  .pk-item .nm{flex:1; min-width:0; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .pk-item .mod{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--muted); flex:0 0 auto;}
+  .pk-item .sz{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); flex:0 0 auto;}
   /* auth gate */
   #em-gate{max-width:380px; margin:150px auto; text-align:center; padding:0 20px;}
   #em-gate input{margin-bottom:12px;}
@@ -76,16 +105,20 @@
       <label for="em-org">Link to client (optional)</label>
       <select id="em-org"><option value="">— none / type a recipient below —</option></select>
 
-      <div class="row2">
-        <div>
-          <label for="em-to">To (client email)</label>
-          <input id="em-to" type="email" placeholder="client@example.com" required>
-        </div>
-        <div>
-          <label for="em-cc">Cc (optional)</label>
-          <input id="em-cc" type="text" placeholder="cc@example.com">
+      <label for="em-to">To (client email)</label>
+      <input id="em-to" type="email" placeholder="client@example.com" required>
+
+      <label>Cc (optional) — add as many as you need</label>
+      <div id="em-cc-list">
+        <div class="cc-row">
+          <input class="em-cc-input" type="text" placeholder="cc@example.com" autocomplete="off">
+          <button type="button" class="mini-x" title="Remove" aria-label="Remove Cc">&times;</button>
         </div>
       </div>
+      <button type="button" class="btn ghost tiny" id="em-cc-add" style="margin-top:2px;">+ Add Cc</button>
+
+      <label for="em-bcc">Bcc (optional)</label>
+      <input id="em-bcc" type="text" placeholder="bcc@example.com, another@example.com" autocomplete="off">
 
       <div class="row2">
         <div>
@@ -104,12 +137,24 @@
       <label for="em-message">Message</label>
       <textarea id="em-message" placeholder="Type your message. Leave a blank line between paragraphs — the greeting, signature, stamp and footer are added automatically."></textarea>
 
+      <label>Attachments (optional)</label>
+      <div class="att-controls">
+        <label class="btn ghost tiny" for="em-file" style="margin:0;">+ Add files from device</label>
+        <input id="em-file" type="file" multiple style="display:none;">
+        <button type="button" class="btn ghost tiny" id="em-crm-pick">+ Attach CRM document</button>
+        <span id="em-att-size" class="att-meter"></span>
+      </div>
+      <div class="att-list" id="em-att-list"></div>
+      <p class="hint">Attach quotations, invoices or any file (PDF, images, Office docs). Device files and stored CRM
+        documents are both supported. Total size limit ~20 MB per email.</p>
+
       <div class="btnrow">
         <button class="btn" id="em-send" type="button">Send Email</button>
         <button class="btn ghost" id="em-refresh-preview" type="button">Refresh Preview</button>
         <span id="em-msg"></span>
       </div>
-      <p class="hint">Tip: the live preview on the right updates when you tap “Refresh Preview”.</p>
+      <p class="hint">Tip: the live preview on the right updates when you tap “Refresh Preview”. Attachments are delivered as
+        real email attachments (they do not appear inside the letterhead preview).</p>
     </div>
 
     <!-- RIGHT: preview + log -->
@@ -125,17 +170,148 @@
   </div>
 </div>
 
+<!-- CRM DOCUMENT PICKER -->
+<div id="em-picker">
+  <div class="pk">
+    <div class="pk-head">
+      <div class="eyebrow">Attach a stored CRM document</div>
+      <button type="button" class="btn ghost tiny" id="em-pk-close">Close</button>
+    </div>
+    <input type="text" class="pk-search" id="em-pk-search" placeholder="Filter by file name, title or module…">
+    <div id="em-pk-list"><p class="em-mono">Loading documents…</p></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script>
 (function(){
   var ASSETS = "https://www.jabranandco.com";
   var ICONS  = "https://ops.sjabrankamran.com/dl/email-feature/icons";
+  var MAX_TOTAL = 20 * 1024 * 1024; // ~20 MB total attachment budget
   var $ = function(id){ return document.getElementById(id); };
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
     return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
   function setMsg(t,cls){ var m=$('em-msg'); m.textContent=t||''; m.className=cls||''; }
+  function fmtSize(n){ n=Number(n)||0; if(n<1024) return n+' B'; if(n<1048576) return (n/1024).toFixed(0)+' KB'; return (n/1048576).toFixed(1)+' MB'; }
+  var EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  function splitEmails(s){ return String(s||'').split(/[,;\s]+/).map(function(x){return x.trim();}).filter(Boolean); }
 
+  /* ---------- recipients (multi Cc + Bcc) ---------- */
+  function addCcRow(val){
+    var list=$('em-cc-list');
+    var row=document.createElement('div'); row.className='cc-row';
+    var inp=document.createElement('input'); inp.type='text'; inp.className='em-cc-input';
+    inp.placeholder='cc@example.com'; inp.autocomplete='off'; if(val) inp.value=val;
+    var x=document.createElement('button'); x.type='button'; x.className='mini-x'; x.title='Remove'; x.innerHTML='&times;';
+    x.addEventListener('click', function(){ row.remove(); if(!$('em-cc-list').querySelector('.cc-row')) addCcRow(''); });
+    row.appendChild(inp); row.appendChild(x); list.appendChild(row); return inp;
+  }
+  function collectCc(){
+    var out=[], bad=[];
+    document.querySelectorAll('.em-cc-input').forEach(function(inp){
+      splitEmails(inp.value).forEach(function(e){
+        if(EMAIL_RE.test(e)){ if(out.indexOf(e)===-1) out.push(e); } else bad.push(e);
+      });
+    });
+    return { list:out, bad:bad };
+  }
+  function collectBcc(){
+    var out=[], bad=[];
+    splitEmails($('em-bcc').value).forEach(function(e){ if(EMAIL_RE.test(e)){ if(out.indexOf(e)===-1) out.push(e);} else bad.push(e); });
+    return { list:out, bad:bad };
+  }
+
+  /* ---------- attachments ---------- */
+  var attachments = []; // {kind:'inline', filename, mimeType, size, contentBase64} | {kind:'crm', filename, size, attachment_id, file_path, mimeType}
+  function totalSize(){ return attachments.reduce(function(a,x){ return a + (Number(x.size)||0); }, 0); }
+  function renderAtt(){
+    var box=$('em-att-list'); box.innerHTML='';
+    attachments.forEach(function(a, i){
+      var chip=document.createElement('div'); chip.className='att-chip';
+      chip.innerHTML='<span class="src '+(a.kind==='crm'?'crm':'dev')+'">'+(a.kind==='crm'?'CRM':'Device')+'</span>'+
+        '<span class="nm">'+esc(a.filename)+'</span>'+
+        '<span class="sz">'+fmtSize(a.size)+'</span>';
+      var x=document.createElement('button'); x.type='button'; x.className='mini-x'; x.title='Remove'; x.innerHTML='&times;';
+      x.addEventListener('click', function(){ attachments.splice(i,1); renderAtt(); });
+      chip.appendChild(x); box.appendChild(chip);
+    });
+    var t=totalSize(), m=$('em-att-size');
+    if(!attachments.length){ m.textContent=''; m.className='att-meter'; }
+    else { m.textContent=attachments.length+' file'+(attachments.length>1?'s':'')+' · '+fmtSize(t)+' / 20 MB';
+           m.className='att-meter'+(t>MAX_TOTAL?' over':''); }
+  }
+  function readFileB64(file){
+    return new Promise(function(res,rej){
+      var fr=new FileReader();
+      fr.onload=function(){ var s=String(fr.result||''); var i=s.indexOf(','); res(i>=0?s.slice(i+1):s); };
+      fr.onerror=function(){ rej(fr.error||new Error('read failed')); };
+      fr.readAsDataURL(file);
+    });
+  }
+  async function addDeviceFiles(fileList){
+    var files=Array.prototype.slice.call(fileList||[]);
+    for(var k=0;k<files.length;k++){
+      var f=files[k];
+      if(totalSize()+f.size > MAX_TOTAL){ setMsg('Attachment budget exceeded (~20 MB). "'+f.name+'" was skipped.','bad'); continue; }
+      try{
+        var b64=await readFileB64(f);
+        attachments.push({ kind:'inline', filename:f.name, mimeType:f.type||'application/octet-stream', size:f.size, contentBase64:b64 });
+        renderAtt();
+      }catch(e){ setMsg('Could not read "'+f.name+'".','bad'); }
+    }
+  }
+  $('em-file').addEventListener('change', function(){ addDeviceFiles(this.files); this.value=''; });
+
+  /* ---------- CRM document picker ---------- */
+  var CRM_DOCS=[];
+  function renderPk(filter){
+    var box=$('em-pk-list'); var q=String(filter||'').toLowerCase();
+    var rows=CRM_DOCS.filter(function(d){
+      if(!q) return true;
+      return (String(d.file_name||'')+' '+String(d.document_title||'')+' '+String(d.module||'')).toLowerCase().indexOf(q)>=0;
+    });
+    if(!rows.length){ box.innerHTML='<p class="em-mono">No matching documents.</p>'; return; }
+    box.innerHTML='';
+    rows.forEach(function(d){
+      var already = attachments.some(function(a){ return a.kind==='crm' && a.attachment_id===d.id; });
+      var it=document.createElement('div'); it.className='pk-item';
+      it.innerHTML='<span class="mod">'+esc(d.module||'')+'</span>'+
+        '<span class="nm" title="'+esc(d.document_title||d.file_name)+'">'+esc(d.file_name||d.document_title||'document')+'</span>'+
+        '<span class="sz">'+fmtSize(d.size_bytes)+'</span>';
+      var b=document.createElement('button'); b.type='button'; b.className='btn ghost tiny';
+      b.textContent= already?'Added':'Attach'; b.disabled=!!already;
+      b.addEventListener('click', function(){
+        if(totalSize()+(Number(d.size_bytes)||0) > MAX_TOTAL){ setMsg('Attachment budget exceeded (~20 MB).','bad'); return; }
+        attachments.push({ kind:'crm', filename:d.file_name||d.document_title||'document', size:d.size_bytes||0,
+          attachment_id:d.id, file_path:d.file_path, mimeType:d.content_type||'application/octet-stream' });
+        renderAtt(); b.textContent='Added'; b.disabled=true;
+      });
+      it.appendChild(b); box.appendChild(it);
+    });
+  }
+  async function openPicker(){
+    $('em-picker').style.display='block';
+    $('em-pk-search').value='';
+    if(CRM_DOCS.length){ renderPk(''); return; }
+    $('em-pk-list').innerHTML='<p class="em-mono">Loading documents…</p>';
+    try{
+      var r = await sb.from('crm_attachments')
+        .select('id,module,record_id,file_path,file_name,document_title,content_type,size_bytes,is_current_version,deleted_at,created_at')
+        .is('deleted_at', null)
+        .order('created_at',{ascending:false})
+        .limit(100);
+      if(r.error){ $('em-pk-list').innerHTML='<p class="em-mono bad">Could not load documents: '+esc(r.error.message)+'</p>'; return; }
+      CRM_DOCS=(r.data||[]).filter(function(d){ return d.is_current_version!==false; });
+      renderPk('');
+    }catch(e){ $('em-pk-list').innerHTML='<p class="em-mono bad">Could not load documents.</p>'; }
+  }
+  $('em-crm-pick').addEventListener('click', openPicker);
+  $('em-pk-close').addEventListener('click', function(){ $('em-picker').style.display='none'; });
+  $('em-picker').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+  $('em-pk-search').addEventListener('input', function(){ renderPk(this.value); });
+
+  /* ---------- letterhead preview render ---------- */
   function messageToHtml(message){
     var blocks = String(message||'').replace(/\r\n/g,'\n').split(/\n{2,}/);
     return blocks.map(function(b){
@@ -243,23 +419,37 @@
 
   async function send(){
     var to=$('em-to').value.trim(), subject=$('em-subject').value.trim(), message=$('em-message').value;
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)){ setMsg('Enter a valid recipient email.','bad'); return; }
+    if(!EMAIL_RE.test(to)){ setMsg('Enter a valid recipient email.','bad'); return; }
     if(!subject){ setMsg('Subject is required.','bad'); return; }
     if(!message.trim()){ setMsg('Message is required.','bad'); return; }
-    $('em-send').disabled=true; setMsg('Sending…','warn');
+    var cc=collectCc(), bcc=collectBcc();
+    if(cc.bad.length){ setMsg('Invalid Cc address: '+cc.bad[0],'bad'); return; }
+    if(bcc.bad.length){ setMsg('Invalid Bcc address: '+bcc.bad[0],'bad'); return; }
+    if(totalSize() > MAX_TOTAL){ setMsg('Attachments exceed the ~20 MB limit. Remove a file and retry.','bad'); return; }
+
+    var payloadAtt = attachments.map(function(a){
+      return a.kind==='crm'
+        ? { filename:a.filename, attachment_id:a.attachment_id, file_path:a.file_path }
+        : { filename:a.filename, mimeType:a.mimeType, contentBase64:a.contentBase64 };
+    });
+
+    $('em-send').disabled=true; setMsg(payloadAtt.length?'Sending with '+payloadAtt.length+' attachment'+(payloadAtt.length>1?'s':'')+'…':'Sending…','warn');
     try{
       var r = await sb.functions.invoke('send-client-email', { body:{
-        to:to, cc:$('em-cc').value.trim(), subject:subject, message:message,
+        to:to, cc:cc.list.join(', '), bcc:bcc.list.join(', '),
+        subject:subject, message:message,
         client_name:$('em-name').value.trim(), ref:$('em-ref').value.trim(),
-        organization_id: $('em-org').value || null
+        organization_id: $('em-org').value || null,
+        attachments: payloadAtt
       }});
       if (r.error){
         var msg=r.error.message||'send failed';
         try{ if(r.error.context&&r.error.context.json){ var j=await r.error.context.json(); if(j&&j.error) msg=j.error; } }catch(e){}
         setMsg('✗ '+msg,'bad');
       } else if (r.data && r.data.ok){
-        setMsg('✓ Sent from '+(r.data.sent_as||'ceo@jabranandco.com'),'ok');
-        $('em-subject').value=''; $('em-message').value=''; refreshPreview(); loadLog();
+        setMsg('✓ Sent from '+(r.data.sent_as||'ceo@jabranandco.com')+(payloadAtt.length?' · '+payloadAtt.length+' attachment'+(payloadAtt.length>1?'s':''):''),'ok');
+        $('em-subject').value=''; $('em-message').value='';
+        attachments=[]; renderAtt(); refreshPreview(); loadLog();
       } else {
         setMsg('✗ '+((r.data&&r.data.error)||'send failed'),'bad');
       }
@@ -277,14 +467,13 @@
       var c = await jco.context();
       if (c && c.is_staff){ showApp(); return; }
     }catch(e){}
-    /* If no staff session after short wait, show login. But don't block other modules. */
     setTimeout(function(){
       if ($('em-gate').style.display !== 'none') return;
-      /* User is staff, app is showing. All good. */
     }, 500);
   }
   $('em-refresh-preview').addEventListener('click', refreshPreview);
   ['em-name','em-ref'].forEach(function(id){ $(id).addEventListener('blur', refreshPreview); });
+  $('em-cc-add').addEventListener('click', function(){ var i=addCcRow(''); i.focus(); });
   $('em-send').addEventListener('click', send);
   $('em-login-form').addEventListener('submit', async function(e){
     e.preventDefault();
@@ -297,10 +486,8 @@
       if (c && c.is_staff) showApp(); else st.textContent='This account is not a staff member.';
     }catch(err){ st.textContent=String(err&&err.message?err.message:err); }
   });
-  /* Try to show the app immediately if a session exists; otherwise show login form. */
   function bootSequence(){
-    var timer = setTimeout(gate, 40); /* small delay to let jco cache settle */
-    /* If session resolves quickly, clear the timer. */
+    var timer = setTimeout(gate, 40);
     jco.context().then(function(c){
       clearTimeout(timer);
       if (c && c.is_staff) showApp();
