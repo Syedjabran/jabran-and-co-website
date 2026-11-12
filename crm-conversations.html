@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var gate=await sb.rpc('crm_is_staff');
     if(gate.error || gate.data!==true){
       document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     me=(await sb.auth.getUser()).data.user;

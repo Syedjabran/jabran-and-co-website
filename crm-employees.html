@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(error||!rows||!rows.length){
       const st=document.getElementById('crm-login-status');
       st.textContent='This account does not have governance access to Employee Management.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     staff=rows; renderStaff();

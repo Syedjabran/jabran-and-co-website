@@ -12,6 +12,12 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 window.JCO_BUILD = '2026-07-16.3-gesture-gateway';
 try { console.info('[J&Co] supabase-client.js build ' + window.JCO_BUILD); } catch (e) {}
 
+/* Business date (YYYY-MM-DD) in Pakistan time, not UTC. d defaults to now. */
+window.jcoLocalDate = function (d) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Karachi', year: 'numeric', month: '2-digit', day: '2-digit' })
+    .format(d == null ? new Date() : new Date(d));
+};
+
 /* ============================================================================
    1 · SESSION CONTEXT CACHE  (performance — unchanged, preserved)
    One crm_session_context() RPC per session, cached in sessionStorage (5-min

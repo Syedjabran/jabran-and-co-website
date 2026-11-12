@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:allowed,error}=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']});
     if(error||allowed!==true){
       document.getElementById('crm-login-status').textContent='Financial Reports are restricted to management.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); canEdit=r.data===true; }catch(e){ canEdit=false; }
     if(!canEdit)['btn-add-budget','btn-save-budgets'].forEach(id=>{ const b=document.getElementById(id); if(b)b.disabled=true; });

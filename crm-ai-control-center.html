@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var g=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo']});
     if(g.error || g.data!==true){
       document.getElementById('crm-login-status').textContent='AI governance is restricted to Owner, Super Admin and CEO.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     loadAll();

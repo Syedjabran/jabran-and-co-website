@@ -283,15 +283,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:allowed,error}=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']});
     if(error||allowed!==true){
       document.getElementById('crm-login-status').textContent='Project Costing is restricted to management.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); canEdit=r.data===true; }catch(e){ canEdit=false; }
     if(!canEdit){
       ['btn-save-rules','btn-save-weights','btn-save-mode','btn-add-weight'].forEach(id=>{ const b=document.getElementById(id); if(b)b.disabled=true; });
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
-    setval('ts-work_date',new Date().toISOString().slice(0,10));
-    setval('run-period',new Date().toISOString().slice(0,7));
+    setval('ts-work_date',jcoLocalDate());
+    setval('run-period',jcoLocalDate().slice(0,7));
     await Promise.all([loadLookups(), loadRules(), loadMode()]);
     await Promise.all([loadCosting(), loadRuns(), loadTimesheets(), loadWeights()]);
     renderKpis();
@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function () {
       payroll='PKR '+pkr.toLocaleString('en-US',{maximumFractionDigits:0});
     }catch(e){}
     try{
-      const start=new Date().toISOString().slice(0,7)+'-01';
+      const start=jcoLocalDate().slice(0,7)+'-01';
       const {data}=await sb.from('crm_timesheets').select('hours').gte('work_date',start);
       hoursMonth=(data||[]).reduce((s,r)=>s+Number(r.hours),0);
     }catch(e){}
@@ -431,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const st=document.getElementById('ts-status'); st.textContent='Saving…';
     const payload={
       employee_cost_id:val('ts-employee_cost_id'),
-      work_date:val('ts-work_date')||new Date().toISOString().slice(0,10),
+      work_date:val('ts-work_date')||jcoLocalDate(),
       hours:numval('ts-hours'),
       order_id:val('ts-order_id'),
       project_id:val('ts-project_id'),

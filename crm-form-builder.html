@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:isOwner,error}=await sb.rpc('crm_has_role',{roles:['owner']});
     if(error||isOwner!==true){
       document.getElementById('crm-login-status').textContent='The Form Builder is restricted to the Owner.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     load();

@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function val(id){ var el=document.getElementById(id); return el && el.value !== '' ? el.value : null; }
   function setval(id,v){ var el=document.getElementById(id); if(el)el.value=v==null?'':v; }
   function num(n){ return n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
-  function iso(d){ return d.toISOString().slice(0,10); }
+  function iso(d){ return jcoLocalDate(d); }
 
   var perms=[], charts={}, overview=null, catalog=[], canFin=false, canOwn=false;
   var GOLD='#C6A55A', GOLDL='#E4C98A', GREEN='#7fc8a9', MUTED='#9C9690';
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (perms.indexOf('analytics.view') < 0) {
       document.getElementById('crm-login-status').textContent =
         'Your role does not include analytics.view. Ask the Owner to grant analytics access.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     canFin = perms.indexOf('analytics.view_financial_metrics') >= 0;
     canOwn = perms.indexOf('analytics.admin') >= 0;

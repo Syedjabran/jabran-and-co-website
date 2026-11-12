@@ -255,7 +255,7 @@
     var s=await sb.rpc('crm_is_staff');
     if(s.error || s.data!==true){
       $('li-status').textContent='This page is for staff accounts only.';
-      await sb.auth.signOut(); loginEl.classList.remove('hide'); appEl.classList.add('hide'); return;
+      await sb.auth.signOut({ scope: 'local' }); loginEl.classList.remove('hide'); appEl.classList.add('hide'); return;
     }
     loginEl.classList.add('hide'); appEl.classList.remove('hide');
     await loadOrgs();

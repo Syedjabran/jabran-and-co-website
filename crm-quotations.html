@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:probe, error}=await sb.from('crm_settings').select('key').limit(1);
     if(error||!probe){
       document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     // CEO probe: only super_admin/ceo can read decided approvals workflow buttons
@@ -594,6 +594,20 @@ document.addEventListener('DOMContentLoaded', function () {
     q=enq?q.eq('enquiry_id',enq).order('total_cost',{ascending:true}):q.order('created_at',{ascending:false});
     const {data,error}=await q;
     offersCache=data||[];
+    /* Never rank raw totals across currencies: with mixed currencies compare the
+       PKR equivalent (Exchange Rate → PKR); offers with no rate follow, ranked
+       only against offers in their own currency. One currency keeps the DB order. */
+    if(enq&&new Set(offersCache.map(o=>o.currency||'')).size>1){
+      const pkr=o=>o.total_cost==null?null:(o.currency==='PKR'?Number(o.total_cost):(Number(o.exchange_rate)>0?Number(o.total_cost)*Number(o.exchange_rate):null));
+      offersCache.sort((a,b)=>{
+        const x=pkr(a), y=pkr(b);
+        if(x!=null&&y!=null) return x-y;
+        if(x!=null) return -1; if(y!=null) return 1;
+        const ca=a.currency||'', cb=b.currency||'';
+        if(ca!==cb) return ca<cb?-1:1;
+        return ((a.total_cost==null)-(b.total_cost==null))||(Number(a.total_cost)-Number(b.total_cost));
+      });
+    }
     document.getElementById('offer-empty').style.display=(error||!offersCache.length)?'block':'none';
     document.getElementById('offer-rows').innerHTML=offersCache.map(o=>`
       <tr class="crm-row-link" data-ofid="${o.id}">

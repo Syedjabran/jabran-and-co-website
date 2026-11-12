@@ -42,6 +42,8 @@
     ['crm-form-builder.html','Form Builder'],
     ['crm-ai-control-center.html','AI Control Center']
   ];
+  /* these pages admit crm_has_role(['owner']) only */
+  var OWNER_ONLY = ['crm-command-center.html','crm-business-rules.html','crm-form-builder.html'];
 
   function here(href){ return location.pathname.replace(/^\//,'')===href; }
 
@@ -78,11 +80,13 @@
     try{
       var r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo']});
       if(r.data===true){
-        var needAdmin=ADMIN.some(function(x){ return !side.querySelector('a[href="'+x[0]+'"]') && !here(x[0]); });
+        var o=await sb.rpc('crm_has_role',{roles:['owner']});
+        var links=o.data===true?ADMIN:ADMIN.filter(function(x){ return OWNER_ONLY.indexOf(x[0])<0; });
+        var needAdmin=links.some(function(x){ return !side.querySelector('a[href="'+x[0]+'"]') && !here(x[0]); });
         if(needAdmin && !side.querySelector('[data-jco-label="admin"]')){
           addLabel(side,'Administration').dataset.jcoLabel='admin';
         }
-        ADMIN.forEach(function(x){ addLink(side, x[0], x[1]); });
+        links.forEach(function(x){ addLink(side, x[0], x[1]); });
       }
     }catch(e){}
   }

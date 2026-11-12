@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var staff = await sb.rpc('crm_is_staff');
     if (!staff || staff.data !== true) {
       document.getElementById('crm-login-status').textContent='Staff access only.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     try {
       var e1 = await sb.rpc('crm_has_role', {roles:['owner','super_admin','ceo','operations_manager','project_manager','trade_sourcing_manager','customs_manager']});
@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var cat = CATS.filter(function(c){ return c.code === o.category_code; })[0];
       var basis = BASES.filter(function(b){ return b.code === o.billing_basis; })[0];
       var cls = o.status==='approved'?'ok':(o.status==='rejected'?'bad':(o.status==='expired'?'bad':'warn'));
-      var expired = o.valid_until && o.valid_until < new Date().toISOString().slice(0,10);
+      var expired = o.valid_until && o.valid_until < jcoLocalDate();
       return '<tr><td class="crm-mono">'+esc(o.offer_number||'—')+'<br><strong style="font-family:Inter;">'+esc(o.title)+'</strong></td>'+
         '<td>'+esc(o.crm_service_providers?o.crm_service_providers.legal_name:'—')+'</td>'+
         '<td>'+esc(cat?cat.name:'—')+'</td>'+

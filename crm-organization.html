@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:allowed,error}=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager','hr_manager']});
     if(error||allowed!==true){
       document.getElementById('crm-login-status').textContent='Organization is restricted to management.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','hr_manager']}); canEdit=r.data===true; }catch(e){}
     try{ const r2=await sb.rpc('crm_has_role',{roles:['owner','super_admin']}); if(r2.data===true){canOwn=true; document.getElementById('tab-cred-btn').style.display='block';} }catch(e){}

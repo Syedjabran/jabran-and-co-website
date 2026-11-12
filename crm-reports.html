@@ -253,6 +253,13 @@ document.addEventListener('DOMContentLoaded', function () {
   function label(s){ return s?String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'—'; }
   function money(n){ return n==null?'—':Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function num(n){ return n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  /* Never add different currencies together: totals are kept per currency and,
+     when more than one occurs, shown as in Daily Expenses ("PKR 1,000 · USD 50"). */
+  function curOf(r){ return r.currency||'PKR'; }
+  function isMulti(rows){ return new Set(rows.map(curOf)).size>1; }
+  function byCur(rows,f){ const by={}; rows.forEach(r=>{ by[curOf(r)]=(by[curOf(r)]||0)+Number(f(r)||0); }); return by; }
+  function curSum(by){ return Object.keys(by).sort().map(c=>c+' '+Number(by[c]).toLocaleString('en-US',{maximumFractionDigits:0})).join(' · ')||'0'; }
+  function kpiFont(s){ return String(s).length>14?' style="font-size:16px;"':''; }
 
   /* ---- CSV export: exports the rendered table exactly as shown ---- */
   function tableToCSV(tableId){
@@ -289,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:probe,error}=await sb.from('crm_settings').select('key').limit(1);
     if(error||!probe){
       document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     const {error:mgmtErr}=await sb.from('crm_order_ebitda').select('order_id').limit(1);
@@ -362,9 +369,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const [pl,un,eb,mon,ar,cli]=await Promise.all([
       sb.from('crm_report_pipeline').select('*'),
       sb.from('crm_report_unrealised').select('weighted_value,total'),
-      sb.from('crm_order_ebitda').select('revenue,cogs,ebitda_contribution'),
+      sb.from('crm_order_ebitda').select('revenue,cogs,ebitda_contribution,currency'),
       sb.from('crm_monthly_finance').select('*'),
-      sb.from('crm_receivables_ageing').select('outstanding,ageing_bucket'),
+      sb.from('crm_receivables_ageing').select('outstanding,ageing_bucket,currency'),
       sb.from('crm_report_client_value').select('*').order('revenue',{ascending:false}).limit(5)
     ]);
     const prospects=(pl.data||[]).reduce((s,r)=>s+Number(r.prospects),0);
@@ -374,21 +381,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const ebitda=(eb.data||[]).reduce((s,r)=>s+Number(r.ebitda_contribution||0),0);
     const outstanding=(ar.data||[]).reduce((s,r)=>s+Number(r.outstanding),0);
     const overdue=(ar.data||[]).filter(r=>r.ageing_bucket!=='current').reduce((s,r)=>s+Number(r.outstanding),0);
+    const ebRows=eb.data||[], arRows=ar.data||[], ebMulti=isMulti(ebRows), arMulti=isMulti(arRows);
+    const revBy=byCur(ebRows,r=>r.revenue), ebitdaBy=byCur(ebRows,r=>r.ebitda_contribution);
     document.getElementById('rep-kpis').innerHTML=[
       {n:num(prospects),l:'Active Prospects'},
       {n:num(weighted),l:'Weighted Pipeline'},
-      {n:num(revenue),l:'Order Revenue'},
-      {n:num(gp),l:'Gross Profit'},
-      {n:num(ebitda),l:'EBITDA Contribution'},
-      {n:revenue?((ebitda/revenue)*100).toFixed(1)+'%':'—',l:'EBITDA Margin'}
-    ].map(k=>`<div class="crm-kpi"><div class="n">${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+      {n:ebMulti?curSum(revBy):num(revenue),l:'Order Revenue'},
+      {n:ebMulti?curSum(byCur(ebRows,r=>Number(r.revenue||0)-Number(r.cogs||0))):num(gp),l:'Gross Profit'},
+      {n:ebMulti?curSum(ebitdaBy):num(ebitda),l:'EBITDA Contribution'},
+      {n:ebMulti?Object.keys(revBy).sort().map(c=>c+' '+(revBy[c]?((ebitdaBy[c]/revBy[c])*100).toFixed(1)+'%':'—')).join(' · ')
+                :(revenue?((ebitda/revenue)*100).toFixed(1)+'%':'—'),l:'EBITDA Margin'}
+    ].map(k=>`<div class="crm-kpi"><div class="n"${ebMulti?kpiFont(k.n):''}>${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
     document.querySelector('#rep-monthly tbody').innerHTML=(mon.data||[]).map(m=>
       `<tr><td class="crm-mono">${esc(m.period)}</td><td class="crm-mono">${money(m.invoiced)}</td><td class="crm-mono">${money(m.collected)}</td><td class="crm-mono">${money(m.gross_profit)}</td><td class="crm-mono">${money(m.ebitda)}</td></tr>`).join('');
-    document.getElementById('rep-ar').innerHTML=[
+    document.getElementById('rep-ar').innerHTML=(arMulti?[
+      {n:curSum(byCur(arRows,r=>r.outstanding)),l:'Total Outstanding'},
+      {n:curSum(byCur(arRows.filter(r=>r.ageing_bucket!=='current'),r=>r.outstanding)),l:'Overdue'},
+      {n:curSum(byCur(arRows.filter(r=>r.ageing_bucket==='current'),r=>r.outstanding)),l:'Current'}
+    ]:[
       {n:num(outstanding),l:'Total Outstanding'},
       {n:num(overdue),l:'Overdue'},
       {n:num(outstanding-overdue),l:'Current'}
-    ].map(k=>`<div class="crm-kpi"><div class="n">${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+    ]).map(k=>`<div class="crm-kpi"><div class="n"${arMulti?kpiFont(k.n):''}>${esc(k.n)}</div><div class="l">${esc(k.l)}</div></div>`).join('');
     document.querySelector('#rep-topclients tbody').innerHTML=(cli.data||[]).map(r=>
       `<tr><td>${esc(r.legal_name)}</td><td class="crm-mono">${num(r.orders)}</td><td class="crm-mono">${money(r.revenue)}</td><td class="crm-mono">${money(r.ebitda)}</td></tr>`).join('')
       ||'<tr><td class="crm-empty" colspan="4">No client data yet.</td></tr>';

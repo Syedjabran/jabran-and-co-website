@@ -25,6 +25,22 @@ document.addEventListener('DOMContentLoaded', function () {
   var policy = { idle_timeout_minutes: 30, remember_me_days: 30 };
 
   function $(id){ return document.getElementById(id); }
+  /* "Browser still open" marker: a session cookie (no Expires/Max-Age) is shared
+     by every tab and cleared when the browser closes. The old per-tab
+     sessionStorage key is still honoured so already-open tabs keep working. */
+  var ALIVE_COOKIE = ALIVE_KEY + '=1; path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+  function markAlive(){
+    try { sessionStorage.setItem(ALIVE_KEY, '1'); } catch (e) {}
+    document.cookie = ALIVE_COOKIE;
+  }
+  function isAlive(){
+    if (document.cookie.split(/;\s*/).indexOf(ALIVE_KEY + '=1') >= 0) return true;
+    try { return sessionStorage.getItem(ALIVE_KEY) === '1'; } catch (e) { return false; }
+  }
+  function clearAlive(){
+    try { sessionStorage.removeItem(ALIVE_KEY); } catch (e) {}
+    document.cookie = ALIVE_COOKIE.replace(ALIVE_KEY + '=1', ALIVE_KEY + '=; Max-Age=0');
+  }
   var loginForm = $('crm-login-form') || $('ma-login-form') || $('qv-login-form');
   var emailInput = $('crm-email') || $('ma-email') || $('qv-email');
   var logoutEl = $('crm-logout') || $('ma-logout');
@@ -40,13 +56,13 @@ document.addEventListener('DOMContentLoaded', function () {
       var { data } = await sb.auth.getSession();
       if (data && data.session) {
         var remembered = localStorage.getItem(REMEMBER_KEY) === '1';
-        var alive = sessionStorage.getItem(ALIVE_KEY) === '1';
+        var alive = isAlive();
         if (!remembered && !alive) {
-          await sb.auth.signOut();
+          await sb.auth.signOut({ scope: 'local' });
           location.reload();
           return;
         }
-        sessionStorage.setItem(ALIVE_KEY, '1');
+        markAlive();
         startIdleTimer();
         loadPolicy();
         decorateLogout();
@@ -122,13 +138,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (rem.checked) localStorage.setItem(REMEMBER_KEY, '1');
         else localStorage.removeItem(REMEMBER_KEY);
       }
-      sessionStorage.setItem(ALIVE_KEY, '1');
+      markAlive();
       localStorage.removeItem(FAIL_KEY);
       sb.rpc('crm_log_login_event', { p_event: 'login', p_user_agent: navigator.userAgent }).then(function(){},function(){});
       loadPolicy(); startIdleTimer(); decorateLogout();
     }
     if (event === 'SIGNED_OUT') {
-      sessionStorage.removeItem(ALIVE_KEY);
+      clearAlive();
       localStorage.removeItem(REMEMBER_KEY);
       stopIdleTimer();
     }
@@ -137,19 +153,34 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ------------------------------------------------------------------
      4 · IDLE TIMEOUT → automatic logout
   ------------------------------------------------------------------ */
-  var idleTimer = null;
-  function startIdleTimer(){
+  /* Last activity is shared across tabs (localStorage) so an idle tab does not
+     sign out the tab the user is working in. */
+  var ACTIVITY_KEY = 'jco_last_activity';
+  var idleTimer = null, lastLocal = Date.now(), lastShared = 0;
+  function startIdleTimer(delay){
     stopIdleTimer();
     var ms = Math.max(5, policy.idle_timeout_minutes || 30) * 60000;
     idleTimer = setTimeout(async function () {
+      var shared = 0;
+      try { shared = Number(localStorage.getItem(ACTIVITY_KEY)) || 0; } catch(e){}
+      var idle = Date.now() - Math.max(lastLocal, shared);
+      if (idle < ms) { startIdleTimer(ms - idle); return; }
       try { await sb.rpc('crm_log_login_event', { p_event: 'timeout', p_user_agent: navigator.userAgent }); } catch(e){}
-      await sb.auth.signOut();
+      await sb.auth.signOut({ scope: 'local' });
       location.reload();
-    }, ms);
+    }, typeof delay === 'number' ? delay : ms);
   }
   function stopIdleTimer(){ if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; } }
   ['click','keydown','scroll','touchstart'].forEach(function (ev) {
-    document.addEventListener(ev, function(){ if (idleTimer) startIdleTimer(); }, { passive: true });
+    document.addEventListener(ev, function(){
+      if (!idleTimer) return;
+      var now = lastLocal = Date.now();
+      if (now - lastShared >= 15000) {
+        lastShared = now;
+        try { localStorage.setItem(ACTIVITY_KEY, String(now)); } catch(e){}
+      }
+      startIdleTimer();
+    }, { passive: true });
   });
 
   /* ------------------------------------------------------------------
@@ -285,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (page.indexOf('crm') !== 0) return;
 
   function eject() {
-    try { sb.auth.signOut(); } catch (e) {}
+    try { sb.auth.signOut({ scope: 'local' }); } catch (e) {}
     try { alert('This area is for Jabran & Co. staff only. Taking you to the Client Portal.'); } catch (e) {}
     location.replace('my-account.html');
   }
@@ -709,6 +740,13 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         }, function () {});
       var roles = ctx.roles || [];
+      /* Owner-only modules (their pages admit crm_has_role(['owner']) only):
+         hide the hard-coded links from every other role. */
+      if (roles.indexOf('owner') < 0) {
+        ['crm-command-center.html', 'crm-business-rules.html', 'crm-form-builder.html'].forEach(function (h) {
+          side.querySelectorAll('a[href="' + h + '"]').forEach(function (a) { a.style.display = 'none'; });
+        });
+      }
       var isMgmt = ['owner','super_admin','ceo','finance_manager'].some(function (r) { return roles.indexOf(r) > -1; });
       if (isMgmt) place(ADMIN_LINKS, 'crm-business-rules.html');
       if (ctx.analytics && ctx.analytics.indexOf('analytics.view') > -1) {

@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const allowed=await hasRole(['owner','super_admin','ceo','finance_manager']);
     if(!allowed){
       document.getElementById('crm-login-status').textContent='Your role does not include Financial Settings access. Ask the Owner for finance access.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     canEdit=await hasRole(['owner','super_admin']);
     document.getElementById('fs-readonly-note').style.display=canEdit?'none':'block';

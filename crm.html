@@ -549,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const st=document.getElementById('crm-login-status');
       st.textContent='This account does not have CRM staff access.';
       st.style.color='#e57368';
-      await sb.auth.signOut();
+      await sb.auth.signOut({ scope: 'local' });
       return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
@@ -605,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---------- DASHBOARD ---------- */
   async function loadDashboard(){
-    document.getElementById('dash-date').textContent = new Date().toISOString().slice(0,10);
+    document.getElementById('dash-date').textContent = jcoLocalDate();
     const [pr, orgs, enq, enqNew] = await Promise.all([
       sb.from('crm_prospects').select('stage', {count:'exact'}).is('deleted_at',null),
       sb.from('crm_organizations').select('id', {count:'exact', head:true}).is('deleted_at',null).eq('status','active'),
@@ -628,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#dash-stage-table tbody').innerHTML =
       order.filter(s=>stages[s]).map(s=>`<tr><td>${esc(label(s))}</td><td style="text-align:right; font-family:'IBM Plex Mono',monospace; color:var(--gold-light);">${stages[s]}</td></tr>`).join('')
       || '<tr><td class="crm-empty">No pipeline data yet.</td></tr>';
-    const week = new Date(Date.now()+7*86400000).toISOString().slice(0,10);
+    const week = jcoLocalDate(Date.now()+7*86400000);
     const { data: fups } = await sb.from('crm_prospects')
       .select('full_name,company_name,next_followup_date,stage')
       .is('deleted_at',null).not('next_followup_date','is',null)

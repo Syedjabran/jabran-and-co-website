@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:probe,error}=await sb.from('crm_settings').select('key').limit(1);
     if(error||!probe){
       document.getElementById('crm-login-status').textContent='This account does not have CRM staff access.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
     const [orgs,svcs]=await Promise.all([

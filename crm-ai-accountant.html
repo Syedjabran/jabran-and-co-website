@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:staff,error}=await sb.rpc('crm_is_staff');
     if(error||staff!==true){
       document.getElementById('crm-login-status').textContent='The AI Accountant is for staff accounts only.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     const {data:sess}=await sb.auth.getSession(); myUid=sess&&sess.session?sess.session.user.id:null;
     try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']}); isMgmt=r.data===true; }catch(e){}
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if(a.type==='record_expense'){
         const payload={
           description:a.description||'Expense', amount:Number(a.amount),
-          currency:a.currency||'PKR', entry_date:a.entry_date||new Date().toISOString().slice(0,10),
+          currency:a.currency||'PKR', entry_date:a.entry_date||jcoLocalDate(),
           category:a.category&&a.category!=='null'?a.category:'other',
           order_id:findOrder(a.order_ref), entered_by:myUid
         };
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function () {
         else if(myEmp){ empId=myEmp.id; }
         else throw new Error('Your login is not linked to an Employee Cost record yet — the Owner can link it in Employee Costs.');
         const payload={ employee_cost_id:empId, hours:Number(a.hours),
-          work_date:a.work_date||new Date().toISOString().slice(0,10),
+          work_date:a.work_date||jcoLocalDate(),
           order_id:findOrder(a.order_ref), description:a.description||null };
         if(!payload.hours)throw new Error('Hours missing.');
         const {data,error}=await sb.from('crm_timesheets').insert(payload).select('id').single();

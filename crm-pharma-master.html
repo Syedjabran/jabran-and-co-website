@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
         {k:'store_category', h:'Grade', badge:function(v){ return v==='A'?'gold':''; }},
         {k:'drug_licence_no', h:'Licence', render:function(r){
           if(!r.drug_licence_no) return '<span class="crm-badge warn">none</span>';
-          var exp = r.licence_expiry && r.licence_expiry < new Date().toISOString().slice(0,10);
+          var exp = r.licence_expiry && r.licence_expiry < jcoLocalDate();
           return '<span class="crm-mono">'+esc(r.drug_licence_no)+'</span>' + (exp?' <span class="crm-badge bad">expired</span>':'');
         }},
         {k:'status', h:'Status', badge:function(v){ return v==='active'?'ok':''; }}
@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function () {
         {k:'performance_score', h:'Performance', render:function(r){ return r.performance_score!=null ? r.performance_score+'/100' : '—'; }},
         {k:'agreement_expiry', h:'Agreement', render:function(r){
           if(!r.agreement_expiry) return '—';
-          var exp = r.agreement_expiry < new Date().toISOString().slice(0,10);
+          var exp = r.agreement_expiry < jcoLocalDate();
           return '<span class="crm-mono">'+esc(r.agreement_expiry)+'</span>'+(exp?' <span class="crm-badge bad">expired</span>':'');
         }},
         {k:'status', h:'Status', badge:function(v){ return v==='active'?'ok':(v==='suspended'?'bad':''); }}
@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (perms.indexOf('pharma.view') < 0 && perms.indexOf('pharma.admin') < 0) {
       document.getElementById('crm-login-status').textContent =
         'Your role does not include pharma.view. Ask the Owner for pharma access.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     canEdit = perms.indexOf('pharma.manage_master') > -1 || perms.indexOf('pharma.admin') > -1;
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';

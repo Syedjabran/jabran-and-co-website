@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:org}=await sb.from('crm_my_organization').select('*').limit(1).maybeSingle();
     if(!org){
       document.getElementById('ma-login-status').textContent='Your account is not yet linked to a client organization. Please contact us on WhatsApp +92 336 4864345.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     orgId=org.id;
     document.getElementById('ma-org-name').textContent=org.trading_name||org.legal_name;

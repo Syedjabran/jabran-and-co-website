@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const amt=numval('de-amount'); const desc=(val('de-description')||'').toLowerCase();
     if(!amt){ warn.style.display='none'; return; }
     const hit=myEntries.find(e=>Number(e.amount)===amt
-      && Math.abs((new Date(e.entry_date)-new Date(val('de-entry_date')||new Date().toISOString().slice(0,10))))/86400000<=3
+      && Math.abs((new Date(e.entry_date)-new Date(val('de-entry_date')||jcoLocalDate())))/86400000<=3
       && (desc.length<4||e.description.toLowerCase().includes(desc.slice(0,12))));
     if(hit){ warn.textContent='Possible duplicate: '+hit.description+' ('+money(hit.amount,hit.currency)+' on '+hit.entry_date+', '+hit.status+'). Submit only if this is a separate expense.'; warn.style.display='block'; }
     else warn.style.display='none';
@@ -262,13 +262,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const {data:staff,error}=await sb.rpc('crm_is_staff');
     if(error||staff!==true){
       document.getElementById('crm-login-status').textContent='Daily Expenses are for staff accounts only.';
-      await sb.auth.signOut(); return;
+      await sb.auth.signOut({ scope: 'local' }); return;
     }
     const {data:sess}=await sb.auth.getSession(); myUid=sess&&sess.session?sess.session.user.id:null;
     try{ const r=await sb.rpc('crm_has_role',{roles:['owner','super_admin','ceo','finance_manager']}); isMgmt=r.data===true; }catch(e){ isMgmt=false; }
     if(isMgmt)document.getElementById('tab-review-btn').style.display='block';
     loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
-    setval('de-entry_date',new Date().toISOString().slice(0,10));
+    setval('de-entry_date',jcoLocalDate());
     await Promise.all([loadLinks(), loadNames()]);
     await loadMine(); if(isMgmt)await loadPending();
     renderKpis();
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---------- KPIs ---------- */
   function renderKpis(){
-    const month=new Date().toISOString().slice(0,7);
+    const month=jcoLocalDate().slice(0,7);
     const mine=myEntries.filter(e=>String(e.entry_date).slice(0,7)===month);
     const by={}; mine.filter(e=>e.status!=='rejected').forEach(e=>{ by[e.currency]=(by[e.currency]||0)+Number(e.amount); });
     const mySum=Object.keys(by).sort().map(c=>c+' '+Number(by[c]).toLocaleString('en-US',{maximumFractionDigits:0})).join(' · ')||'0';
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
       description:val('de-description'),
       amount:numval('de-amount'),
       currency:val('de-currency')||'PKR',
-      entry_date:val('de-entry_date')||new Date().toISOString().slice(0,10),
+      entry_date:val('de-entry_date')||jcoLocalDate(),
       category:val('de-category')||'other',
       order_id:val('de-order_id'),
       project_id:val('de-project_id'),
@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }catch(e3){}
     }
     document.getElementById('de-form').reset();
-    setval('de-entry_date',new Date().toISOString().slice(0,10));
+    setval('de-entry_date',jcoLocalDate());
     document.getElementById('de-class-hint').textContent='';
     document.getElementById('de-dup-warn').style.display='none';
     st.textContent='Submitted — awaiting approval.'; btn.disabled=false;
@@ -418,10 +418,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }).join('');
     box.querySelectorAll('[data-rc]').forEach(a=>a.addEventListener('click', async ev=>{
       ev.preventDefault();
+      const w=window.open('','_blank');   /* opened inside the click so Safari does not block it */
       try{
         const {data}=await sb.storage.from('finance-docs').createSignedUrl(a.dataset.rc,600);
-        if(data&&data.signedUrl)window.open(data.signedUrl,'_blank');
-      }catch(e2){}
+        if(data&&data.signedUrl){ if(w) w.location=data.signedUrl; else window.open(data.signedUrl,'_blank'); }
+        else if(w) w.close();
+      }catch(e2){ if(w) w.close(); }
     }));
     box.querySelectorAll('.de-appr').forEach(card=>{
       const id=card.dataset.eid;
