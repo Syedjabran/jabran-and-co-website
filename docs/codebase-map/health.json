@@ -152,7 +152,7 @@
  {
   "sev": "low",
   "area": "Database",
-  "status": "pending",
+  "status": "fixed",
   "text": "Eight database functions lack a fixed search path."
  },
  {

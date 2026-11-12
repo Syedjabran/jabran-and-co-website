@@ -87,7 +87,12 @@ Never use `supabase db push` / `db reset` against this project: the remote
 migration history has only one entry (`social_agent_001_foundation`), so the
 CLI would not know the rest of the schema exists.
 
-## 5 · Getting a full schema baseline into git (recommended next step)
+## 5 · Schema baseline
+
+A schema-only snapshot reconstructed from the production catalog (read-only,
+2026-11-12) is in [`supabase/schema/baseline/`](../supabase/schema/baseline/README.md)
+— tables, constraints, indexes, functions, views, triggers, RLS policies and
+grants, with two secrets redacted. To replace it with a true `pg_dump`:
 
 The schema was built by hand in the SQL editor across ~26 numbered
 increments and is not in git. To capture it (schema only, no data):
@@ -113,7 +118,7 @@ so future migrations stack on top of it.
 | # | Change | Why | Risk |
 |---|---|---|---|
 | D1 | ~~Close anonymous access to 5 views and 5 helper functions~~ | **Done 2026-11-12** — migration `20261112191851` | Permissions only; rollback provided |
-| D2 | Run `supabase/proposed/20261113_002_harden_function_search_path.sql` — `set search_path` on the 8 flagged functions (`ai_conv_touch`, `crm_att_touch`, `crm_invoice_lock_guard`, `crm_order_client_status`, …) | Prevents search-path hijacking of definer code | Very low |
+| D2 | ~~`set search_path` on the 8 flagged functions~~ **Done 2026-11-12** (migration `20261112193236`) (`ai_conv_touch`, `crm_att_touch`, `crm_invoice_lock_guard`, `crm_order_client_status`, …) | Prevents search-path hijacking of definer code | Very low |
 | D3 | Review the remaining ~125 `SECURITY DEFINER` functions executable by `anon`; revoke where no signed-out page needs them | Smaller public attack surface | Low, needs a per-function check of which public pages call RPCs |
 | D4 | Turn on Auth → leaked password protection | Advisor warning | None |
 | D5 | Create a **staging** Supabase project from the baseline (§5) and point previews/localhost at it | Testing today happens on live data | Medium effort; needs a config switch in `supabase-client.js` by hostname |
