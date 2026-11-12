@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Settings | JABRAN &amp; CO.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- crm-/fs- scoped; brand-token fallbacks (exact style.css values) ---- */
+  :root{
+    --bg:#0B0F14; --bg-alt:#111820; --bg-alt-2:#1E242C; --bg-deep:#08111C;
+    --gold:#C6A55A; --gold-light:#E4C98A; --gold-deep:#B86A32; --emerald:#0F6B5C;
+    --cream:#F5F3EF; --muted:#9C9690; --line:rgba(198,165,90,0.22);
+  }
+  body{background:var(--bg); color:var(--cream); font-family:'Inter',sans-serif; font-weight:300; line-height:1.6;}
+  .eyebrow{font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); font-weight:500;}
+  h1,h2,h3{font-family:'Playfair Display',serif; font-weight:600;}
+  .crm-shell{display:flex; min-height:100vh;}
+  .crm-side{width:230px; flex-shrink:0; border-right:1px solid var(--line); background:var(--bg-deep); padding:110px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .crm-side .crm-brand{padding:0 22px 26px;}
+  .crm-nav-item{display:block; padding:11px 22px; font-size:13px; letter-spacing:0.04em; color:var(--muted); cursor:pointer; border-left:2px solid transparent; text-decoration:none; transition:color .2s, border-color .2s;}
+  .crm-nav-item:hover{color:var(--cream);}
+  .crm-nav-item.active{color:var(--gold-light); border-left-color:var(--gold); background:rgba(198,165,90,0.06);}
+  .crm-nav-label{font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); padding:20px 22px 8px; font-family:'IBM Plex Mono',monospace;}
+  .crm-main{flex:1; padding:110px 36px 80px; min-width:0; max-width:1180px;}
+  .crm-topline{margin-bottom:28px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;}
+  .crm-topline h1{font-size:28px;}
+  .crm-mono{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--muted);}
+  .crm-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:26px;}
+  .crm-kpi{border:1px solid var(--line); background:var(--bg-alt); padding:18px 20px;}
+  .crm-kpi .n{font-family:'Playfair Display',serif; font-size:24px; color:var(--gold-light);}
+  .crm-kpi .l{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:4px;}
+  .fs-lead{font-size:13px; color:var(--muted); margin:-16px 0 24px; max-width:720px;}
+  .fs-tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:22px; overflow-x:auto;}
+  .fs-tab{padding:11px 20px; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-family:'IBM Plex Mono',monospace;}
+  .fs-tab.active{color:var(--gold-light); border-bottom-color:var(--gold);}
+  .fs-filters{border:1px solid var(--line); background:var(--bg-alt); padding:14px 18px; margin-bottom:18px; display:flex; gap:18px; align-items:flex-end; flex-wrap:wrap;}
+  .fs-filters label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:5px;}
+  .fs-filters input,.fs-filters select{background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:8px 10px; font-size:13px; border-radius:2px; font-family:'Inter',sans-serif;}
+  .fs-filters input{width:220px;}
+  .fs-filters .fs-spacer{flex:1;}
+  .crm-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .crm-table th{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); text-align:left; padding:10px 12px; border-bottom:1px solid var(--line);}
+  .crm-table td{padding:11px 12px; border-bottom:1px solid rgba(198,165,90,0.10); vertical-align:top;}
+  .crm-table td.fs-actions{white-space:nowrap;}
+  .crm-table td.fs-actions .crm-btn{margin:0 4px 4px 0;}
+  .crm-badge{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border:1px solid var(--line); color:var(--muted);}
+  .crm-badge.ok{color:#7fc8a9; border-color:rgba(127,200,169,0.4);}
+  .crm-badge.warn{color:var(--gold-light); border-color:rgba(228,201,138,0.4);}
+  .crm-badge.bad{color:#e57368; border-color:rgba(229,115,104,0.4);}
+  .crm-empty{font-size:13px; color:var(--muted); padding:22px 0;}
+  .crm-btn{display:inline-block; background:var(--gold); color:#0a0a0b; border:none; padding:10px 22px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500; border-radius:2px;}
+  .crm-btn:hover{background:var(--gold-light);}
+  .crm-btn.ghost{background:transparent; color:var(--gold-light); border:1px solid var(--line);}
+  .crm-btn.danger{background:transparent; color:#e57368; border:1px solid rgba(229,115,104,0.4);}
+  .crm-btn.small{padding:6px 12px; font-size:10px;}
+  .crm-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .crm-status-msg{font-size:12px; color:var(--gold-light); margin-left:10px;}
+  .crm-modal-bg{display:none; position:fixed; inset:0; background:rgba(4,8,12,0.82); z-index:120; overflow-y:auto; padding:40px 16px;}
+  .crm-modal-bg.open{display:block;}
+  .crm-modal{max-width:680px; margin:0 auto; background:var(--bg-alt); border:1px solid var(--line); padding:30px 30px 26px;}
+  .crm-modal h2{font-size:21px; margin-bottom:18px;}
+  .crm-form label{display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:12px 0 5px;}
+  .crm-form input, .crm-form select, .crm-form textarea{width:100%; background:var(--bg); border:1px solid var(--line); color:var(--cream); padding:9px 12px; font-size:13px; border-radius:2px; font-family:'Inter',sans-serif;}
+  .crm-form input[type=checkbox]{width:auto;}
+  .crm-form textarea{min-height:60px; resize:vertical;}
+  .crm-form .fs-check{display:flex; align-items:center; gap:8px; font-family:'Inter',sans-serif; font-size:13px; letter-spacing:0; text-transform:none; color:var(--cream); margin-top:34px;}
+  .crm-grid2{display:grid; grid-template-columns:1fr 1fr; gap:0 18px;}
+  .fs-section{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); border-bottom:1px solid var(--line); padding-bottom:6px; margin:22px 0 4px;}
+  .fs-secret{position:relative;}
+  .fs-secret input{padding-right:64px;}
+  .fs-secret button{position:absolute; right:10px; top:9px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;}
+  .fs-hint{font-size:11px; color:var(--muted); margin-top:4px;}
+  #crm-login-box{max-width:380px; margin:160px auto; text-align:center; padding:0 20px;}
+  #crm-login-box input{margin-bottom:14px; width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream); padding:12px 14px; border-radius:2px;}
+  #crm-logout{position:fixed; top:24px; right:24px; z-index:90; font-size:12px; color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:0.08em;}
+  @media (max-width:860px){
+    .crm-shell{display:block;}
+    .crm-side{width:100%; height:auto; position:static; padding:96px 0 0; display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line);}
+    .crm-side .crm-brand,.crm-nav-label{display:none;}
+    .crm-nav-item{white-space:nowrap; border-left:none; border-bottom:2px solid transparent;}
+    .crm-nav-item.active{border-bottom-color:var(--gold);}
+    .crm-main{padding:28px 18px 70px;}
+    .crm-grid2{grid-template-columns:1fr;}
+    .crm-table{display:block; overflow-x:auto;}
+    .fs-filters input{width:100%;}
+    .crm-form .fs-check{margin-top:14px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE — JABRAN & CO. identity -->
+<div id="crm-login-box">
+  <img src="logo-full.png" alt="JABRAN &amp; CO." style="width:140px; max-width:60%; height:auto; margin-bottom:26px;">
+  <div class="eyebrow" style="margin-bottom:8px;">JABRAN &amp; CO.</div>
+  <p style="font-size:13px; color:var(--muted); margin-bottom:26px; letter-spacing:0.04em;">Financial Settings — Management Access</p>
+  <form id="crm-login-form">
+    <label for="crm-email" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Email Address</label>
+    <input id="crm-email" type="email" autocomplete="email" placeholder="you@company.com" required>
+    <label for="crm-password" style="display:block; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:5px;">Password</label>
+    <div style="position:relative;">
+      <input id="crm-password" type="password" autocomplete="current-password" placeholder="••••••••" required style="padding-right:64px;">
+      <button type="button" id="crm-pass-toggle" aria-label="Show password" style="position:absolute; right:10px; top:11px; background:none; border:none; color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">Show</button>
+    </div>
+    <button class="crm-btn" id="crm-login-btn" type="submit" style="width:100%; margin-top:0;">Log In</button>
+    <p id="crm-login-status" role="alert" style="font-size:13px; color:#e57368; margin-top:12px;"></p>
+  </form>
+</div>
+
+<div id="crm-logout" style="display:none;">Log Out</div>
+
+<div class="crm-shell" id="crm-shell" style="display:none;">
+  <aside class="crm-side">
+    <div class="crm-brand"><img src="logo-full.png" alt="JABRAN &amp; CO." style="height:auto; width:110px;"></div>
+    <div class="crm-nav-label">Modules</div>
+    <a class="crm-nav-item" href="crm.html">CRM Dashboard</a>
+    <a class="crm-nav-item" href="crm-opportunities.html">Opportunities</a>
+    <a class="crm-nav-item" href="crm-quotations.html">Quotations &amp; Costing</a>
+    <a class="crm-nav-item" href="crm-orders.html">Orders &amp; Fulfilment</a>
+    <a class="crm-nav-item" href="crm-finance.html">Finance</a>
+    <a class="crm-nav-item" href="crm-reports.html">Reports</a>
+    <div class="crm-nav-label">Administration</div>
+    <a class="crm-nav-item" href="crm-command-center.html">Command Center</a>
+    <a class="crm-nav-item" href="crm-business-rules.html">Business Rules</a>
+    <span class="crm-nav-item active">Financial Settings</span>
+    <a class="crm-nav-item" href="crm-employee-costs.html">Employee Costs</a>
+    <a class="crm-nav-item" href="crm-employees.html">Employees</a>
+    <a class="crm-nav-item" href="crm-form-builder.html">Form Builder</a>
+  </aside>
+
+  <main class="crm-main">
+    <div class="crm-topline">
+      <div>
+        <div class="eyebrow">Management Only — Never Client-Visible</div>
+        <h1>Financial Settings</h1>
+      </div>
+      <span class="crm-status-msg" id="fs-status" role="status"></span>
+    </div>
+    <p class="fs-lead">Recurring software subscriptions and fixed overheads that feed the P&amp;L, cash-flow and cost allocation. Monthly equivalents are computed by the database from each cost and its cycle.</p>
+    <p id="fs-readonly-note" class="crm-mono" style="display:none; margin-bottom:18px; color:var(--gold-light);">Read-only access — changes are restricted to the Owner and Super Admin.</p>
+
+    <div class="crm-kpis" id="fs-kpis"></div>
+
+    <div class="fs-tabs">
+      <div class="fs-tab active" data-tab="subscriptions">Subscriptions</div>
+      <div class="fs-tab" data-tab="fixed">Fixed Expenses</div>
+      <div class="fs-tab" data-tab="categories">Cost Categories</div>
+    </div>
+
+    <!-- SUBSCRIPTIONS -->
+    <section id="tab-subscriptions">
+      <div class="fs-filters">
+        <div>
+          <label for="sub-filter-status">Status</label>
+          <select id="sub-filter-status">
+            <option value="active" selected>Active</option><option value="cancelled">Cancelled</option>
+            <option value="archived">Archived</option><option value="all">All</option>
+          </select>
+        </div>
+        <div>
+          <label for="sub-filter-q">Search</label>
+          <input id="sub-filter-q" type="search" placeholder="Software, vendor, plan…">
+        </div>
+        <div class="fs-spacer"></div>
+        <button class="crm-btn" id="btn-new-sub" type="button">+ New Subscription</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>Software</th><th>Vendor / Plan</th><th>Cycle</th><th>Cost</th><th>Monthly Eq.</th><th>Renewal</th><th>Auto-Renew</th><th>Seats</th><th>Cost Centre</th><th>Status</th><th></th></tr></thead>
+        <tbody id="sub-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="sub-empty" style="display:none;"></p>
+    </section>
+
+    <!-- FIXED EXPENSES -->
+    <section id="tab-fixed" style="display:none;">
+      <div class="fs-filters">
+        <div>
+          <label for="fx-filter-status">Status</label>
+          <select id="fx-filter-status">
+            <option value="active" selected>Active</option><option value="paused">Paused</option>
+            <option value="archived">Archived</option><option value="all">All</option>
+          </select>
+        </div>
+        <div>
+          <label for="fx-filter-q">Search</label>
+          <input id="fx-filter-q" type="search" placeholder="Name, vendor, category…">
+        </div>
+        <div class="fs-spacer"></div>
+        <button class="crm-btn" id="btn-new-fx" type="button">+ New Fixed Expense</button>
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>Name</th><th>Category</th><th>Vendor</th><th>Frequency</th><th>Amount</th><th>Tax Incl.</th><th>Monthly Eq.</th><th>Start / End</th><th>Cost Centre</th><th>Status</th><th></th></tr></thead>
+        <tbody id="fx-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="fx-empty" style="display:none;"></p>
+    </section>
+
+    <!-- COST CATEGORIES -->
+    <section id="tab-categories" style="display:none;">
+      <p class="crm-mono" style="margin-bottom:14px;">The chart of cost categories used across costing, the ledger and allocation. Read-only here — other modules key off the code, letter and kind.</p>
+      <table class="crm-table">
+        <thead><tr><th>Letter</th><th>Code</th><th>Name</th><th>Default Kind</th><th>Service Tags</th><th>Active</th></tr></thead>
+        <tbody id="cat-rows"></tbody>
+      </table>
+      <p class="crm-empty" id="cat-empty" style="display:none;"></p>
+    </section>
+  </main>
+</div>
+
+<!-- SUBSCRIPTION MODAL -->
+<div class="crm-modal-bg" id="modal-sub">
+  <div class="crm-modal">
+    <h2 id="sub-modal-title">New Subscription</h2>
+    <form id="sub-form" class="crm-form" novalidate>
+      <input type="hidden" id="sub-id">
+
+      <div class="fs-section">Software</div>
+      <div class="crm-grid2">
+        <div><label for="sub-software_name">Software Name *</label><input id="sub-software_name" maxlength="200"></div>
+        <div><label for="sub-vendor_name">Vendor</label><input id="sub-vendor_name" maxlength="200"></div>
+        <div><label for="sub-plan_name">Plan</label><input id="sub-plan_name" maxlength="200"></div>
+        <div><label for="sub-status">Status</label><select id="sub-status"></select></div>
+      </div>
+
+      <div class="fs-section">Billing</div>
+      <div class="crm-grid2">
+        <div><label for="sub-cost">Cost per Cycle *</label><input id="sub-cost" type="number" step="0.01" min="0"></div>
+        <div><label for="sub-currency">Currency</label><select id="sub-currency"></select></div>
+        <div><label for="sub-billing_cycle">Billing Cycle</label><select id="sub-billing_cycle"></select></div>
+        <div><label for="sub-renewal_date">Next Renewal Date</label><input id="sub-renewal_date" type="date"></div>
+        <div><label for="sub-cost_centre_id">Cost Centre</label><select id="sub-cost_centre_id"><option value="">—</option></select></div>
+        <div><label class="fs-check"><input id="sub-auto_renewal" type="checkbox" checked> Auto-renews</label></div>
+      </div>
+
+      <div class="fs-section">Seats &amp; Licence</div>
+      <div class="crm-grid2">
+        <div><label for="sub-seats_purchased">Seats Purchased</label><input id="sub-seats_purchased" type="number" step="1" min="0"></div>
+        <div><label for="sub-seats_used">Seats Used</label><input id="sub-seats_used" type="number" step="1" min="0"></div>
+      </div>
+      <label for="sub-license_key">Licence Key</label>
+      <div class="fs-secret">
+        <input id="sub-license_key" type="password" autocomplete="off" spellcheck="false">
+        <button type="button" id="sub-license-toggle" aria-label="Show licence key">Show</button>
+      </div>
+      <div class="fs-hint" id="sub-license-hint">Stored privately; never shown in the list.</div>
+
+      <div><label for="sub-notes">Notes</label><textarea id="sub-notes"></textarea></div>
+
+      <div style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; align-items:center;">
+        <button class="crm-btn" type="submit" id="sub-save-btn">Save</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-sub">Close</button>
+        <span class="crm-status-msg" id="sub-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- FIXED EXPENSE MODAL -->
+<div class="crm-modal-bg" id="modal-fx">
+  <div class="crm-modal">
+    <h2 id="fx-modal-title">New Fixed Expense</h2>
+    <form id="fx-form" class="crm-form" novalidate>
+      <input type="hidden" id="fx-id">
+
+      <div class="fs-section">Expense</div>
+      <div class="crm-grid2">
+        <div><label for="fx-name">Name *</label><input id="fx-name" maxlength="200"></div>
+        <div><label for="fx-category">Category</label><select id="fx-category"></select></div>
+        <div><label for="fx-vendor_name">Vendor</label><input id="fx-vendor_name" maxlength="200"></div>
+        <div><label for="fx-status">Status</label><select id="fx-status"></select></div>
+      </div>
+
+      <div class="fs-section">Amount &amp; Schedule</div>
+      <div class="crm-grid2">
+        <div><label for="fx-amount">Amount per Occurrence *</label><input id="fx-amount" type="number" step="0.01" min="0"></div>
+        <div><label for="fx-currency">Currency</label><select id="fx-currency"></select></div>
+        <div><label for="fx-frequency">Frequency</label><select id="fx-frequency"></select></div>
+        <div><label class="fs-check"><input id="fx-tax_included" type="checkbox" checked> Amount includes tax</label></div>
+        <div><label for="fx-start_date">Start Date *</label><input id="fx-start_date" type="date"></div>
+        <div><label for="fx-end_date">End Date</label><input id="fx-end_date" type="date"></div>
+        <div><label for="fx-cost_centre_id">Cost Centre</label><select id="fx-cost_centre_id"><option value="">—</option></select></div>
+      </div>
+
+      <div><label for="fx-notes">Notes</label><textarea id="fx-notes"></textarea></div>
+
+      <div style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; align-items:center;">
+        <button class="crm-btn" type="submit" id="fx-save-btn">Save</button>
+        <button class="crm-btn ghost" type="button" data-close="modal-fx">Close</button>
+        <span class="crm-status-msg" id="fx-form-status"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="crm-modal-bg" id="modal-hist">
+  <div class="crm-modal" style="max-width:760px;">
+    <h2 id="hist-title">History</h2>
+    <p class="crm-mono" id="hist-sub" style="margin:-10px 0 14px;"></p>
+    <div id="hist-body"></div>
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="crm-btn ghost" type="button" data-close="modal-hist">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL (in-page — no browser dialogs) -->
+<div class="crm-modal-bg" id="modal-confirm">
+  <div class="crm-modal" style="max-width:480px;">
+    <h2 id="cf-title">Confirm</h2>
+    <p id="cf-text" style="font-size:13px; color:var(--muted);"></p>
+    <div style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; align-items:center;">
+      <button class="crm-btn danger" type="button" id="cf-ok">Confirm</button>
+      <button class="crm-btn ghost" type="button" data-close="modal-confirm">Cancel</button>
+      <span class="crm-status-msg" id="cf-status"></span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+<script src="supabase-client.js"></script>
+<script src="crm-auth.js"></script>
+<script src="crm-activity.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof sb === 'undefined') return;
+
+  function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function escAttr(s){ return esc(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  const NICE={internet_telecom:'Internet / Telecom', audit_accounting:'Audit / Accounting', domains_email:'Domains / Email',
+    software_licenses:'Software Licences', half_yearly:'Half-Yearly', one_time:'One-Time'};
+  function label(s){ if(!s)return '—'; if(NICE[s])return NICE[s]; return String(s).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }
+  function fmtNum(n){ return Number(n).toLocaleString('en-US',{maximumFractionDigits:2}); }
+  function money(n,c){ return (n==null||n==='')?'—':(c?c+' ':'')+fmtNum(n); }
+  function val(id){ const el=document.getElementById(id); if(!el)return null; if(el.type==='checkbox')return el.checked; const v=String(el.value).trim(); return v===''?null:v; }
+  function setval(id,v){
+    const el=document.getElementById(id); if(!el)return;
+    if(el.type==='checkbox'){ el.checked=!!v; } else { el.value=v==null?'':v; }
+    if(el.tagName==='SELECT')el.dispatchEvent(new Event('change')); /* repaints crm-select.js triggers */
+  }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function daysUntil(ds){
+    if(!ds)return null;
+    const a=Date.parse(String(ds).slice(0,10)+'T00:00:00'), b=Date.parse(todayStr()+'T00:00:00');
+    return isNaN(a)?null:Math.round((a-b)/86400000);
+  }
+  function fmtTs(ts){ if(!ts)return '—'; const d=new Date(ts); if(isNaN(d.getTime()))return String(ts); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+  function openModal(id){ const m=document.getElementById(id); if(m)m.classList.add('open'); }
+  function closeModal(id){ const m=document.getElementById(id); if(m)m.classList.remove('open'); }
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
+  function setStatus(msg){ document.getElementById('fs-status').textContent=msg||''; }
+
+  /* Enumerations — exactly the CHECK constraints on the production tables. */
+  const SUB_CYCLES=['monthly','quarterly','yearly'];
+  const SUB_STATUSES=['active','cancelled','archived'];
+  const FX_CATEGORIES=['rent','utilities','internet_telecom','insurance','legal','audit_accounting','software_licenses',
+    'cloud_hosting','domains_email','vehicle','fuel','office_supplies','cleaning','security','maintenance','marketing',
+    'professional_fees','banking','travel','equipment','other'];
+  const FX_FREQS=['daily','weekly','monthly','quarterly','half_yearly','yearly','one_time'];
+  const FX_STATUSES=['active','paused','archived'];
+  const CURRENCIES=['PKR','USD','GBP','EUR','AED','SAR'];
+  /* license_key is deliberately NOT in the list query. */
+  const SUB_COLS='id,subscription_number,software_name,vendor_name,plan_name,billing_cycle,cost,currency,renewal_date,auto_renewal,seats_purchased,seats_used,cost_centre_id,notes,status,monthly_equivalent,created_at,updated_at';
+  const FX_COLS='id,expense_number,name,category,vendor_name,frequency,start_date,end_date,amount,tax_included,currency,cost_centre_id,status,notes,monthly_equivalent,created_at,updated_at';
+  const NO_ROW='No row was updated — your role may not allow this change.';
+
+  var canEdit=false, subs=[], subsErr=null, fixed=[], fixedErr=null, ccCache=[], staffNames=null, licenseOrig='';
+
+  /* Fill an enum <select>; a stored value outside the list is kept, never silently dropped. */
+  function fillEnum(id, values, current, raw){
+    const list=values.slice(); if(current&&list.indexOf(current)<0)list.push(current);
+    document.getElementById(id).innerHTML=list.map(v=>`<option value="${escAttr(v)}">${esc(raw?v:label(v))}</option>`).join('');
+    setval(id, current||values[0]);
+  }
+  function fillCc(id, current){
+    const opts=ccCache.filter(c=>c.is_active||c.id===current);
+    let html='<option value="">—</option>'+opts.map(c=>`<option value="${escAttr(c.id)}">${esc(c.name)}${c.is_active?'':' (inactive)'}</option>`).join('');
+    if(current&&!opts.some(c=>c.id===current))html+=`<option value="${escAttr(current)}">(unknown cost centre)</option>`;
+    document.getElementById(id).innerHTML=html;
+    setval(id,current||'');
+  }
+  function ccName(id){ if(!id)return '—'; const c=ccCache.find(x=>x.id===id); return c?c.name:'—'; }
+  function statusBadge(s){
+    const cls=s==='active'?'ok':(s==='paused'?'warn':(s==='cancelled'?'bad':''));
+    return `<span class="crm-badge ${cls}">${esc(label(s))}</span>`;
+  }
+
+  /* ---------- AUTH ---------- */
+  const loginBox=document.getElementById('crm-login-box'), shell=document.getElementById('crm-shell'), logoutBtn=document.getElementById('crm-logout');
+  const passToggle=document.getElementById('crm-pass-toggle');
+  if(passToggle)passToggle.addEventListener('click',()=>{ const pw=document.getElementById('crm-password'); const show=pw.type==='password'; pw.type=show?'text':'password'; passToggle.textContent=show?'Hide':'Show'; });
+  async function checkSession(){ const {data}=await sb.auth.getSession(); if(data.session){await boot();} else {loginBox.style.display='block'; shell.style.display='none'; logoutBtn.style.display='none';} }
+  document.getElementById('crm-login-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const st=document.getElementById('crm-login-status'), btn=document.getElementById('crm-login-btn');
+    btn.disabled=true; btn.textContent='Logging in…'; st.textContent='';
+    const {error}=await sb.auth.signInWithPassword({email:document.getElementById('crm-email').value, password:document.getElementById('crm-password').value});
+    btn.disabled=false; btn.textContent='Log In';
+    if(error){ st.textContent=(error.name==='ExplicitSubmitRequired')?error.message:'Incorrect email or password.'; } else { await boot(); }
+  });
+  logoutBtn.addEventListener('click', async ()=>{ await sb.auth.signOut(); checkSession(); });
+
+  /* Role check through the shared cached session context (one RPC per session);
+     falls back to the crm_has_role RPC if the context is not available yet. */
+  async function hasRole(roles){
+    try{
+      if(window.jco&&jco.context&&jco.hasRole){
+        const ctx=await jco.context();
+        if(ctx&&ctx.roles)return await jco.hasRole(roles);
+      }
+    }catch(e){}
+    try{ const r=await sb.rpc('crm_has_role',{roles:roles}); return !r.error&&r.data===true; }catch(e){ return false; }
+  }
+
+  async function boot(){
+    const allowed=await hasRole(['owner','super_admin','ceo','finance_manager']);
+    if(!allowed){
+      document.getElementById('crm-login-status').textContent='Your role does not include Financial Settings access. Ask the Owner for finance access.';
+      await sb.auth.signOut(); return;
+    }
+    canEdit=await hasRole(['owner','super_admin']);
+    document.getElementById('fs-readonly-note').style.display=canEdit?'none':'block';
+    ['btn-new-sub','btn-new-fx'].forEach(id=>{ document.getElementById(id).style.display=canEdit?'':'none'; });
+    loginBox.style.display='none'; shell.style.display='flex'; logoutBtn.style.display='block';
+    staffNames=null;
+    await loadCostCentres();
+    await Promise.all([loadSubs(), loadFixed(), loadCategories()]);
+  }
+
+  /* ---------- TABS (+ deep links #subscriptions / #fixed / #categories) ---------- */
+  const TABS=['subscriptions','fixed','categories'];
+  function selectTab(k, push){
+    if(TABS.indexOf(k)<0)k='subscriptions';
+    document.querySelectorAll('.fs-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===k));
+    TABS.forEach(t=>{ document.getElementById('tab-'+t).style.display=(t===k)?'block':'none'; });
+    if(push&&location.hash!=='#'+k){ try{ history.replaceState(null,'','#'+k); }catch(e){} }
+  }
+  function tabFromHash(){ return (location.hash||'').replace(/^#/,'').toLowerCase(); }
+  document.querySelectorAll('.fs-tab').forEach(t=>t.addEventListener('click',()=>selectTab(t.dataset.tab,true)));
+  window.addEventListener('hashchange',()=>{ const h=tabFromHash(); if(TABS.indexOf(h)>-1)selectTab(h,false); });
+  selectTab(tabFromHash(),false);
+
+  /* ---------- LOOKUPS ---------- */
+  async function loadCostCentres(){
+    const {data,error}=await sb.from('crm_cost_centres').select('id,name,is_active').order('sort_order');
+    if(error){ ccCache=[]; setStatus('Cost centres could not be loaded: '+error.message); return; }
+    ccCache=data||[];
+  }
+  async function ensureStaffNames(){
+    if(staffNames)return;
+    staffNames={};
+    try{
+      const {data,error}=await sb.rpc('crm_staff_names');
+      if(!error)(data||[]).forEach(n=>{ staffNames[n.user_id]=n.display_name; });
+    }catch(e){}
+  }
+  function who(uid){ return uid?(staffNames&&staffNames[uid])||'Staff member':'System'; }
+
+  /* ---------- KPIs (per currency — never added across currencies) ---------- */
+  function sumByCurrency(rows){
+    const by={};
+    rows.forEach(r=>{ if(r.monthly_equivalent==null)return; const c=r.currency||'—'; by[c]=(by[c]||0)+Number(r.monthly_equivalent); });
+    return Object.keys(by).sort().map(c=>c+' '+Number(by[c]).toLocaleString('en-US',{maximumFractionDigits:0})).join(' · ')||'0';
+  }
+  function renderKpis(){
+    const actSubs=subs.filter(s=>s.status==='active');
+    const actFx=fixed.filter(f=>f.status==='active');
+    const due=actSubs.filter(s=>{ const d=daysUntil(s.renewal_date); return d!=null&&d<=30; });
+    const overdue=due.filter(s=>daysUntil(s.renewal_date)<0).length;
+    const kpis=[
+      {n:subsErr?'—':String(actSubs.length), l:'Active Subscriptions'},
+      {n:subsErr?'—':sumByCurrency(actSubs), l:'Subscriptions / Month'},
+      {n:fixedErr?'—':sumByCurrency(actFx), l:'Fixed Expenses / Month'},
+      {n:subsErr?'—':String(due.length), l:'Renewals Due in 30 Days'+(overdue?' ('+overdue+' overdue)':'')}
+    ];
+    document.getElementById('fs-kpis').innerHTML=kpis.map(k=>
+      `<div class="crm-kpi"><div class="n" style="font-size:${String(k.n).length>14?'16px':'24px'};">${esc(String(k.n))}</div><div class="l">${esc(k.l)}</div></div>`).join('');
+  }
+
+  /* ---------- SUBSCRIPTIONS ---------- */
+  async function loadSubs(){
+    const {data,error}=await sb.from('crm_subscriptions').select(SUB_COLS).is('deleted_at',null).order('software_name');
+    if(error){ subs=[]; subsErr=error.message; } else { subs=data||[]; subsErr=null; }
+    renderSubs(); renderKpis();
+  }
+  function renewalCell(s){
+    if(!s.renewal_date)return '<td class="crm-mono">—</td>';
+    const d=s.status==='active'?daysUntil(s.renewal_date):null;
+    let badge='';
+    if(d!=null){
+      if(d<0)badge='<span class="crm-badge bad">Overdue '+(-d)+'d</span>';
+      else if(d===0)badge='<span class="crm-badge warn">Today</span>';
+      else if(d<=30)badge='<span class="crm-badge warn">In '+d+' day'+(d===1?'':'s')+'</span>';
+      else badge='<span class="crm-badge">In '+d+' days</span>';
+    }
+    const hot=d!=null&&d<=30;
+    return `<td class="crm-mono" style="${hot?'color:var(--gold-light);':''}">${esc(String(s.renewal_date).slice(0,10))}<div style="margin-top:3px;">${badge}</div></td>`;
+  }
+  function renderSubs(){
+    const fs=val('sub-filter-status')||'active', q=(val('sub-filter-q')||'').toLowerCase();
+    const rows=subs.filter(s=>(fs==='all'||s.status===fs)&&(!q||[s.software_name,s.vendor_name,s.plan_name,s.subscription_number,s.notes]
+      .some(x=>x&&String(x).toLowerCase().indexOf(q)>-1)));
+    const empty=document.getElementById('sub-empty');
+    empty.textContent=subsErr?('Could not load subscriptions — '+subsErr):(!subs.length?'No subscriptions recorded yet.':'No subscriptions match these filters.');
+    empty.style.display=(subsErr||!rows.length)?'block':'none';
+    document.getElementById('sub-rows').innerHTML=rows.map(s=>{
+      const over=s.seats_used!=null&&s.seats_purchased!=null&&Number(s.seats_used)>Number(s.seats_purchased);
+      const seats=(s.seats_used==null&&s.seats_purchased==null)?'—':esc(s.seats_used==null?'—':String(s.seats_used))+' / '+esc(s.seats_purchased==null?'—':String(s.seats_purchased));
+      const id=escAttr(s.id);
+      const acts=(canEdit?`<button class="crm-btn ghost small" type="button" data-act="edit" data-id="${id}">Edit</button>`:'')
+        +`<button class="crm-btn ghost small" type="button" data-act="hist" data-id="${id}">History</button>`
+        +(canEdit&&s.status!=='archived'?`<button class="crm-btn danger small" type="button" data-act="archive" data-id="${id}">Archive</button>`:'');
+      return `<tr>
+        <td>${esc(s.software_name)}${s.subscription_number?'<div class="crm-mono">'+esc(s.subscription_number)+'</div>':''}</td>
+        <td>${esc(s.vendor_name||'—')}${s.plan_name?'<div class="crm-mono">'+esc(s.plan_name)+'</div>':''}</td>
+        <td class="crm-mono">${esc(label(s.billing_cycle))}</td>
+        <td class="crm-mono">${esc(money(s.cost,s.currency))}</td>
+        <td class="crm-mono" style="color:var(--gold-light);">${esc(money(s.monthly_equivalent,s.currency))}</td>
+        ${renewalCell(s)}
+        <td>${s.auto_renewal?'<span class="crm-badge ok">Yes</span>':'<span class="crm-badge">No</span>'}</td>
+        <td class="crm-mono" style="${over?'color:#e57368;':''}">${seats}</td>
+        <td>${esc(ccName(s.cost_centre_id))}</td>
+        <td>${statusBadge(s.status)}</td>
+        <td class="fs-actions">${acts}</td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('sub-filter-status').addEventListener('change',renderSubs);
+  document.getElementById('sub-filter-q').addEventListener('input',renderSubs);
+  document.getElementById('sub-rows').addEventListener('click',e=>{
+    const b=e.target.closest('[data-act]'); if(!b)return;
+    const s=subs.find(x=>x.id===b.dataset.id); if(!s)return;
+    if(b.dataset.act==='edit')openSub(s);
+    else if(b.dataset.act==='hist')showSubHistory(s);
+    else if(b.dataset.act==='archive')askConfirm('Archive subscription',
+      'Archive "'+s.software_name+'"? It stops counting toward monthly overhead and renewals. Nothing is deleted — set the status back to Active to restore it.',
+      'Archive', ()=>setSubStatus(s,'archived'));
+  });
+  async function setSubStatus(s,status){
+    const {data,error}=await sb.from('crm_subscriptions').update({status:status}).eq('id',s.id).select('id');
+    if(error)return error.message;
+    if(!data||!data.length)return NO_ROW;
+    setStatus(s.software_name+' — '+label(status)+'.');
+    await loadSubs(); return null;
+  }
+
+  const licInput=document.getElementById('sub-license_key'), licToggle=document.getElementById('sub-license-toggle');
+  function maskLicense(){ licInput.type='password'; licToggle.textContent='Show'; licToggle.setAttribute('aria-label','Show licence key'); }
+  licToggle.addEventListener('click',()=>{
+    const show=licInput.type==='password';
+    licInput.type=show?'text':'password'; licToggle.textContent=show?'Hide':'Show';
+    licToggle.setAttribute('aria-label',show?'Hide licence key':'Show licence key');
+  });
+
+  document.getElementById('btn-new-sub').addEventListener('click',()=>openSub(null));
+  async function openSub(s){
+    if(!canEdit)return;
+    const st=document.getElementById('sub-form-status'), btn=document.getElementById('sub-save-btn');
+    document.getElementById('sub-form').reset(); st.textContent='';
+    if(!subSaving)btn.disabled=false;
+    setval('sub-id',s?s.id:'');
+    document.getElementById('sub-modal-title').textContent=s?('Edit — '+s.software_name):'New Subscription';
+    ['software_name','vendor_name','plan_name','renewal_date','notes'].forEach(k=>setval('sub-'+k,s?s[k]:null));
+    setval('sub-cost',s?s.cost:null);
+    setval('sub-seats_purchased',s?s.seats_purchased:null);
+    setval('sub-seats_used',s?s.seats_used:null);
+    setval('sub-auto_renewal',s?s.auto_renewal:true);
+    fillEnum('sub-billing_cycle',SUB_CYCLES,s?s.billing_cycle:'monthly');
+    fillEnum('sub-status',SUB_STATUSES,s?s.status:'active');
+    fillEnum('sub-currency',CURRENCIES,s?s.currency:'PKR',true);
+    fillCc('sub-cost_centre_id',s?s.cost_centre_id:null);
+    maskLicense(); setval('sub-license_key',''); licenseOrig='';
+    document.getElementById('sub-license-hint').textContent='Stored privately; never shown in the list.';
+    openModal('modal-sub');
+    if(s){
+      btn.disabled=true; st.textContent='Loading…';
+      const {data,error}=await sb.from('crm_subscriptions').select('license_key').eq('id',s.id).maybeSingle();
+      if(val('sub-id')!==s.id)return;               /* modal re-opened for another row meanwhile */
+      btn.disabled=false; st.textContent='';
+      if(error||!data){ document.getElementById('sub-license-hint').textContent='The stored licence key could not be loaded — leave blank to keep it unchanged.'; }
+      else { licenseOrig=data.license_key||''; setval('sub-license_key',licenseOrig); }
+    }
+  }
+  function intOrNull(id){ const v=val(id); if(v==null)return {ok:true,v:null}; const n=Number(v); return {ok:Number.isInteger(n)&&n>=0, v:n}; }
+  let subSaving=false;
+  document.getElementById('sub-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    if(subSaving||!canEdit)return;
+    const st=document.getElementById('sub-form-status'), btn=document.getElementById('sub-save-btn');
+    const id=val('sub-id');
+    const sp=intOrNull('sub-seats_purchased'), su=intOrNull('sub-seats_used');
+    const costRaw=val('sub-cost'), cost=costRaw==null?NaN:Number(costRaw);
+    const p={
+      software_name:val('sub-software_name'), vendor_name:val('sub-vendor_name'), plan_name:val('sub-plan_name'),
+      billing_cycle:val('sub-billing_cycle'), cost:cost, currency:val('sub-currency'),
+      renewal_date:val('sub-renewal_date'), auto_renewal:!!val('sub-auto_renewal'),
+      seats_purchased:sp.v, seats_used:su.v, cost_centre_id:val('sub-cost_centre_id'),
+      notes:val('sub-notes'), status:val('sub-status')
+    };
+    if(!p.software_name){ st.textContent='Software name is required.'; return; }
+    if(!isFinite(cost)||cost<0||cost>=1e12){ st.textContent='Cost must be a number of 0 or more.'; return; }
+    if(SUB_CYCLES.indexOf(p.billing_cycle)<0){ st.textContent='Billing cycle must be monthly, quarterly or yearly.'; return; }
+    if(SUB_STATUSES.indexOf(p.status)<0){ st.textContent='Choose a valid status.'; return; }
+    if(!p.currency){ st.textContent='Currency is required.'; return; }
+    if(!sp.ok||!su.ok){ st.textContent='Seats must be whole numbers of 0 or more.'; return; }
+    if(p.renewal_date&&!/^\d{4}-\d{2}-\d{2}$/.test(p.renewal_date)){ st.textContent='Renewal date is not a valid date.'; return; }
+    const lic=document.getElementById('sub-license_key').value.trim();
+    if(lic!==licenseOrig)p.license_key=lic||null;   /* only written when actually changed */
+
+    subSaving=true; btn.disabled=true; st.textContent='Saving…';
+    try{
+      let error=null, ref=p.software_name;
+      if(id){
+        const r=await sb.from('crm_subscriptions').update(p).eq('id',id).select('id');
+        error=r.error; if(!error&&(!r.data||!r.data.length))error={message:NO_ROW};
+      } else {
+        try{ const {data:num}=await sb.rpc('crm_next_number',{p_entity:'sub'}); p.subscription_number=num||null; }catch(e2){}
+        const r=await sb.from('crm_subscriptions').insert(p).select('id,subscription_number').single();
+        error=r.error; if(r.data&&r.data.subscription_number)ref=r.data.subscription_number+' '+p.software_name;
+      }
+      if(error){ st.textContent='Error: '+error.message; return; }
+      st.textContent=''; licenseOrig=''; setval('sub-license_key',''); maskLicense();
+      closeModal('modal-sub');
+      setStatus((id?'Saved — ':'Added — ')+ref+'.');
+      await loadSubs();
+    } finally { subSaving=false; btn.disabled=false; }
+  });
+
+  async function showSubHistory(s){
+    document.getElementById('hist-title').textContent='Price History — '+s.software_name;
+    document.getElementById('hist-sub').textContent='Every change to cost or billing cycle, newest first.';
+    const body=document.getElementById('hist-body');
+    body.innerHTML='<p class="crm-empty">Loading…</p>';
+    openModal('modal-hist');
+    const [{data,error}]=await Promise.all([
+      sb.from('crm_subscription_price_history').select('id,old_cost,new_cost,old_billing_cycle,new_billing_cycle,changed_by,changed_at')
+        .eq('subscription_id',s.id).order('changed_at',{ascending:false}).limit(100),
+      ensureStaffNames()
+    ]);
+    if(error){ body.innerHTML='<p class="crm-empty">Could not load price history — '+esc(error.message)+'</p>'; return; }
+    if(!data||!data.length){ body.innerHTML='<p class="crm-empty">No price or cycle changes recorded yet.</p>'; return; }
+    body.innerHTML=`<table class="crm-table"><thead><tr><th>Changed</th><th>Cost</th><th>Billing Cycle</th><th>By</th></tr></thead><tbody>`+
+      data.map(h=>`<tr>
+        <td class="crm-mono">${esc(fmtTs(h.changed_at))}</td>
+        <td class="crm-mono">${esc(money(h.old_cost,s.currency))} → <span style="color:var(--gold-light);">${esc(money(h.new_cost,s.currency))}</span></td>
+        <td class="crm-mono">${esc(label(h.old_billing_cycle))} → ${esc(label(h.new_billing_cycle))}</td>
+        <td>${esc(who(h.changed_by))}</td>
+      </tr>`).join('')+'</tbody></table>';
+  }
+
+  /* ---------- FIXED EXPENSES ---------- */
+  async function loadFixed(){
+    const {data,error}=await sb.from('crm_fixed_expenses').select(FX_COLS).is('deleted_at',null).order('name');
+    if(error){ fixed=[]; fixedErr=error.message; } else { fixed=data||[]; fixedErr=null; }
+    renderFixed(); renderKpis();
+  }
+  function renderFixed(){
+    const fs=val('fx-filter-status')||'active', q=(val('fx-filter-q')||'').toLowerCase();
+    const rows=fixed.filter(f=>(fs==='all'||f.status===fs)&&(!q||[f.name,f.vendor_name,label(f.category),f.expense_number,f.notes]
+      .some(x=>x&&String(x).toLowerCase().indexOf(q)>-1)));
+    const empty=document.getElementById('fx-empty');
+    empty.textContent=fixedErr?('Could not load fixed expenses — '+fixedErr):(!fixed.length?'No fixed expenses recorded yet.':'No fixed expenses match these filters.');
+    empty.style.display=(fixedErr||!rows.length)?'block':'none';
+    document.getElementById('fx-rows').innerHTML=rows.map(f=>{
+      const id=escAttr(f.id);
+      const ended=f.end_date&&daysUntil(f.end_date)<0;
+      const acts=(canEdit?`<button class="crm-btn ghost small" type="button" data-act="edit" data-id="${id}">Edit</button>`:'')
+        +`<button class="crm-btn ghost small" type="button" data-act="hist" data-id="${id}">History</button>`
+        +(canEdit&&f.status!=='archived'?`<button class="crm-btn ghost small" type="button" data-act="pause" data-id="${id}">${f.status==='paused'?'Resume':'Pause'}</button>`:'')
+        +(canEdit&&f.status!=='archived'?`<button class="crm-btn danger small" type="button" data-act="archive" data-id="${id}">Archive</button>`:'');
+      return `<tr>
+        <td>${esc(f.name)}${f.expense_number?'<div class="crm-mono">'+esc(f.expense_number)+'</div>':''}</td>
+        <td class="crm-mono">${esc(label(f.category))}</td>
+        <td>${esc(f.vendor_name||'—')}</td>
+        <td class="crm-mono">${esc(label(f.frequency))}</td>
+        <td class="crm-mono">${esc(money(f.amount,f.currency))}</td>
+        <td>${f.tax_included?'<span class="crm-badge ok">Yes</span>':'<span class="crm-badge">No</span>'}</td>
+        <td class="crm-mono" style="color:var(--gold-light);">${esc(money(f.monthly_equivalent,f.currency))}</td>
+        <td class="crm-mono">${esc(f.start_date?String(f.start_date).slice(0,10):'—')}<div style="${ended?'color:#e57368;':''}">${f.end_date?'→ '+esc(String(f.end_date).slice(0,10)):'→ ongoing'}</div></td>
+        <td>${esc(ccName(f.cost_centre_id))}</td>
+        <td>${statusBadge(f.status)}</td>
+        <td class="fs-actions">${acts}</td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('fx-filter-status').addEventListener('change',renderFixed);
+  document.getElementById('fx-filter-q').addEventListener('input',renderFixed);
+  document.getElementById('fx-rows').addEventListener('click', async e=>{
+    const b=e.target.closest('[data-act]'); if(!b)return;
+    const f=fixed.find(x=>x.id===b.dataset.id); if(!f)return;
+    if(b.dataset.act==='edit')openFx(f);
+    else if(b.dataset.act==='hist')showFxHistory(f);
+    else if(b.dataset.act==='archive')askConfirm('Archive fixed expense',
+      'Archive "'+f.name+'"? It stops counting toward monthly overhead. Nothing is deleted — set the status back to Active to restore it.',
+      'Archive', ()=>setFxStatus(f,'archived'));
+    else if(b.dataset.act==='pause'){
+      if(b.disabled)return;
+      b.disabled=true; setStatus('Updating…');
+      const err=await setFxStatus(f, f.status==='paused'?'active':'paused');
+      if(err){ b.disabled=false; setStatus('Error: '+err); }
+    }
+  });
+  async function setFxStatus(f,status){
+    const {data,error}=await sb.from('crm_fixed_expenses').update({status:status}).eq('id',f.id).select('id');
+    if(error)return error.message;
+    if(!data||!data.length)return NO_ROW;
+    setStatus(f.name+' — '+label(status)+'.');
+    await loadFixed(); return null;
+  }
+
+  document.getElementById('btn-new-fx').addEventListener('click',()=>openFx(null));
+  function openFx(f){
+    if(!canEdit)return;
+    document.getElementById('fx-form').reset(); document.getElementById('fx-form-status').textContent='';
+    setval('fx-id',f?f.id:'');
+    document.getElementById('fx-modal-title').textContent=f?('Edit — '+f.name):'New Fixed Expense';
+    ['name','vendor_name','notes','end_date'].forEach(k=>setval('fx-'+k,f?f[k]:null));
+    setval('fx-amount',f?f.amount:null);
+    setval('fx-start_date',f?(f.start_date?String(f.start_date).slice(0,10):null):todayStr());
+    setval('fx-tax_included',f?f.tax_included:true);
+    fillEnum('fx-category',FX_CATEGORIES,f?f.category:'other');
+    fillEnum('fx-frequency',FX_FREQS,f?f.frequency:'monthly');
+    fillEnum('fx-status',FX_STATUSES,f?f.status:'active');
+    fillEnum('fx-currency',CURRENCIES,f?f.currency:'PKR',true);
+    fillCc('fx-cost_centre_id',f?f.cost_centre_id:null);
+    openModal('modal-fx');
+  }
+  let fxSaving=false;
+  document.getElementById('fx-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    if(fxSaving||!canEdit)return;
+    const st=document.getElementById('fx-form-status'), btn=document.getElementById('fx-save-btn');
+    const id=val('fx-id');
+    const amtRaw=val('fx-amount'), amount=amtRaw==null?NaN:Number(amtRaw);
+    const p={
+      name:val('fx-name'), category:val('fx-category'), vendor_name:val('fx-vendor_name'),
+      frequency:val('fx-frequency'), start_date:val('fx-start_date'), end_date:val('fx-end_date'),
+      amount:amount, tax_included:!!val('fx-tax_included'), currency:val('fx-currency'),
+      cost_centre_id:val('fx-cost_centre_id'), status:val('fx-status'), notes:val('fx-notes')
+    };
+    if(!p.name){ st.textContent='Name is required.'; return; }
+    if(!isFinite(amount)||amount<0||amount>=1e12){ st.textContent='Amount must be a number of 0 or more.'; return; }
+    if(FX_CATEGORIES.indexOf(p.category)<0){ st.textContent='Choose a valid category.'; return; }
+    if(FX_FREQS.indexOf(p.frequency)<0){ st.textContent='Choose a valid frequency.'; return; }
+    if(FX_STATUSES.indexOf(p.status)<0){ st.textContent='Choose a valid status.'; return; }
+    if(!p.currency){ st.textContent='Currency is required.'; return; }
+    if(!p.start_date||!/^\d{4}-\d{2}-\d{2}$/.test(p.start_date)){ st.textContent='Start date is required.'; return; }
+    if(p.end_date&&!/^\d{4}-\d{2}-\d{2}$/.test(p.end_date)){ st.textContent='End date is not a valid date.'; return; }
+    if(p.end_date&&p.end_date<p.start_date){ st.textContent='End date cannot be before the start date.'; return; }
+
+    fxSaving=true; btn.disabled=true; st.textContent='Saving…';
+    try{
+      let error=null, ref=p.name;
+      if(id){
+        const r=await sb.from('crm_fixed_expenses').update(p).eq('id',id).select('id');
+        error=r.error; if(!error&&(!r.data||!r.data.length))error={message:NO_ROW};
+      } else {
+        try{ const {data:num}=await sb.rpc('crm_next_number',{p_entity:'fxp'}); p.expense_number=num||null; }catch(e2){}
+        const r=await sb.from('crm_fixed_expenses').insert(p).select('id,expense_number').single();
+        error=r.error; if(r.data&&r.data.expense_number)ref=r.data.expense_number+' '+p.name;
+      }
+      if(error){ st.textContent='Error: '+error.message; return; }
+      st.textContent=''; closeModal('modal-fx');
+      setStatus((id?'Saved — ':'Added — ')+ref+'.');
+      await loadFixed();
+    } finally { fxSaving=false; btn.disabled=false; }
+  });
+
+  async function showFxHistory(f){
+    document.getElementById('hist-title').textContent='Change History — '+f.name;
+    document.getElementById('hist-sub').textContent='Each row shows the values as they were before the change, newest first.';
+    const body=document.getElementById('hist-body');
+    body.innerHTML='<p class="crm-empty">Loading…</p>';
+    openModal('modal-hist');
+    const [{data,error}]=await Promise.all([
+      sb.from('crm_fixed_expense_history').select('id,action,old_data,changed_by,changed_at')
+        .eq('fixed_expense_id',f.id).order('changed_at',{ascending:false}).limit(100),
+      ensureStaffNames()
+    ]);
+    if(error){ body.innerHTML='<p class="crm-empty">Could not load history — '+esc(error.message)+'</p>'; return; }
+    if(!data||!data.length){ body.innerHTML='<p class="crm-empty">No changes recorded yet.</p>'; return; }
+    body.innerHTML=`<table class="crm-table"><thead><tr><th>Changed</th><th>Action</th><th>Was</th><th>By</th></tr></thead><tbody>`+
+      data.map(h=>{
+        const o=(h.old_data&&typeof h.old_data==='object')?h.old_data:null;
+        const was=o?[o.amount!=null?money(o.amount,o.currency||f.currency):null, o.frequency?label(o.frequency):null, o.status?label(o.status):null]
+          .filter(Boolean).join(' · '):'';
+        return `<tr>
+          <td class="crm-mono">${esc(fmtTs(h.changed_at))}</td>
+          <td class="crm-mono">${esc(label(h.action))}</td>
+          <td class="crm-mono">${esc(was||'—')}</td>
+          <td>${esc(who(h.changed_by))}</td>
+        </tr>`;
+      }).join('')+'</tbody></table>';
+  }
+
+  /* ---------- COST CATEGORIES (read-only) ---------- */
+  async function loadCategories(){
+    const {data,error}=await sb.from('crm_cost_categories').select('code,letter,name,default_kind,service_tags,sort_order,is_active').order('sort_order');
+    const rows=error?[]:(data||[]);
+    const empty=document.getElementById('cat-empty');
+    empty.textContent=error?('Could not load cost categories — '+error.message):'No cost categories defined.';
+    empty.style.display=(error||!rows.length)?'block':'none';
+    document.getElementById('cat-rows').innerHTML=rows.map(c=>{
+      const tags=Array.isArray(c.service_tags)?c.service_tags:(c.service_tags?[c.service_tags]:[]);
+      return `<tr>
+        <td class="crm-mono" style="color:var(--gold-light);">${esc(c.letter||'—')}</td>
+        <td class="crm-mono">${esc(c.code||'—')}</td>
+        <td>${esc(c.name||'—')}</td>
+        <td class="crm-mono">${esc(label(c.default_kind))}</td>
+        <td>${tags.length?tags.map(t=>'<span class="crm-badge" style="margin:0 4px 4px 0;">'+esc(t)+'</span>').join(''):'—'}</td>
+        <td>${c.is_active?'<span class="crm-badge ok">Active</span>':'<span class="crm-badge">Inactive</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ---------- IN-PAGE CONFIRM ---------- */
+  let cfRun=null;
+  function askConfirm(title,text,okLabel,run){
+    document.getElementById('cf-title').textContent=title;
+    document.getElementById('cf-text').textContent=text;
+    document.getElementById('cf-ok').textContent=okLabel||'Confirm';
+    document.getElementById('cf-ok').disabled=false;
+    document.getElementById('cf-status').textContent='';
+    cfRun=run; openModal('modal-confirm');
+  }
+  document.getElementById('cf-ok').addEventListener('click', async ()=>{
+    const btn=document.getElementById('cf-ok'), st=document.getElementById('cf-status');
+    if(!cfRun||btn.disabled)return;
+    btn.disabled=true; st.textContent='Working…';
+    let err=null;
+    try{ err=await cfRun(); }catch(e){ err=e&&e.message?e.message:String(e); }
+    if(err){ st.textContent='Error: '+err; btn.disabled=false; return; }
+    cfRun=null; st.textContent=''; closeModal('modal-confirm');
+  });
+
+  checkSession();
+});
+</script>
+</body>
+</html>
