@@ -31,6 +31,9 @@ Full detail: [docs/AUDIT-2026-11-12.md](docs/AUDIT-2026-11-12.md).
 - Schema baseline (catalog reconstruction) in `supabase/schema/baseline/`.
 - `advisory-agent` v25: server-side rate limit + website-chat lead capture.
 - `ai-agent` / `ai-client-agent` switched off (`ai_agent_configs.is_enabled = false`).
+- Claude connected (2026-11-12 21:40 UTC, commit `4537bb8`): `advisory-agent` v27, `ai-accountant` v30,
+  `analytics-agent` v25 deployed with the Supabase CLI; `ANTHROPIC_API_KEY` set by the owner; live test answered
+  by `claude-haiku-5-5`. Gemini remains the automatic fallback if the key is removed.
 
 **Changed**
 - supabase-js pinned to 2.119.0 on every page (was the floating `@2`).
