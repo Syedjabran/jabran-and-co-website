@@ -1,0 +1,58 @@
+# Supabase CLI configuration for Jabran & Co.
+# Production project ref: dvsaqjvcxqlzgpbvexnu  (region ap-northeast-1, Postgres 17)
+#
+# Only edge-function settings are pinned here. `verify_jwt` mirrors what is
+# live in production (checked 2026-11-12). Deploying with the CLI uses these
+# values; a function missing from this file would silently default to
+# verify_jwt = true, which breaks webhooks and public endpoints. The quality
+# gate (npm run check) fails if a function folder is not declared here.
+#
+#   verify_jwt = false  → the function authenticates the caller itself
+#                         (webhook secret, OAuth state, or its own JWT check).
+#
+# Deploy one function:  npx supabase functions deploy <name> --project-ref dvsaqjvcxqlzgpbvexnu
+# See docs/DEPLOYMENT.md before deploying anything.
+
+project_id = "jabran-and-co"
+
+# --- Called by the CRM with the signed-in user's token ----------------------
+[functions.admin-invite]
+verify_jwt = true
+
+[functions.admin-set-password]
+verify_jwt = true
+
+[functions.send-client-email]
+verify_jwt = true
+
+[functions.ai-accountant]
+verify_jwt = true
+
+[functions.ai-client-agent]
+verify_jwt = true
+
+[functions.analytics-agent]
+verify_jwt = true
+
+[functions.analytics-oauth]
+verify_jwt = true
+
+[functions.analytics-sync]
+verify_jwt = true
+
+# --- Public / machine-to-machine (do the auth check inside the function) -----
+# Database webhook on crm_enquiries INSERT; checks the x-webhook-secret header.
+[functions.notify-enquiry]
+verify_jwt = false
+
+# Website chat assistant (anonymous visitors).
+[functions.ai-agent]
+verify_jwt = false
+
+# Advisory assistant on the public site.
+[functions.advisory-agent]
+verify_jwt = false
+
+# OAuth provider redirects here; validated with the stored OAuth state.
+[functions.analytics-oauth-callback]
+verify_jwt = false
