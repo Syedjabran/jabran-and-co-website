@@ -1,0 +1,17 @@
+{
+  "name": "jabran-and-co-website",
+  "private": true,
+  "description": "Jabran & Co public website, CRM and client portal (static HTML/JS on Vercel, Supabase backend).",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "npx --yes serve@14.2.7 -l 3000 .",
+    "check": "node scripts/check.mjs",
+    "graph": "node scripts/graph.mjs",
+    "map": "node scripts/graph.mjs && node docs/codebase-map/build.mjs . docs/codebase-map/index.html",
+    "functions:list": "npx --yes supabase@3 functions list --project-ref dvsaqjvcxqlzgpbvexnu"
+  }
+}

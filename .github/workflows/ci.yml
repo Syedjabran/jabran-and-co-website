@@ -1,0 +1,49 @@
+# Quality gate on every push and pull request.
+# It only checks code; it never deploys. (Vercel deploys on its own from Git:
+# main → production, every other branch → protected preview.)
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: node scripts/check.mjs
+        run: node scripts/check.mjs
+
+  functions:
+    name: Edge functions type-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: deno check supabase/functions/*/index.ts
+        # Advisory for now: the archived functions were written in the dashboard
+        # without a type-checker. Make this blocking once they pass cleanly.
+        continue-on-error: true
+        run: |
+          for f in supabase/functions/*/index.ts; do
+            echo "::group::$f"
+            deno check "$f" || echo "::warning file=$f::deno check reported problems"
+            echo "::endgroup::"
+          done

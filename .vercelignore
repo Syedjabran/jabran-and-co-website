@@ -1,0 +1,21 @@
+# Files that live in the repository but must NOT be published on
+# www.jabranandco.com. Everything else in the root is the website.
+# (Never add a folder called public/ — Vercel would then serve ONLY that folder.)
+
+# Backend source (deployed to Supabase, not Vercel)
+supabase/
+
+# Engineering docs, tooling and CI
+docs/
+scripts/
+.github/
+README.md
+AGENTS.md
+CLAUDE.md
+CHANGELOG.md
+CONTRIBUTING.md
+SECURITY.md
+package.json
+.editorconfig
+.gitattributes
+.env.example

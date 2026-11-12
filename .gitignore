@@ -1,0 +1,27 @@
+# Secrets — never commit. Only .env.example is tracked.
+.env
+.env.*
+!.env.example
+
+# Tooling
+node_modules/
+.vercel/
+supabase/.temp/
+supabase/.branches/
+.claude/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs / scratch
+*.log
+tmp/
+
+# Generated codebase map page (npm run map)
+docs/codebase-map/index.html
