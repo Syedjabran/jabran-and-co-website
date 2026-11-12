@@ -1,6 +1,6 @@
 -- ============================================================================
--- PROPOSED — NOT APPLIED.  Needs the owner's approval before it is run.
--- Jabran & Co · security hardening 001 · prepared 2026-11-12
+-- APPLIED to production 2026-11-12 19:18:51 UTC (migration 20261112191851), with the
+-- owner's approval. Verified: anon gets "permission denied" on the views and functions.
 --
 -- Changes PERMISSIONS only. No table, column, row, policy or function body is
 -- created, altered or deleted. Every page and CRM module keeps working.
