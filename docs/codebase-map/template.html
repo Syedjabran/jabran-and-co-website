@@ -1,0 +1,511 @@
+<title>Jabran &amp; Co Codebase Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: brand-dark workbench. Sticky top bar with view tabs; graph view is a
+   full-height canvas with a slide-in inspector; other views are scrolling sheets. */
+:root{
+  --bg:#0B0F14; --panel:#111820; --panel-2:#16202B; --line:#24303D; --ink:#F5F3EF; --muted:#9C9690;
+  --gold:#C6A55A; --gold-ink:#E4C98A; --ok:#4FB38A; --warn:#D9A441; --bad:#E06A5F;
+  --display:'Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F7F7F5; --panel:#FFFFFF; --panel-2:#F0EFEA; --line:#DEDBD2; --ink:#121821; --muted:#5F6670;
+  --gold:#8E6B22; --gold-ink:#6E5118; --ok:#1F7F5A; --warn:#94680F; --bad:#B23A30; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#F7F7F5; --panel:#FFFFFF; --panel-2:#F0EFEA; --line:#DEDBD2; --ink:#121821; --muted:#5F6670;
+  --gold:#8E6B22; --gold-ink:#6E5118; --ok:#1F7F5A; --warn:#94680F; --bad:#B23A30; color-scheme:light}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 var(--sans);display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding-block:12px}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font:600 20px/1.2 var(--display);margin:0;letter-spacing:.01em;text-wrap:balance}
+.brand small{font:500 11px var(--mono);color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav a{color:var(--muted);text-decoration:none;font:500 13px var(--sans);padding:6px 11px;border-radius:6px;border:1px solid transparent}
+nav a:hover{color:var(--ink)}
+nav a[aria-current="page"]{color:var(--gold-ink);border-color:var(--line);background:var(--panel-2)}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+main{flex:1;min-height:0;display:flex;flex-direction:column}
+section.view{flex:1;min-height:0}
+.sheet{padding-block:24px 48px;max-width:1180px;margin:0 auto;width:100%;overflow:auto}
+h2{font:600 24px/1.25 var(--display);margin:0 0 6px;text-wrap:balance}
+h3{font:600 15px/1.3 var(--sans);margin:0 0 8px}
+.lead{color:var(--muted);max-width:68ch;margin:0 0 20px}
+.eyebrow{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.mono{font-family:var(--mono)}
+.num{font-variant-numeric:tabular-nums}
+
+/* stat strip */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:0 0 26px}
+.stat{background:var(--panel);padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.stat b{font:600 22px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:12px}
+
+/* graph view */
+#v-graph{display:flex;position:relative;min-height:420px}
+.tools{position:absolute;z-index:3;left:max(12px,env(safe-area-inset-left,0px));top:12px;right:12px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.tools>*{pointer-events:auto}
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 12px var(--sans);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 8px;cursor:pointer;user-select:none}
+.chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chip[aria-pressed="false"]{opacity:.42}
+.chip .n{color:var(--muted);font:500 11px var(--mono)}
+#q{font:13px var(--sans);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 12px;width:220px;max-width:100%}
+.btn{font:500 12px var(--sans);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer}
+.btn:hover{border-color:var(--gold)}
+#cv{flex:1;min-width:0;display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+#cv.drag{cursor:grabbing}
+aside#insp{width:340px;max-width:100%;border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 24px 16px}
+aside#insp .kind{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+aside#insp h3{font:600 18px/1.3 var(--display);margin:4px 0 2px;word-break:break-word}
+aside#insp .sub{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+.group{margin-top:14px}
+.group h4{margin:0 0 6px;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:5px}
+.links button{font:12px var(--mono);color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:2px 7px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.links button i{width:7px;height:7px;border-radius:50%;flex:none}
+.flag{display:inline-block;font:500 11px var(--mono);padding:1px 7px;border-radius:4px;border:1px solid var(--line);margin:2px 4px 0 0}
+.flag.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+.flag.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+.flag.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.hint{color:var(--muted);font-size:12.5px}
+@media (max-width:760px){#v-graph{flex-direction:column}#cv{height:62vh;flex:none}aside#insp{width:auto;border-left:0;border-top:1px solid var(--line)}}
+
+/* tables */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 11px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--panel-2);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.mono{font-size:12.5px;word-break:break-word}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+
+/* cards grid for functions */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card h3{font:500 14px var(--mono);margin:0;word-break:break-word}
+.card p{margin:0;color:var(--muted);font-size:13px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12.5px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);word-break:break-word}
+
+/* domain bars */
+.bars{display:flex;flex-direction:column;gap:8px}
+.brow{display:grid;grid-template-columns:110px 1fr 90px;gap:12px;align-items:center;font-size:13px}
+.track{height:12px;border-radius:3px;background:var(--panel-2);overflow:hidden;display:flex}
+.track span{height:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media (max-width:860px){.cols2{grid-template-columns:1fr}}
+
+/* flows */
+.flow{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 18px;overflow-x:auto}
+.flow pre.mermaid{margin:0;background:transparent}
+
+/* health */
+.sev{display:inline-block;font:600 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px}
+.sev.critical,.sev.high{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.sev.medium{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.sev.low{background:var(--panel-2);color:var(--muted)}
+.st{font:500 12px var(--mono)}
+.st.fixed{color:var(--ok)} .st.pending{color:var(--warn)} .st.open{color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header><div class="wrap bar">
+  <div class="brand"><h1>Jabran &amp; Co Codebase Map</h1><small id="gen"></small></div>
+  <nav aria-label="Views">
+    <a href="#graph" data-v="graph">Graph</a>
+    <a href="#flows" data-v="flows">Flows</a>
+    <a href="#functions" data-v="functions">Edge functions</a>
+    <a href="#database" data-v="database">Database</a>
+    <a href="#pages" data-v="pages">Pages</a>
+    <a href="#health" data-v="health">Health</a>
+  </nav>
+</div></header>
+
+<main>
+<section class="view" id="v-graph" data-view="graph">
+  <div class="tools" id="tools">
+    <input id="q" type="search" placeholder="Find a page, table, function…" aria-label="Find a node">
+    <button class="btn" id="reset" type="button">Show all</button>
+  </div>
+  <canvas id="cv" aria-label="Dependency graph of the codebase"></canvas>
+  <aside id="insp" aria-live="polite"></aside>
+</section>
+
+<section class="view" id="v-flows" data-view="flows" hidden><div class="wrap sheet">
+  <div class="eyebrow">How work moves through the system</div>
+  <h2>Flows</h2>
+  <p class="lead">The paths that matter most, drawn from the code and the production database. Every arrow is a real call, trigger or insert.</p>
+  <h3>Layers</h3>
+  <div class="flow"><pre class="mermaid">
+flowchart LR
+  subgraph V["Vercel · static site"]
+    P["Public pages (21)"]
+    C["CRM modules (27)"]
+    CP["Client portal + documents"]
+    S["Shared scripts<br/>supabase-client.js · crm-auth.js · crm-*.js"]
+  end
+  subgraph SB["Supabase · dvsaqjvcxqlzgpbvexnu"]
+    A["Auth"]
+    DB[("Postgres<br/>181 tables · 78 views<br/>RLS on every table")]
+    R["153 functions / RPCs<br/>134 triggers"]
+    F["12 edge functions"]
+    ST[("Storage<br/>crm-private · finance-docs")]
+  end
+  X["Resend · Gmail relay · Gemini · Anthropic<br/>Google · Meta · LinkedIn APIs"]
+  P & C & CP --> S --> A & DB & R
+  C & CP --> F
+  F --> DB & ST & X
+  C --> ST
+  </pre></div>
+
+  <h3>Website enquiry to CEO email</h3>
+  <div class="flow"><pre class="mermaid">
+sequenceDiagram
+  participant V as Visitor (contact.html)
+  participant DB as crm_enquiries
+  participant T as Triggers
+  participant W as Webhook enquiry-email
+  participant N as notify-enquiry
+  participant R as Resend
+  V->>DB: insert (anon, RLS allows insert only)
+  DB->>T: number, owner, activity row
+  DB->>W: on INSERT
+  W->>N: POST + x-webhook-secret
+  N->>R: branded email
+  R-->>N: 200
+  Note over N: NOTIFY_EMAIL gets the alert
+  </pre></div>
+
+  <h3>Sales pipeline</h3>
+  <div class="flow"><pre class="mermaid">
+flowchart LR
+  E["Enquiry<br/>crm_enquiries"] -->|crm_create_opportunity_from_enquiry| O["Opportunity<br/>crm_opportunities"]
+  O -->|crm_convert_opportunity_to_quotation| Q["Quotation<br/>crm_quotations + items"]
+  Q -->|crm_submit / decide / issue| QA["Approval<br/>crm_quotation_approvals"]
+  Q -->|crm_convert_quotation_to_order| OR["Order<br/>crm_orders + items + milestones"]
+  OR --> SH["Tracking · shipments · customs"]
+  OR -->|crm_issue_invoice| I["Invoice<br/>crm_invoices + items"]
+  I --> PA["Payment<br/>crm_payments + allocations"]
+  PA -->|crm_verify_payment| RC["Receipt<br/>crm_receipts"]
+  Q -.->|trigger recalc| Q
+  I -.->|trigger recalc| I
+  </pre></div>
+
+  <h3>Staff sign-in</h3>
+  <div class="flow"><pre class="mermaid">
+sequenceDiagram
+  participant U as Staff member
+  participant G as Gesture gateway (supabase-client.js)
+  participant A as Supabase Auth
+  participant X as crm_session_context()
+  participant P as CRM page (crm-auth.js)
+  U->>G: real tap / click / Enter on Log In
+  G->>G: mint single-use token (3 s)
+  G->>A: signInWithPassword
+  A-->>P: SIGNED_IN
+  P->>X: one RPC per session (cached 5 min)
+  X-->>P: roles, is_staff, analytics permissions
+  P->>P: staff? show module : eject client accounts
+  Note over P,A: RLS still decides every row returned
+  </pre></div>
+</div></section>
+
+<section class="view" id="v-functions" data-view="functions" hidden><div class="wrap sheet">
+  <div class="eyebrow">supabase/functions</div>
+  <h2>Edge functions</h2>
+  <p class="lead">Server code that holds secrets. All twelve are now in git; until this release ten existed only in the Supabase dashboard. "Public" means the function checks the caller itself instead of Supabase checking a login.</p>
+  <div class="grid" id="fn-grid"></div>
+</div></section>
+
+<section class="view" id="v-database" data-view="database" hidden><div class="wrap sheet">
+  <div class="eyebrow">Postgres 17 · production inventory</div>
+  <h2>Database</h2>
+  <p class="lead">Object counts come from the production catalog. Usage counts come from scanning the code, so objects used only by triggers or other database functions show zero here.</p>
+  <div class="stats" id="db-stats"></div>
+  <div class="cols2">
+    <div>
+      <h3>Objects by domain</h3>
+      <div class="bars" id="db-bars"></div>
+      <div class="legend"><span><i id="lg-t"></i>tables</span><span><i id="lg-v"></i>views</span></div>
+    </div>
+    <div>
+      <h3>Most-used by the code</h3>
+      <div class="tblwrap"><table><thead><tr><th>Object</th><th>Kind</th><th class="num">Files</th></tr></thead><tbody id="db-top"></tbody></table></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="view" id="v-pages" data-view="pages" hidden><div class="wrap sheet">
+  <div class="eyebrow">Repository root · served as-is by Vercel</div>
+  <h2>Pages</h2>
+  <p class="lead">Every HTML page, what it loads and what it touches. Select a row to see it in the graph.</p>
+  <div class="filters" id="pg-filters"></div>
+  <div class="tblwrap"><table><thead><tr><th>Page</th><th>Group</th><th>Shared scripts</th><th class="num">Tables/views</th><th class="num">RPCs</th><th>Edge functions</th></tr></thead><tbody id="pg-body"></tbody></table></div>
+</div></section>
+
+<section class="view" id="v-health" data-view="health" hidden><div class="wrap sheet">
+  <div class="eyebrow">Engineering audit · 2026-11-12</div>
+  <h2>Health</h2>
+  <p class="lead" id="hl-lead"></p>
+  <div class="stats" id="hl-stats"></div>
+  <div class="filters" id="hl-filters"></div>
+  <div class="tblwrap"><table><thead><tr><th>Severity</th><th>Area</th><th>Finding</th><th>Status</th></tr></thead><tbody id="hl-body"></tbody></table></div>
+</div></section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const G = /*__GRAPH__*/null;
+const HEALTH = /*__HEALTH__*/[];
+const INV = /*__INV__*/{};
+
+const KIND = {
+  'page:public':{c:'#5B9BE6',l:'Public page'}, 'page:crm':{c:'#C6A55A',l:'CRM page'}, 'page:portal':{c:'#A98BE8',l:'Portal page'},
+  'page:document':{c:'#7FB6C9',l:'Document page'}, 'page:snippet':{c:'#6F7782',l:'Snippet page'}, 'page:missing':{c:'#E06A5F',l:'Missing page'},
+  script:{c:'#B8BFC9',l:'Shared script'}, function:{c:'#E8874A',l:'Edge function'}, table:{c:'#4FB38A',l:'Table'}, view:{c:'#2FB9B4',l:'View'},
+  rpc:{c:'#D36FC6',l:'RPC'}, bucket:{c:'#8C7CF0',l:'Storage bucket'}, external:{c:'#E2577A',l:'External service'}, library:{c:'#8A919B',l:'Library'}
+};
+const kk = n => n.kind==='page' ? 'page:'+(n.group||'public') : n.kind;
+const col = n => (KIND[kk(n)]||{c:'#999'}).c;
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const byId = new Map(G.nodes.map(n=>[n.id,n]));
+G.nodes.forEach(n=>{n.out=[];n.in=[];});
+const E = G.edges.filter(e=>byId.has(e.from)&&byId.has(e.to)).map(e=>({source:byId.get(e.from),target:byId.get(e.to),kind:e.kind}));
+E.forEach(e=>{e.source.out.push(e);e.target.in.push(e);});
+G.nodes.forEach(n=>{n.deg=n.out.length+n.in.length;});
+document.getElementById('gen').textContent = 'generated '+G.generated;
+
+/* ---------------- routing ---------------- */
+const VIEWS=['graph','flows','functions','database','pages','health'];
+function route(){
+  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'graph';
+  document.querySelectorAll('section.view').forEach(s=>s.hidden = s.dataset.view!==v);
+  document.querySelectorAll('nav a').forEach(a=>a.setAttribute('aria-current', a.dataset.v===v?'page':'false'));
+  if(v==='graph') requestAnimationFrame(resize);
+}
+addEventListener('hashchange',route);
+
+/* ---------------- graph ---------------- */
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const tools=document.getElementById('tools'), insp=document.getElementById('insp');
+let W=0,H=0,dpr=1,t=d3.zoomIdentity,sel=null,focus=null,hover=null;
+const on={}; Object.keys(KIND).forEach(k=>on[k]=true); on['page:snippet']=false; on.library=false;
+const counts={}; G.nodes.forEach(n=>{counts[kk(n)]=(counts[kk(n)]||0)+1;});
+Object.keys(KIND).filter(k=>counts[k]).forEach(k=>{
+  const b=document.createElement('button'); b.type='button'; b.className='chip'; b.dataset.k=k; b.setAttribute('aria-pressed',on[k]);
+  b.innerHTML='<i style="background:'+KIND[k].c+'"></i>'+esc(KIND[k].l)+' <span class="n">'+counts[k]+'</span>';
+  b.onclick=()=>{on[k]=!on[k]; b.setAttribute('aria-pressed',on[k]); draw();};
+  tools.insertBefore(b, document.getElementById('q'));
+});
+function enableKind(n){ const k=kk(n); if(!on[k]){ on[k]=true; const c=tools.querySelector('.chip[data-k="'+k+'"]'); if(c) c.setAttribute('aria-pressed','true'); } }
+const visible = n => on[kk(n)] && (!focus || n===focus || focus.out.some(e=>e.target===n) || focus.in.some(e=>e.source===n));
+const rad = n => 3 + Math.sqrt(n.deg)*1.15 + (n.kind==='function'?2:0);
+
+const sim = d3.forceSimulation(G.nodes)
+  .force('link', d3.forceLink(E).distance(e=>e.kind==='links'?70:42).strength(e=>e.kind==='links'?0.04:0.25))
+  .force('charge', d3.forceManyBody().strength(n=>-26-n.deg*1.4).distanceMax(420))
+  .force('collide', d3.forceCollide(n=>rad(n)+2))
+  .force('x', d3.forceX(n=>({page:-180,script:-40,function:120,rpc:180,table:240,view:260,bucket:160,external:300,library:-260}[n.kind]||0)).strength(0.06))
+  .force('y', d3.forceY(0).strength(0.05))
+  .alphaDecay(0.035).on('tick',draw);
+
+function resize(){
+  const r=cv.getBoundingClientRect(); if(!r.width) return;
+  dpr=window.devicePixelRatio||1; W=r.width; H=r.height; cv.width=W*dpr; cv.height=H*dpr;
+  if(!resize.done){ t=d3.zoomIdentity.translate(W/2,H/2).scale(Math.min(1.1,Math.max(0.45,W/1100))); d3.select(cv).call(zoom.transform,t); resize.done=true; }
+  draw();
+}
+addEventListener('resize',resize);
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function draw(){
+  if(!W) return;
+  ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+  ctx.save(); ctx.translate(t.x,t.y); ctx.scale(t.k,t.k);
+  const ink=css('--ink'), line=css('--line'), gold=css('--gold');
+  const hl = sel||hover;
+  const near = hl ? new Set([hl,...hl.out.map(e=>e.target),...hl.in.map(e=>e.source)]) : null;
+  ctx.lineWidth=0.6/t.k;
+  for(const e of E){
+    if(!visible(e.source)||!visible(e.target)) continue;
+    const act = hl && (e.source===hl||e.target===hl);
+    ctx.strokeStyle = act ? gold : line; ctx.globalAlpha = act ? 0.9 : (hl?0.18:0.55);
+    ctx.lineWidth=(act?1.3:0.6)/t.k;
+    ctx.beginPath(); ctx.moveTo(e.source.x,e.source.y); ctx.lineTo(e.target.x,e.target.y); ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+  for(const n of G.nodes){
+    if(!visible(n)) continue;
+    const dim = near && !near.has(n);
+    ctx.globalAlpha = dim?0.22:1;
+    ctx.fillStyle=col(n); ctx.beginPath(); ctx.arc(n.x,n.y,rad(n),0,Math.PI*2); ctx.fill();
+    if(n.missing||n.unknown||kk(n)==='page:missing'){ctx.strokeStyle=css('--bad');ctx.lineWidth=2/t.k;ctx.stroke();}
+    if(n===sel){ctx.strokeStyle=ink;ctx.lineWidth=2/t.k;ctx.stroke();}
+  }
+  ctx.globalAlpha=1; ctx.fillStyle=ink; ctx.textBaseline='middle';
+  ctx.font = (11/t.k)+'px '+css('--mono').split(',')[0];
+  for(const n of G.nodes){
+    if(!visible(n)) continue;
+    const show = n===sel||n===hover|| (near&&near.has(n)&&t.k>0.55) || (!near && (n.deg>=14 || n.kind==='function') && t.k>0.5) || t.k>1.8;
+    if(!show) continue;
+    ctx.globalAlpha = near&&!near.has(n)?0.3:0.95;
+    ctx.fillText(n.label, n.x+rad(n)+3/t.k, n.y);
+  }
+  ctx.restore();
+}
+function pick(px,py){
+  const [x,y]=t.invert([px,py]); let best=null,bd=1e9;
+  for(const n of G.nodes){ if(!visible(n)) continue; const d=Math.hypot(n.x-x,n.y-y); if(d<rad(n)+5/t.k && d<bd){bd=d;best=n;} }
+  return best;
+}
+const zoom=d3.zoom().scaleExtent([0.15,6]).on('zoom',ev=>{t=ev.transform;draw();});
+d3.select(cv).call(zoom).on('dblclick.zoom',null);
+let dragN=null;
+d3.select(cv).call(d3.drag().container(cv)
+  .subject(ev=>pick(ev.x,ev.y))
+  .on('start',ev=>{dragN=ev.subject; cv.classList.add('drag'); sim.alphaTarget(0.2).restart();})
+  .on('drag',ev=>{const [x,y]=t.invert([ev.x,ev.y]); dragN.fx=x; dragN.fy=y;})
+  .on('end',()=>{sim.alphaTarget(0); if(dragN){dragN.fx=null;dragN.fy=null;} dragN=null; cv.classList.remove('drag');}));
+cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect(); const n=pick(e.clientX-r.left,e.clientY-r.top); if(n!==hover){hover=n; cv.style.cursor=n?'pointer':''; draw();}});
+cv.addEventListener('click',e=>{const r=cv.getBoundingClientRect(); select(pick(e.clientX-r.left,e.clientY-r.top));});
+cv.addEventListener('dblclick',e=>{const r=cv.getBoundingClientRect(); const n=pick(e.clientX-r.left,e.clientY-r.top); if(n){focus=n; select(n);} });
+
+const REL={includes:['Loads','Loaded by'],links:['Links to','Linked from'],data:['Reads / writes','Used by'],rpc:['Calls RPC','Called by'],invokes:['Calls function','Called by'],storage:['Uses bucket','Used by'],calls:['Calls service','Called by'],loads:['Loads','Loaded by'],tracks:['Sends tracking to','Receives tracking from']};
+function select(n){
+  sel=n; draw(); renderInsp();
+  if(n){ const [x,y]=[n.x,n.y]; d3.select(cv).transition().duration(450).call(zoom.translateTo,x,y); }
+}
+function chipBtn(n){return '<button type="button" data-id="'+esc(n.id)+'" title="'+esc(n.label)+'"><i style="background:'+col(n)+'"></i>'+esc(n.label)+'</button>';}
+function renderInsp(){
+  const n=sel;
+  if(!n){
+    insp.innerHTML='<div class="eyebrow">How to read this</div><h3>'+G.nodes.length+' parts, '+E.length+' connections</h3>'+
+      '<p class="sub">Pages sit on the left, shared scripts and edge functions in the middle, database objects and outside services on the right.</p>'+
+      '<p class="hint">Click a dot to see what it uses and what uses it. Double-click to show only its neighbours. Drag to move, scroll or pinch to zoom. Red rings mark something the code refers to that does not exist.</p>'+
+      '<div class="group"><h4>Most connected</h4><div class="links">'+G.nodes.slice().sort((a,b)=>b.deg-a.deg).slice(0,14).map(chipBtn).join('')+'</div></div>';
+    return;
+  }
+  const flags=[];
+  if(n.kind==='function'){ flags.push(n.verifyJwt===false?'<span class="flag warn">public · checks caller itself</span>':'<span class="flag ok">login required</span>'); if(n.serviceRole) flags.push('<span class="flag">uses service role</span>'); if(!n.in.length) flags.push('<span class="flag bad">no caller in the site</span>'); }
+  if(kk(n)==='page:missing') flags.push('<span class="flag bad">page does not exist</span>');
+  if(n.unknown) flags.push('<span class="flag bad">not in production database</span>');
+  if(n.kind==='script' && !n.in.length) flags.push('<span class="flag warn">no page loads this</span>');
+  let h='<div class="kind" style="color:'+col(n)+'">'+esc((KIND[kk(n)]||{}).l||n.kind)+'</div><h3>'+esc(n.label)+'</h3>';
+  h+='<div class="sub">'+[n.title&&esc(n.title), n.file&&('<span class="mono">'+esc(n.file)+'</span>'), n.lines&&(n.lines+' lines')].filter(Boolean).join(' · ')+'</div>';
+  h+=flags.join('');
+  const groups={};
+  n.out.forEach(e=>{const k=(REL[e.kind]||[e.kind])[0]; (groups[k]=groups[k]||[]).push(e.target);});
+  n.in.forEach(e=>{const k=(REL[e.kind]||[e.kind,e.kind])[1]; (groups[k]=groups[k]||[]).push(e.source);});
+  Object.entries(groups).forEach(([k,list])=>{
+    const uniq=[...new Set(list)].sort((a,b)=>a.label.localeCompare(b.label));
+    h+='<div class="group"><h4>'+esc(k)+' · '+uniq.length+'</h4><div class="links">'+uniq.map(chipBtn).join('')+'</div></div>';
+  });
+  h+='<div class="group"><button class="btn" type="button" id="focusbtn">'+(focus===n?'Show everything':'Show only this and its neighbours')+'</button></div>';
+  insp.innerHTML=h;
+  document.getElementById('focusbtn').onclick=()=>{focus = focus===n?null:n; draw(); renderInsp();};
+}
+insp.addEventListener('click',e=>{const b=e.target.closest('button[data-id]'); if(b){const n=byId.get(b.dataset.id); if(n){ enableKind(n); select(n);} }});
+document.getElementById('reset').onclick=()=>{focus=null; sel=null; draw(); renderInsp(); d3.select(cv).transition().duration(450).call(zoom.transform,d3.zoomIdentity.translate(W/2,H/2).scale(Math.min(1.1,Math.max(0.45,W/1100))));};
+document.getElementById('q').addEventListener('input',e=>{
+  const q=e.target.value.trim().toLowerCase(); if(q.length<2) return;
+  const n=G.nodes.filter(n=>n.label.toLowerCase().includes(q)).sort((a,b)=>(a.label.toLowerCase().indexOf(q)-b.label.toLowerCase().indexOf(q))||b.deg-a.deg)[0];
+  if(n){ enableKind(n); select(n); }
+});
+renderInsp();
+
+/* ---------------- functions ---------------- */
+(function(){
+  const PURPOSE={
+    'notify-enquiry':'Emails the CEO when a website enquiry arrives (database webhook).',
+    'admin-invite':'Invites a new staff member and sets their profile and roles.',
+    'admin-set-password':'Owner or super admin sets a staff password directly.',
+    'send-client-email':'Sends a letterhead email to a client from ceo@jabranandco.com, with attachments.',
+    'advisory-agent':'Website chat assistant (Gemini) answering from verified firm facts.',
+    'ai-agent':'Lead-qualifying website chat (Anthropic). Deployed, not used by any page.',
+    'ai-client-agent':'Client-portal assistant (Anthropic). Its script is not loaded by any page.',
+    'ai-accountant':'Turns a staff member’s request into a proposed accounting action (Gemini).',
+    'analytics-agent':'Answers analytics questions using only approved analytics RPCs (Gemini).',
+    'analytics-oauth':'Starts and ends OAuth connections to Google, Meta and LinkedIn.',
+    'analytics-oauth-callback':'Receives the OAuth redirect and stores the encrypted token.',
+    'analytics-sync':'Pulls GA4 and Search Console data into the metrics tables.'
+  };
+  const fns=G.nodes.filter(n=>n.kind==='function').sort((a,b)=>a.label.localeCompare(b.label));
+  document.getElementById('fn-grid').innerHTML=fns.map(n=>{
+    const callers=[...new Set(n.in.map(e=>e.source.label))];
+    const tables=[...new Set(n.out.filter(e=>e.kind==='data').map(e=>e.target.label))];
+    const rpcs=[...new Set(n.out.filter(e=>e.kind==='rpc').map(e=>e.target.label))];
+    const ext=[...new Set(n.out.filter(e=>e.kind==='calls').map(e=>e.target.label))];
+    return '<article class="card"><h3>'+esc(n.label)+'</h3><p>'+esc(PURPOSE[n.label]||'')+'</p><div>'+
+      (n.verifyJwt===false?'<span class="flag warn">public</span>':'<span class="flag ok">login required</span>')+
+      (n.serviceRole?'<span class="flag">service role</span>':'')+(callers.length?'':'<span class="flag bad">no caller</span>')+'</div>'+
+      '<dl class="kv"><dt>Called by</dt><dd>'+(esc(callers.join(', '))||'–')+'</dd><dt>Tables</dt><dd>'+(esc(tables.join(', '))||'–')+'</dd><dt>RPCs</dt><dd>'+(esc(rpcs.join(', '))||'–')+'</dd><dt>Calls out to</dt><dd>'+(esc(ext.join(', '))||'–')+'</dd><dt>Size</dt><dd>'+n.lines+' lines</dd></dl></article>';
+  }).join('');
+})();
+
+/* ---------------- database ---------------- */
+(function(){
+  const t=INV.tables||[], v=INV.views||[], f=INV.functions||[];
+  const used=G.nodes.filter(n=>n.kind==='table'||n.kind==='view');
+  const stats=[[t.length,'tables, all with RLS'],[v.length,'views'],[f.length,'callable functions'],[used.length,'objects the code touches'],[(G.unused.tables||[]).length,'tables no file touches']];
+  document.getElementById('db-stats').innerHTML=stats.map(s=>'<div class="stat"><b>'+s[0]+'</b><span>'+esc(s[1])+'</span></div>').join('');
+  const dom={}; const d=x=>{const p=x.split('_')[0]; return ['crm','pharma','analytics','ai','social','training','client'].includes(p)?p:'other';};
+  t.forEach(x=>{const k=d(x);(dom[k]=dom[k]||{t:0,v:0}).t++;}); v.forEach(x=>{const k=d(x);(dom[k]=dom[k]||{t:0,v:0}).v++;});
+  const max=Math.max(...Object.values(dom).map(o=>o.t+o.v));
+  const ct=KIND.table.c, cvw=KIND.view.c;
+  document.getElementById('lg-t').style.background=ct; document.getElementById('lg-v').style.background=cvw;
+  document.getElementById('db-bars').innerHTML=Object.entries(dom).sort((a,b)=>(b[1].t+b[1].v)-(a[1].t+a[1].v)).map(([k,o])=>
+    '<div class="brow"><span class="mono">'+esc(k)+'_</span><div class="track" role="img" aria-label="'+o.t+' tables, '+o.v+' views"><span style="width:'+(o.t/max*100)+'%;background:'+ct+'"></span><span style="width:'+(o.v/max*100)+'%;background:'+cvw+'"></span></div><span class="num mono">'+o.t+' + '+o.v+'</span></div>').join('');
+  document.getElementById('db-top').innerHTML=used.sort((a,b)=>b.in.length-a.in.length).slice(0,18).map(n=>'<tr><td class="mono">'+esc(n.label)+'</td><td>'+n.kind+'</td><td class="num">'+new Set(n.in.map(e=>e.source.id)).size+'</td></tr>').join('');
+})();
+
+/* ---------------- pages ---------------- */
+(function(){
+  const pages=G.nodes.filter(n=>n.kind==='page');
+  const groups=['all','public','crm','portal','document','snippet','missing'];
+  let g='all';
+  const f=document.getElementById('pg-filters');
+  f.innerHTML=groups.map(x=>'<button type="button" class="chip" aria-pressed="'+(x===g)+'" data-g="'+x+'">'+(x==='all'?'All':esc((KIND['page:'+x]||{l:x}).l))+' <span class="n">'+(x==='all'?pages.length:pages.filter(p=>p.group===x).length)+'</span></button>').join('');
+  function render(){
+    document.getElementById('pg-body').innerHTML=pages.filter(p=>g==='all'||p.group===g).sort((a,b)=>a.label.localeCompare(b.label)).map(p=>{
+      const s=p.out.filter(e=>e.kind==='includes'&&e.target.kind==='script').map(e=>e.target.label);
+      return '<tr data-id="'+esc(p.id)+'" style="cursor:pointer"><td class="mono">'+esc(p.label)+(p.title?'<div class="hint">'+esc(p.title)+'</div>':'')+'</td><td>'+esc(p.group)+'</td><td class="mono">'+(esc(s.join(', '))||'–')+'</td><td class="num">'+p.out.filter(e=>e.kind==='data').length+'</td><td class="num">'+p.out.filter(e=>e.kind==='rpc').length+'</td><td class="mono">'+(esc(p.out.filter(e=>e.kind==='invokes').map(e=>e.target.label).join(', '))||'–')+'</td></tr>';
+    }).join('');
+  }
+  f.addEventListener('click',e=>{const b=e.target.closest('button[data-g]'); if(!b) return; g=b.dataset.g; f.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render();});
+  document.getElementById('pg-body').addEventListener('click',e=>{const tr=e.target.closest('tr[data-id]'); if(!tr) return; const n=byId.get(tr.dataset.id); enableKind(n); location.hash='graph'; setTimeout(()=>select(n),60);});
+  render();
+})();
+
+/* ---------------- health ---------------- */
+(function(){
+  const order={critical:0,high:1,medium:2,low:3};
+  const fixed=HEALTH.filter(h=>h.status==='fixed').length, pending=HEALTH.filter(h=>h.status==='pending').length, open=HEALTH.filter(h=>h.status==='open').length;
+  document.getElementById('hl-lead').textContent='What the audit found across the website, CRM, edge functions and database, and what this release did about it. "Needs approval" items touch production permissions or behaviour and wait for the owner.';
+  document.getElementById('hl-stats').innerHTML=[[HEALTH.length,'findings listed'],[fixed,'fixed in this release'],[pending,'need owner approval'],[open,'open recommendations']].map(s=>'<div class="stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>').join('');
+  let f='all';
+  const fl=document.getElementById('hl-filters');
+  const keys=[['all','All'],['fixed','Fixed'],['pending','Needs approval'],['open','Open']];
+  fl.innerHTML=keys.map(k=>'<button type="button" class="chip" aria-pressed="'+(k[0]===f)+'" data-f="'+k[0]+'">'+k[1]+'</button>').join('');
+  const label={fixed:'Fixed',pending:'Needs approval',open:'Open'};
+  function render(){
+    document.getElementById('hl-body').innerHTML=HEALTH.filter(h=>f==='all'||h.status===f).sort((a,b)=>order[a.sev]-order[b.sev]).map(h=>
+      '<tr><td><span class="sev '+h.sev+'">'+h.sev+'</span></td><td>'+esc(h.area)+'</td><td>'+esc(h.text)+'</td><td><span class="st '+h.status+'">'+label[h.status]+'</span></td></tr>').join('');
+  }
+  fl.addEventListener('click',e=>{const b=e.target.closest('button[data-f]'); if(!b) return; f=b.dataset.f; fl.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render();});
+  render();
+})();
+
+route();
+</script>

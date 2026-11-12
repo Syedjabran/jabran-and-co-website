@@ -1,0 +1,7534 @@
+{
+ "generated": "2026-11-12",
+ "counts": {
+  "table": 111,
+  "view": 44,
+  "external": 11,
+  "function": 12,
+  "script": 19,
+  "library": 4,
+  "page": 65,
+  "rpc": 49,
+  "edges": 1066
+ },
+ "unused": {
+  "tables": [
+   "ai_conversation_summaries",
+   "analytics_accounts",
+   "analytics_alerts",
+   "analytics_attribution",
+   "analytics_campaigns",
+   "analytics_conversion_events",
+   "analytics_fact_map",
+   "analytics_generated_reports",
+   "analytics_metric_definitions",
+   "analytics_role_permissions",
+   "case_study_approvals",
+   "crm_activity_events",
+   "crm_agent_accounts",
+   "crm_ai_agents",
+   "crm_cost_lines",
+   "crm_counters",
+   "crm_outsourced_categories",
+   "crm_quotation_approvals",
+   "crm_tracking_template_steps",
+   "pharma_adverse_events",
+   "pharma_campaigns",
+   "pharma_companies",
+   "pharma_company_contacts",
+   "pharma_complaints",
+   "pharma_distributor_products",
+   "pharma_distributor_territories",
+   "pharma_doctor_affiliations",
+   "pharma_doctor_products",
+   "pharma_doctors",
+   "pharma_engagement_spend",
+   "pharma_expense_dimensions",
+   "pharma_field_force",
+   "pharma_hospitals",
+   "pharma_inventory_batches",
+   "pharma_inventory_movements",
+   "pharma_invoices",
+   "pharma_offer_categories",
+   "pharma_offer_products",
+   "pharma_offer_targets",
+   "pharma_pharmacies",
+   "pharma_plant_capabilities",
+   "pharma_product_prices",
+   "pharma_product_regulatory",
+   "pharma_production_batches",
+   "pharma_products",
+   "pharma_promotional_offers",
+   "pharma_recalls",
+   "pharma_receipts",
+   "pharma_returns",
+   "pharma_role_permissions",
+   "pharma_sales_order_items",
+   "pharma_sales_orders",
+   "pharma_sample_items",
+   "pharma_sample_transactions",
+   "pharma_tender_products",
+   "pharma_tenders",
+   "pharma_territories",
+   "pharma_toll_contracts",
+   "pharma_toll_enquiries",
+   "pharma_toll_offers",
+   "pharma_visit_plans",
+   "pharma_visits",
+   "pharma_warehouses",
+   "social_assets",
+   "social_audit_log",
+   "social_brand_voice",
+   "social_channels",
+   "social_content_calendar",
+   "social_engagement",
+   "social_posts",
+   "social_settings",
+   "training_quiz_attempts"
+  ],
+  "views": [
+   "analytics_fact_enquiries",
+   "analytics_fact_opportunities",
+   "analytics_fact_orders",
+   "analytics_fact_quotations",
+   "analytics_my_orgs",
+   "crm_allocations_monthly",
+   "crm_cost_line_performance",
+   "crm_cost_sheet_breakdown",
+   "crm_cost_sheet_items_classified",
+   "crm_expense_ledger_monthly",
+   "crm_fx_realised",
+   "crm_labour_monthly",
+   "crm_my_timesheets",
+   "crm_order_direct_labour",
+   "crm_overhead_lines",
+   "crm_receivables_payment_breakdown",
+   "crm_service_offers_selectable",
+   "crm_upcoming_renewals",
+   "pharma_allocated_costs",
+   "pharma_campaign_performance",
+   "pharma_campaign_roi",
+   "pharma_credit_exposure",
+   "pharma_distributor_pl",
+   "pharma_doctor_spend_status",
+   "pharma_field_activity",
+   "pharma_order_totals",
+   "pharma_product_pl",
+   "pharma_receivables_ageing",
+   "pharma_revenue_lines",
+   "pharma_sample_balances",
+   "pharma_stock_positions",
+   "pharma_territory_pl",
+   "pharma_toll_comparison",
+   "pharma_unallocated_expenses"
+  ]
+ },
+ "nodes": [
+  {
+   "id": "db:ai_agent_configs",
+   "kind": "table",
+   "label": "ai_agent_configs",
+   "domain": "ai"
+  },
+  {
+   "id": "db:ai_agent_feedback",
+   "kind": "table",
+   "label": "ai_agent_feedback",
+   "domain": "ai"
+  },
+  {
+   "id": "db:ai_agent_handoffs",
+   "kind": "table",
+   "label": "ai_agent_handoffs",
+   "domain": "ai"
+  },
+  {
+   "id": "db:ai_conversations",
+   "kind": "table",
+   "label": "ai_conversations",
+   "domain": "ai"
+  },
+  {
+   "id": "db:ai_messages",
+   "kind": "table",
+   "label": "ai_messages",
+   "domain": "ai"
+  },
+  {
+   "id": "db:ai_prompt_versions",
+   "kind": "table",
+   "label": "ai_prompt_versions",
+   "domain": "ai"
+  },
+  {
+   "id": "db:ai_usage_log",
+   "kind": "table",
+   "label": "ai_usage_log",
+   "domain": "ai"
+  },
+  {
+   "id": "db:analytics_connections",
+   "kind": "table",
+   "label": "analytics_connections",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:analytics_content_metrics",
+   "kind": "table",
+   "label": "analytics_content_metrics",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:analytics_daily_metrics",
+   "kind": "table",
+   "label": "analytics_daily_metrics",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:analytics_data_quality_events",
+   "kind": "table",
+   "label": "analytics_data_quality_events",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:analytics_oauth_states",
+   "kind": "table",
+   "label": "analytics_oauth_states",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:analytics_oauth_tokens",
+   "kind": "table",
+   "label": "analytics_oauth_tokens",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:analytics_prompt_history",
+   "kind": "table",
+   "label": "analytics_prompt_history",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:analytics_sync_jobs",
+   "kind": "table",
+   "label": "analytics_sync_jobs",
+   "domain": "analytics"
+  },
+  {
+   "id": "db:audit_findings",
+   "kind": "table",
+   "label": "audit_findings",
+   "domain": "audit"
+  },
+  {
+   "id": "db:blog_posts",
+   "kind": "table",
+   "label": "blog_posts",
+   "domain": "blog"
+  },
+  {
+   "id": "db:case_studies",
+   "kind": "table",
+   "label": "case_studies",
+   "domain": "case"
+  },
+  {
+   "id": "db:client_actions",
+   "kind": "table",
+   "label": "client_actions",
+   "domain": "client"
+  },
+  {
+   "id": "db:client_documents",
+   "kind": "table",
+   "label": "client_documents",
+   "domain": "client"
+  },
+  {
+   "id": "db:client_kpis",
+   "kind": "table",
+   "label": "client_kpis",
+   "domain": "client"
+  },
+  {
+   "id": "db:client_meetings",
+   "kind": "table",
+   "label": "client_meetings",
+   "domain": "client"
+  },
+  {
+   "id": "db:client_reports",
+   "kind": "table",
+   "label": "client_reports",
+   "domain": "client"
+  },
+  {
+   "id": "db:clients",
+   "kind": "table",
+   "label": "clients",
+   "domain": "clients"
+  },
+  {
+   "id": "db:contact_submissions",
+   "kind": "table",
+   "label": "contact_submissions",
+   "domain": "contact"
+  },
+  {
+   "id": "db:crm_ai_actions",
+   "kind": "table",
+   "label": "crm_ai_actions",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_alert_dismissals",
+   "kind": "table",
+   "label": "crm_alert_dismissals",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_allocation_rules",
+   "kind": "table",
+   "label": "crm_allocation_rules",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_allocation_targets",
+   "kind": "table",
+   "label": "crm_allocation_targets",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_attachment_categories",
+   "kind": "table",
+   "label": "crm_attachment_categories",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_attachment_events",
+   "kind": "table",
+   "label": "crm_attachment_events",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_attachment_policy",
+   "kind": "table",
+   "label": "crm_attachment_policy",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_attachments",
+   "kind": "table",
+   "label": "crm_attachments",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_audit_logs",
+   "kind": "table",
+   "label": "crm_audit_logs",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_billing_bases",
+   "kind": "table",
+   "label": "crm_billing_bases",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_budget_vs_actual",
+   "kind": "view",
+   "label": "crm_budget_vs_actual",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_budgets",
+   "kind": "table",
+   "label": "crm_budgets",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cashflow_monthly",
+   "kind": "view",
+   "label": "crm_cashflow_monthly",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_ageing",
+   "kind": "view",
+   "label": "crm_cc_ageing",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_funnel",
+   "kind": "view",
+   "label": "crm_cc_funnel",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_kpis",
+   "kind": "view",
+   "label": "crm_cc_kpis",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_monthly",
+   "kind": "view",
+   "label": "crm_cc_monthly",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_order_status",
+   "kind": "view",
+   "label": "crm_cc_order_status",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_project_status",
+   "kind": "view",
+   "label": "crm_cc_project_status",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_quotation_outcomes",
+   "kind": "view",
+   "label": "crm_cc_quotation_outcomes",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_revenue_client",
+   "kind": "view",
+   "label": "crm_cc_revenue_client",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_revenue_country",
+   "kind": "view",
+   "label": "crm_cc_revenue_country",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_revenue_service",
+   "kind": "view",
+   "label": "crm_cc_revenue_service",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cc_shipment_status",
+   "kind": "view",
+   "label": "crm_cc_shipment_status",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_client_invoices",
+   "kind": "view",
+   "label": "crm_client_invoices",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_client_orders",
+   "kind": "view",
+   "label": "crm_client_orders",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_client_projects",
+   "kind": "view",
+   "label": "crm_client_projects",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_client_quotations",
+   "kind": "view",
+   "label": "crm_client_quotations",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_client_shipments",
+   "kind": "view",
+   "label": "crm_client_shipments",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_contacts",
+   "kind": "table",
+   "label": "crm_contacts",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cost_allocations",
+   "kind": "table",
+   "label": "crm_cost_allocations",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cost_categories",
+   "kind": "table",
+   "label": "crm_cost_categories",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cost_centre_report",
+   "kind": "view",
+   "label": "crm_cost_centre_report",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cost_centres",
+   "kind": "table",
+   "label": "crm_cost_centres",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cost_sheet_items",
+   "kind": "table",
+   "label": "crm_cost_sheet_items",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cost_sheet_totals",
+   "kind": "view",
+   "label": "crm_cost_sheet_totals",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_cost_sheets",
+   "kind": "table",
+   "label": "crm_cost_sheets",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_countries",
+   "kind": "table",
+   "label": "crm_countries",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_custom_values",
+   "kind": "table",
+   "label": "crm_custom_values",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_customs_records",
+   "kind": "table",
+   "label": "crm_customs_records",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_daily_entries",
+   "kind": "table",
+   "label": "crm_daily_entries",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_department_directory",
+   "kind": "view",
+   "label": "crm_department_directory",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_departments",
+   "kind": "table",
+   "label": "crm_departments",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_email_log",
+   "kind": "table",
+   "label": "crm_email_log",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_employee_allowances",
+   "kind": "table",
+   "label": "crm_employee_allowances",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_employee_cost_history",
+   "kind": "table",
+   "label": "crm_employee_cost_history",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_employee_cost_rates",
+   "kind": "view",
+   "label": "crm_employee_cost_rates",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_employee_costs",
+   "kind": "table",
+   "label": "crm_employee_costs",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_employee_profiles",
+   "kind": "table",
+   "label": "crm_employee_profiles",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_enquiries",
+   "kind": "table",
+   "label": "crm_enquiries",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_enquiry_activity",
+   "kind": "table",
+   "label": "crm_enquiry_activity",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_expenses",
+   "kind": "table",
+   "label": "crm_expenses",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_field_config",
+   "kind": "table",
+   "label": "crm_field_config",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_fixed_expense_history",
+   "kind": "table",
+   "label": "crm_fixed_expense_history",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_fixed_expenses",
+   "kind": "table",
+   "label": "crm_fixed_expenses",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_invoice_items",
+   "kind": "table",
+   "label": "crm_invoice_items",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_invoices",
+   "kind": "table",
+   "label": "crm_invoices",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_job_roles",
+   "kind": "table",
+   "label": "crm_job_roles",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_login_history",
+   "kind": "table",
+   "label": "crm_login_history",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_monthly_employee_cost",
+   "kind": "view",
+   "label": "crm_monthly_employee_cost",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_monthly_finance",
+   "kind": "view",
+   "label": "crm_monthly_finance",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_monthly_overhead_actual",
+   "kind": "view",
+   "label": "crm_monthly_overhead_actual",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_my_organization",
+   "kind": "view",
+   "label": "crm_my_organization",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_notifications",
+   "kind": "table",
+   "label": "crm_notifications",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_opportunities",
+   "kind": "table",
+   "label": "crm_opportunities",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_opportunity_activity",
+   "kind": "table",
+   "label": "crm_opportunity_activity",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_order_costing_actual",
+   "kind": "view",
+   "label": "crm_order_costing_actual",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_order_ebitda",
+   "kind": "view",
+   "label": "crm_order_ebitda",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_order_events",
+   "kind": "table",
+   "label": "crm_order_events",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_order_items",
+   "kind": "table",
+   "label": "crm_order_items",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_order_milestones",
+   "kind": "table",
+   "label": "crm_order_milestones",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_order_profitability",
+   "kind": "view",
+   "label": "crm_order_profitability",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_order_tracking",
+   "kind": "table",
+   "label": "crm_order_tracking",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_orders",
+   "kind": "table",
+   "label": "crm_orders",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_org_assignments",
+   "kind": "view",
+   "label": "crm_org_assignments",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_org_credit_status",
+   "kind": "view",
+   "label": "crm_org_credit_status",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_organizations",
+   "kind": "table",
+   "label": "crm_organizations",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_payment_allocations",
+   "kind": "table",
+   "label": "crm_payment_allocations",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_payments",
+   "kind": "table",
+   "label": "crm_payments",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_pl_actual_monthly",
+   "kind": "view",
+   "label": "crm_pl_actual_monthly",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_portal_members",
+   "kind": "table",
+   "label": "crm_portal_members",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_project_milestones",
+   "kind": "table",
+   "label": "crm_project_milestones",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_projects",
+   "kind": "table",
+   "label": "crm_projects",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_prospects",
+   "kind": "table",
+   "label": "crm_prospects",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_quotation_items",
+   "kind": "table",
+   "label": "crm_quotation_items",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_quotations",
+   "kind": "table",
+   "label": "crm_quotations",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_receipts",
+   "kind": "table",
+   "label": "crm_receipts",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_receivables_ageing",
+   "kind": "view",
+   "label": "crm_receivables_ageing",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_record_assignments",
+   "kind": "table",
+   "label": "crm_record_assignments",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_client_value",
+   "kind": "view",
+   "label": "crm_report_client_value",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_country",
+   "kind": "view",
+   "label": "crm_report_country",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_enquiries",
+   "kind": "view",
+   "label": "crm_report_enquiries",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_lead_sources",
+   "kind": "view",
+   "label": "crm_report_lead_sources",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_opportunity_pipeline",
+   "kind": "view",
+   "label": "crm_report_opportunity_pipeline",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_pipeline",
+   "kind": "view",
+   "label": "crm_report_pipeline",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_quotation_stats",
+   "kind": "view",
+   "label": "crm_report_quotation_stats",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_service_perf",
+   "kind": "view",
+   "label": "crm_report_service_perf",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_report_unrealised",
+   "kind": "view",
+   "label": "crm_report_unrealised",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_rm_policy",
+   "kind": "table",
+   "label": "crm_rm_policy",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_service_branches",
+   "kind": "table",
+   "label": "crm_service_branches",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_service_milestone_templates",
+   "kind": "table",
+   "label": "crm_service_milestone_templates",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_service_offer_comparison",
+   "kind": "view",
+   "label": "crm_service_offer_comparison",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_service_offers",
+   "kind": "table",
+   "label": "crm_service_offers",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_service_provider_bank",
+   "kind": "table",
+   "label": "crm_service_provider_bank",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_service_providers",
+   "kind": "table",
+   "label": "crm_service_providers",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_services",
+   "kind": "table",
+   "label": "crm_services",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_settings",
+   "kind": "table",
+   "label": "crm_settings",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_shipments",
+   "kind": "table",
+   "label": "crm_shipments",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_staff_roles",
+   "kind": "table",
+   "label": "crm_staff_roles",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_stockists",
+   "kind": "table",
+   "label": "crm_stockists",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_subscription_price_history",
+   "kind": "table",
+   "label": "crm_subscription_price_history",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_subscriptions",
+   "kind": "table",
+   "label": "crm_subscriptions",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_supplier_offers",
+   "kind": "table",
+   "label": "crm_supplier_offers",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_timesheets",
+   "kind": "table",
+   "label": "crm_timesheets",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_tracking_policy",
+   "kind": "table",
+   "label": "crm_tracking_policy",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_tracking_templates",
+   "kind": "table",
+   "label": "crm_tracking_templates",
+   "domain": "crm"
+  },
+  {
+   "id": "db:crm_vendors",
+   "kind": "table",
+   "label": "crm_vendors",
+   "domain": "crm"
+  },
+  {
+   "id": "db:featured_topics",
+   "kind": "table",
+   "label": "featured_topics",
+   "domain": "featured"
+  },
+  {
+   "id": "db:pharma_distributors",
+   "kind": "table",
+   "label": "pharma_distributors",
+   "domain": "pharma"
+  },
+  {
+   "id": "db:pharma_dosage_forms",
+   "kind": "table",
+   "label": "pharma_dosage_forms",
+   "domain": "pharma"
+  },
+  {
+   "id": "db:pharma_network_counts",
+   "kind": "view",
+   "label": "pharma_network_counts",
+   "domain": "pharma"
+  },
+  {
+   "id": "db:pharma_plants",
+   "kind": "table",
+   "label": "pharma_plants",
+   "domain": "pharma"
+  },
+  {
+   "id": "db:pharma_therapeutic_categories",
+   "kind": "table",
+   "label": "pharma_therapeutic_categories",
+   "domain": "pharma"
+  },
+  {
+   "id": "db:product_lines",
+   "kind": "table",
+   "label": "product_lines",
+   "unknown": true,
+   "domain": "product"
+  },
+  {
+   "id": "db:profiles",
+   "kind": "table",
+   "label": "profiles",
+   "domain": "profiles"
+  },
+  {
+   "id": "db:trade_inquiries",
+   "kind": "table",
+   "label": "trade_inquiries",
+   "unknown": true,
+   "domain": "trade"
+  },
+  {
+   "id": "db:training_assignments",
+   "kind": "table",
+   "label": "training_assignments",
+   "domain": "training"
+  },
+  {
+   "id": "db:training_certificates",
+   "kind": "table",
+   "label": "training_certificates",
+   "domain": "training"
+  },
+  {
+   "id": "db:training_modules",
+   "kind": "table",
+   "label": "training_modules",
+   "domain": "training"
+  },
+  {
+   "id": "db:training_quiz_questions",
+   "kind": "table",
+   "label": "training_quiz_questions",
+   "domain": "training"
+  },
+  {
+   "id": "ext:Anthropic API",
+   "kind": "external",
+   "label": "Anthropic API"
+  },
+  {
+   "id": "ext:GA4 Data API",
+   "kind": "external",
+   "label": "GA4 Data API"
+  },
+  {
+   "id": "ext:Gmail relay (Apps Script)",
+   "kind": "external",
+   "label": "Gmail relay (Apps Script)"
+  },
+  {
+   "id": "ext:Google Gemini",
+   "kind": "external",
+   "label": "Google Gemini"
+  },
+  {
+   "id": "ext:Google OAuth",
+   "kind": "external",
+   "label": "Google OAuth"
+  },
+  {
+   "id": "ext:LinkedIn API",
+   "kind": "external",
+   "label": "LinkedIn API"
+  },
+  {
+   "id": "ext:LinkedIn Insight",
+   "kind": "external",
+   "label": "LinkedIn Insight"
+  },
+  {
+   "id": "ext:Meta Graph API",
+   "kind": "external",
+   "label": "Meta Graph API"
+  },
+  {
+   "id": "ext:Meta Pixel",
+   "kind": "external",
+   "label": "Meta Pixel"
+  },
+  {
+   "id": "ext:Resend (email)",
+   "kind": "external",
+   "label": "Resend (email)"
+  },
+  {
+   "id": "ext:Search Console API",
+   "kind": "external",
+   "label": "Search Console API"
+  },
+  {
+   "id": "fn:admin-invite",
+   "kind": "function",
+   "label": "admin-invite",
+   "file": "supabase/functions/admin-invite/index.ts",
+   "lines": 94,
+   "serviceRole": true,
+   "verifyJwt": true
+  },
+  {
+   "id": "fn:admin-set-password",
+   "kind": "function",
+   "label": "admin-set-password",
+   "file": "supabase/functions/admin-set-password/index.ts",
+   "lines": 83,
+   "serviceRole": true,
+   "verifyJwt": true
+  },
+  {
+   "id": "fn:advisory-agent",
+   "kind": "function",
+   "label": "advisory-agent",
+   "file": "supabase/functions/advisory-agent/index.ts",
+   "lines": 103,
+   "verifyJwt": false
+  },
+  {
+   "id": "fn:ai-accountant",
+   "kind": "function",
+   "label": "ai-accountant",
+   "file": "supabase/functions/ai-accountant/index.ts",
+   "lines": 179,
+   "verifyJwt": true
+  },
+  {
+   "id": "fn:ai-agent",
+   "kind": "function",
+   "label": "ai-agent",
+   "file": "supabase/functions/ai-agent/index.ts",
+   "lines": 319,
+   "serviceRole": true,
+   "verifyJwt": false
+  },
+  {
+   "id": "fn:ai-client-agent",
+   "kind": "function",
+   "label": "ai-client-agent",
+   "file": "supabase/functions/ai-client-agent/index.ts",
+   "lines": 221,
+   "serviceRole": true,
+   "verifyJwt": true
+  },
+  {
+   "id": "fn:analytics-agent",
+   "kind": "function",
+   "label": "analytics-agent",
+   "file": "supabase/functions/analytics-agent/index.ts",
+   "lines": 454,
+   "verifyJwt": true
+  },
+  {
+   "id": "fn:analytics-oauth",
+   "kind": "function",
+   "label": "analytics-oauth",
+   "file": "supabase/functions/analytics-oauth/index.ts",
+   "lines": 359,
+   "serviceRole": true,
+   "verifyJwt": true
+  },
+  {
+   "id": "fn:analytics-oauth-callback",
+   "kind": "function",
+   "label": "analytics-oauth-callback",
+   "file": "supabase/functions/analytics-oauth-callback/index.ts",
+   "lines": 179,
+   "serviceRole": true,
+   "verifyJwt": false
+  },
+  {
+   "id": "fn:analytics-sync",
+   "kind": "function",
+   "label": "analytics-sync",
+   "file": "supabase/functions/analytics-sync/index.ts",
+   "lines": 346,
+   "serviceRole": true,
+   "verifyJwt": true
+  },
+  {
+   "id": "fn:notify-enquiry",
+   "kind": "function",
+   "label": "notify-enquiry",
+   "file": "supabase/functions/notify-enquiry/index.ts",
+   "lines": 98,
+   "verifyJwt": false
+  },
+  {
+   "id": "fn:send-client-email",
+   "kind": "function",
+   "label": "send-client-email",
+   "file": "supabase/functions/send-client-email/index.ts",
+   "lines": 324,
+   "serviceRole": true,
+   "verifyJwt": true
+  },
+  {
+   "id": "js:animations.js",
+   "kind": "script",
+   "label": "animations.js",
+   "file": "animations.js",
+   "lines": 172
+  },
+  {
+   "id": "js:chat-widget.js",
+   "kind": "script",
+   "label": "chat-widget.js",
+   "file": "chat-widget.js",
+   "lines": 231
+  },
+  {
+   "id": "js:client-ai-agent.js",
+   "kind": "script",
+   "label": "client-ai-agent.js",
+   "file": "client-ai-agent.js",
+   "lines": 159
+  },
+  {
+   "id": "js:crm-activity.js",
+   "kind": "script",
+   "label": "crm-activity.js",
+   "file": "crm-activity.js",
+   "lines": 42
+  },
+  {
+   "id": "js:crm-ai-kpis.js",
+   "kind": "script",
+   "label": "crm-ai-kpis.js",
+   "file": "crm-ai-kpis.js",
+   "lines": 106
+  },
+  {
+   "id": "js:crm-alerts.js",
+   "kind": "script",
+   "label": "crm-alerts.js",
+   "file": "crm-alerts.js",
+   "lines": 55
+  },
+  {
+   "id": "js:crm-auth.js",
+   "kind": "script",
+   "label": "crm-auth.js",
+   "file": "crm-auth.js",
+   "lines": 907
+  },
+  {
+   "id": "js:crm-extras.js",
+   "kind": "script",
+   "label": "crm-extras.js",
+   "file": "crm-extras.js",
+   "lines": 254
+  },
+  {
+   "id": "js:crm-forms.js",
+   "kind": "script",
+   "label": "crm-forms.js",
+   "file": "crm-forms.js",
+   "lines": 163
+  },
+  {
+   "id": "js:crm-intl.js",
+   "kind": "script",
+   "label": "crm-intl.js",
+   "file": "crm-intl.js",
+   "lines": 184
+  },
+  {
+   "id": "js:crm-links.js",
+   "kind": "script",
+   "label": "crm-links.js",
+   "file": "crm-links.js",
+   "lines": 69
+  },
+  {
+   "id": "js:crm-nav.js",
+   "kind": "script",
+   "label": "crm-nav.js",
+   "file": "crm-nav.js",
+   "lines": 187
+  },
+  {
+   "id": "js:crm-rm.js",
+   "kind": "script",
+   "label": "crm-rm.js",
+   "file": "crm-rm.js",
+   "lines": 133
+  },
+  {
+   "id": "js:crm-select.js",
+   "kind": "script",
+   "label": "crm-select.js",
+   "file": "crm-select.js",
+   "lines": 300
+  },
+  {
+   "id": "js:crm-tracking.js",
+   "kind": "script",
+   "label": "crm-tracking.js",
+   "file": "crm-tracking.js",
+   "lines": 177
+  },
+  {
+   "id": "js:portal-documents.js",
+   "kind": "script",
+   "label": "portal-documents.js",
+   "file": "portal-documents.js",
+   "lines": 153
+  },
+  {
+   "id": "js:portal-tracking.js",
+   "kind": "script",
+   "label": "portal-tracking.js",
+   "file": "portal-tracking.js",
+   "lines": 83
+  },
+  {
+   "id": "js:supabase-client.js",
+   "kind": "script",
+   "label": "supabase-client.js",
+   "file": "supabase-client.js",
+   "lines": 460
+  },
+  {
+   "id": "js:utm-capture.js",
+   "kind": "script",
+   "label": "utm-capture.js",
+   "file": "utm-capture.js",
+   "lines": 157
+  },
+  {
+   "id": "lib:Chart.js 4.4.1",
+   "kind": "library",
+   "label": "Chart.js 4.4.1"
+  },
+  {
+   "id": "lib:Google Tag Manager",
+   "kind": "library",
+   "label": "Google Tag Manager"
+  },
+  {
+   "id": "lib:qrcodejs",
+   "kind": "library",
+   "label": "qrcodejs"
+  },
+  {
+   "id": "lib:supabase-js 2.119.0",
+   "kind": "library",
+   "label": "supabase-js 2.119.0"
+  },
+  {
+   "id": "page:404.html",
+   "kind": "page",
+   "label": "404.html",
+   "file": "404.html",
+   "group": "public",
+   "title": "Page Not Found — Jabran &amp; Co",
+   "lines": 50
+  },
+  {
+   "id": "page:about.html",
+   "kind": "page",
+   "label": "about.html",
+   "file": "about.html",
+   "group": "public",
+   "title": "About — Jabran &amp; Co",
+   "lines": 313
+  },
+  {
+   "id": "page:admin.html",
+   "kind": "page",
+   "label": "admin.html",
+   "file": "admin.html",
+   "group": "portal",
+   "title": "Admin — Jabran &amp; Co",
+   "lines": 961
+  },
+  {
+   "id": "page:advisory.html",
+   "kind": "page",
+   "label": "advisory.html",
+   "file": "advisory.html",
+   "group": "public",
+   "title": "Advisory — Jabran &amp; Co",
+   "lines": 285
+  },
+  {
+   "id": "page:analytics-oauth.html",
+   "kind": "page",
+   "label": "analytics-oauth.html",
+   "file": "analytics-oauth.html",
+   "group": "portal",
+   "title": "Connecting Data Source | JABRAN &amp; CO.",
+   "lines": 230
+  },
+  {
+   "id": "page:architecture-interiors-construction.html",
+   "kind": "page",
+   "label": "architecture-interiors-construction.html",
+   "file": "architecture-interiors-construction.html",
+   "group": "public",
+   "title": "Architecture, Interiors &amp; Construction — Jabran &amp; Co",
+   "lines": 222
+  },
+  {
+   "id": "page:assessment-tools.html",
+   "kind": "page",
+   "label": "assessment-tools.html",
+   "file": "assessment-tools.html",
+   "group": "public",
+   "title": "Factory Health Assessment &amp; Procurement Savings Calculator — Jabran &amp; Co",
+   "lines": 265
+  },
+  {
+   "id": "page:careers.html",
+   "kind": "page",
+   "label": "careers.html",
+   "file": "careers.html",
+   "group": "public",
+   "title": "Careers — Jabran &amp; Co",
+   "lines": 169
+  },
+  {
+   "id": "page:case-studies.html",
+   "kind": "page",
+   "label": "case-studies.html",
+   "file": "case-studies.html",
+   "group": "public",
+   "title": "Case Studies — Jabran &amp; Co",
+   "lines": 296
+  },
+  {
+   "id": "page:certificate-view.html",
+   "kind": "page",
+   "label": "certificate-view.html",
+   "file": "certificate-view.html",
+   "group": "document",
+   "title": "Certificate — Jabran & Co",
+   "lines": 126
+  },
+  {
+   "id": "page:client-portal.html",
+   "kind": "page",
+   "label": "client-portal.html",
+   "file": "client-portal.html",
+   "group": "portal",
+   "title": "Client Portal — Jabran &amp; Co",
+   "lines": 32
+  },
+  {
+   "id": "page:construction-interiors.html",
+   "kind": "page",
+   "label": "construction-interiors.html",
+   "file": "construction-interiors.html",
+   "group": "public",
+   "title": "Redirecting… — Jabran &amp; Co",
+   "lines": 15
+  },
+  {
+   "id": "page:contact.html",
+   "kind": "page",
+   "label": "contact.html",
+   "file": "contact.html",
+   "group": "public",
+   "title": "Contact — Jabran &amp; Co",
+   "lines": 334
+  },
+  {
+   "id": "page:crm-ai-accountant.html",
+   "kind": "page",
+   "label": "crm-ai-accountant.html",
+   "file": "crm-ai-accountant.html",
+   "group": "crm",
+   "title": "AI Accountant | JABRAN &amp; CO.",
+   "lines": 434
+  },
+  {
+   "id": "page:crm-ai-control-center.html",
+   "kind": "page",
+   "label": "crm-ai-control-center.html",
+   "file": "crm-ai-control-center.html",
+   "group": "crm",
+   "title": "AI Control Center | JABRAN &amp; CO.",
+   "lines": 394
+  },
+  {
+   "id": "page:crm-alerts.html",
+   "kind": "page",
+   "label": "crm-alerts.html",
+   "file": "crm-alerts.html",
+   "group": "crm",
+   "title": "Alerts | JABRAN &amp; CO.",
+   "lines": 274
+  },
+  {
+   "id": "page:crm-analytics.html",
+   "kind": "page",
+   "label": "crm-analytics.html",
+   "file": "crm-analytics.html",
+   "group": "crm",
+   "title": "AI Analytics | JABRAN &amp; CO.",
+   "lines": 684
+  },
+  {
+   "id": "page:crm-business-rules.html",
+   "kind": "page",
+   "label": "crm-business-rules.html",
+   "file": "crm-business-rules.html",
+   "group": "crm",
+   "title": "Business Rules | JABRAN &amp; CO.",
+   "lines": 271
+  },
+  {
+   "id": "page:crm-command-center.html",
+   "kind": "page",
+   "label": "crm-command-center.html",
+   "file": "crm-command-center.html",
+   "group": "crm",
+   "title": "Owner Command Center | JABRAN &amp; CO.",
+   "lines": 281
+  },
+  {
+   "id": "page:crm-conversations.html",
+   "kind": "page",
+   "label": "crm-conversations.html",
+   "file": "crm-conversations.html",
+   "group": "crm",
+   "title": "Conversations | JABRAN &amp; CO.",
+   "lines": 393
+  },
+  {
+   "id": "page:crm-daily-entry.html",
+   "kind": "page",
+   "label": "crm-daily-entry.html",
+   "file": "crm-daily-entry.html",
+   "group": "crm",
+   "title": "Daily Expenses | JABRAN &amp; CO.",
+   "lines": 458
+  },
+  {
+   "id": "page:crm-email.html",
+   "kind": "page",
+   "label": "crm-email.html",
+   "file": "crm-email.html",
+   "group": "crm",
+   "title": "Compose Client Email | JABRAN &amp; CO.",
+   "lines": 509
+  },
+  {
+   "id": "page:crm-employee-costs.html",
+   "kind": "page",
+   "label": "crm-employee-costs.html",
+   "file": "crm-employee-costs.html",
+   "group": "crm",
+   "title": "Employee Costs | JABRAN &amp; CO.",
+   "lines": 512
+  },
+  {
+   "id": "page:crm-employees.html",
+   "kind": "page",
+   "label": "crm-employees.html",
+   "file": "crm-employees.html",
+   "group": "crm",
+   "title": "Employees | JABRAN &amp; CO.",
+   "lines": 371
+  },
+  {
+   "id": "page:crm-finance-reports.html",
+   "kind": "page",
+   "label": "crm-finance-reports.html",
+   "file": "crm-finance-reports.html",
+   "group": "crm",
+   "title": "Financial Reports | JABRAN &amp; CO.",
+   "lines": 440
+  },
+  {
+   "id": "page:crm-finance.html",
+   "kind": "page",
+   "label": "crm-finance.html",
+   "file": "crm-finance.html",
+   "group": "crm",
+   "title": "Finance | JABRAN &amp; CO.",
+   "lines": 780
+  },
+  {
+   "id": "page:crm-financial-settings.html",
+   "kind": "page",
+   "label": "crm-financial-settings.html",
+   "file": "crm-financial-settings.html",
+   "group": "crm",
+   "title": "Financial Settings | JABRAN &amp; CO.",
+   "lines": 847
+  },
+  {
+   "id": "page:crm-form-builder.html",
+   "kind": "page",
+   "label": "crm-form-builder.html",
+   "file": "crm-form-builder.html",
+   "group": "crm",
+   "title": "Form Builder | JABRAN &amp; CO.",
+   "lines": 365
+  },
+  {
+   "id": "page:crm-opportunities.html",
+   "kind": "page",
+   "label": "crm-opportunities.html",
+   "file": "crm-opportunities.html",
+   "group": "crm",
+   "title": "Opportunities | JABRAN &amp; CO.",
+   "lines": 411
+  },
+  {
+   "id": "page:crm-orders.html",
+   "kind": "page",
+   "label": "crm-orders.html",
+   "file": "crm-orders.html",
+   "group": "crm",
+   "title": "Orders &amp; Projects | JABRAN &amp; CO.",
+   "lines": 746
+  },
+  {
+   "id": "page:crm-organization.html",
+   "kind": "page",
+   "label": "crm-organization.html",
+   "file": "crm-organization.html",
+   "group": "crm",
+   "title": "Organization | JABRAN &amp; CO.",
+   "lines": 404
+  },
+  {
+   "id": "page:crm-outsourced-offers.html",
+   "kind": "page",
+   "label": "crm-outsourced-offers.html",
+   "file": "crm-outsourced-offers.html",
+   "group": "crm",
+   "title": "Outsourced Service Offers | JABRAN &amp; CO.",
+   "lines": 705
+  },
+  {
+   "id": "page:crm-pharma-master.html",
+   "kind": "page",
+   "label": "crm-pharma-master.html",
+   "file": "crm-pharma-master.html",
+   "group": "crm",
+   "title": "Pharma Master Data | JABRAN &amp; CO.",
+   "lines": 785
+  },
+  {
+   "id": "page:crm-project-costing.html",
+   "kind": "page",
+   "label": "crm-project-costing.html",
+   "file": "crm-project-costing.html",
+   "group": "crm",
+   "title": "Project Costing | JABRAN &amp; CO.",
+   "lines": 548
+  },
+  {
+   "id": "page:crm-quotations.html",
+   "kind": "page",
+   "label": "crm-quotations.html",
+   "file": "crm-quotations.html",
+   "group": "crm",
+   "title": "Quotations &amp; Costing | JABRAN &amp; CO.",
+   "lines": 1121
+  },
+  {
+   "id": "page:crm-reports.html",
+   "kind": "page",
+   "label": "crm-reports.html",
+   "file": "crm-reports.html",
+   "group": "crm",
+   "title": "Reports | JABRAN &amp; CO.",
+   "lines": 402
+  },
+  {
+   "id": "page:crm-rm-dashboard.html",
+   "kind": "page",
+   "label": "crm-rm-dashboard.html",
+   "file": "crm-rm-dashboard.html",
+   "group": "crm",
+   "title": "RM Dashboard | JABRAN &amp; CO.",
+   "lines": 274
+  },
+  {
+   "id": "page:crm-stockists.html",
+   "kind": "page",
+   "label": "crm-stockists.html",
+   "file": "crm-stockists.html",
+   "group": "crm",
+   "title": "Stockists · Retail Placement — JABRAN &amp; CO. CRM",
+   "lines": 422
+  },
+  {
+   "id": "page:crm-website-capture-snippet.html",
+   "kind": "page",
+   "label": "crm-website-capture-snippet.html",
+   "file": "crm-website-capture-snippet.html",
+   "group": "snippet",
+   "title": "",
+   "lines": 99
+  },
+  {
+   "id": "page:crm.html",
+   "kind": "page",
+   "label": "crm.html",
+   "file": "crm.html",
+   "group": "crm",
+   "title": "CRM | JABRAN &amp; CO.",
+   "lines": 1036
+  },
+  {
+   "id": "page:custom-clearance-consultancy.html",
+   "kind": "page",
+   "label": "custom-clearance-consultancy.html",
+   "file": "custom-clearance-consultancy.html",
+   "group": "public",
+   "title": "Custom Clearance Consultancy — Jabran &amp; Co",
+   "lines": 220
+  },
+  {
+   "id": "page:factory-performance.html",
+   "kind": "page",
+   "label": "factory-performance.html",
+   "file": "factory-performance.html",
+   "group": "public",
+   "title": "Redirecting… — Jabran &amp; Co",
+   "lines": 15
+  },
+  {
+   "id": "page:flagship-audit-insert-pack.html",
+   "kind": "page",
+   "label": "flagship-audit-insert-pack.html",
+   "file": "flagship-audit-insert-pack.html",
+   "group": "snippet",
+   "title": "",
+   "lines": 294
+  },
+  {
+   "id": "page:global-trade-sourcing-snippets.html",
+   "kind": "page",
+   "label": "global-trade-sourcing-snippets.html",
+   "file": "global-trade-sourcing-snippets.html",
+   "group": "snippet",
+   "title": "",
+   "lines": 152
+  },
+  {
+   "id": "page:global-trade-sourcing.html",
+   "kind": "page",
+   "label": "global-trade-sourcing.html",
+   "file": "global-trade-sourcing.html",
+   "group": "public",
+   "title": "Global Trade &amp; Sourcing — Jabran &amp; Co",
+   "lines": 248
+  },
+  {
+   "id": "page:index.html",
+   "kind": "page",
+   "label": "index.html",
+   "file": "index.html",
+   "group": "public",
+   "title": "Jabran &amp; Co — Global Trade, Strategic Advisory &amp; Industrial Consulting",
+   "lines": 264
+  },
+  {
+   "id": "page:insight-hidden-factory.html",
+   "kind": "page",
+   "label": "insight-hidden-factory.html",
+   "file": "insight-hidden-factory.html",
+   "group": "public",
+   "title": "The Hidden Factory: Where Production Capacity Disappears — Jabran &amp; Co",
+   "lines": 187
+  },
+  {
+   "id": "page:insight-integration-snippet.html",
+   "kind": "page",
+   "label": "insight-integration-snippet.html",
+   "file": "insight-integration-snippet.html",
+   "group": "snippet",
+   "title": "",
+   "lines": 79
+  },
+  {
+   "id": "page:insights.html",
+   "kind": "page",
+   "label": "insights.html",
+   "file": "insights.html",
+   "group": "public",
+   "title": "Insights — Jabran &amp; Co",
+   "lines": 283
+  },
+  {
+   "id": "page:invoice-view.html",
+   "kind": "page",
+   "label": "invoice-view.html",
+   "file": "invoice-view.html",
+   "group": "document",
+   "title": "Invoice | JABRAN &amp; CO.",
+   "lines": 242
+  },
+  {
+   "id": "page:jabran-method-upgrade.html",
+   "kind": "page",
+   "label": "jabran-method-upgrade.html",
+   "file": "jabran-method-upgrade.html",
+   "group": "snippet",
+   "title": "",
+   "lines": 157
+  },
+  {
+   "id": "page:my-account.html",
+   "kind": "page",
+   "label": "my-account.html",
+   "file": "my-account.html",
+   "group": "portal",
+   "title": "My Account | JABRAN &amp; CO.",
+   "lines": 429
+  },
+  {
+   "id": "page:plant-audit-deepdive-upgrade.html",
+   "kind": "page",
+   "label": "plant-audit-deepdive-upgrade.html",
+   "file": "plant-audit-deepdive-upgrade.html",
+   "group": "snippet",
+   "title": "",
+   "lines": 228
+  },
+  {
+   "id": "page:podcast.html",
+   "kind": "page",
+   "label": "podcast.html",
+   "file": "podcast.html",
+   "group": "public",
+   "title": "Podcast — Jabran &amp; Co",
+   "lines": 179
+  },
+  {
+   "id": "page:ppap-revert-previous.html",
+   "kind": "page",
+   "label": "ppap-revert-previous.html",
+   "file": "ppap-revert-previous.html",
+   "group": "snippet",
+   "title": "Production Plant Audit &amp; Performance — Jabran &amp; Co",
+   "lines": 259
+  },
+  {
+   "id": "page:privacy.html",
+   "kind": "page",
+   "label": "privacy.html",
+   "file": "privacy.html",
+   "group": "public",
+   "title": "Privacy Policy | JABRAN &amp; CO.",
+   "lines": 249
+  },
+  {
+   "id": "page:production-plant-audit-performance.html",
+   "kind": "page",
+   "label": "production-plant-audit-performance.html",
+   "file": "production-plant-audit-performance.html",
+   "group": "public",
+   "title": "Production Plant Audit &amp; Performance — Jabran &amp; Co",
+   "lines": 252
+  },
+  {
+   "id": "page:quotation-view.html",
+   "kind": "page",
+   "label": "quotation-view.html",
+   "file": "quotation-view.html",
+   "group": "document",
+   "title": "Commercial Proposal | JABRAN &amp; CO.",
+   "lines": 427
+  },
+  {
+   "id": "page:receipt-view.html",
+   "kind": "page",
+   "label": "receipt-view.html",
+   "file": "receipt-view.html",
+   "group": "document",
+   "title": "Official Receipt | JABRAN &amp; CO.",
+   "lines": 211
+  },
+  {
+   "id": "page:report-view.html",
+   "kind": "page",
+   "label": "report-view.html",
+   "file": "report-view.html",
+   "group": "document",
+   "title": "Progress Report — Jabran & Co",
+   "lines": 127
+  },
+  {
+   "id": "page:reset-password.html",
+   "kind": "page",
+   "label": "reset-password.html",
+   "file": "reset-password.html",
+   "group": "portal",
+   "title": "Reset Password | JABRAN &amp; CO.",
+   "lines": 151
+  },
+  {
+   "id": "page:seo-jsonld-snippet.html",
+   "kind": "page",
+   "label": "seo-jsonld-snippet.html",
+   "file": "seo-jsonld-snippet.html",
+   "group": "snippet",
+   "title": "",
+   "lines": 61
+  },
+  {
+   "id": "page:terms.html",
+   "kind": "page",
+   "label": "terms.html",
+   "file": "terms.html",
+   "group": "public",
+   "title": "Terms of Service | JABRAN &amp; CO.",
+   "lines": 197
+  },
+  {
+   "id": "page:trading.html",
+   "kind": "page",
+   "label": "trading.html",
+   "file": "trading.html",
+   "group": "public",
+   "title": "Redirecting… — Jabran &amp; Co",
+   "lines": 15
+  },
+  {
+   "id": "page:training-academy.html",
+   "kind": "page",
+   "label": "training-academy.html",
+   "file": "training-academy.html",
+   "group": "public",
+   "title": "Training Academy — Jabran &amp; Co",
+   "lines": 218
+  },
+  {
+   "id": "rpc:ai_activate_prompt",
+   "kind": "rpc",
+   "label": "ai_activate_prompt"
+  },
+  {
+   "id": "rpc:ai_anonymize_conversation",
+   "kind": "rpc",
+   "label": "ai_anonymize_conversation"
+  },
+  {
+   "id": "rpc:ai_client_snapshot",
+   "kind": "rpc",
+   "label": "ai_client_snapshot"
+  },
+  {
+   "id": "rpc:ai_content_intelligence",
+   "kind": "rpc",
+   "label": "ai_content_intelligence"
+  },
+  {
+   "id": "rpc:analytics_by_dimension",
+   "kind": "rpc",
+   "label": "analytics_by_dimension"
+  },
+  {
+   "id": "rpc:analytics_data_freshness",
+   "kind": "rpc",
+   "label": "analytics_data_freshness"
+  },
+  {
+   "id": "rpc:analytics_metric_catalog",
+   "kind": "rpc",
+   "label": "analytics_metric_catalog"
+  },
+  {
+   "id": "rpc:analytics_my_permissions",
+   "kind": "rpc",
+   "label": "analytics_my_permissions"
+  },
+  {
+   "id": "rpc:analytics_overview",
+   "kind": "rpc",
+   "label": "analytics_overview"
+  },
+  {
+   "id": "rpc:analytics_timeseries",
+   "kind": "rpc",
+   "label": "analytics_timeseries"
+  },
+  {
+   "id": "rpc:crm_alerts_now",
+   "kind": "rpc",
+   "label": "crm_alerts_now"
+  },
+  {
+   "id": "rpc:crm_cc_productivity",
+   "kind": "rpc",
+   "label": "crm_cc_productivity"
+  },
+  {
+   "id": "rpc:crm_client_quotation_action",
+   "kind": "rpc",
+   "label": "crm_client_quotation_action"
+  },
+  {
+   "id": "rpc:crm_client_tracking",
+   "kind": "rpc",
+   "label": "crm_client_tracking"
+  },
+  {
+   "id": "rpc:crm_convert_opportunity_to_quotation",
+   "kind": "rpc",
+   "label": "crm_convert_opportunity_to_quotation"
+  },
+  {
+   "id": "rpc:crm_convert_prospect",
+   "kind": "rpc",
+   "label": "crm_convert_prospect"
+  },
+  {
+   "id": "rpc:crm_convert_quotation_to_order",
+   "kind": "rpc",
+   "label": "crm_convert_quotation_to_order"
+  },
+  {
+   "id": "rpc:crm_cost_line_options",
+   "kind": "rpc",
+   "label": "crm_cost_line_options"
+  },
+  {
+   "id": "rpc:crm_create_opportunity_from_enquiry",
+   "kind": "rpc",
+   "label": "crm_create_opportunity_from_enquiry"
+  },
+  {
+   "id": "rpc:crm_delete_custom_field",
+   "kind": "rpc",
+   "label": "crm_delete_custom_field"
+  },
+  {
+   "id": "rpc:crm_eligible_rms",
+   "kind": "rpc",
+   "label": "crm_eligible_rms"
+  },
+  {
+   "id": "rpc:crm_generate_milestones",
+   "kind": "rpc",
+   "label": "crm_generate_milestones"
+  },
+  {
+   "id": "rpc:crm_has_role",
+   "kind": "rpc",
+   "label": "crm_has_role"
+  },
+  {
+   "id": "rpc:crm_is_staff",
+   "kind": "rpc",
+   "label": "crm_is_staff"
+  },
+  {
+   "id": "rpc:crm_issue_invoice",
+   "kind": "rpc",
+   "label": "crm_issue_invoice"
+  },
+  {
+   "id": "rpc:crm_list_staff",
+   "kind": "rpc",
+   "label": "crm_list_staff"
+  },
+  {
+   "id": "rpc:crm_log_activity",
+   "kind": "rpc",
+   "label": "crm_log_activity"
+  },
+  {
+   "id": "rpc:crm_log_login_event",
+   "kind": "rpc",
+   "label": "crm_log_login_event"
+  },
+  {
+   "id": "rpc:crm_mark_quotation_viewed",
+   "kind": "rpc",
+   "label": "crm_mark_quotation_viewed"
+  },
+  {
+   "id": "rpc:crm_my_employee_cost_id",
+   "kind": "rpc",
+   "label": "crm_my_employee_cost_id"
+  },
+  {
+   "id": "rpc:crm_next_number",
+   "kind": "rpc",
+   "label": "crm_next_number"
+  },
+  {
+   "id": "rpc:crm_outsourced_category_options",
+   "kind": "rpc",
+   "label": "crm_outsourced_category_options"
+  },
+  {
+   "id": "rpc:crm_reassign_rm",
+   "kind": "rpc",
+   "label": "crm_reassign_rm"
+  },
+  {
+   "id": "rpc:crm_recent_activity",
+   "kind": "rpc",
+   "label": "crm_recent_activity"
+  },
+  {
+   "id": "rpc:crm_related_records",
+   "kind": "rpc",
+   "label": "crm_related_records"
+  },
+  {
+   "id": "rpc:crm_review_daily_entry",
+   "kind": "rpc",
+   "label": "crm_review_daily_entry"
+  },
+  {
+   "id": "rpc:crm_rm_dashboard",
+   "kind": "rpc",
+   "label": "crm_rm_dashboard"
+  },
+  {
+   "id": "rpc:crm_run_allocation",
+   "kind": "rpc",
+   "label": "crm_run_allocation"
+  },
+  {
+   "id": "rpc:crm_select_supplier_offer",
+   "kind": "rpc",
+   "label": "crm_select_supplier_offer"
+  },
+  {
+   "id": "rpc:crm_session_context",
+   "kind": "rpc",
+   "label": "crm_session_context"
+  },
+  {
+   "id": "rpc:crm_session_policy",
+   "kind": "rpc",
+   "label": "crm_session_policy"
+  },
+  {
+   "id": "rpc:crm_set_employee_active",
+   "kind": "rpc",
+   "label": "crm_set_employee_active"
+  },
+  {
+   "id": "rpc:crm_set_roles",
+   "kind": "rpc",
+   "label": "crm_set_roles"
+  },
+  {
+   "id": "rpc:crm_staff_names",
+   "kind": "rpc",
+   "label": "crm_staff_names"
+  },
+  {
+   "id": "rpc:crm_tracking_alerts",
+   "kind": "rpc",
+   "label": "crm_tracking_alerts"
+  },
+  {
+   "id": "rpc:crm_verify_payment",
+   "kind": "rpc",
+   "label": "crm_verify_payment"
+  },
+  {
+   "id": "rpc:pharma_can",
+   "kind": "rpc",
+   "label": "pharma_can"
+  },
+  {
+   "id": "rpc:pharma_my_permissions",
+   "kind": "rpc",
+   "label": "pharma_my_permissions"
+  },
+  {
+   "id": "rpc:pharma_territory_options",
+   "kind": "rpc",
+   "label": "pharma_territory_options"
+  }
+ ],
+ "edges": [
+  {
+   "from": "fn:admin-invite",
+   "to": "db:crm_employee_profiles",
+   "kind": "data"
+  },
+  {
+   "from": "fn:admin-invite",
+   "to": "db:crm_staff_roles",
+   "kind": "data"
+  },
+  {
+   "from": "fn:admin-invite",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:admin-set-password",
+   "to": "db:crm_audit_logs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:admin-set-password",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:advisory-agent",
+   "to": "ext:Google Gemini",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:ai-accountant",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:ai-accountant",
+   "to": "ext:Google Gemini",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:ai_agent_configs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:ai_conversations",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:ai_messages",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:ai_agent_feedback",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:ai_agent_handoffs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:ai_usage_log",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:ai_prompt_versions",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-agent",
+   "to": "ext:Anthropic API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "db:ai_agent_configs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "db:ai_conversations",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "db:crm_portal_members",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "db:ai_messages",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "db:ai_agent_handoffs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "db:ai_prompt_versions",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "db:ai_usage_log",
+   "kind": "data"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "rpc:ai_client_snapshot",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:ai-client-agent",
+   "to": "ext:Anthropic API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "db:analytics_prompt_history",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "rpc:analytics_my_permissions",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "rpc:analytics_metric_catalog",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "rpc:analytics_data_freshness",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "rpc:analytics_overview",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "rpc:analytics_timeseries",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "rpc:analytics_by_dimension",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-agent",
+   "to": "ext:Google Gemini",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "db:crm_audit_logs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "db:analytics_oauth_states",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "db:analytics_connections",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "db:analytics_oauth_tokens",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "rpc:analytics_my_permissions",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "fn:analytics-oauth-callback",
+   "kind": "invokes"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "ext:Search Console API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "ext:Google OAuth",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "ext:Meta Graph API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-oauth",
+   "to": "ext:LinkedIn API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-oauth-callback",
+   "to": "db:analytics_oauth_states",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth-callback",
+   "to": "db:analytics_connections",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth-callback",
+   "to": "db:analytics_oauth_tokens",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth-callback",
+   "to": "db:crm_audit_logs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-oauth-callback",
+   "to": "ext:Google OAuth",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-oauth-callback",
+   "to": "ext:Meta Graph API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-oauth-callback",
+   "to": "ext:LinkedIn API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "db:analytics_sync_jobs",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "db:analytics_connections",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "db:analytics_data_quality_events",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "db:analytics_oauth_tokens",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "db:analytics_daily_metrics",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "db:analytics_content_metrics",
+   "kind": "data"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "rpc:analytics_my_permissions",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "ext:GA4 Data API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "ext:Search Console API",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:analytics-sync",
+   "to": "ext:Google OAuth",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:notify-enquiry",
+   "to": "ext:Resend (email)",
+   "kind": "calls"
+  },
+  {
+   "from": "fn:send-client-email",
+   "to": "db:crm_attachments",
+   "kind": "data"
+  },
+  {
+   "from": "fn:send-client-email",
+   "to": "db:crm_email_log",
+   "kind": "data"
+  },
+  {
+   "from": "fn:send-client-email",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "fn:send-client-email",
+   "to": "ext:Gmail relay (Apps Script)",
+   "kind": "calls"
+  },
+  {
+   "from": "js:chat-widget.js",
+   "to": "fn:advisory-agent",
+   "kind": "invokes"
+  },
+  {
+   "from": "js:client-ai-agent.js",
+   "to": "fn:ai-client-agent",
+   "kind": "invokes"
+  },
+  {
+   "from": "js:crm-activity.js",
+   "to": "rpc:crm_log_activity",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-ai-kpis.js",
+   "to": "db:ai_usage_log",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-ai-kpis.js",
+   "to": "rpc:ai_content_intelligence",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-alerts.js",
+   "to": "db:crm_alert_dismissals",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-alerts.js",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-alerts.js",
+   "to": "rpc:crm_alerts_now",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "db:crm_login_history",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "db:crm_field_config",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "db:crm_invoices",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "db:crm_order_ebitda",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "db:crm_audit_logs",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "rpc:crm_session_policy",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "rpc:crm_log_login_event",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-auth.js",
+   "to": "rpc:pharma_can",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-extras.js",
+   "to": "db:crm_contacts",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-extras.js",
+   "to": "db:crm_attachments",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-forms.js",
+   "to": "db:crm_invoices",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-forms.js",
+   "to": "db:crm_order_ebitda",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-forms.js",
+   "to": "db:crm_field_config",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-forms.js",
+   "to": "db:crm_custom_values",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-forms.js",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-intl.js",
+   "to": "db:crm_countries",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-links.js",
+   "to": "rpc:crm_related_records",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-nav.js",
+   "to": "db:crm_notifications",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-nav.js",
+   "to": "db:ai_conversations",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-nav.js",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-nav.js",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-rm.js",
+   "to": "db:crm_orders",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-rm.js",
+   "to": "db:crm_record_assignments",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-rm.js",
+   "to": "rpc:crm_eligible_rms",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-rm.js",
+   "to": "rpc:crm_reassign_rm",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:crm-tracking.js",
+   "to": "db:crm_order_tracking",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-tracking.js",
+   "to": "db:crm_order_milestones",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-tracking.js",
+   "to": "db:crm_tracking_templates",
+   "kind": "data"
+  },
+  {
+   "from": "js:crm-tracking.js",
+   "to": "rpc:crm_generate_milestones",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:portal-documents.js",
+   "to": "db:crm_portal_members",
+   "kind": "data"
+  },
+  {
+   "from": "js:portal-documents.js",
+   "to": "db:crm_attachment_categories",
+   "kind": "data"
+  },
+  {
+   "from": "js:portal-documents.js",
+   "to": "db:crm_attachments",
+   "kind": "data"
+  },
+  {
+   "from": "js:portal-documents.js",
+   "to": "db:crm_attachment_events",
+   "kind": "data"
+  },
+  {
+   "from": "js:portal-tracking.js",
+   "to": "rpc:crm_client_tracking",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:supabase-client.js",
+   "to": "rpc:crm_session_context",
+   "kind": "rpc"
+  },
+  {
+   "from": "js:utm-capture.js",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:about.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:about.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:about.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:about.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:about.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "page:report-view.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:blog_posts",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:contact_submissions",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:featured_topics",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:audit_findings",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:clients",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:client_actions",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:client_kpis",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:client_meetings",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:client_reports",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:client_documents",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:training_modules",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:training_quiz_questions",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:training_assignments",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:case_studies",
+   "kind": "data"
+  },
+  {
+   "from": "page:admin.html",
+   "to": "db:profiles",
+   "kind": "data"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:advisory.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:analytics-oauth.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:analytics-oauth.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:analytics-oauth.html",
+   "to": "page:crm-analytics.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:analytics-oauth.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:analytics-oauth.html",
+   "to": "fn:analytics-oauth",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:architecture-interiors-construction.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:assessment-tools.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:careers.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:case-studies.html",
+   "to": "db:case_studies",
+   "kind": "data"
+  },
+  {
+   "from": "page:certificate-view.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:certificate-view.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:certificate-view.html",
+   "to": "db:training_certificates",
+   "kind": "data"
+  },
+  {
+   "from": "page:client-portal.html",
+   "to": "page:my-account.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:construction-interiors.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "db:crm_services",
+   "kind": "data"
+  },
+  {
+   "from": "page:contact.html",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-daily-entry.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-financial-settings.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-employee-costs.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "page:crm-project-costing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_orders",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_subscriptions",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_employee_cost_rates",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_daily_entries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_monthly_overhead_actual",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_monthly_employee_cost",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_ai_actions",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_timesheets",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_fixed_expenses",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "db:crm_employee_costs",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "rpc:crm_my_employee_cost_id",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-ai-accountant.html",
+   "to": "fn:ai-accountant",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "js:crm-nav.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "db:ai_agent_configs",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "db:ai_prompt_versions",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "db:ai_usage_log",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "db:crm_attachment_policy",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "db:crm_rm_policy",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "db:crm_tracking_policy",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "db:ai_conversations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "rpc:ai_activate_prompt",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-ai-control-center.html",
+   "to": "rpc:ai_anonymize_conversation",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-daily-entry.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-ai-accountant.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-financial-settings.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-employee-costs.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-project-costing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "page:crm-finance-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "db:crm_alert_dismissals",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-alerts.html",
+   "to": "rpc:crm_alerts_now",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "lib:Chart.js 4.4.1",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-daily-entry.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-ai-accountant.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-financial-settings.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-project-costing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-finance-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-organization.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "page:crm-alerts.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "db:analytics_prompt_history",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "rpc:analytics_my_permissions",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "rpc:analytics_overview",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "rpc:analytics_timeseries",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "rpc:analytics_by_dimension",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "rpc:analytics_data_freshness",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "rpc:analytics_metric_catalog",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "fn:analytics-agent",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "fn:analytics-oauth",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:crm-analytics.html",
+   "to": "fn:analytics-sync",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "page:crm-form-builder.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "db:crm_org_credit_status",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-business-rules.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "lib:Chart.js 4.4.1",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "page:crm-form-builder.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_kpis",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_monthly",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_funnel",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_quotation_outcomes",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_ageing",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_revenue_service",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_revenue_country",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_order_status",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_revenue_client",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_shipment_status",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "db:crm_cc_project_status",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "rpc:crm_cc_productivity",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-command-center.html",
+   "to": "rpc:crm_recent_activity",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "page:crm-rm-dashboard.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "db:ai_conversations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "db:ai_messages",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "db:ai_agent_handoffs",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-conversations.html",
+   "to": "rpc:crm_staff_names",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-financial-settings.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-employee-costs.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "db:crm_orders",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "db:crm_projects",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "db:crm_daily_entries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "rpc:crm_staff_names",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-daily-entry.html",
+   "to": "rpc:crm_review_daily_entry",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-email.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-email.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-email.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-email.html",
+   "to": "db:crm_attachments",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-email.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-email.html",
+   "to": "db:crm_email_log",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-email.html",
+   "to": "fn:send-client-email",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-financial-settings.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "page:crm-form-builder.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "db:crm_cost_centres",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "db:crm_employee_cost_rates",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "db:crm_employee_allowances",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "db:crm_employee_cost_history",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "db:crm_employee_costs",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-employee-costs.html",
+   "to": "rpc:crm_staff_names",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "db:crm_employee_profiles",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "db:crm_login_history",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "rpc:crm_list_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "rpc:crm_staff_names",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "rpc:crm_set_roles",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "rpc:crm_set_employee_active",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-employees.html",
+   "to": "fn:admin-invite",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "lib:Chart.js 4.4.1",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-daily-entry.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-ai-accountant.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-financial-settings.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-employee-costs.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "page:crm-project-costing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "db:crm_pl_actual_monthly",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "db:crm_cashflow_monthly",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "db:crm_cost_centre_report",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "db:crm_cost_centres",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "db:crm_budgets",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "db:crm_budget_vs_actual",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance-reports.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "js:crm-forms.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "js:crm-extras.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "js:crm-links.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_orders",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_projects",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_order_ebitda",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_invoices",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_invoice_items",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_payments",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_payment_allocations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_receipts",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_receivables_ageing",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_expenses",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "db:crm_monthly_finance",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "rpc:crm_issue_invoice",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-finance.html",
+   "to": "rpc:crm_verify_payment",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-employee-costs.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "page:crm-form-builder.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "db:crm_cost_centres",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "db:crm_subscriptions",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "db:crm_subscription_price_history",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "db:crm_fixed_expenses",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "db:crm_fixed_expense_history",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "db:crm_cost_categories",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "rpc:crm_staff_names",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-financial-settings.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "db:crm_field_config",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-form-builder.html",
+   "to": "rpc:crm_delete_custom_field",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "js:crm-forms.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "js:crm-extras.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "js:crm-links.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "db:crm_services",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "db:crm_opportunities",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "db:crm_report_opportunity_pipeline",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "db:crm_opportunity_activity",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "rpc:crm_create_opportunity_from_enquiry",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-opportunities.html",
+   "to": "rpc:crm_convert_opportunity_to_quotation",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "js:crm-forms.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "js:crm-extras.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "js:crm-links.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_services",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_vendors",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_orders",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_quotations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_order_items",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_order_profitability",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_order_events",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_projects",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_project_milestones",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_shipments",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "db:crm_customs_records",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "rpc:crm_convert_quotation_to_order",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-orders.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-daily-entry.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-ai-accountant.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-employee-costs.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "page:crm-alerts.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "db:crm_department_directory",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "db:crm_job_roles",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "db:crm_cost_centres",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "db:crm_org_assignments",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "db:crm_employee_profiles",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "db:crm_departments",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "rpc:crm_staff_names",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-organization.html",
+   "to": "fn:admin-set-password",
+   "kind": "invokes"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm-daily-entry.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm-ai-accountant.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "page:crm-analytics.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "db:crm_service_branches",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "db:crm_billing_bases",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "db:crm_service_providers",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "db:crm_service_provider_bank",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "db:crm_service_offers",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "db:crm_service_offer_comparison",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-outsourced-offers.html",
+   "to": "rpc:crm_outsourced_category_options",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "page:crm-outsourced-offers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "page:crm-analytics.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "db:pharma_plants",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "db:pharma_therapeutic_categories",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "db:pharma_dosage_forms",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "db:pharma_distributors",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "db:pharma_network_counts",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "rpc:pharma_my_permissions",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-pharma-master.html",
+   "to": "rpc:pharma_territory_options",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-daily-entry.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-financial-settings.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-employee-costs.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_employee_cost_rates",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_orders",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_projects",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_monthly_overhead_actual",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_monthly_employee_cost",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_timesheets",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_cost_allocations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_order_costing_actual",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_allocation_rules",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_allocation_targets",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-project-costing.html",
+   "to": "rpc:crm_run_allocation",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "js:crm-forms.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "js:crm-extras.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "js:crm-links.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "js:crm-intl.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_audit_logs",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_services",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_vendors",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_cost_sheets",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_supplier_offers",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_cost_sheet_totals",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_cost_sheet_items",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_billing_bases",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_quotations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "db:crm_quotation_items",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "rpc:crm_select_supplier_offer",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-quotations.html",
+   "to": "rpc:crm_cost_line_options",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_order_ebitda",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_pipeline",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_lead_sources",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_quotation_stats",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_unrealised",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_service_perf",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_client_value",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_report_country",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_monthly_finance",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-reports.html",
+   "to": "db:crm_receivables_ageing",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "db:crm_orders",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "db:crm_notifications",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "db:crm_record_assignments",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "rpc:crm_tracking_alerts",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-rm-dashboard.html",
+   "to": "rpc:crm_rm_dashboard",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-stockists.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-stockists.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm-stockists.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-stockists.html",
+   "to": "db:crm_stockists",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-stockists.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm-website-capture-snippet.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-website-capture-snippet.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-website-capture-snippet.html",
+   "to": "js:crm-intl.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm-website-capture-snippet.html",
+   "to": "db:crm_services",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm-website-capture-snippet.html",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "js:crm-forms.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "js:crm-extras.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "js:crm-links.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "js:crm-intl.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-orders.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-reports.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-opportunities.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-email.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-command-center.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-business-rules.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-form-builder.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "page:crm-employees.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_settings",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_audit_logs",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_services",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_prospects",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_contacts",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_enquiry_activity",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "db:crm_service_milestone_templates",
+   "kind": "data"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "rpc:crm_has_role",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "rpc:crm_next_number",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:crm.html",
+   "to": "rpc:crm_convert_prospect",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:custom-clearance-consultancy.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:factory-performance.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing-snippets.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:global-trade-sourcing-snippets.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:global-trade-sourcing-snippets.html",
+   "to": "db:product_lines",
+   "kind": "data"
+  },
+  {
+   "from": "page:global-trade-sourcing-snippets.html",
+   "to": "db:trade_inquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:global-trade-sourcing.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:index.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:index.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:index.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:index.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insight-hidden-factory.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:insight-hidden-factory.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:insight-hidden-factory.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:insight-hidden-factory.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insight-hidden-factory.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insight-hidden-factory.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insight-integration-snippet.html",
+   "to": "page:insight-hidden-factory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "db:blog_posts",
+   "kind": "data"
+  },
+  {
+   "from": "page:insights.html",
+   "to": "db:featured_topics",
+   "kind": "data"
+  },
+  {
+   "from": "page:invoice-view.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:invoice-view.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:invoice-view.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:invoice-view.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:invoice-view.html",
+   "to": "db:crm_my_organization",
+   "kind": "data"
+  },
+  {
+   "from": "page:invoice-view.html",
+   "to": "db:crm_invoice_items",
+   "kind": "data"
+  },
+  {
+   "from": "page:invoice-view.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:jabran-method-upgrade.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "page:quotation-view.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "page:invoice-view.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "page:receipt-view.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_my_organization",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_services",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_client_quotations",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_client_orders",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_client_shipments",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_client_invoices",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_receipts",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_order_events",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_client_projects",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_project_milestones",
+   "kind": "data"
+  },
+  {
+   "from": "page:my-account.html",
+   "to": "db:crm_enquiries",
+   "kind": "data"
+  },
+  {
+   "from": "page:plant-audit-deepdive-upgrade.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:podcast.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:ppap-revert-previous.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:privacy.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:privacy.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:privacy.html",
+   "to": "page:terms.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:privacy.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:training-academy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:production-plant-audit-performance.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "lib:qrcodejs",
+   "kind": "includes"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "js:crm-auth.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "js:crm-activity.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "page:crm-quotations.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "db:crm_quotations",
+   "kind": "data"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "db:crm_client_quotations",
+   "kind": "data"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "db:crm_my_organization",
+   "kind": "data"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "db:crm_quotation_items",
+   "kind": "data"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "rpc:crm_mark_quotation_viewed",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:quotation-view.html",
+   "to": "rpc:crm_client_quotation_action",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "page:crm-finance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "db:crm_receipts",
+   "kind": "data"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "db:crm_organizations",
+   "kind": "data"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "db:crm_my_organization",
+   "kind": "data"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "db:crm_payments",
+   "kind": "data"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "db:crm_payment_allocations",
+   "kind": "data"
+  },
+  {
+   "from": "page:receipt-view.html",
+   "to": "rpc:crm_is_staff",
+   "kind": "rpc"
+  },
+  {
+   "from": "page:report-view.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:report-view.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:report-view.html",
+   "to": "db:client_reports",
+   "kind": "data"
+  },
+  {
+   "from": "page:reset-password.html",
+   "to": "lib:supabase-js 2.119.0",
+   "kind": "includes"
+  },
+  {
+   "from": "page:reset-password.html",
+   "to": "js:supabase-client.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:reset-password.html",
+   "to": "page:crm.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:reset-password.html",
+   "to": "page:my-account.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:reset-password.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:terms.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:terms.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:terms.html",
+   "to": "page:privacy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:terms.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:trading.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "lib:Google Tag Manager",
+   "kind": "includes"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "js:animations.js",
+   "kind": "includes"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "ext:Meta Pixel",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "ext:LinkedIn Insight",
+   "kind": "tracks"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:index.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:about.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:careers.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:advisory.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:production-plant-audit-performance.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:global-trade-sourcing.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:architecture-interiors-construction.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:custom-clearance-consultancy.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:assessment-tools.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:case-studies.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:insights.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:podcast.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:contact.html",
+   "kind": "links"
+  },
+  {
+   "from": "page:training-academy.html",
+   "to": "page:client-portal.html",
+   "kind": "links"
+  }
+ ]
+}

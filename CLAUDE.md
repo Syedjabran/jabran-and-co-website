@@ -1,0 +1,1 @@
+Read [AGENTS.md](AGENTS.md) before doing anything in this repository. It holds the ground rules (production database, `main` deploys live, no UI changes without being asked, secrets) and links to the architecture, database and deployment docs.
