@@ -9,7 +9,7 @@
   "library": 4,
   "page": 65,
   "rpc": 49,
-  "edges": 1066
+  "edges": 1067
  },
  "unused": {
   "tables": [
@@ -1134,7 +1134,8 @@
    "kind": "function",
    "label": "advisory-agent",
    "file": "supabase/functions/advisory-agent/index.ts",
-   "lines": 103,
+   "lines": 372,
+   "serviceRole": true,
    "verifyJwt": false
   },
   {
@@ -1262,7 +1263,7 @@
    "kind": "script",
    "label": "crm-auth.js",
    "file": "crm-auth.js",
-   "lines": 907
+   "lines": 945
   },
   {
    "id": "js:crm-extras.js",
@@ -1297,7 +1298,7 @@
    "kind": "script",
    "label": "crm-nav.js",
    "file": "crm-nav.js",
-   "lines": 187
+   "lines": 191
   },
   {
    "id": "js:crm-rm.js",
@@ -1339,7 +1340,7 @@
    "kind": "script",
    "label": "supabase-client.js",
    "file": "supabase-client.js",
-   "lines": 460
+   "lines": 466
   },
   {
    "id": "js:utm-capture.js",
@@ -1555,7 +1556,7 @@
    "file": "crm-daily-entry.html",
    "group": "crm",
    "title": "Daily Expenses | JABRAN &amp; CO.",
-   "lines": 458
+   "lines": 460
   },
   {
    "id": "page:crm-email.html",
@@ -1600,7 +1601,7 @@
    "file": "crm-finance.html",
    "group": "crm",
    "title": "Finance | JABRAN &amp; CO.",
-   "lines": 780
+   "lines": 797
   },
   {
    "id": "page:crm-financial-settings.html",
@@ -1681,7 +1682,7 @@
    "file": "crm-quotations.html",
    "group": "crm",
    "title": "Quotations &amp; Costing | JABRAN &amp; CO.",
-   "lines": 1121
+   "lines": 1135
   },
   {
    "id": "page:crm-reports.html",
@@ -1690,7 +1691,7 @@
    "file": "crm-reports.html",
    "group": "crm",
    "title": "Reports | JABRAN &amp; CO.",
-   "lines": 402
+   "lines": 416
   },
   {
    "id": "page:crm-rm-dashboard.html",
@@ -2224,6 +2225,11 @@
    "from": "fn:admin-set-password",
    "to": "rpc:crm_has_role",
    "kind": "rpc"
+  },
+  {
+   "from": "fn:advisory-agent",
+   "to": "db:crm_enquiries",
+   "kind": "data"
   },
   {
    "from": "fn:advisory-agent",

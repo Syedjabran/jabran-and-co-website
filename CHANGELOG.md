@@ -19,8 +19,14 @@ Full detail: [docs/AUDIT-2026-11-12.md](docs/AUDIT-2026-11-12.md).
 - Codebase map: `npm run graph` → `docs/CODEBASE-MAP.md`, `docs/codebase-graph.json`.
 - Documentation: README, AGENTS, CONTRIBUTING (branch model), SECURITY,
   docs/ARCHITECTURE, DATABASE, DEPLOYMENT, AUDIT; PR template, CODEOWNERS.
-- `supabase/proposed/20261112_001_close_public_data_exposure.sql` (+ rollback)
-  — **not applied**, waiting for approval.
+- Migrations with rollbacks under `supabase/migrations/`; pending SQL for the
+  owner in `supabase/proposed/` (function `search_path` hardening).
+
+**Database / backend (applied 2026-11-12, owner-approved)**
+- Migration `20261112191851`: closed anonymous read of 5 views and EXECUTE on 5 unguarded helpers.
+- Migration `20261112191938`: `ai_public_rate_events` table.
+- `advisory-agent` v25: server-side rate limit + website-chat lead capture.
+- `ai-agent` / `ai-client-agent` switched off (`ai_agent_configs.is_enabled = false`).
 
 **Changed**
 - supabase-js pinned to 2.119.0 on every page (was the floating `@2`).
@@ -32,7 +38,9 @@ after sign-in; employee save removing roles; lockouts from Enter presses;
 duplicate records from double-clicks; links blanked when editing records with
 inactive references; allowance edits hitting the wrong row; phone numbers
 rewritten with the wrong country code; one network blip ejecting staff; 404
-page styling; canonical URLs.
+page styling; canonical URLs. Second batch: new-tab logout (shared session
+cookie, local-scope sign-out), idle timeout shared across tabs, owner-only
+menu links, per-currency totals, Pakistan-time business dates, iOS receipt view.
 
 ## 2026-11-03 — `655ff86` (`dpl_AQNnYekryRCKmKS374ELKwNAkHC3`)
 

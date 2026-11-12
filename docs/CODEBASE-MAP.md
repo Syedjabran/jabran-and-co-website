@@ -13,7 +13,7 @@ Machine-readable graph: [`codebase-graph.json`](codebase-graph.json).
 | library | 4 |
 | page | 65 |
 | rpc | 49 |
-| edges | 1066 |
+| edges | 1067 |
 
 ## Layers
 
@@ -162,7 +162,7 @@ flowchart LR
 |---|---|
 | crm_organizations | 13 |
 | crm_settings | 11 |
-| crm_enquiries | 8 |
+| crm_enquiries | 9 |
 | crm_orders | 7 |
 | crm_services | 7 |
 | crm_audit_logs | 6 |

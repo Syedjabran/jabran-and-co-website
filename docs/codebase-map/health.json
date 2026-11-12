@@ -1,42 +1,248 @@
 [
- {"sev":"critical","area":"Database","status":"pending","text":"Some reporting views can be read without logging in. Permissions-only fix prepared with a rollback."},
- {"sev":"high","area":"Database","status":"pending","text":"Five helper functions with no caller check are callable by anyone, including one that posts notifications into staff inboxes. Same fix file."},
- {"sev":"high","area":"Backend","status":"fixed","text":"10 of 12 edge functions existed only in the Supabase dashboard. All 12 are now in git with their settings pinned."},
- {"sev":"high","area":"CRM sign-in","status":"fixed","text":"The login form stayed on screen above the module after a normal login."},
- {"sev":"high","area":"CRM employees","status":"fixed","text":"Saving an employee removed any role that has no checkbox on the form."},
- {"sev":"high","area":"CRM sessions","status":"open","text":"Opening a CRM page in a new tab signs a user without Remember me out on every tab and device."},
- {"sev":"high","area":"Website chat","status":"open","text":"The public chat endpoint has no server-side rate limit and its origin check can be faked, so the AI quota can be drained."},
- {"sev":"medium","area":"Website chat","status":"open","text":"Contact details typed into the chat are not stored, though the assistant says the team will follow up."},
- {"sev":"medium","area":"Backend","status":"open","text":"Two AI functions are deployed but unused; one accepts unauthenticated conversation starts and can create CRM enquiries."},
- {"sev":"medium","area":"CRM menu","status":"fixed","text":"Financial Settings linked from 7 pages and the menu did not exist. The module is now built on existing tables."},
- {"sev":"medium","area":"Hosting","status":"fixed","text":"The Supabase library was loaded unpinned, so every upstream release went live untested. Pinned to 2.119.0."},
- {"sev":"medium","area":"CRM sign-in","status":"fixed","text":"Pressing Enter in the password field counted toward the 5-attempt lockout."},
- {"sev":"medium","area":"CRM sign-in","status":"fixed","text":"One failed session check was cached, ejecting genuine staff."},
- {"sev":"medium","area":"CRM forms","status":"fixed","text":"Double-clicking Save created duplicate payments, invoices, quotations, orders and more."},
- {"sev":"medium","area":"CRM forms","status":"fixed","text":"Editing a record with an inactive linked service, provider or order blanked that link on save."},
- {"sev":"medium","area":"CRM employee costs","status":"fixed","text":"Allowance edit or remove could hit the wrong row."},
- {"sev":"medium","area":"AI Accountant","status":"fixed","text":"Confirm could run the same action twice."},
- {"sev":"medium","area":"CRM forms","status":"fixed","text":"Phone fields kept the previous record's country and rewrote local numbers."},
- {"sev":"medium","area":"CRM forms","status":"fixed","text":"Searchable dropdowns could show the previous record's value."},
- {"sev":"medium","area":"CRM finance","status":"open","text":"Some totals and rankings add different currencies together."},
- {"sev":"medium","area":"CRM sessions","status":"open","text":"An idle second tab signs the user out everywhere."},
- {"sev":"medium","area":"CRM menu","status":"open","text":"Staff see menu links to owner-only pages that then sign them out."},
- {"sev":"medium","area":"CRM pages","status":"open","text":"Stockists and Email pages skip the shared sign-in safeguards."},
- {"sev":"medium","area":"Analytics sync","status":"open","text":"A failed sync can leave a gap in stored metrics; Search Console results stop at 5,000 rows."},
- {"sev":"low","area":"Database","status":"open","text":"Eight database functions lack a fixed search path."},
- {"sev":"low","area":"Auth","status":"open","text":"Leaked-password protection is switched off."},
- {"sev":"low","area":"Database","status":"open","text":"Duplicate document-number counters (pay / PAY) can produce the same payment number."},
- {"sev":"low","area":"Hosting","status":"fixed","text":"Backend source and internal docs were published on the website."},
- {"sev":"low","area":"CRM","status":"fixed","text":"Conversations showed every staff member as Staff."},
- {"sev":"low","area":"CRM","status":"fixed","text":"Overhead allocation mode was saved double-encoded."},
- {"sev":"low","area":"CRM","status":"fixed","text":"Form Builder owner-only fields were shown to all staff."},
- {"sev":"low","area":"CRM email","status":"fixed","text":"Email page loaded twice and the first Cc remove button did nothing."},
- {"sev":"low","area":"CRM","status":"fixed","text":"Bank-detail errors showed Saved; some search text broke the provider filter."},
- {"sev":"low","area":"AI Accountant","status":"fixed","text":"Renewal dates overflowed at month end (Jan 31 + 1 month became Mar 3)."},
- {"sev":"low","area":"CRM","status":"fixed","text":"RM Dashboard Open links did not go to the order; notification links could run script."},
- {"sev":"low","area":"Documents","status":"fixed","text":"View did nothing on iPhone Safari; report and certificate views crashed on hidden joins."},
- {"sev":"low","area":"Website","status":"fixed","text":"404 page unstyled on nested URLs; non-www canonicals; broken excerpts on Insights and Case Studies."},
- {"sev":"low","area":"CRM","status":"open","text":"Entries made between midnight and 5 am Pakistan time are dated the previous day."},
- {"sev":"low","area":"Website","status":"open","text":"Campaign tracking overwrites the landing page on every view."},
- {"sev":"low","area":"Docs","status":"open","text":"Two function headers and the analytics setup guide describe settings the code no longer uses."}
+ {
+  "sev": "high",
+  "area": "AI services",
+  "status": "pending",
+  "text": "The Gemini API key has run out of prepaid credits, so the website chat, AI Accountant and AI Analytics are unavailable until billing is topped up in Google AI Studio."
+ },
+ {
+  "sev": "critical",
+  "area": "Database",
+  "status": "fixed",
+  "text": "Some reporting views could be read without logging in. Closed by a permissions-only migration."
+ },
+ {
+  "sev": "high",
+  "area": "Database",
+  "status": "fixed",
+  "text": "Five helper functions with no caller check were callable by anyone, including one that posts notifications into staff inboxes. Closed."
+ },
+ {
+  "sev": "high",
+  "area": "Backend",
+  "status": "fixed",
+  "text": "10 of 12 edge functions existed only in the Supabase dashboard. All 12 are now in git with their settings pinned."
+ },
+ {
+  "sev": "high",
+  "area": "CRM sign-in",
+  "status": "fixed",
+  "text": "The login form stayed on screen above the module after a normal login."
+ },
+ {
+  "sev": "high",
+  "area": "CRM employees",
+  "status": "fixed",
+  "text": "Saving an employee removed any role that has no checkbox on the form."
+ },
+ {
+  "sev": "high",
+  "area": "CRM sessions",
+  "status": "fixed",
+  "text": "Opening a CRM page in a new tab signs a user without Remember me out on every tab and device."
+ },
+ {
+  "sev": "high",
+  "area": "Website chat",
+  "status": "fixed",
+  "text": "The public chat endpoint has no server-side rate limit and its origin check can be faked, so the AI quota can be drained."
+ },
+ {
+  "sev": "medium",
+  "area": "Website chat",
+  "status": "fixed",
+  "text": "Contact details typed into the chat are not stored, though the assistant says the team will follow up."
+ },
+ {
+  "sev": "medium",
+  "area": "Backend",
+  "status": "fixed",
+  "text": "Two AI functions are deployed but unused; one accepts unauthenticated conversation starts and can create CRM enquiries."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM menu",
+  "status": "fixed",
+  "text": "Financial Settings linked from 7 pages and the menu did not exist. The module is now built on existing tables."
+ },
+ {
+  "sev": "medium",
+  "area": "Hosting",
+  "status": "fixed",
+  "text": "The Supabase library was loaded unpinned, so every upstream release went live untested. Pinned to 2.119.0."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM sign-in",
+  "status": "fixed",
+  "text": "Pressing Enter in the password field counted toward the 5-attempt lockout."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM sign-in",
+  "status": "fixed",
+  "text": "One failed session check was cached, ejecting genuine staff."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM forms",
+  "status": "fixed",
+  "text": "Double-clicking Save created duplicate payments, invoices, quotations, orders and more."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM forms",
+  "status": "fixed",
+  "text": "Editing a record with an inactive linked service, provider or order blanked that link on save."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM employee costs",
+  "status": "fixed",
+  "text": "Allowance edit or remove could hit the wrong row."
+ },
+ {
+  "sev": "medium",
+  "area": "AI Accountant",
+  "status": "fixed",
+  "text": "Confirm could run the same action twice."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM forms",
+  "status": "fixed",
+  "text": "Phone fields kept the previous record's country and rewrote local numbers."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM forms",
+  "status": "fixed",
+  "text": "Searchable dropdowns could show the previous record's value."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM finance",
+  "status": "fixed",
+  "text": "Some totals and rankings add different currencies together."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM sessions",
+  "status": "fixed",
+  "text": "An idle second tab signs the user out everywhere."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM menu",
+  "status": "fixed",
+  "text": "Staff see menu links to owner-only pages that then sign them out."
+ },
+ {
+  "sev": "medium",
+  "area": "CRM pages",
+  "status": "open",
+  "text": "Stockists and Email pages skip the shared sign-in safeguards."
+ },
+ {
+  "sev": "medium",
+  "area": "Analytics sync",
+  "status": "open",
+  "text": "A failed sync can leave a gap in stored metrics; Search Console results stop at 5,000 rows."
+ },
+ {
+  "sev": "low",
+  "area": "Database",
+  "status": "pending",
+  "text": "Eight database functions lack a fixed search path."
+ },
+ {
+  "sev": "low",
+  "area": "Auth",
+  "status": "pending",
+  "text": "Leaked-password protection is switched off."
+ },
+ {
+  "sev": "low",
+  "area": "Database",
+  "status": "open",
+  "text": "Duplicate document-number counters (pay / PAY) can produce the same payment number."
+ },
+ {
+  "sev": "low",
+  "area": "Hosting",
+  "status": "fixed",
+  "text": "Backend source and internal docs were published on the website."
+ },
+ {
+  "sev": "low",
+  "area": "CRM",
+  "status": "fixed",
+  "text": "Conversations showed every staff member as Staff."
+ },
+ {
+  "sev": "low",
+  "area": "CRM",
+  "status": "fixed",
+  "text": "Overhead allocation mode was saved double-encoded."
+ },
+ {
+  "sev": "low",
+  "area": "CRM",
+  "status": "fixed",
+  "text": "Form Builder owner-only fields were shown to all staff."
+ },
+ {
+  "sev": "low",
+  "area": "CRM email",
+  "status": "fixed",
+  "text": "Email page loaded twice and the first Cc remove button did nothing."
+ },
+ {
+  "sev": "low",
+  "area": "CRM",
+  "status": "fixed",
+  "text": "Bank-detail errors showed Saved; some search text broke the provider filter."
+ },
+ {
+  "sev": "low",
+  "area": "AI Accountant",
+  "status": "fixed",
+  "text": "Renewal dates overflowed at month end (Jan 31 + 1 month became Mar 3)."
+ },
+ {
+  "sev": "low",
+  "area": "CRM",
+  "status": "fixed",
+  "text": "RM Dashboard Open links did not go to the order; notification links could run script."
+ },
+ {
+  "sev": "low",
+  "area": "Documents",
+  "status": "fixed",
+  "text": "View did nothing on iPhone Safari; report and certificate views crashed on hidden joins."
+ },
+ {
+  "sev": "low",
+  "area": "Website",
+  "status": "fixed",
+  "text": "404 page unstyled on nested URLs; non-www canonicals; broken excerpts on Insights and Case Studies."
+ },
+ {
+  "sev": "low",
+  "area": "CRM",
+  "status": "fixed",
+  "text": "Entries made between midnight and 5 am Pakistan time are dated the previous day."
+ },
+ {
+  "sev": "low",
+  "area": "Website",
+  "status": "open",
+  "text": "Campaign tracking overwrites the landing page on every view."
+ },
+ {
+  "sev": "low",
+  "area": "Docs",
+  "status": "open",
+  "text": "Two function headers and the analytics setup guide describe settings the code no longer uses."
+ }
 ]

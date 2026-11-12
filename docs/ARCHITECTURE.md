@@ -146,9 +146,9 @@ Details and the change process: [DATABASE.md](DATABASE.md).
 | `admin-invite` | on | `crm-employees.html` | owner, super_admin, ceo | `SITE_URL` | Supabase Auth invite |
 | `admin-set-password` | on | `crm-employees.html` | owner, super_admin | – | – |
 | `send-client-email` | on | `crm-email.html` | owner, super_admin, ceo, BD, account/consultancy/operations/project managers | `GMAIL_RELAY_URL`, `GMAIL_RELAY_SECRET`, `REPLY_TO`, `SENDER_NAME` | Apps Script Gmail relay |
-| `advisory-agent` | off | `chat-widget.js` (all public pages) | browsers on the allowed origins | `GEMINI_API_KEY` | Gemini `gemini-3.1-flash-lite` |
-| `ai-agent` | off | **no page** (lead-capturing chat, not wired up) | anyone | `AI_API_KEY`, `AI_PROVIDER`, `AI_MODEL_PUBLIC`, `AI_MAX_TOKENS`, `ALLOWED_ORIGIN` | Anthropic |
-| `ai-client-agent` | on | `client-ai-agent.js` (**not loaded by any page**) | signed-in portal users | `AI_API_KEY`, `AI_MODEL_CLIENT`, `AI_MODEL_PUBLIC`, `AI_MAX_TOKENS`, `ALLOWED_ORIGIN` | Anthropic |
+| `advisory-agent` | off | `chat-widget.js` (all public pages) | browsers on the allowed origins; rate-limited per hashed IP (`ai_public_rate_events`); saves leads to `crm_enquiries` | `GEMINI_API_KEY`, optional `RATE_LIMIT_SALT`, `RL_PER_10MIN`, `RL_PER_DAY`, `RL_GLOBAL_PER_DAY` | Gemini `gemini-3.1-flash-lite` |
+| `ai-agent` | off | **no page** — switched off via `ai_agent_configs.is_enabled` (returns 503) | anyone | `AI_API_KEY`, `AI_PROVIDER`, `AI_MODEL_PUBLIC`, `AI_MAX_TOKENS`, `ALLOWED_ORIGIN` | Anthropic |
+| `ai-client-agent` | on | `client-ai-agent.js` (**not loaded by any page**) — switched off via `ai_agent_configs.is_enabled` | signed-in portal users | `AI_API_KEY`, `AI_MODEL_CLIENT`, `AI_MODEL_PUBLIC`, `AI_MAX_TOKENS`, `ALLOWED_ORIGIN` | Anthropic |
 | `ai-accountant` | on | `crm-ai-accountant.html` | staff (`crm_is_staff`) | `GEMINI_API_KEY` | Gemini |
 | `analytics-agent` | on | `crm-analytics.html` | `analytics.query` permission | `GEMINI_API_KEY` | Gemini (planner + narrator) |
 | `analytics-oauth` | on | `crm-analytics.html`, `analytics-oauth.html` | `connect_sources` / `manage_connections` / admin | `TOKEN_ENC_KEY`, `GOOGLE_OAUTH_CLIENT_ID/SECRET`, `META_APP_ID/SECRET`, `LINKEDIN_CLIENT_ID/SECRET` | Google, Meta, LinkedIn OAuth |
@@ -173,5 +173,4 @@ Pattern used by every role-gated function: build a client with the caller's
 ## 8 · Known gaps (tracked in the audit)
 
 No staging database; no schema baseline in git yet; no automated browser
-tests; two AI functions deployed but unused; public AI endpoint without a
-server-side rate limit. See [AUDIT-2026-11-12.md](AUDIT-2026-11-12.md).
+tests; two AI functions deployed but switched off. See [AUDIT-2026-11-12.md](AUDIT-2026-11-12.md).

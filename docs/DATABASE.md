@@ -8,8 +8,8 @@ Figures below were read from the catalog on 2026-11-12.
 
 | Object | Count | Notes |
 |---|---|---|
-| Tables (`public`) | 181 | RLS **enabled on every one** |
-| Views | 78 | 69 run as the caller (`security_invoker`); 9 run as the owner — see §3 |
+| Tables (`public`) | 182 (incl. `ai_public_rate_events`, 2026-11-12) | RLS **enabled on every one** |
+| Views | 78 | 70 run as the caller (`security_invoker`); 8 run as the owner, of which 4 are now closed to the public key and 4 filter by the signed-in user — see §3 |
 | Functions | 153 | 139 are `SECURITY DEFINER` |
 | Triggers | 134 | numbering, totals, history, touch-timestamps, notifications |
 | RLS policies | 347 (+19 on storage) | |
@@ -112,8 +112,8 @@ so future migrations stack on top of it.
 
 | # | Change | Why | Risk |
 |---|---|---|---|
-| D1 | Apply `supabase/proposed/20261112_001_close_public_data_exposure.sql` | Signed-out visitors can read receivables and revenue views; anyone can post CRM notifications | Permissions only; rollback provided |
-| D2 | Add `set search_path = public` to the 8 flagged functions (`ai_conv_touch`, `crm_att_touch`, `crm_invoice_lock_guard`, `crm_order_client_status`, …) | Prevents search-path hijacking of definer code | Very low |
+| D1 | ~~Close anonymous access to 5 views and 5 helper functions~~ | **Done 2026-11-12** — migration `20261112191851` | Permissions only; rollback provided |
+| D2 | Run `supabase/proposed/20261113_002_harden_function_search_path.sql` — `set search_path` on the 8 flagged functions (`ai_conv_touch`, `crm_att_touch`, `crm_invoice_lock_guard`, `crm_order_client_status`, …) | Prevents search-path hijacking of definer code | Very low |
 | D3 | Review the remaining ~125 `SECURITY DEFINER` functions executable by `anon`; revoke where no signed-out page needs them | Smaller public attack surface | Low, needs a per-function check of which public pages call RPCs |
 | D4 | Turn on Auth → leaked password protection | Advisor warning | None |
 | D5 | Create a **staging** Supabase project from the baseline (§5) and point previews/localhost at it | Testing today happens on live data | Medium effort; needs a config switch in `supabase-client.js` by hostname |
