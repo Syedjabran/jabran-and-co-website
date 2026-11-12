@@ -1,23 +1,34 @@
 // ============================================================================
-// JABRAN & CO. CRM — EDGE FUNCTION: ai-accountant  (OpenAI / ChatGPT version)
+// JABRAN & CO. CRM — EDGE FUNCTION: ai-accountant
 //
 // Drop-in replacement: same function name, same request/response shape, so
-// crm-ai-accountant.html and all SQL stay exactly as deployed. Only the AI
-// provider changes: Anthropic → OpenAI (model: gpt-4o-mini, JSON mode).
+// crm-ai-accountant.html and all SQL stay exactly as deployed.
+//
+// AI provider (shared client ../_shared/llm.ts, the same choices as ScholexAI):
+//   Claude (Anthropic) when ANTHROPIC_API_KEY is set, else Google Gemini
+//   (gemini-3.1-flash-lite, OpenAI-compatible endpoint, JSON mode, temperature
+//   0); AI_PROVIDER=anthropic|gemini overrides. Claude: claude-haiku-5-5 at
+//   effort low by default, no temperature, the long system prompt cached, the
+//   JSON reply read from its text.
+//   History: Anthropic → OpenAI gpt-4o-mini → Gemini (v2 2026-08-06) →
+//   Claude preferred, Gemini fallback (v3 2026-11-13).
 //
 // ROLE: language → structured proposal ONLY. No service-role key, no writes.
 // The page executes confirmed actions under the user's own session (RLS).
 //
-// DEPLOY:
-//   1. Supabase → Edge Functions → Secrets → add:  OPENAI_API_KEY = sk-...
-//      (from platform.openai.com → API keys. ChatGPT Plus does NOT include
-//      API access — add a small pay-as-you-go credit on the platform.)
-//   2. Edge Functions → ai-accountant → replace ALL code with this file
-//      → Deploy. JWT toggle stays ON.
-//   3. Nothing else changes — no HTML, no SQL.
+// SECRETS (Supabase → Edge Functions → Secrets):
+//   ANTHROPIC_API_KEY   Claude (preferred when set)
+//   ANTHROPIC_MODEL     optional, default claude-haiku-5-5
+//   ANTHROPIC_EFFORT    optional, low|medium|high|xhigh|max (default low)
+//   AI_PROVIDER         optional, anthropic|gemini forces one provider
+//   GEMINI_API_KEY      fallback when ANTHROPIC_API_KEY is not set
+//   — at least one of ANTHROPIC_API_KEY / GEMINI_API_KEY is required.
+//
+// DEPLOY: from the repo (docs/DEPLOYMENT.md). JWT verification stays ON.
+//   No HTML or SQL changes.
 // ============================================================================
 import { createClient } from "npm:@supabase/supabase-js@2";
-const OPENAI_MODEL = "gemini-3.1-flash-lite"; // v2 2026-08-06: Gemini free tier via OpenAI-compat endpoint (was gpt-4o-mini)
+import { callLlm, selectProvider } from "../_shared/llm.ts";
 const CATEGORIES = [
   "fuel",
   "travel",
@@ -48,7 +59,7 @@ Deno.serve(async (req)=>{
   try {
     // User-scoped client: every check runs as the caller, never elevated.
     const auth = req.headers.get("Authorization") ?? "";
-    const sb = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_ANON_KEY"), {
+    const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: {
         headers: {
           Authorization: auth
@@ -76,11 +87,10 @@ Deno.serve(async (req)=>{
         headers: cors
       });
     }
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) {
-      console.error("REJECT 500: GEMINI_API_KEY secret is missing");
+    if (!selectProvider()) {
+      console.error("REJECT 500: no AI key secret (ANTHROPIC_API_KEY / GEMINI_API_KEY) is set");
       return new Response(JSON.stringify({
-        error: "GEMINI_API_KEY not configured — add it in Edge Function Secrets."
+        error: "ANTHROPIC_API_KEY (or GEMINI_API_KEY) not configured — add it in Edge Function Secrets."
       }), {
         status: 500,
         headers: cors
@@ -113,47 +123,37 @@ Rules:
 
 Context snapshot (already permission-filtered by the app):
 ${JSON.stringify(ctx).slice(0, 4000)}`;
-    const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "authorization": "Bearer " + apiKey
-      },
-      body: JSON.stringify({
-        model: OPENAI_MODEL,
-        temperature: 0,
-        max_tokens: 700,
-        response_format: {
-          type: "json_object"
-        },
-        messages: [
-          {
-            role: "system",
-            content: system
-          },
-          ...messages.map((m)=>({
-              role: m.role === "assistant" ? "assistant" : "user",
-              content: String(m.content ?? "").slice(0, 2000)
-            }))
-        ]
-      })
+    const result = await callLlm({
+      system,
+      cache: true,
+      json: true,
+      temperature: 0, // Gemini only
+      maxTokens: 700,
+      messages: messages.map((m: { role?: string; content?: unknown })=>({
+          role: m.role === "assistant" ? "assistant" as const : "user" as const,
+          content: String(m.content ?? "").slice(0, 2000)
+        }))
     });
-    if (!resp.ok) {
-      const t = await resp.text();
-      console.error("REJECT 502: OpenAI error:", t.slice(0, 300));
+    if (!result.ok && (result.reason === "http" || result.reason === "timeout" || result.reason === "no-provider")) {
+      console.error("REJECT 502: AI error:", result.reason, result.status ?? "");
       return new Response(JSON.stringify({
-        error: "AI service error: " + t.slice(0, 300)
+        error: "AI service error: " + String(result.detail ?? result.reason).slice(0, 300)
       }), {
         status: 502,
         headers: cors
       });
     }
-    const data = await resp.json();
-    const text = String(data?.choices?.[0]?.message?.content ?? "").replace(/```json|```/g, "").trim();
-    let parsed = {};
-    try {
-      parsed = JSON.parse(text);
-    } catch (_e) {
+    let parsed: { reply?: unknown; action?: unknown } = {};
+    if (!result.ok) {
+      // "empty" (no text came back) or "blocked" (the AI declined the request).
+      parsed = {
+        reply: result.reason === "blocked" ? "I can't help with that one — please rephrase it as an expense, hours or subscription entry." : "I couldn't parse that — please rephrase.",
+        action: null
+      };
+    } else if (result.json && typeof result.json === "object") {
+      parsed = result.json as { reply?: unknown; action?: unknown };
+    } else {
+      const text = result.text.replace(/```json|```/g, "").trim();
       parsed = {
         reply: text || "I couldn't parse that — please rephrase.",
         action: null

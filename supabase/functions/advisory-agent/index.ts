@@ -1,12 +1,19 @@
 // ============================================================================
-// JABRAN & CO. — EDGE FUNCTION: advisory-agent  (public website chat) — v3
+// JABRAN & CO. — EDGE FUNCTION: advisory-agent  (public website chat) — v4
 //
 // Purpose: the public AI chat on jabranandco.com (called by chat-widget.js
 // with { messages } → returns { reply }). Answers from a verified-facts-only
-// prompt via Google Gemini (gemini-3.1-flash-lite, OpenAI-compatible endpoint).
+// prompt via the shared LLM client (../_shared/llm.ts): Claude (Anthropic)
+// when ANTHROPIC_API_KEY is set, else Google Gemini (gemini-3.1-flash-lite,
+// OpenAI-compatible endpoint) — AI_PROVIDER=anthropic|gemini overrides.
 //
+// v4 (2026-11-13): Claude via the shared client (same choices as ScholexAI):
+//   claude-haiku-5-5 at effort low by default, system prompt cached. If Claude
+//   declines a request (stop_reason "refusal"), the visitor gets a polite
+//   200 reply pointing to WhatsApp; any other AI failure keeps the 502
+//   "temporarily unavailable" path (lead capture still runs there).
 // v3 (2026-11-13): server-side rate limiting + lead capture.
-//   • Rate limit (checked BEFORE Gemini is called): per client (hashed IP)
+//   • Rate limit (checked BEFORE the AI is called): per client (hashed IP)
 //     per 10 min and per day, plus a global daily cap. Over the limit →
 //     HTTP 429 with { reply } so the widget shows a polite bot message.
 //     If the DB is unreachable the check fails OPEN (chat still works).
@@ -28,7 +35,12 @@
 //     results, prices, or promises.
 //
 // Env / secrets:
-//   GEMINI_API_KEY            (required)
+//   ANTHROPIC_API_KEY         (Claude; preferred when set)
+//   ANTHROPIC_MODEL           (optional; default claude-haiku-5-5)
+//   ANTHROPIC_EFFORT          (optional; low|medium|high|xhigh|max, default low)
+//   AI_PROVIDER               (optional; anthropic|gemini forces one provider)
+//   GEMINI_API_KEY            (fallback when ANTHROPIC_API_KEY is not set)
+//   — at least one of ANTHROPIC_API_KEY / GEMINI_API_KEY is required.
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY   (injected by Supabase)
 //   RATE_LIMIT_SALT           (optional; salt for the hashed client key,
 //                              defaults to SUPABASE_URL)
@@ -46,10 +58,7 @@
 // ============================================================================
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
-
-const GEMINI_MODEL = "gemini-3.1-flash-lite";
-const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+import { callLlm, selectProvider } from "../_shared/llm.ts";
 
 const ALLOWED_ORIGINS = [
   "https://jabranandco.com",
@@ -82,6 +91,11 @@ const RATE_LIMIT_REPLY =
   "Thank you for chatting with us — you've reached the chat limit for now. " +
   "Our team would be glad to continue the conversation directly: WhatsApp +92 336 4864345 " +
   "or email ceo@jabranandco.com.";
+// The AI declined the request (Claude's stop_reason "refusal"): something the
+// assistant can't help with — answer politely and point to a human.
+const BLOCKED_REPLY =
+  "I'm sorry — that's not something I can help with here. For anything about our services, " +
+  "our team would be glad to talk with you directly: WhatsApp +92 336 4864345.";
 
 function envInt(name: string, fallback: number): number {
   const n = parseInt(Deno.env.get(name) ?? "", 10);
@@ -318,13 +332,12 @@ Deno.serve(async (req: Request) => {
       return new Response(JSON.stringify({ error: "No message." }), { status: 400, headers: cors });
     }
 
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) {
-      console.error("REJECT 500: GEMINI_API_KEY secret is missing");
+    if (!selectProvider()) {
+      console.error("REJECT 500: no AI key secret (ANTHROPIC_API_KEY / GEMINI_API_KEY) is set");
       return new Response(JSON.stringify({ error: "The assistant is being set up — please use the contact form or WhatsApp +92 336 4864345." }), { status: 500, headers: cors });
     }
 
-    // Server-side rate limit — checked before any Gemini call.
+    // Server-side rate limit — checked before any AI call.
     const db = serviceClient();
     if (db) {
       const key = await clientKey(req);
@@ -336,32 +349,28 @@ Deno.serve(async (req: Request) => {
       console.error("RATE LIMIT: no DB client, failing open");
     }
 
-    const resp = await fetch(GEMINI_URL, {
-      method: "POST",
-      headers: { "content-type": "application/json", "authorization": "Bearer " + apiKey },
-      body: JSON.stringify({
-        model: GEMINI_MODEL,
-        temperature: 0.3,
-        max_tokens: 350,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...messages.map((m: { role: string; content: string }) => ({
-            role: m.role === "assistant" ? "assistant" : "user",
-            content: String(m.content ?? "").slice(0, 1200),
-          })),
-        ],
-      }),
+    const result = await callLlm({
+      system: SYSTEM_PROMPT,
+      cache: true,
+      temperature: 0.3,   // Gemini only
+      maxTokens: 350,
+      messages: messages.map((m: { role: string; content: string }) => ({
+        role: m.role === "assistant" ? "assistant" as const : "user" as const,
+        content: String(m.content ?? "").slice(0, 1200),
+      })),
     });
 
-    if (!resp.ok) {
-      const t = await resp.text();
-      console.error("REJECT 502: Gemini error:", t.slice(0, 300));
-      await captureLeadSafe(db, req, messages, "");   // don't lose a lead because Gemini is down
+    if (!result.ok && result.reason === "blocked") {
+      await captureLeadSafe(db, req, messages, BLOCKED_REPLY);
+      return new Response(JSON.stringify({ reply: BLOCKED_REPLY }), { status: 200, headers: cors });
+    }
+    if (!result.ok) {
+      console.error("REJECT 502: AI error:", result.reason, result.status ?? "");
+      await captureLeadSafe(db, req, messages, "");   // don't lose a lead because the AI is down
       return new Response(JSON.stringify({ error: "The assistant is temporarily unavailable — please use WhatsApp +92 336 4864345." }), { status: 502, headers: cors });
     }
 
-    const data = await resp.json();
-    const reply = String(data?.choices?.[0]?.message?.content ?? "").slice(0, 1600);
+    const reply = result.text.slice(0, 1600);
     await captureLeadSafe(db, req, messages, reply);
     return new Response(JSON.stringify({ reply }), { status: 200, headers: cors });
   } catch (e) {
