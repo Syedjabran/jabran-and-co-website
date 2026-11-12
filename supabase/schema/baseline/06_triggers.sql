@@ -1,0 +1,147 @@
+-- Baseline 06: non-internal triggers on public tables, from pg_get_triggerdef().
+-- Production has 134; 133 are emitted below. The 134th is the Supabase
+-- Database Webhook "enquiry-email" on public.crm_enquiries (AFTER INSERT,
+-- supabase_functions.http_request -> /functions/v1/notify-enquiry). Its
+-- arguments embed the webhook secret header, so it is deliberately NOT
+-- reproduced here. Recreate it from the Supabase dashboard (Database ->
+-- Webhooks) on a new project, with a fresh secret. Shape, secret redacted:
+--
+-- CREATE TRIGGER "enquiry-email" AFTER INSERT ON public.crm_enquiries
+--   FOR EACH ROW EXECUTE FUNCTION supabase_functions.http_request(
+--     'https://<project-ref>.supabase.co/functions/v1/notify-enquiry', 'POST',
+--     '{"Content-type":"application/json","x-webhook-secret":"<REDACTED>"}',
+--     '{}', '5000');
+
+CREATE TRIGGER trg_ai_handoff_after AFTER INSERT ON public.ai_agent_handoffs FOR EACH ROW EXECUTE FUNCTION ai_handoff_after();
+CREATE TRIGGER trg_ai_conv_touch BEFORE UPDATE ON public.ai_conversations FOR EACH ROW EXECUTE FUNCTION ai_conv_touch();
+CREATE TRIGGER trg_ai_msg_after AFTER INSERT ON public.ai_messages FOR EACH ROW EXECUTE FUNCTION ai_msg_after();
+CREATE TRIGGER trg_analytics_connections_touch BEFORE UPDATE ON public.analytics_connections FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_oauth_tokens_touch BEFORE UPDATE ON public.analytics_oauth_tokens FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_ai_actions_touch BEFORE UPDATE ON public.crm_ai_actions FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_crm_att_enforce BEFORE INSERT ON public.crm_attachments FOR EACH ROW EXECUTE FUNCTION crm_att_enforce();
+CREATE TRIGGER trg_crm_att_log AFTER INSERT OR UPDATE ON public.crm_attachments FOR EACH ROW EXECUTE FUNCTION crm_att_log();
+CREATE TRIGGER trg_crm_att_touch BEFORE UPDATE ON public.crm_attachments FOR EACH ROW EXECUTE FUNCTION crm_att_touch();
+CREATE TRIGGER trg_budgets_touch BEFORE UPDATE ON public.crm_budgets FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_contacts_touch BEFORE UPDATE ON public.crm_contacts FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_cost_centres_touch BEFORE UPDATE ON public.crm_cost_centres FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_cost_lines_touch BEFORE UPDATE ON public.crm_cost_lines FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_csi_offer_snapshot BEFORE INSERT OR UPDATE ON public.crm_cost_sheet_items FOR EACH ROW EXECUTE FUNCTION crm_snapshot_service_offer();
+CREATE TRIGGER trg_costsheets_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_cost_sheets FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_costsheets_touch BEFORE UPDATE ON public.crm_cost_sheets FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_custom_values_touch BEFORE UPDATE ON public.crm_custom_values FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_customs_touch BEFORE UPDATE ON public.crm_customs_records FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_daily_entries_touch BEFORE UPDATE ON public.crm_daily_entries FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_departments_touch BEFORE UPDATE ON public.crm_departments FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_employee_cost_history AFTER UPDATE ON public.crm_employee_costs FOR EACH ROW EXECUTE FUNCTION crm_employee_cost_track();
+CREATE TRIGGER trg_employee_costs_touch BEFORE UPDATE ON public.crm_employee_costs FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_emp_profiles_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_employee_profiles FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_emp_profiles_touch BEFORE UPDATE ON public.crm_employee_profiles FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_enquiries_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_enquiries FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_enquiries_autonumber BEFORE INSERT ON public.crm_enquiries FOR EACH ROW EXECUTE FUNCTION crm_enquiry_autonumber();
+CREATE TRIGGER trg_enquiries_status_log AFTER UPDATE ON public.crm_enquiries FOR EACH ROW EXECUTE FUNCTION crm_enquiry_status_log();
+CREATE TRIGGER trg_enquiries_touch BEFORE UPDATE ON public.crm_enquiries FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_enquiry_attribution AFTER INSERT ON public.crm_enquiries FOR EACH ROW EXECUTE FUNCTION crm_enquiry_attribution();
+CREATE TRIGGER trg_expenses_touch BEFORE UPDATE ON public.crm_expenses FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_field_config_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_field_config FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_field_config_touch BEFORE UPDATE ON public.crm_field_config FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_fixed_expense_history AFTER UPDATE ON public.crm_fixed_expenses FOR EACH ROW EXECUTE FUNCTION crm_fixed_expense_track();
+CREATE TRIGGER trg_fixed_expenses_touch BEFORE UPDATE ON public.crm_fixed_expenses FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_ii_lock BEFORE INSERT OR DELETE OR UPDATE ON public.crm_invoice_items FOR EACH ROW EXECUTE FUNCTION crm_invoice_items_lock_guard();
+CREATE TRIGGER trg_ii_recalc AFTER INSERT OR DELETE OR UPDATE ON public.crm_invoice_items FOR EACH ROW EXECUTE FUNCTION crm_invoice_items_changed();
+CREATE TRIGGER trg_inv_lock BEFORE UPDATE ON public.crm_invoices FOR EACH ROW EXECUTE FUNCTION crm_invoice_lock_guard();
+CREATE TRIGGER trg_inv_rates_recalc AFTER UPDATE ON public.crm_invoices FOR EACH ROW EXECUTE FUNCTION crm_invoice_rates_changed();
+CREATE TRIGGER trg_invoices_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_invoices FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_invoices_touch BEFORE UPDATE ON public.crm_invoices FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_opps_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_opportunities FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_opps_stage_log AFTER UPDATE ON public.crm_opportunities FOR EACH ROW EXECUTE FUNCTION crm_opportunity_stage_log();
+CREATE TRIGGER trg_opps_touch BEFORE UPDATE ON public.crm_opportunities FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_om_guard BEFORE UPDATE ON public.crm_order_milestones FOR EACH ROW EXECUTE FUNCTION crm_om_before();
+CREATE TRIGGER trg_om_recalc AFTER INSERT OR DELETE OR UPDATE ON public.crm_order_milestones FOR EACH ROW EXECUTE FUNCTION crm_om_after();
+CREATE TRIGGER trg_autocreate_service_project AFTER INSERT ON public.crm_orders FOR EACH ROW EXECUTE FUNCTION jco_autocreate_service_project();
+CREATE TRIGGER trg_crm_rm_enforce BEFORE UPDATE ON public.crm_orders FOR EACH ROW EXECUTE FUNCTION crm_rm_enforce();
+CREATE TRIGGER trg_crm_rm_track AFTER INSERT OR UPDATE OF relationship_manager_id ON public.crm_orders FOR EACH ROW EXECUTE FUNCTION crm_rm_track();
+CREATE TRIGGER trg_order_autotrack AFTER INSERT ON public.crm_orders FOR EACH ROW EXECUTE FUNCTION crm_order_autotrack();
+CREATE TRIGGER trg_orders_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_orders FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_orders_status_guard BEFORE UPDATE ON public.crm_orders FOR EACH ROW EXECUTE FUNCTION crm_order_status_guard();
+CREATE TRIGGER trg_orders_touch BEFORE UPDATE ON public.crm_orders FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_orgs_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_organizations FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_orgs_touch BEFORE UPDATE ON public.crm_organizations FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_alloc_guard BEFORE INSERT OR UPDATE ON public.crm_payment_allocations FOR EACH ROW EXECUTE FUNCTION crm_allocation_guard();
+CREATE TRIGGER trg_alloc_sync AFTER INSERT OR DELETE OR UPDATE ON public.crm_payment_allocations FOR EACH ROW EXECUTE FUNCTION crm_allocations_changed();
+CREATE TRIGGER trg_payments_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_payments FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_payments_touch BEFORE UPDATE ON public.crm_payments FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_no_staff_as_client BEFORE INSERT OR UPDATE ON public.crm_portal_members FOR EACH ROW EXECUTE FUNCTION crm_block_role_conflict();
+CREATE TRIGGER trg_projects_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_projects FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_projects_touch BEFORE UPDATE ON public.crm_projects FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_prospects_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_prospects FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_prospects_touch BEFORE UPDATE ON public.crm_prospects FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_qti_lock BEFORE INSERT OR DELETE OR UPDATE ON public.crm_quotation_items FOR EACH ROW EXECUTE FUNCTION crm_quotation_items_lock_guard();
+CREATE TRIGGER trg_qti_recalc AFTER INSERT OR DELETE OR UPDATE ON public.crm_quotation_items FOR EACH ROW EXECUTE FUNCTION crm_quotation_items_changed();
+CREATE TRIGGER trg_quotation_item_billable BEFORE INSERT OR UPDATE ON public.crm_quotation_items FOR EACH ROW EXECUTE FUNCTION crm_quotation_item_billable();
+CREATE TRIGGER trg_qtn_lock BEFORE UPDATE ON public.crm_quotations FOR EACH ROW EXECUTE FUNCTION crm_quotation_lock_guard();
+CREATE TRIGGER trg_qtn_opp_autoresult AFTER UPDATE ON public.crm_quotations FOR EACH ROW EXECUTE FUNCTION crm_opportunity_autoresult();
+CREATE TRIGGER trg_qtn_rates_recalc AFTER UPDATE ON public.crm_quotations FOR EACH ROW EXECUTE FUNCTION crm_quotation_rates_changed();
+CREATE TRIGGER trg_qtn_validity BEFORE UPDATE ON public.crm_quotations FOR EACH ROW EXECUTE FUNCTION crm_apply_quotation_validity();
+CREATE TRIGGER trg_quotations_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_quotations FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_quotations_touch BEFORE UPDATE ON public.crm_quotations FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_so_approval BEFORE UPDATE ON public.crm_service_offers FOR EACH ROW EXECUTE FUNCTION crm_service_offer_approval();
+CREATE TRIGGER trg_so_number BEFORE INSERT ON public.crm_service_offers FOR EACH ROW EXECUTE FUNCTION crm_service_offer_number();
+CREATE TRIGGER trg_so_touch BEFORE UPDATE ON public.crm_service_offers FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_sp_number BEFORE INSERT ON public.crm_service_providers FOR EACH ROW EXECUTE FUNCTION crm_service_provider_number();
+CREATE TRIGGER trg_sp_touch BEFORE UPDATE ON public.crm_service_providers FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_settings_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_settings FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_shipments_status_log AFTER UPDATE ON public.crm_shipments FOR EACH ROW EXECUTE FUNCTION crm_shipment_status_log();
+CREATE TRIGGER trg_shipments_touch BEFORE UPDATE ON public.crm_shipments FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_no_client_as_staff BEFORE INSERT OR UPDATE ON public.crm_staff_roles FOR EACH ROW EXECUTE FUNCTION crm_block_role_conflict();
+CREATE TRIGGER trg_protect_last_owner BEFORE DELETE OR UPDATE ON public.crm_staff_roles FOR EACH ROW EXECUTE FUNCTION crm_protect_last_owner();
+CREATE TRIGGER trg_crm_stockists_number BEFORE INSERT ON public.crm_stockists FOR EACH ROW EXECUTE FUNCTION crm_stockists_assign_number();
+CREATE TRIGGER trg_crm_stockists_updated BEFORE UPDATE ON public.crm_stockists FOR EACH ROW EXECUTE FUNCTION crm_stockists_set_updated_at();
+CREATE TRIGGER trg_subscription_price_history AFTER UPDATE ON public.crm_subscriptions FOR EACH ROW WHEN (((old.cost IS DISTINCT FROM new.cost) OR (old.billing_cycle IS DISTINCT FROM new.billing_cycle))) EXECUTE FUNCTION crm_subscription_price_track();
+CREATE TRIGGER trg_subscriptions_touch BEFORE UPDATE ON public.crm_subscriptions FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_offers_touch BEFORE UPDATE ON public.crm_supplier_offers FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_timesheet_rate BEFORE INSERT ON public.crm_timesheets FOR EACH ROW EXECUTE FUNCTION crm_timesheet_rate_snapshot();
+CREATE TRIGGER trg_timesheets_touch BEFORE UPDATE ON public.crm_timesheets FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_vendors_audit AFTER INSERT OR DELETE OR UPDATE ON public.crm_vendors FOR EACH ROW EXECUTE FUNCTION crm_audit_trigger();
+CREATE TRIGGER trg_vendors_touch BEFORE UPDATE ON public.crm_vendors FOR EACH ROW EXECUTE FUNCTION crm_touch_updated_at();
+CREATE TRIGGER trg_ae_touch BEFORE UPDATE ON public.pharma_adverse_events FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_camp_touch BEFORE UPDATE ON public.pharma_campaigns FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_pc_touch BEFORE UPDATE ON public.pharma_companies FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_comp_touch BEFORE UPDATE ON public.pharma_complaints FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_dist_touch BEFORE UPDATE ON public.pharma_distributors FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_doc_guard BEFORE INSERT OR UPDATE ON public.pharma_doctors FOR EACH ROW EXECUTE FUNCTION pharma_doctor_guard();
+CREATE TRIGGER trg_doc_touch BEFORE UPDATE ON public.pharma_doctors FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_spend_cap BEFORE INSERT OR UPDATE ON public.pharma_engagement_spend FOR EACH ROW EXECUTE FUNCTION pharma_spend_cap_guard();
+CREATE TRIGGER trg_ped_guard BEFORE INSERT OR UPDATE ON public.pharma_expense_dimensions FOR EACH ROW EXECUTE FUNCTION pharma_allocation_guard();
+CREATE TRIGGER trg_hosp_touch BEFORE UPDATE ON public.pharma_hospitals FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_ib_touch BEFORE UPDATE ON public.pharma_inventory_batches FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_pinv_touch BEFORE UPDATE ON public.pharma_invoices FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_ot_guard BEFORE INSERT OR UPDATE ON public.pharma_offer_targets FOR EACH ROW EXECUTE FUNCTION pharma_offer_target_guard();
+CREATE TRIGGER trg_ph_touch BEFORE UPDATE ON public.pharma_pharmacies FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_plant_touch BEFORE UPDATE ON public.pharma_plants FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_ppr_touch BEFORE UPDATE ON public.pharma_product_regulatory FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_pb_release BEFORE UPDATE ON public.pharma_production_batches FOR EACH ROW EXECUTE FUNCTION pharma_batch_release_guard();
+CREATE TRIGGER trg_pb_touch BEFORE UPDATE ON public.pharma_production_batches FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_prod_touch BEFORE UPDATE ON public.pharma_products FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_po_guard BEFORE INSERT OR UPDATE ON public.pharma_promotional_offers FOR EACH ROW EXECUTE FUNCTION pharma_offer_guard();
+CREATE TRIGGER trg_po_touch BEFORE UPDATE ON public.pharma_promotional_offers FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_recall_effect AFTER INSERT ON public.pharma_recalls FOR EACH ROW EXECUTE FUNCTION pharma_recall_effect();
+CREATE TRIGGER trg_recall_touch BEFORE UPDATE ON public.pharma_recalls FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_prcpt_guard BEFORE INSERT OR UPDATE ON public.pharma_receipts FOR EACH ROW EXECUTE FUNCTION pharma_receipt_guard();
+CREATE TRIGGER trg_ret_touch BEFORE UPDATE ON public.pharma_returns FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_soi_guard BEFORE INSERT OR UPDATE ON public.pharma_sales_order_items FOR EACH ROW EXECUTE FUNCTION pharma_order_item_guard();
+CREATE TRIGGER trg_pso_credit BEFORE INSERT OR UPDATE ON public.pharma_sales_orders FOR EACH ROW EXECUTE FUNCTION pharma_credit_guard();
+CREATE TRIGGER trg_pso_touch BEFORE UPDATE ON public.pharma_sales_orders FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_sample_guard BEFORE INSERT ON public.pharma_sample_transactions FOR EACH ROW EXECUTE FUNCTION pharma_sample_guard();
+CREATE TRIGGER trg_tender_touch BEFORE UPDATE ON public.pharma_tenders FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_tc_touch BEFORE UPDATE ON public.pharma_toll_contracts FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_te_touch BEFORE UPDATE ON public.pharma_toll_enquiries FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_to_touch BEFORE UPDATE ON public.pharma_toll_offers FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_visit_after AFTER INSERT OR UPDATE ON public.pharma_visits FOR EACH ROW EXECUTE FUNCTION pharma_visit_after();
+CREATE TRIGGER trg_visit_guard BEFORE INSERT OR UPDATE ON public.pharma_visits FOR EACH ROW EXECUTE FUNCTION pharma_visit_guard();
+CREATE TRIGGER trg_visit_touch BEFORE UPDATE ON public.pharma_visits FOR EACH ROW EXECUTE FUNCTION crm_touch_row();
+CREATE TRIGGER trg_social_brand_voice_updated BEFORE UPDATE ON public.social_brand_voice FOR EACH ROW EXECUTE FUNCTION social_set_updated_at();
+CREATE TRIGGER trg_social_channels_updated BEFORE UPDATE ON public.social_channels FOR EACH ROW EXECUTE FUNCTION social_set_updated_at();
+CREATE TRIGGER trg_social_calendar_updated BEFORE UPDATE ON public.social_content_calendar FOR EACH ROW EXECUTE FUNCTION social_set_updated_at();
+CREATE TRIGGER trg_social_engagement_updated BEFORE UPDATE ON public.social_engagement FOR EACH ROW EXECUTE FUNCTION social_set_updated_at();
+CREATE TRIGGER trg_social_posts_updated BEFORE UPDATE ON public.social_posts FOR EACH ROW EXECUTE FUNCTION social_set_updated_at();
+CREATE TRIGGER trg_social_settings_updated BEFORE UPDATE ON public.social_settings FOR EACH ROW EXECUTE FUNCTION social_set_updated_at();

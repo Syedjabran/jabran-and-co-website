@@ -1,6 +1,6 @@
 -- ============================================================================
--- PROPOSED — NOT APPLIED (the automated session was not permitted to run it).
--- Owner: paste into Supabase → SQL editor → Run. Safe and reversible.
+-- APPLIED to production 2026-11-12 19:32:36 UTC (migration 20261112193236) with
+-- the owner's approval. Verified: all 8 functions carry search_path=public, pg_temp.
 --
 -- Supabase security advisor "function_search_path_mutable": these 8 functions
 -- run with the caller's search_path. Pinning it prevents a malicious schema on
