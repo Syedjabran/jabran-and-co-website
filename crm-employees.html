@@ -183,7 +183,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // roles: keep owner if already held (not editable here), apply checkboxes
     const emp=staff.find(x=>x.user_id===uid);
     const picked=[...document.querySelectorAll('#em-roles input:checked')].map(cb=>cb.value);
-    if((emp.roles||[]).includes(OWNER)) picked.push(OWNER);
+    ((emp&&emp.roles)||[]).forEach(r=>{ if(!ROLES.includes(r) && !picked.includes(r)) picked.push(r); });
     const {error:rErr}=await sb.rpc('crm_set_roles',{p_user_id:uid, p_roles:picked});
     if(rErr){ st.textContent='Error: '+rErr.message; return; }
     st.textContent='Saved.'; refresh();

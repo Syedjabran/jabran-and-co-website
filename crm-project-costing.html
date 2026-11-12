@@ -247,7 +247,7 @@
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -531,11 +531,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function loadMode(){
     const {data}=await sb.from('crm_settings').select('value').eq('key','overhead_allocation_mode').maybeSingle();
-    if(data&&data.value)setval('mode-select',data.value);
+    let v=data&&data.value; if(typeof v==='string'&&v.length>1&&v[0]==='"'&&v[v.length-1]==='"'){ try{ v=JSON.parse(v); }catch(e){} }   /* tolerate the legacy double-encoded form */
+    if(v)setval('mode-select',v);
   }
   document.getElementById('btn-save-mode').addEventListener('click', async ()=>{
     const st=document.getElementById('mode-status'); st.textContent='Saving…';
-    const {error}=await sb.from('crm_settings').upsert({key:'overhead_allocation_mode', value:JSON.stringify(val('mode-select'))},{onConflict:'key'});
+    const {error}=await sb.from('crm_settings').upsert({key:'overhead_allocation_mode', value:val('mode-select')},{onConflict:'key'});
     st.textContent=error?('Error: '+error.message):'Saved.';
   });
 

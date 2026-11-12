@@ -160,7 +160,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -731,6 +731,9 @@ document.addEventListener('DOMContentLoaded', function () {
       var v = rec ? rec[f.k] : null;
       if (f.t === 'bool') setval('f-'+f.k, String(!!v));
       else setval('f-'+f.k, v);
+      /* keep a saved value that is not among the listed options, so Save writes it back unchanged */
+      var se = document.getElementById('f-'+f.k);
+      if (f.t === 'select' && se && v != null && v !== '' && se.value !== String(v)) { var op = document.createElement('option'); op.value = v; op.textContent = String(v); se.appendChild(op); se.value = String(v); }
     });
     /* the organisation link cannot change after creation: it IS the key */
     if (current === 'companies') {

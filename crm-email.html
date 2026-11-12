@@ -182,7 +182,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script>
 (function(){
@@ -458,7 +458,9 @@
   }
 
   // ---- boot ----
+  var appShown=false;   /* gate() and bootSequence() can both call this; run it once */
   async function showApp(){
+    if(appShown) return; appShown=true;
     $('em-gate').style.display='none'; $('em-main').style.display='block';
     refreshPreview(); loadOrgs(); loadLog();
   }
@@ -474,6 +476,8 @@
   $('em-refresh-preview').addEventListener('click', refreshPreview);
   ['em-name','em-ref'].forEach(function(id){ $(id).addEventListener('blur', refreshPreview); });
   $('em-cc-add').addEventListener('click', function(){ var i=addCcRow(''); i.focus(); });
+  document.querySelectorAll('#em-cc-list .cc-row .mini-x').forEach(function(x){ var row=x.closest('.cc-row');
+    x.addEventListener('click', function(){ row.remove(); if(!$('em-cc-list').querySelector('.cc-row')) addCcRow(''); }); });
   $('em-send').addEventListener('click', send);
   $('em-login-form').addEventListener('submit', async function(e){
     e.preventDefault();

@@ -360,7 +360,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -383,6 +383,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function val(id){ const el=document.getElementById(id); return el?(el.type==='checkbox'?el.checked:(el.value.trim()||null)):null; }
   function numval(id){ const v=val(id); return v===null||v===false?null:Number(v); }
   function setval(id,v){ const el=document.getElementById(id); if(!el)return; if(el.type==='checkbox'){el.checked=!!v;}else{el.value=v==null?'':v;} }
+  /* keep a saved link that is not among the listed options, so Save writes it back unchanged */
+  function keepOpt(id,v,lbl){ const el=document.getElementById(id); if(!el) return; el.querySelectorAll('option[data-kept]').forEach(x=>{ if(x.value!==String(v)) x.remove(); }); if(v==null||v===''||el.value===String(v)) return; const o=document.createElement('option'); o.value=v; o.textContent=lbl||v; o.dataset.kept='1'; el.appendChild(o); el.value=String(v); }
   function openModal(id){ document.getElementById(id).style.display='flex'; }
   function closeModal(id){ document.getElementById(id).style.display='none'; }
   document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
@@ -563,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-pjid]').forEach(r=>r.addEventListener('click',()=>openProject(r.dataset.pjid)));
   }
   document.getElementById('btn-new-project').addEventListener('click',()=>{
-    document.getElementById('project-form').reset(); setval('pj-id','');
+    document.getElementById('project-form').reset(); setval('pj-id',''); keepOpt('pj-order_id',null);
     document.getElementById('project-modal-title').textContent='New Project';
     document.getElementById('pj-milestones-block').style.display='none';
     document.getElementById('pj-visibility-row').style.display='none';
@@ -572,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function () {
   async function openProject(id){
     const p=projectsCache.find(x=>x.id===id); if(!p)return;
     document.getElementById('project-form').reset(); setval('pj-id',p.id);
-    PJ_FIELDS.forEach(f=>setval('pj-'+f,p[f])); setval('pj-completion_pct',p.completion_pct);
+    PJ_FIELDS.forEach(f=>setval('pj-'+f,p[f])); setval('pj-completion_pct',p.completion_pct); keepOpt('pj-order_id',p.order_id);
     document.getElementById('project-modal-title').textContent=(p.project_number||'Project')+' — '+p.title;
     document.getElementById('pj-milestones-block').style.display='block';
     renderPjVisibility(p);
@@ -610,6 +612,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('project-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('project-form-status'); st.textContent='Saving…';
     const payload={}; PJ_FIELDS.forEach(f=>payload[f]=val('pj-'+f));
     payload.completion_pct=numval('pj-completion_pct')||0;
@@ -623,6 +626,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-project'); loadProjects();
+    }finally{ sBtn.disabled=false; }
   });
 
   /* ---------- CLIENT VISIBILITY (publish gate, migration 042) ----------
@@ -681,7 +685,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   document.getElementById('btn-new-shipment').addEventListener('click', async ()=>{
     if(!ordersCache.length) await loadOrders();
-    document.getElementById('shipment-form').reset(); setval('sh-id',''); setval('cu-id','');
+    document.getElementById('shipment-form').reset(); setval('sh-id',''); setval('cu-id',''); keepOpt('sh-order_id',null);
     document.getElementById('shipment-modal-title').textContent='New Shipment';
     document.getElementById('sh-customs-block').style.display='none';
     openModal('modal-shipment');
@@ -689,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function openShipment(id){
     const s=shipmentsCache.find(x=>x.id===id); if(!s)return;
     document.getElementById('shipment-form').reset(); setval('sh-id',s.id);
-    SH_FIELDS.forEach(f=>setval('sh-'+f,s[f]));
+    SH_FIELDS.forEach(f=>setval('sh-'+f,s[f])); keepOpt('sh-order_id',s.order_id);
     setval('sh-freight_cost',s.freight_cost); setval('sh-insurance_cost',s.insurance_cost);
     document.getElementById('shipment-modal-title').textContent=(s.shipment_number||'Shipment');
     document.getElementById('sh-customs-block').style.display='block';
@@ -701,6 +705,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   document.getElementById('shipment-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('shipment-form-status'); st.textContent='Saving…';
     const payload={}; SH_FIELDS.forEach(f=>payload[f]=val('sh-'+f));
     payload.freight_cost=numval('sh-freight_cost'); payload.insurance_cost=numval('sh-insurance_cost');
@@ -714,6 +719,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-shipment'); loadShipments();
+    }finally{ sBtn.disabled=false; }
   });
   document.getElementById('btn-save-customs').addEventListener('click', async ()=>{
     const shId=val('sh-id');

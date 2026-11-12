@@ -65,7 +65,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script>
   function escapeHtml(str){
@@ -99,11 +99,11 @@
       return;
     }
 
-    meta.innerHTML = `${escapeHtml(report.clients.name)}<br>${report.report_date}`;
+    meta.innerHTML = `${escapeHtml((report.clients || {}).name || '')}<br>${report.report_date}`;
 
     body.innerHTML = `
       <div class="report-title">${TYPE_LABELS[report.report_type]}</div>
-      <div class="report-sub">Prepared for ${escapeHtml(report.clients.name)} · ${report.report_date}</div>
+      <div class="report-sub">Prepared for ${escapeHtml((report.clients || {}).name || '')} · ${report.report_date}</div>
 
       ${section('Baseline', report.baseline_summary)}
       ${section('Current Performance', report.current_performance)}

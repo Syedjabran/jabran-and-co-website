@@ -476,7 +476,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -500,6 +500,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function val(id){ const el=document.getElementById(id); return el ? (el.type==='checkbox'?el.checked:(el.value.trim()||null)) : null; }
   function numval(id){ const v=val(id); return v===null?null:Number(v); }
   function setval(id,v){ const el=document.getElementById(id); if(!el) return; if(el.type==='checkbox'){el.checked=!!v;} else {el.value=v==null?'':v;} }
+  /* keep a saved link that is not among the listed options, so Save writes it back unchanged */
+  function keepOpt(id,v,lbl){ const el=document.getElementById(id); if(!el) return; el.querySelectorAll('option[data-kept]').forEach(x=>{ if(x.value!==String(v)) x.remove(); }); if(v==null||v===''||el.value===String(v)) return; const o=document.createElement('option'); o.value=v; o.textContent=lbl||v; o.dataset.kept='1'; el.appendChild(o); el.value=String(v); }
   function openModal(id){ document.getElementById(id).style.display='flex'; }
   function closeModal(id){ document.getElementById(id).style.display='none'; }
   document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
@@ -674,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('btn-new-prospect').addEventListener('click',()=>{
     document.getElementById('prospect-form').reset();
-    setval('p-id',''); setval('p-priority','medium'); setval('p-stage','new');
+    setval('p-id',''); setval('p-priority','medium'); setval('p-stage','new'); keepOpt('p-interested_service_id',null);
     document.getElementById('prospect-modal-title').textContent='New Prospect';
     document.getElementById('btn-convert-prospect').style.display='none';
     if(window.jcoApplyFieldConfig)window.jcoApplyFieldConfig('prospects');
@@ -685,6 +687,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('prospect-form').reset();
     setval('p-id',p.id);
     P_FIELDS.forEach(f=>setval('p-'+f, p[f]));
+    keepOpt('p-interested_service_id', p.interested_service_id, (servicesCache.find(s=>s.id===p.interested_service_id)||{}).name);
     setval('p-expected_budget', p.expected_budget);
     setval('p-budget_currency', p.budget_currency||'PKR');
     setval('p-lead_score', p.lead_score);
@@ -696,6 +699,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   document.getElementById('prospect-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('prospect-form-status'); st.textContent='Saving…';
     const payload={};
     P_FIELDS.forEach(f=>payload[f]=val('p-'+f));
@@ -713,6 +717,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-prospect'); loadProspects();
+    }finally{ sBtn.disabled=false; }
   });
   document.getElementById('btn-convert-prospect').addEventListener('click', async ()=>{
     const id=val('p-id'); if(!id) return;
@@ -786,6 +791,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('org-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('org-form-status'); st.textContent='Saving…';
     const payload={}; O_FIELDS.forEach(f=>payload[f]=val('o-'+f));
     payload.credit_limit=numval('o-credit_limit');
@@ -800,6 +806,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-org');
     await loadOrgsCache(); loadOrgs();
+    }finally{ sBtn.disabled=false; }
   });
 
   /* ---------- ENQUIRIES ---------- */
@@ -829,7 +836,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('enq-status-filter').addEventListener('change', renderEnquiries);
   document.getElementById('enq-service-filter').addEventListener('change', renderEnquiries);
   document.getElementById('btn-new-enquiry').addEventListener('click',()=>{
-    document.getElementById('enq-form').reset(); setval('e-id','');
+    document.getElementById('enq-form').reset(); setval('e-id',''); keepOpt('e-service_id',null);
     document.getElementById('enq-modal-title').textContent='New Enquiry';
     document.getElementById('enq-links').innerHTML='';
     document.getElementById('enq-timeline-block').style.display='none';
@@ -840,6 +847,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const q=enqData.find(x=>x.id===id); if(!q) return;
     document.getElementById('enq-form').reset(); setval('e-id',q.id);
     E_FIELDS.forEach(f=>setval('e-'+f,q[f]));
+    keepOpt('e-service_id', q.service_id, (servicesCache.find(s=>s.id===q.service_id)||{}).name);
     setval('e-estimated_budget',q.estimated_budget);
     setval('e-budget_currency',q.budget_currency||'PKR');
     setval('e-quotation_required',q.quotation_required);
@@ -877,6 +885,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('enq-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('enq-form-status'); st.textContent='Saving…';
     const payload={}; E_FIELDS.forEach(f=>payload[f]=val('e-'+f));
     payload.estimated_budget=numval('e-estimated_budget');
@@ -897,6 +906,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-enq'); loadEnquiries();
+    }finally{ sBtn.disabled=false; }
   });
 
   /* ---------- SERVICES ---------- */

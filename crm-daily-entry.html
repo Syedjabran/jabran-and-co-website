@@ -181,7 +181,7 @@
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -426,7 +426,8 @@ document.addEventListener('DOMContentLoaded', function () {
     box.querySelectorAll('.de-appr').forEach(card=>{
       const id=card.dataset.eid;
       const st=card.querySelector('[data-st]');
-      card.querySelector('[data-approve]').addEventListener('click', async ()=>{
+      card.querySelector('[data-approve]').addEventListener('click', async ev=>{
+        const btn=ev.currentTarget; btn.disabled=true; try{
         st.textContent='Posting…';
         const {error}=await sb.rpc('crm_review_daily_entry',{
           p_entry_id:id, p_decision:'approve',
@@ -436,6 +437,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         if(error){ st.textContent='Error: '+error.message; return; }
         await loadPending(); await loadMine(); renderKpis();
+        }finally{ btn.disabled=false; }
       });
       card.querySelector('[data-reject]').addEventListener('click', async ()=>{
         const note=card.querySelector('[data-note]').value;

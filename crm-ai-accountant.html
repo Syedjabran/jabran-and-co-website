@@ -142,7 +142,7 @@
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -316,13 +316,15 @@ document.addEventListener('DOMContentLoaded', function () {
     return empCache.find(e=>e.employee_name.toLowerCase().includes(n)||n.includes(e.employee_name.toLowerCase()))||null;
   }
   function addMonths(dateStr,m){
-    const d=new Date(dateStr); d.setMonth(d.getMonth()+m);
+    const d=new Date(dateStr), day=d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth()+m);
+    d.setUTCDate(Math.min(day,new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).getUTCDate()));
     return d.toISOString().slice(0,10);
   }
 
   /* ---------- DETERMINISTIC EXECUTION (user's own session; RLS decides) ---------- */
   async function executePending(){
-    const a=pendingAction; if(!a)return;
+    const a=pendingAction; if(!a)return; pendingAction=null; const logId=pendingLogId;
+    const cBtn=document.getElementById('aa-confirm-btn'); if(cBtn)cBtn.disabled=true;
     const box=document.getElementById('aa-confirm');
     let ref=null, err=null;
     try{
@@ -401,8 +403,8 @@ document.addEventListener('DOMContentLoaded', function () {
       else throw new Error('Unsupported action type.');
     }catch(e){ err=e.message||String(e); }
 
-    if(pendingLogId){
-      await sb.from('crm_ai_actions').update(err?{status:'failed',error:err}:{status:'executed',result_ref:String(ref)}).eq('id',pendingLogId);
+    if(logId){
+      await sb.from('crm_ai_actions').update(err?{status:'failed',error:err}:{status:'executed',result_ref:String(ref)}).eq('id',logId);
     }
     if(err)push('sys','Not recorded — '+err);
     pendingAction=null; pendingLogId=null; box.innerHTML='';

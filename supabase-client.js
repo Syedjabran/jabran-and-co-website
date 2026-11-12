@@ -57,6 +57,9 @@ window.jco = window.jco || {};
       try { sessionStorage.setItem(key(uid), JSON.stringify({ at: Date.now(), ctx: r.data })); } catch (e) {}
       return r.data;
     })();
+    /* never memoise a failure: a null result is retried on the next call */
+    var p = inflight;
+    p.then(function (c) { if (!c && inflight === p) inflight = null; }, function () { if (inflight === p) inflight = null; });
     return inflight;
   };
 

@@ -422,7 +422,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -1075,6 +1075,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('qtn-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('qtn-form-status'); st.textContent='Saving…';
     const payload={}; Q_FIELDS.forEach(f=>payload[f]=val('q-'+f)); Q_NUMS.forEach(f=>payload[f]=numval('q-'+f)||0);
     if(!payload.organization_id){ st.textContent='Organization is required.'; return; }
@@ -1087,6 +1088,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; if(!id){ closeModal('modal-qtn'); } loadQuotations();
+    }finally{ sBtn.disabled=false; }
   });
   async function wf(rpc,args,confirmMsg){
     const id=val('q-id'); if(!id)return;
@@ -1116,4 +1118,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-================================================

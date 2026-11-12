@@ -205,7 +205,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -311,9 +311,11 @@ document.addEventListener('DOMContentLoaded', function () {
         <button class="crm-btn sm" data-qualify="${e.id}">Qualify as Opportunity</button>
       </div>`).join('');
     document.querySelectorAll('[data-qualify]').forEach(b=>b.addEventListener('click',async()=>{
+      b.disabled=true; try{
       const {data:newId,error}=await sb.rpc('crm_create_opportunity_from_enquiry',{p_enquiry_id:b.dataset.qualify});
       if(error){ alert('Error: '+error.message); return; }
       await load(); openOpp(newId);
+      }finally{ b.disabled=false; }
     }));
     // table
     document.getElementById('opp-empty').style.display=oppData.length?'none':'block';
@@ -372,6 +374,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('opp-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('opp-form-status'); st.textContent='Saving…';
     const payload={}; OP_FIELDS.forEach(f=>payload[f]=val('op-'+f));
     payload.estimated_value=numval('op-estimated_value');
@@ -385,6 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-opp'); load();
+    }finally{ sBtn.disabled=false; }
   });
   document.getElementById('btn-opp-to-qtn').addEventListener('click', async ()=>{
     const id=val('op-id'); if(!id)return;
@@ -404,4 +408,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-================================================

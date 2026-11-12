@@ -162,7 +162,8 @@
       document.getElementById('jco-nlist').querySelectorAll('.n').forEach(function(el){
         el.addEventListener('click', async function(){
           try{ await sb.from('crm_notifications').update({read_at:new Date().toISOString()}).eq('id',el.dataset.id); }catch(e){}
-          if(el.dataset.link) location.href=el.dataset.link;
+          /* only follow relative or http(s) links, never javascript: or other schemes */
+          if(el.dataset.link){ try{ var u=new URL(el.dataset.link, location.href); if(u.protocol==='http:'||u.protocol==='https:') location.href=u.href; }catch(e){} }
         });
       });
     }catch(e){}

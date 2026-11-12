@@ -191,10 +191,11 @@
       list.querySelectorAll('[data-view]').forEach(function(b){
         b.addEventListener('click', async function(){
           var a=rows.find(function(x){return x.id===b.dataset.view;}); if(!a) return;
+          var w=window.open('','_blank');   /* opened inside the click so Safari does not block it */
           var s=await sb.storage.from('crm-private').createSignedUrl(a.file_path,120);
-          if(s.data&&s.data.signedUrl){ window.open(s.data.signedUrl,'_blank');
+          if(s.data&&s.data.signedUrl){ if(w) w.location=s.data.signedUrl; else window.open(s.data.signedUrl,'_blank');
             if(window.jcoLogActivity) window.jcoLogActivity('view','attachment',a.id,a.file_name);
-          } else astat.textContent='Could not open file.';
+          } else { if(w) w.close(); astat.textContent='Could not open file.'; }
         });
       });
       list.querySelectorAll('[data-del]').forEach(function(b){

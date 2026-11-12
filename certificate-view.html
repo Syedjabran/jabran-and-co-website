@@ -90,7 +90,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script>
   async function loadCertificate(){
@@ -114,8 +114,8 @@
       return;
     }
 
-    document.getElementById('recipient-name').textContent = cert.clients.name;
-    document.getElementById('module-title').textContent = cert.training_modules.title;
+    document.getElementById('recipient-name').textContent = (cert.clients || {}).name || '';
+    document.getElementById('module-title').textContent = (cert.training_modules || {}).title || '';
     document.getElementById('issue-date').textContent = new Date(cert.issued_at).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
     document.getElementById('cert-code').textContent = 'Certificate ID: ' + cert.certificate_code;
   }

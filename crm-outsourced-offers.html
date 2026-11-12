@@ -312,7 +312,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -324,6 +324,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function val(id){ var e=document.getElementById(id); return e && e.value!=='' ? e.value : null; }
   function numval(id){ var v=val(id); return v==null?null:Number(v); }
   function setval(id,v){ var e=document.getElementById(id); if(e) e.value = v==null?'':v; }
+  /* keep a saved link that is not among the listed options, so Save writes it back unchanged */
+  function keepOpt(id,v,lbl){ var e=document.getElementById(id); if(!e) return; e.querySelectorAll('option[data-kept]').forEach(function(x){ if(x.value!==String(v)) x.remove(); }); if(v==null||v===''||e.value===String(v)) return; var o=document.createElement('option'); o.value=v; o.textContent=lbl||v; o.dataset.kept='1'; e.appendChild(o); e.value=String(v); }
   function money(n,c){ return (c||'PKR')+' '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
   var BRANCHES=[], CATS=[], BASES=[], PROVIDERS=[], canEdit=false, canApprove=false, canBank=false;
@@ -435,7 +437,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (val('f-cat'))    q = q.eq('category_code', val('f-cat'));
     if (val('f-status')) q = q.eq('status', val('f-status'));
     var term = val('f-q');
-    if (term) q = q.or('legal_name.ilike.%'+term+'%,trading_name.ilike.%'+term+'%,contact_person.ilike.%'+term+'%,city.ilike.%'+term+'%');
+    if (term) { var qt = '"%'+term.replace(/["\\]/g,'\\$&')+'%"';   /* quoted so , ( ) in the search cannot break the or() filter */
+      q = q.or('legal_name.ilike.'+qt+',trading_name.ilike.'+qt+',contact_person.ilike.'+qt+',city.ilike.'+qt); }
     var r = await q.order('legal_name').limit(200);
     PROVIDERS = r.data || [];
     document.getElementById('prov-empty').style.display = PROVIDERS.length ? 'none' : 'block';
@@ -526,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function () {
         account_number:val('pb-account_number'), iban:val('pb-iban'), swift:val('pb-swift'),
         payment_terms:val('pb-payment_terms')
       }, {onConflict:'provider_id'});
-      if (bres.error) { st.textContent = 'Provider saved, bank details failed: '+bres.error.message; }
+      if (bres.error) { st.textContent = 'Provider saved, bank details failed: '+bres.error.message; setval('pm-id', pid); loadProviders(); return; }
     }
     st.textContent = 'Saved.';
     await loadProviders();
@@ -539,7 +542,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (val('of-branch')) q = q.eq('branch_code', val('of-branch'));
     if (val('of-status')) q = q.eq('status', val('of-status'));
     var term = val('of-q');
-    if (term) q = q.or('title.ilike.%'+term+'%,offer_number.ilike.%'+term+'%');
+    if (term) { var qt = '"%'+term.replace(/["\\]/g,'\\$&')+'%"';   /* quoted so , ( ) in the search cannot break the or() filter */
+      q = q.or('title.ilike.'+qt+',offer_number.ilike.'+qt); }
     var r = await q.order('created_at',{ascending:false}).limit(200);
     var rows = r.data || [];
     document.getElementById('offer-empty').style.display = rows.length ? 'none' : 'block';
@@ -604,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('btn-new-offer').addEventListener('click', function(){ openOffer(null); });
   function openOffer(id){
-    document.getElementById('om-form').reset();
+    document.getElementById('om-form').reset(); keepOpt('om-provider_id', null);
     setval('om-id', id||''); document.getElementById('om-status-msg').textContent='';
     document.getElementById('om-title').textContent = id ? 'Offer' : 'New Offer';
     document.getElementById('om-num').textContent='';
@@ -614,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (o) {
         document.getElementById('om-num').textContent = o.offer_number||'';
         setval('om-provider_id',o.provider_id); setval('om-branch_code',o.branch_code);
+        keepOpt('om-provider_id', o.provider_id, o.crm_service_providers ? o.crm_service_providers.legal_name : null);
         catOptions('om-category_code', o.branch_code||null, '—'); setval('om-category_code',o.category_code);
         setval('om-title_f',o.title);
         ['scope_of_work','billing_basis','rate','estimated_qty','resources','min_billable_qty',

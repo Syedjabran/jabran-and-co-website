@@ -112,11 +112,12 @@
     }).join('');
     listEl.querySelectorAll('[data-view]').forEach(function(b){
       b.addEventListener('click', async function(){
+        var w=window.open('','_blank');   /* opened inside the click so Safari does not block it */
         var s=await sb.storage.from('crm-private').createSignedUrl(b.dataset.path,120);
         if(s.data&&s.data.signedUrl){
           try{ sb.from('crm_attachment_events').insert({attachment_id:b.dataset.view,event_type:'signed_link',detail:'portal view'}).then(function(){}); }catch(e){}
-          window.open(s.data.signedUrl,'_blank');
-        }
+          if(w) w.location=s.data.signedUrl; else window.open(s.data.signedUrl,'_blank');
+        } else if(w) w.close();
       });
     });
   }

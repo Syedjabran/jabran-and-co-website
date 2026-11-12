@@ -281,12 +281,15 @@
         muts.forEach(function (m) {
           if (m.target && m.target.tagName === 'SELECT') touched = true;
           else if (m.addedNodes && m.addedNodes.length) touched = true;
+          else if (m.type === 'attributes') touched = true;   /* a modal opening: repaint values set by setval() */
         });
         if (!touched) return;
         clearTimeout(pending);
         pending = setTimeout(function () { scan(document); }, 120);
-      }).observe(document.body, { childList: true, subtree: true });
+      }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
     } catch (e) {}
+    /* form.reset() changes values without a change event: repaint once it has applied */
+    document.addEventListener('reset', function () { setTimeout(function () { scan(document); }, 0); }, true);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

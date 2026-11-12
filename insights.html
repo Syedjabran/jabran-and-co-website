@@ -168,7 +168,7 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
   </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script>
   const form = document.getElementById('blog-submit-form');
@@ -207,7 +207,7 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
       <div class="teaser-card">
         <div class="eyebrow">${new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}</div>
         <h3>${escapeHtml(post.title)}</h3>
-        <p>${escapeHtml(post.body).slice(0, 180)}${post.body.length > 180 ? '…' : ''}</p>
+        <p>${escapeHtml((post.body || '').slice(0, 180))}${(post.body || '').length > 180 ? '…' : ''}</p>
         <div style="margin-top:10px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em;">By ${escapeHtml(post.author_name)}</div>
       </div>
     `).join('');

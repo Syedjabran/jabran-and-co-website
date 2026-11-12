@@ -345,7 +345,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -530,6 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('inv-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('inv-form-status'); st.textContent='Saving…';
     const payload={}; IN_FIELDS.forEach(f=>payload[f]=val('in-'+f)); IN_NUMS.forEach(f=>payload[f]=numval('in-'+f)||0);
     payload.exchange_rate=numval('in-exchange_rate');
@@ -543,6 +544,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; if(!id)closeModal('modal-inv'); loadInvoices();
+    }finally{ sBtn.disabled=false; }
   });
 
   /* ---------- PAYMENTS ---------- */
@@ -640,6 +642,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('pay-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('pay-form-status'); st.textContent='Saving…';
     const payload={}; PA_FIELDS.forEach(f=>payload[f]=val('pa-'+f)); PA_NUMS.forEach(f=>payload[f]=numval('pa-'+f));
     ['withholding_tax','bank_charges','deductions'].forEach(f=>payload[f]=payload[f]||0);
@@ -654,6 +657,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; if(!id)closeModal('modal-pay'); loadPayments();
+    }finally{ sBtn.disabled=false; }
   });
 
   /* ---------- RECEIVABLES ---------- */
@@ -710,6 +714,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   document.getElementById('exp-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    const sBtn=e.target.querySelector('[type="submit"]'); sBtn.disabled=true; try{
     const st=document.getElementById('exp-form-status'); st.textContent='Saving…';
     const payload={}; EX_FIELDS.forEach(f=>payload[f]=val('ex-'+f));
     payload.amount=numval('ex-amount'); payload.is_direct=val('ex-is_direct')||false;
@@ -724,6 +729,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if(error){ st.textContent='Error: '+error.message; return; }
     st.textContent='Saved.'; closeModal('modal-exp'); loadExpenses();
+    }finally{ sBtn.disabled=false; }
   });
 
   /* ---------- PROFITABILITY & EBITDA ---------- */
@@ -771,4 +777,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-================================================

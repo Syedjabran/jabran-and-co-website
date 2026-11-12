@@ -176,7 +176,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function(){
     try{
       var sn=await sb.rpc('crm_staff_names');
       (sn.data||[]).forEach(function(s){
-        var id=s.user_id||s.id, nm=s.full_name||s.name||s.email||'Staff';
+        var id=s.user_id||s.id, nm=s.display_name||s.full_name||s.name||s.email||'Staff';
         staff[id]=nm;
       });
       var sel=document.getElementById('a-assign');

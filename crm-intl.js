@@ -136,8 +136,10 @@
       var num = digitsOnly(raw);
       if (raw.charAt(0) === '+') {
         var hit = findByDial(num);
-        if (hit) sel.value = hit.iso2;
+        if (hit) { sel.value = hit.iso2; return; }
       }
+      /* no dial code stored: do not inherit the previous record's country (unless the user is typing here) */
+      if (document.activeElement !== input) sel.value = defaultIso;
     }
 
     input.addEventListener('blur', normalise);

@@ -97,9 +97,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (statusEl){ statusEl.textContent = 'Too many failed attempts. Try again in ' + mins + ' minute(s).'; statusEl.style.color='#e57368'; }
         return;
       }
-      setTimeout(async function () {
+      /* Count only a real credential rejection logged by the gateway, not its silent refusals. */
+      var logFrom = window.__jcoAuthLog ? window.__jcoAuthLog.length : -1, tries = 0;
+      setTimeout(async function check() {
         var { data } = await sb.auth.getSession();
-        if (!data || !data.session) {
+        var kinds = logFrom < 0 ? null : window.__jcoAuthLog.slice(logFrom).map(function (r) { return r.kind; });
+        if (kinds && kinds.indexOf('TOKEN-CONSUMED') >= 0 && kinds.indexOf('rejected') < 0 && kinds.indexOf('NEW-SESSION-CREATED') < 0 && kinds.indexOf('error') < 0 && ++tries < 10) { setTimeout(check, 1500); return; }
+        if ((!data || !data.session) && (!kinds || kinds.indexOf('rejected') >= 0)) {
           st.n = (st.n || 0) + 1;
           if (st.n >= 5) { st.until = Date.now() + 5 * 60000; st.n = 0; }
           localStorage.setItem(FAIL_KEY, JSON.stringify(st));
@@ -195,12 +199,12 @@ document.addEventListener('DOMContentLoaded', function () {
       var probes = {
         finance_only:    sb.from('crm_invoices').select('id', { head:true, count:'exact' }),
         management_only: sb.from('crm_order_ebitda').select('order_id').limit(1),
-        owner_only:      sb.from('crm_field_config').select('id', { head:true, count:'exact' })
+        owner_only:      sb.rpc('crm_has_role', { roles: ['owner'] })
       };
       // internal_only is true for any staff member reaching a staff page
       roleScopes.internal_only = true;
       for (var scope in probes) {
-        try { var r = await probes[scope]; roleScopes[scope] = !r.error; }
+        try { var r = await probes[scope]; roleScopes[scope] = scope === 'owner_only' ? (!r.error && r.data === true) : !r.error; }
         catch (e) { roleScopes[scope] = false; }
       }
       cfg.forEach(function (f) {
@@ -838,6 +842,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (settled) return;
     settled = true;
     if (showLogin) root.className += ' jco-show-login';
+    else root.className = root.className.replace(/\s*jco-show-login/g, '');
     root.className = root.className.replace(/\s*jco-booting/g, '');
     if (overlay) {
       overlay.className = 'gone';
@@ -878,6 +883,8 @@ document.addEventListener('DOMContentLoaded', function () {
   try {
     if (typeof sb !== 'undefined' && sb.auth && sb.auth.onAuthStateChange) {
       sb.auth.onAuthStateChange(function (ev) {
+        /* signed in: stop forcing the login box visible; the page hides it itself */
+        if (ev === 'SIGNED_IN') root.className = root.className.replace(/\s*jco-show-login/g, '');
         if (ev === 'SIGNED_OUT') {
           settled = false;                 /* allow one more reveal */
           reveal(true);

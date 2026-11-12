@@ -129,7 +129,7 @@
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function(){
         return '<div style="display:flex; gap:10px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(198,165,90,0.08); font-size:13px;">'+
           '<span class="crm-mono" style="color:var(--gold-light);">'+esc(o.order_number||o.id.slice(0,8))+'</span>'+
           '<span class="crm-badge">'+esc(o.status||'—')+'</span>'+
-          '<a class="crm-btn ghost sm" style="margin-left:auto; text-decoration:none;" href="crm-orders.html">Open</a></div>';
+          '<a class="crm-btn ghost sm" style="margin-left:auto; text-decoration:none;" href="crm-orders.html#order='+esc(o.id)+'">Open</a></div>';
       }).join('');
     } else {
       document.getElementById('rm-unassigned-card').style.display='none';
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function(){
         '<td>'+esc(orgMap[o.organization_id]||'—')+'</td>'+
         '<td><span class="crm-badge">'+esc(o.status||'—')+'</span></td>'+
         '<td class="crm-mono">'+esc(since[o.id]||(o.created_at||'').slice(0,10))+'</td>'+
-        '<td><a class="crm-btn ghost sm" style="text-decoration:none;" href="crm-orders.html">Open</a></td></tr>';
+        '<td><a class="crm-btn ghost sm" style="text-decoration:none;" href="crm-orders.html#order='+esc(o.id)+'">Open</a></td></tr>';
     }).join('');
   }
 

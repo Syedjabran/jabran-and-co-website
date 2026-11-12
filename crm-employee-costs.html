@@ -228,7 +228,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script src="crm-auth.js"></script>
 <script src="crm-activity.js"></script>
@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---------- ALLOWANCES ---------- */
   function renderAllowRows(){
     const box=document.getElementById('ec-al-rows');
-    box.innerHTML=curAllowances.filter(a=>a.is_active!==false).map((a,i)=>`
+    box.innerHTML=curAllowances.map((a,i)=>a.is_active===false?'':`
       <div class="ec-al-row" data-ai="${i}">
         <select data-af="allowance_type" ${canEdit?'':'disabled'}>
           ${['fuel','travel','food','accommodation','phone','medical','other'].map(t=>`<option value="${t}" ${a.allowance_type===t?'selected':''}>${label(t)}</option>`).join('')}

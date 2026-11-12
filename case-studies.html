@@ -219,7 +219,7 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
   </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="supabase-client.js"></script>
 <script>
   function escapeHtml(str){
@@ -239,7 +239,7 @@ s.parentNode.insertBefore(b, s);})(window.lintrk);
         <div class="eyebrow">${escapeHtml(cs.industry || 'Case Study')}</div>
         <h3>${escapeHtml(cs.title)}</h3>
         <p><strong>Client:</strong> ${escapeHtml(cs.client_display_name)}</p>
-        ${cs.results ? '<p>'+escapeHtml(cs.results).slice(0,180)+(cs.results.length>180?'…':'')+'</p>' : ''}
+        ${cs.results ? '<p>'+escapeHtml(String(cs.results).slice(0,180))+(cs.results.length>180?'…':'')+'</p>' : ''}
       </div>
     `).join('');
   }
